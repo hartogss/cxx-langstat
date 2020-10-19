@@ -1,14 +1,16 @@
 # https://github.com/peter-can-talk/cppnow-2017/blob/master/code/mccabe/Makefile
 # https://jonasdevlieghere.com/understanding-the-clang-ast/#astcontext
 # https://stackoverflow.com/questions/10024279/how-to-use-shell-commands-in-makefile
+# https://www.youtube.com/watch?v=_r7i5X0rXJk
 
-TARGET := Langstat
 #HEADERS := -isystem /llvm/include/
 #WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter
 #CXXFLAGS := $(WARNINGS) -std=c++14 -fno-exceptions -fno-rtti -O3 -Os
+
+TARGET := Langstat
+
 CXXFLAGS := $(shell /usr/local/bin/llvm-config --cxxflags)
 LDFLAGS := $(shell /usr/local/bin/llvm-config --ldflags)
-
 CLANG_LIBS := \
 	-lclangFrontendTool \
 	-lclangRewriteFrontend \
@@ -27,16 +29,17 @@ CLANG_LIBS := \
 	-lclangAST \
 	-lclangLex \
 	-lclangBasic
-
 LIBS :=  $(shell /usr/local/bin/llvm-config --libs --system-libs) $(CLANG_LIBS)
 
-all: langstat
 
-.phony: clean
-.phony: run
+langstat: Analysis.o Langstat.o
+	clang++ $(TARGET).o Analysis.o $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o langstat
+
+Langstat.o: $(TARGET).cpp
+	clang++ -c $(TARGET).cpp $(CXXFLAGS)
+
+Analysis.o: Analysis.cpp Analysis.h
+	clang++ -c Analysis.cpp
 
 clean:
-	rm $(TARGET) || echo -n ""
-
-langstat: $(TARGET).cpp
-	clang++ $(TARGET).cpp $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o cxx-langstat
+	rm $(TARGET) *.o
