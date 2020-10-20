@@ -8,7 +8,11 @@ using namespace clang::ast_matchers;
 Analysis::Analysis() : Matcher(allOf(hasAncestor(forStmt()), unless(hasAncestor(forStmt())))){
 }
 // ctor
-Analysis::Analysis(StatementMatcher Matcher, std::function<void()> Runner) : Matcher(Matcher), Runner(Runner) {
+Analysis::Analysis(std::string Name, StatementMatcher Matcher,
+    std::function<void(const clang::Stmt*)> Runner) :
+    Name(Name),
+    Matcher(Matcher),
+    Runner(Runner) {
 }
 //
 clang::ast_matchers::StatementMatcher Analysis::getMatcher(){

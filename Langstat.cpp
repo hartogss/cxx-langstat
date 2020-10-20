@@ -27,8 +27,9 @@ public:
     // Gets called on a match by MatchFinder
     void run(const ast_matchers::MatchFinder::MatchResult& Result){
         std::cout << "Found match in AST" << std::endl;
-        auto node = Result.Nodes.getNodeAs<ForStmt>("fs");
-        An.Runner();
+        // is everyting Stmt*? I thought no general class for stmt,decl,expr
+        const clang::Stmt* node = Result.Nodes.getNodeAs<clang::Stmt>(An.Name);
+        An.Runner(node);
     }
     Analysis An;
 };
@@ -119,18 +120,22 @@ llvm::cl::opt<bool> WSOption(
 // avoids (maybe slow) copy
 int main(int argc, const char** argv){
     using namespace clang::tooling;
+    using namespace clang::ast_matchers;
+
 
     // parses all options that command-line tools have in common
     CommonOptionsParser Parser(argc, argv, ClangStatCategory);
 
-    ClangTool Tool(Parser.getCompilations(),
-                 Parser.getSourcePathList());
+    ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
 
-    using namespace clang::ast_matchers;
-    StatementMatcher m = forStmt().bind("fs");
-    std::function<void()> r = []() {std::cout << "worked" << std::endl;};
-    Analysis forstmt(m, r);
-
+    // Add analysis
+    std::string Name = "fs";
+    StatementMatcher Matcher = whileStmt().bind(Name);
+    auto Runner = [](auto Node) {
+        std::cout << "fs matcher runner called" << std::endl;
+        Node->dump();
+    };
+    Analysis forstmt(Name, Matcher, Runner);
 
 
     // util to run frontendaction over file
