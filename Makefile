@@ -7,6 +7,7 @@
 #WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter
 #CXXFLAGS := $(WARNINGS) -std=c++14 -fno-exceptions -fno-rtti -O3 -Os
 
+EXECUTABLE := langstat
 TARGET := Langstat
 
 CXXFLAGS := $(shell /usr/local/bin/llvm-config --cxxflags)
@@ -32,11 +33,14 @@ CLANG_LIBS := \
 LIBS :=  $(shell /usr/local/bin/llvm-config --libs --system-libs) $(CLANG_LIBS)
 
 
-langstat: Analysis.o Langstat.o
-	clang++ $(TARGET).o Analysis.o $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o langstat
+langstat: Analysis.o ForStmtAnalysis.o Langstat.o
+	clang++ $(TARGET).o Analysis.o ForStmtAnalysis.o $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(EXECUTABLE)
 
 Langstat.o: $(TARGET).cpp
 	clang++ -c $(TARGET).cpp $(CXXFLAGS)
+
+ForStmtAnalysis.o: ForStmtAnalysis.cpp ForStmtAnalysis.h
+	clang++ -c ForStmtAnalysis.cpp
 
 Analysis.o: Analysis.cpp Analysis.h
 	clang++ -c Analysis.cpp

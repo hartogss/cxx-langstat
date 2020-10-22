@@ -6,7 +6,8 @@
 // standard includes
 #include <iostream>
 // custom includes
-#include "Analysis.h"
+// #include "Analysis.h"
+#include "ForStmtAnalysis.h"
 
 // namespaces
 using namespace clang; // CompilerInstance, ASTFrontendAction, ASTConsumer
@@ -23,16 +24,14 @@ public:
     MatchHandler() = default;
     // Gets called on a match by MatchFinder
     void run(const ast_matchers::MatchFinder::MatchResult& Result){
-        std::cout << "Found match in AST" << std::endl;
-        // is everyting Stmt*? I thought no general class for stmt,decl,expr
-        const clang::Stmt* node = Result.Nodes.getNodeAs<clang::Stmt>(An.Name);
-        An.Runner(node);
+        std::cout << "\033[32mFound match in AST\033[0m" << std::endl;
+        An.Runner(Result);
     }
     Analysis An;
 };
 
 //-----------------------------------------------------------------------------
-
+ 
 
 // Consumes the AST, i.e. does computations on the AST
 class Consumer : public ASTConsumer {
@@ -42,7 +41,7 @@ public:
         std::cout << "Consumer() called" << std::endl;
         std::cout << "Adding matchers to finder" << std::endl;
         Handler.An = An;
-        Finder.addMatcher(An.getMatcher(), &Handler);
+        Finder.addMatcher(An.getBaseMatcher(), &Handler);
     }
     // Called when AST for TU is ready/has been parsed
     void HandleTranslationUnit(clang::ASTContext& Context){
@@ -77,7 +76,8 @@ public:
         return true;
     }
     // Called after frontend is initialized, but before per-file processing
-    std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(
+    std::unique_ptr<clang::ASTConsumer>
+    CreateASTConsumer(
         CompilerInstance &CI, llvm::StringRef InFile){
             std::cout << "CreateASTConsumer() called" << std::endl;
             return std::make_unique<Consumer>(An);
@@ -93,29 +93,13 @@ private:
 llvm::cl::OptionCategory ClangStatCategory("clang-stat options");
 llvm::cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
 llvm::cl::extrahelp MoreHelp("\nMore help text coming soon...\n");
-// CL options
+
+// Analysis-specific options
 llvm::cl::opt<bool> FSOption(
     "forstmt",
     llvm::cl::desc("Whether we want to catch for statements "),
     llvm::cl::cat(ClangStatCategory)
 );
-llvm::cl::opt<bool> WSOption(
-    "whilestmt",
-    llvm::cl::desc("Whether we want to catch while statements "),
-    llvm::cl::cat(ClangStatCategory)
-);
-
-//-----------------------------------------------------------------------------
-// Should move to separate file
-
-// Add analysis
-std::string Name = "fs";
-StatementMatcher Matcher = forStmt().bind(Name);
-auto Runner = [](auto Node) {
-    std::cout << "fs matcher runner called" << std::endl;
-    Node->dump();
-};
-Analysis forstmt(Name, Matcher, Runner);
 
 //-----------------------------------------------------------------------------
 
@@ -140,6 +124,8 @@ int main(int argc, const char** argv){
     for (auto SourceFilePath : Parser.getSourcePathList()){
         std::cout << SourceFilePath << std::endl;
     }
+
+    std::cout << FSOption << std::endl;
 
     ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
 
