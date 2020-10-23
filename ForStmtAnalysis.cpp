@@ -8,30 +8,31 @@ using namespace clang; // Stmt, Expr, FullSourceLoc
 using namespace clang::ast_matchers;
 
 // TODO: variables defined here shouldn't be visible in Langstat.cpp, only
-// analysis object should be
+// forstmt object should be
 
-StatementMatcher constructMatcher(StatementMatcher m, int depth, std::string Name){
-    StatementMatcher AtLeastDepth = hasDescendant(forStmt());
-    StatementMatcher EnsureIsOuterMostLoop = unless(hasAncestor(forStmt()));
-    int i=2;
-    while(i<depth){
+// Constructs matcher that exactly matches for-loops with depth d (nesting depth)
+StatementMatcher constructMatcher(int d, std::string Name){
+    StatementMatcher AtLeastDepth = anything();
+    int i=1;
+    while(i<d){
         AtLeastDepth = hasDescendant(forStmt(AtLeastDepth));
         i++;
     }
-    StatementMatcher AtLeastDepthPLUS1 = forStmt(EnsureIsOuterMostLoop, hasDescendant(forStmt(AtLeastDepth)));
+    StatementMatcher EnsureIsOuterMostLoop = unless(hasAncestor(forStmt()));
+    StatementMatcher AtLeastDepthPlus1 = forStmt(EnsureIsOuterMostLoop, hasDescendant(forStmt(AtLeastDepth)));
     AtLeastDepth = forStmt(EnsureIsOuterMostLoop, AtLeastDepth);
-    return forStmt(AtLeastDepth, unless(AtLeastDepthPLUS1)).bind(Name);
+    return forStmt(AtLeastDepth, unless(AtLeastDepthPlus1)).bind(Name);
 }
 
 // matchers with more depth could either be hardcoded
 // or made constexpr if max-depth is fixed to speed up runtime
-int depth = 3;
+int depth = 1;
 
 
 std::string Name = "fs";
-StatementMatcher BaseMatcher = forStmt();
+// StatementMatcher BaseMatcher = forStmt();
 // StatementMatcher test = forStmt(hasDescendant(BaseMatcher));
-StatementMatcher m = constructMatcher(BaseMatcher, depth, Name);
+StatementMatcher m = constructMatcher(depth, Name);
 
 auto Runner = [](const clang::ast_matchers::MatchFinder::MatchResult& Result) {
     const ForStmt* FS = Result.Nodes.getNodeAs<ForStmt>(Name);
