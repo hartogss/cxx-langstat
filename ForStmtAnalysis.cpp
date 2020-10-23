@@ -1,7 +1,5 @@
 #include "clang/ASTMatchers/ASTMatchers.h"
-
 #include <iostream>
-
 #include "ForStmtAnalysis.h"
 
 using namespace clang; // Stmt, Expr, FullSourceLoc

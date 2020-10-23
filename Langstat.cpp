@@ -31,7 +31,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
- 
+
 
 // Consumes the AST, i.e. does computations on the AST
 class Consumer : public ASTConsumer {
@@ -67,12 +67,12 @@ public:
     }
     // ctor
     Action(Analysis An) : An(An){
-        std::cout << "Creating AST action with arg" << std::endl;
+        std::cout << "Created Action with Analysis arg" << std::endl;
     }
     // Called at start of processing a single input
     bool BeginSourceFileAction(CompilerInstance& CI) {
-        std::cout << "Starting to process file" << std::endl;
-        std::cout << getCurrentFile().data() << std::endl;
+        std::cout << "Starting to process file"
+        << getCurrentFile().data() << std::endl;
         return true;
     }
     // Called after frontend is initialized, but before per-file processing
@@ -95,7 +95,7 @@ llvm::cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
 llvm::cl::extrahelp MoreHelp("\nMore help text coming soon...\n");
 
 // Analysis-specific options
-llvm::cl::opt<bool> FSOption(
+llvm::cl::opt<int> FSOption(
     "forstmt",
     llvm::cl::desc("Whether we want to catch for statements "),
     llvm::cl::cat(ClangStatCategory)
@@ -108,7 +108,7 @@ class Factory : public clang::tooling::FrontendActionFactory {
 public:
     // 'ctor'
     std::unique_ptr<FrontendAction> create() {
-        std::cout << "create() called" << std::endl;
+        std::cout << "Factory created" << std::endl;
         return std::make_unique<Action>(forstmt);
     }
 };
@@ -124,6 +124,7 @@ int main(int argc, const char** argv){
     for (auto SourceFilePath : Parser.getSourcePathList()){
         std::cout << SourceFilePath << std::endl;
     }
+
 
     std::cout << FSOption << std::endl;
 
