@@ -10,7 +10,7 @@ class ForStmtAnalysis : public Analysis {
     using Analysis::Analysis;
 };
 
-ForStmtAnalysis newForStmtAnalysis(llvm::cl::opt<int> FSOption);
+ForStmtAnalysis newForStmtAnalysis(int FSOption);
 
 }
 
