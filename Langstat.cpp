@@ -3,10 +3,11 @@
 #include "clang/Tooling/Tooling.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
+
 // standard includes
 #include <iostream>
+
 // custom includes
-// #include "Analysis.h"
 #include "ForStmtAnalysis.h"
 
 // namespaces
@@ -109,7 +110,7 @@ public:
     // 'ctor'
     std::unique_ptr<FrontendAction> create() {
         std::cout << "Factory created" << std::endl;
-        return std::make_unique<Action>(forstmt);
+        return std::make_unique<Action>(fsa::forstmt);
     }
 };
 

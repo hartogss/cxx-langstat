@@ -8,6 +8,8 @@ using namespace clang::ast_matchers;
 // TODO: variables defined here shouldn't be visible in Langstat.cpp, only
 // forstmt object should be
 
+namespace fsa {
+
 // Constructs matcher that exactly matches for-loops with depth d (nesting depth)
 StatementMatcher constructMatcher(int d, std::string Name){
     StatementMatcher AtLeastDepth = anything();
@@ -51,3 +53,5 @@ auto Runner = [](const clang::ast_matchers::MatchFinder::MatchResult& Result) {
 };
 
 ForStmtAnalysis forstmt(Name, m, Runner);
+
+} // namespace fsa
