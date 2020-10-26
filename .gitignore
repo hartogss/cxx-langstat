@@ -1,2 +1,11 @@
-ClangStat.exports
-forintreeCmakelists.txt
+# Object files
+*.o
+
+# Executables
+
+# macOS folder attributes
+.DS_Store
+
+# ETHZ polybox
+.owncloudsync.log
+.sync_*
