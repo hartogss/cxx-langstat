@@ -33,7 +33,6 @@ public:
 
 //-----------------------------------------------------------------------------
 
-
 // Consumes the AST, i.e. does computations on the AST
 class Consumer : public ASTConsumer {
 public:
@@ -57,7 +56,6 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-
 
 // Responsible for steering when what is executed
 class Action : public ASTFrontendAction {
@@ -110,14 +108,13 @@ public:
     // 'ctor'
     std::unique_ptr<FrontendAction> create() {
         std::cout << "Factory created" << std::endl;
-        return std::make_unique<Action>(fsa::forstmt);
+        return std::make_unique<Action>(fsa::newForStmtAnalysis(FSOption));
     }
 };
 
 //-----------------------------------------------------------------------------
 
 int main(int argc, const char** argv){
-
     // parses all options that command-line tools have in common
     CommonOptionsParser Parser(argc, argv, ClangStatCategory);
 
@@ -125,9 +122,6 @@ int main(int argc, const char** argv){
     for (auto SourceFilePath : Parser.getSourcePathList()){
         std::cout << SourceFilePath << std::endl;
     }
-
-
-    std::cout << FSOption << std::endl;
 
     ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
 
