@@ -15,6 +15,6 @@ Analysis::Analysis(std::string Name, StatementMatcher BaseMatcher,
     Runner(Runner) {
 }
 //
-clang::ast_matchers::StatementMatcher Analysis::getBaseMatcher(){
+StatementMatcher Analysis::getBaseMatcher(){
     return BaseMatcher;
 }
