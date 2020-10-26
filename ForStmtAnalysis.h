@@ -10,6 +10,7 @@ class ForStmtAnalysis : public Analysis {
     using Analysis::Analysis;
 };
 
+// extern s.t. Langstat.cpp can find it, defined in ForStmtAnalysis.cpp
 extern ForStmtAnalysis forstmt;
 
 }
