@@ -34,7 +34,7 @@ CLANG_LIBS := \
 	-lclangBasic
 LIBS :=  $(shell /usr/local/bin/llvm-config --libs --system-libs) $(CLANG_LIBS)
 
-crude: $(CRUDE).cpp
+crude: $(CRUDE).cpp $(CRUDE).h
 	clang++ $(CRUDE).cpp $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(CRUDE)
 
 langstat: Analysis.o ForStmtAnalysis.o Langstat.o
