@@ -6,17 +6,16 @@
 
 //-----------------------------------------------------------------------------
 
-
 class Extractor : public clang::ast_matchers::MatchFinder::MatchCallback {
 public :
     //ctor
     Extractor(std::string id, clang::ast_matchers::StatementMatcher Matcher);
     //
     virtual void run(const clang::ast_matchers::MatchFinder::MatchResult &Result);
-    int appearances;
+    int _numMatches;
 private:
-    std::string id;
-    clang::ast_matchers::StatementMatcher Matcher;
+    std::string _id;
+    clang::ast_matchers::StatementMatcher _Matcher;
 };
 
 int extract(std::string id, clang::ast_matchers::StatementMatcher Matcher,
