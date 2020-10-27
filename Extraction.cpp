@@ -1,12 +1,9 @@
-// llvm & clang includes
 #include "clang/Tooling/Tooling.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 
-// standard includes
 #include <iostream>
 
-// custom includes
 #include "Extraction.h"
 
 // namespaces
@@ -17,16 +14,18 @@ using namespace clang::tooling; // CommonOptionsParser
 
 //-----------------------------------------------------------------------------
 
+namespace Extraction {
+
 // ctor
-Extractor::Extractor(std::string id, StatementMatcher Matcher) : _id(id), _Matcher(Matcher){
-    this->_numMatches=0;
+Extractor::Extractor(std::string id, StatementMatcher Matcher) : id(id), Matcher(Matcher){
+    this->NumMatches=0;
 }
 //
 void Extractor::run(const MatchFinder::MatchResult &Result) {
-    std::cout << "\033[32mFound match in AST\033[0m" << std::endl;
-    const Stmt* node = Result.Nodes.getNodeAs<clang::Stmt>(this->_id);
+    // std::cout << "\033[32mFound match in AST\033[0m" << std::endl;
+    const Stmt* node = Result.Nodes.getNodeAs<clang::Stmt>(this->id);
     ASTContext* Context = Result.Context;
-    this->_numMatches++;
+    this->NumMatches++;
 
     // if(node){
     //     FullSourceLoc Location = Context->getFullLoc(node->getBeginLoc());
@@ -40,13 +39,12 @@ void Extractor::run(const MatchFinder::MatchResult &Result) {
 
 // TODO: put this method into Extract class
 int extract(std::string id, StatementMatcher Matcher, ClangTool Tool){
-    std::cout << "extract called" << std::endl;
     Extractor Extractor(id, Matcher);
     MatchFinder Finder;
     Finder.addMatcher(Matcher, &Extractor);
     Tool.run(newFrontendActionFactory(&Finder).get());
-    return Extractor._numMatches;
+    return Extractor.NumMatches;
 
 }
 
-//-----------------------------------------------------------------------------
+} //namespace Extraction

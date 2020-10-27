@@ -12,7 +12,9 @@ TARGET := Langstat
 
 CRUDE := Extraction
 
-CXXFLAGS := $(shell /usr/local/bin/llvm-config --cxxflags)
+# CXXFLAGS := $(shell /usr/local/bin/llvm-config --cxxflags)
+CXXFLAGS := -fno-rtti #fno-rtti important why?
+
 LDFLAGS := $(shell /usr/local/bin/llvm-config --ldflags)
 CLANG_LIBS := \
 	-lclangFrontendTool \
@@ -35,20 +37,20 @@ CLANG_LIBS := \
 LIBS :=  $(shell /usr/local/bin/llvm-config --libs --system-libs) $(CLANG_LIBS)
 
 
-langstat: Extraction.o Langstat.o
-	clang++ Extraction.o $(TARGET).o $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(EXECUTABLE)
+$(EXECUTABLE): Extraction.o Analysis.o ForStmtAnalysis.o Langstat.o
+	clang++ Extraction.o Analysis.o ForStmtAnalysis.o $(TARGET).o $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(EXECUTABLE)
+
+$(TARGET).o: $(TARGET).cpp
+	clang++ -c $(TARGET).cpp $(CXXFLAGS)
+
+ForStmtAnalysis.o: ForStmtAnalysis.cpp ForStmtAnalysis.h
+	clang++ -c ForStmtAnalysis.cpp $(CXXFLAGS)
+
+Analysis.o: Analysis.cpp Analysis.h
+	clang++ -c Analysis.cpp $(CXXFLAGS)
 
 Extraction.o: Extraction.cpp Extraction.h
 	clang++ -c Extraction.cpp $(CXXFLAGS)
-
-Langstat.o: $(TARGET).cpp
-	clang++ -c $(TARGET).cpp $(CXXFLAGS)
-
-# ForStmtAnalysis.o: ForStmtAnalysis.cpp ForStmtAnalysis.h
-# 	clang++ -c ForStmtAnalysis.cpp
-#
-# Analysis.o: Analysis.cpp Analysis.h
-# 	clang++ -c Analysis.cpp
 
 clean:
 	rm $(TARGET) *.o

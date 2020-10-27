@@ -6,22 +6,24 @@
 
 //-----------------------------------------------------------------------------
 
+namespace Extraction{
+
+
 class Extractor : public clang::ast_matchers::MatchFinder::MatchCallback {
 public :
     //ctor
     Extractor(std::string id, clang::ast_matchers::StatementMatcher Matcher);
     //
     virtual void run(const clang::ast_matchers::MatchFinder::MatchResult &Result);
-    int _numMatches;
+    int NumMatches;
 private:
-    std::string _id;
-    clang::ast_matchers::StatementMatcher _Matcher;
+    std::string id;
+    clang::ast_matchers::StatementMatcher Matcher;
 };
 
 int extract(std::string id, clang::ast_matchers::StatementMatcher Matcher,
     clang::tooling::ClangTool Tool);
 
-//-----------------------------------------------------------------------------
-
+} //
 
 #endif // EXTRACTION_H

@@ -1,11 +1,16 @@
-#include "clang/ASTMatchers/ASTMatchers.h"
+#include "clang/Tooling/Tooling.h"
+#include "clang/Tooling/CommonOptionsParser.h"
+
 #include <iostream>
+#include <vector>
+#include <numeric>
+
+#include "Extraction.h"
 #include "ForStmtAnalysis.h"
 
-using namespace clang; // Stmt, Expr, FullSourceLoc
+// namespaces
 using namespace clang::ast_matchers;
-
-namespace fsa {
+using namespace clang::tooling; // ClangTool
 
 // Constructs matcher that exactly matches for-loops with depth d (nesting depth)
 StatementMatcher constructMatcher(int d, std::string Name){
@@ -21,27 +26,41 @@ StatementMatcher constructMatcher(int d, std::string Name){
     return forStmt(AtLeastDepth, unless(AtLeastDepthPlus1)).bind(Name);
 }
 
-ForStmtAnalysis newForStmtAnalysis(int depth) {
-    std::string Name = "fs";
-    StatementMatcher m = constructMatcher(depth, Name);
-    auto Runner = [=](const clang::ast_matchers::MatchFinder::MatchResult& Result) {
-        const ForStmt* FS = Result.Nodes.getNodeAs<ForStmt>(Name);
-        clang::ASTContext* Context = Result.Context;
-        /*const Stmt* LoopInit = FS->getInit();
-        const Expr* LoopCond = FS->getCond();
-        const Expr* LoopInc = FS->getInc();*/
-        if(FS){
-            FullSourceLoc Location = Context->getFullLoc(FS->getBeginLoc());
-            if(Location.isValid()){
-                int LineNumber = Location.getLineNumber();
-                std::cout << "for loop of depth " << depth << " @ line " << LineNumber << "\n";
-                /*LoopInit->dumpPretty(*Context);
-                LoopCond->dumpPretty(*Context);
-                LoopInc->dumpPretty(*Context);*/
-            }
-        }
-    };
-    return ForStmtAnalysis(Name, m, Runner);
+// TODO: why parent ctor?
+ForStmtAnalysis::ForStmtAnalysis(ClangTool Tool, int MaxDepthOption) : Analysis(Tool), Tool(Tool), MaxDepth(MaxDepthOption) {
 }
+// step 1: extraction
+void ForStmtAnalysis::extract() {
+    std::string matcherid = "fs";
+    std::vector<int> Data;
+    unsigned TotalForLoops = Extraction::extract(matcherid, forStmt(unless(hasAncestor(forStmt()))), this->Tool);
+    std::cout << "#Independent for loops:" << TotalForLoops << std::endl;
+    unsigned ForLoopsFound = 0;
+    for (int i=1; i<=this->MaxDepth; i++){
+        StatementMatcher Matcher = constructMatcher(i, matcherid);
+        unsigned DataPoint = Extraction::extract(matcherid, Matcher, this->Tool);
+        ForLoopsFound += DataPoint;
+        Data.emplace_back(DataPoint);
 
-} // namespace fsa
+        if(ForLoopsFound == TotalForLoops) // stop searching for loops of depth n+1 if there aren't any of depth n
+            break;
+    }
+    if(ForLoopsFound < TotalForLoops)
+        std::cout << "Some for loops deeper than max_depth have not been analyzed" << std::endl;
+    analyze(Data);
+}
+//step 2: compute stats
+void ForStmtAnalysis::analyze(std::vector<int> Data){
+    unsigned DetectedForLoops = std::accumulate(Data.begin(), Data.end(), 0);
+    unsigned depth = 1;
+    for (int d : Data){
+        if (d!=0)
+            std::cout << d << "/" << DetectedForLoops << " of depth " << depth << std::endl;
+        depth++;
+    }
+}
+//step 3: visualization (for later)
+// combine
+void ForStmtAnalysis::run(){
+    extract(); //why 'this' not needed?
+}

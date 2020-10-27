@@ -1,27 +1,33 @@
-// llvm & clang includes
-#include "clang/Frontend/FrontendAction.h"
 #include "clang/Tooling/Tooling.h"
 #include "clang/Tooling/CommonOptionsParser.h"
-#include "clang/ASTMatchers/ASTMatchFinder.h"
 
-// standard includes
 #include <iostream>
 
-// custom includes
 #include "Extraction.h"
-#include "Analysis.h"
+#include "ForStmtAnalysis.h"
 
 // namespaces
 using namespace clang; // CompilerInstance, ASTFrontendAction, ASTConsumer
-using namespace clang::ast_matchers; // StatementMatcher, actual AST matchers like forStmt etc.
 using namespace clang::tooling; // CommonOptionsParser
 
 
 //-----------------------------------------------------------------------------
+// CL options
 
+// Options in CLI specific/nongeneric to clang-stat
 llvm::cl::OptionCategory ClangStatCategory("clang-stat options");
 llvm::cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
 llvm::cl::extrahelp MoreHelp("\nMore help text coming soon...\n");
+
+// Analysis-specific options
+llvm::cl::opt<int> FSAMaxDepthOption(
+    "forstmt",
+    llvm::cl::desc("Whether we want to catch for statements "),
+    llvm::cl::cat(ClangStatCategory)
+);
+
+//-----------------------------------------------------------------------------
+
 
 int main(int argc, const char** argv){
     // parses all options that command-line tools have in common
@@ -34,7 +40,7 @@ int main(int argc, const char** argv){
 
     ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
 
-    Analysis A(Tool);
+    ForStmtAnalysis A(Tool, FSAMaxDepthOption);
     A.run();
 
     return 0;
