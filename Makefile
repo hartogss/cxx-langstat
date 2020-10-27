@@ -10,6 +10,8 @@
 EXECUTABLE := langstat
 TARGET := Langstat
 
+CRUDE := Extraction
+
 CXXFLAGS := $(shell /usr/local/bin/llvm-config --cxxflags)
 LDFLAGS := $(shell /usr/local/bin/llvm-config --ldflags)
 CLANG_LIBS := \
@@ -32,6 +34,8 @@ CLANG_LIBS := \
 	-lclangBasic
 LIBS :=  $(shell /usr/local/bin/llvm-config --libs --system-libs) $(CLANG_LIBS)
 
+crude: $(CRUDE).cpp
+	clang++ $(CRUDE).cpp $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(CRUDE)
 
 langstat: Analysis.o ForStmtAnalysis.o Langstat.o
 	clang++ $(TARGET).o Analysis.o ForStmtAnalysis.o $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(EXECUTABLE)
