@@ -9,6 +9,7 @@
 
 // custom includes
 #include "Extraction.h"
+#include "Analysis.h"
 
 // namespaces
 using namespace clang; // CompilerInstance, ASTFrontendAction, ASTConsumer
@@ -33,14 +34,8 @@ int main(int argc, const char** argv){
 
     ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
 
-
-    //for now build analysis: simplified: extraction & statistics computation in main
-    // extraction
-    std::string matcherid = "fs";
-    StatementMatcher Matcher = forStmt().bind(matcherid);
-    int numMatches = extract(matcherid, Matcher, Tool);
-    std::cout << "Number of matches " << numMatches << "\n";
-
+    Analysis A(Tool);
+    A.run();
 
     return 0;
 }
