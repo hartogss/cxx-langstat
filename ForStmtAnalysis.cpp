@@ -27,22 +27,24 @@ StatementMatcher constructMatcher(int d, std::string Name){
 }
 
 // TODO: why parent ctor?
-ForStmtAnalysis::ForStmtAnalysis(ClangTool Tool, int MaxDepthOption) : Analysis(Tool), Tool(Tool), MaxDepth(MaxDepthOption) {
+ForStmtAnalysis::ForStmtAnalysis(ClangTool Tool, int MaxDepthOption) :
+    Analysis(Tool),
+    Extr(Extractor(Tool)), // instantiate extr with Extractor constructor
+    MaxDepth(MaxDepthOption) {
 }
 // step 1: extraction
 void ForStmtAnalysis::extract() {
     std::string matcherid = "fs";
     std::vector<int> Data;
-    unsigned TotalForLoops = Extraction::extract(matcherid, forStmt(unless(hasAncestor(forStmt()))), this->Tool);
-    std::cout << "#Independent for loops:" << TotalForLoops << std::endl;
+    unsigned TotalForLoops = this->Extr.extract(matcherid, forStmt(unless(hasAncestor(forStmt())))); // doesn't this need a bind?
+    std::cout << "#Independent for-loops:" << TotalForLoops << std::endl;
     unsigned ForLoopsFound = 0;
     for (int i=1; i<=this->MaxDepth; i++){
         StatementMatcher Matcher = constructMatcher(i, matcherid);
-        unsigned DataPoint = Extraction::extract(matcherid, Matcher, this->Tool);
+        unsigned DataPoint = this->Extr.extract(matcherid, Matcher);
         ForLoopsFound += DataPoint;
         Data.emplace_back(DataPoint);
-
-        if(ForLoopsFound == TotalForLoops) // stop searching for loops of depth n+1 if there aren't any of depth n
+        if(ForLoopsFound == TotalForLoops) // stop searching if all possible loops have been found
             break;
     }
     if(ForLoopsFound < TotalForLoops)

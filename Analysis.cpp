@@ -11,7 +11,9 @@ using namespace clang::ast_matchers;
 using namespace clang::tooling;
 
 // should be abstract class?
-Analysis::Analysis(ClangTool Tool) : Tool(Tool){
+Analysis::Analysis(ClangTool Tool) : Extr(Extractor(Tool)){
+    class Extractor Extractor(Tool);
+    // this->Extractor = Extractor;
 }
 // step 1: extraction
 void Analysis::extract() {
@@ -22,8 +24,6 @@ void Analysis::analyze(){
 //step 3: visualization (for later)
 // combine
 void Analysis::run(){
-    std::cout << "Analysis::run()" << std::endl;
+    std::cout << "Empty Analysis run, stopping." << std::endl;
     extract(); //why 'this' not needed?
-
-
 }

@@ -6,7 +6,6 @@
 
 #include "Analysis.h"
 
-// should be abstract class
 // need analysis object since we want other analysis to inherit interface
 class ForStmtAnalysis : Analysis {
 public:
@@ -21,10 +20,9 @@ public:
     void run();
 
     // std::string name;
-    clang::tooling::ClangTool Tool;
     int MaxDepth;
-    int ExtractedData;
-
+private:
+    class Extractor Extr;
 };
 
 #endif /* FORSTMTANALYSIS_H */

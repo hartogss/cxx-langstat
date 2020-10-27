@@ -19,9 +19,8 @@ public:
     void run();
 
     // std::string name;
-    clang::tooling::ClangTool Tool;
-    int ExtractedData;
-
+private:
+    class Extractor Extr;
 };
 
 #endif /* ANALYSIS_H */
