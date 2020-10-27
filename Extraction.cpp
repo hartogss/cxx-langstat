@@ -14,37 +14,35 @@ using namespace clang::tooling; // CommonOptionsParser
 
 //-----------------------------------------------------------------------------
 
-namespace Extraction {
-
 // ctor
-Extractor::Extractor(std::string id, StatementMatcher Matcher) : id(id), Matcher(Matcher){
+Extractor::Extractor(clang::tooling::ClangTool Tool) : Tool(Tool){
     this->NumMatches=0;
 }
-//
 void Extractor::run(const MatchFinder::MatchResult &Result) {
     // std::cout << "\033[32mFound match in AST\033[0m" << std::endl;
-    const Stmt* node = Result.Nodes.getNodeAs<clang::Stmt>(this->id);
+    const Stmt* node = Result.Nodes.getNodeAs<clang::Stmt>(this->matcherid);
     ASTContext* Context = Result.Context;
     this->NumMatches++;
 
-    // if(node){
-    //     FullSourceLoc Location = Context->getFullLoc(node->getBeginLoc());
-    //     if(Location.isValid()){
-    //         int LineNumber = Location.getLineNumber();
-    //         result = LineNumber;
-    //
-    //     }
-    // }
+    /*if(node){
+        FullSourceLoc Location = Context->getFullLoc(node->getBeginLoc());
+        if(Location.isValid()){
+            int LineNumber = Location.getLineNumber();
+            result = LineNumber;
+
+        }
+    }*/
 }
 
-// TODO: put this method into Extract class
-int extract(std::string id, StatementMatcher Matcher, ClangTool Tool){
-    Extractor Extractor(id, Matcher);
+unsigned Extractor::resetState(){
+    unsigned result = this->NumMatches;
+    this->NumMatches=0;
+    return result;
+}
+int Extractor::extract(std::string id, StatementMatcher Matcher){
     MatchFinder Finder;
-    Finder.addMatcher(Matcher, &Extractor);
+    this->matcherid=id;
+    Finder.addMatcher(Matcher, this);
     Tool.run(newFrontendActionFactory(&Finder).get());
-    return Extractor.NumMatches;
-
+    return resetState();
 }
-
-} //namespace Extraction

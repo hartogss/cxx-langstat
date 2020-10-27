@@ -6,24 +6,24 @@
 
 //-----------------------------------------------------------------------------
 
-namespace Extraction{
-
 
 class Extractor : public clang::ast_matchers::MatchFinder::MatchCallback {
 public :
+    Extractor();
     //ctor
-    Extractor(std::string id, clang::ast_matchers::StatementMatcher Matcher);
-    //
+    Extractor(clang::tooling::ClangTool Tool);
+    // Run when match is found after extract call with Matcher
     virtual void run(const clang::ast_matchers::MatchFinder::MatchResult &Result);
+    // Call this method to get data from AST
+    int extract(std::string id, clang::ast_matchers::StatementMatcher Matcher);
     int NumMatches;
 private:
-    std::string id;
-    clang::ast_matchers::StatementMatcher Matcher;
+    // Resets state, possibly better to do that on extract() call
+    unsigned resetState();
+    //
+    clang::tooling::ClangTool Tool;
+    std::string matcherid;
 };
 
-int extract(std::string id, clang::ast_matchers::StatementMatcher Matcher,
-    clang::tooling::ClangTool Tool);
-
-} //
 
 #endif // EXTRACTION_H
