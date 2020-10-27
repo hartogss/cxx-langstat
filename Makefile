@@ -34,20 +34,24 @@ CLANG_LIBS := \
 	-lclangBasic
 LIBS :=  $(shell /usr/local/bin/llvm-config --libs --system-libs) $(CLANG_LIBS)
 
-crude: $(CRUDE).cpp $(CRUDE).h
-	clang++ $(CRUDE).cpp $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(CRUDE)
 
-langstat: Analysis.o ForStmtAnalysis.o Langstat.o
-	clang++ $(TARGET).o Analysis.o ForStmtAnalysis.o $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(EXECUTABLE)
+langstat: Extraction.o Langstat.o
+	clang++ Extraction.o $(TARGET).o $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(EXECUTABLE)
+
+Extraction.o: Extraction.cpp Extraction.h
+	clang++ -c Extraction.cpp $(CXXFLAGS)
 
 Langstat.o: $(TARGET).cpp
 	clang++ -c $(TARGET).cpp $(CXXFLAGS)
 
-ForStmtAnalysis.o: ForStmtAnalysis.cpp ForStmtAnalysis.h
-	clang++ -c ForStmtAnalysis.cpp
-
-Analysis.o: Analysis.cpp Analysis.h
-	clang++ -c Analysis.cpp
+# ForStmtAnalysis.o: ForStmtAnalysis.cpp ForStmtAnalysis.h
+# 	clang++ -c ForStmtAnalysis.cpp
+#
+# Analysis.o: Analysis.cpp Analysis.h
+# 	clang++ -c Analysis.cpp
 
 clean:
 	rm $(TARGET) *.o
+
+crude: $(CRUDE).cpp $(CRUDE).h
+	clang++ $(CRUDE).cpp $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $(CRUDE)
