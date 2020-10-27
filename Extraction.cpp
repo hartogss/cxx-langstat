@@ -1,5 +1,4 @@
 // llvm & clang includes
-#include "clang/Frontend/FrontendAction.h"
 #include "clang/Tooling/Tooling.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
@@ -8,7 +7,7 @@
 #include <iostream>
 
 // custom includes
-#include "ForStmtAnalysis.h"
+#include "Extraction.h"
 
 // namespaces
 using namespace clang; // CompilerInstance, ASTFrontendAction, ASTConsumer
@@ -18,73 +17,64 @@ using namespace clang::tooling; // CommonOptionsParser
 
 //-----------------------------------------------------------------------------
 
-// Class called on a match
-class MatchHandler : public ast_matchers::MatchFinder::MatchCallback {
-public:
-    // ctor
-    MatchHandler() = default;
-    // Gets called on a match by MatchFinder
-    void run(const ast_matchers::MatchFinder::MatchResult& Result){
-        std::cout << "\033[32mFound match in AST\033[0m" << std::endl;
-    }
-};
+//ctor
+Extractor::Extractor(std::string id, StatementMatcher Matcher) : id(id), Matcher(Matcher){
+    this->appearances=0;
+}
+//
+void Extractor::run(const MatchFinder::MatchResult &Result) {
+    std::cout << "\033[32mFound match in AST\033[0m" << std::endl;
+    const Stmt* node = Result.Nodes.getNodeAs<clang::Stmt>(id);
+    ASTContext* Context = Result.Context;
+    appearances++;
+
+    // if(node){
+    //     FullSourceLoc Location = Context->getFullLoc(node->getBeginLoc());
+    //     if(Location.isValid()){
+    //         int LineNumber = Location.getLineNumber();
+    //         result = LineNumber;
+    //
+    //     }
+    // }
+}
+
+// TODO: put this method into Extract class
+int extract(std::string id, StatementMatcher Matcher, ClangTool Tool){
+    std::cout << "extract called" << std::endl;
+    Extractor extractor(id, Matcher);
+    MatchFinder Finder;
+    Finder.addMatcher(Matcher, &extractor);
+    Tool.run(newFrontendActionFactory(&Finder).get());
+    return extractor.appearances;
+
+}
 
 //-----------------------------------------------------------------------------
 
-// Consumes the AST, i.e. does computations on the AST
-class Consumer : public ASTConsumer {
-public:
-    // ctor
-    Consumer(){
-        std::cout << "Consumer() called" << std::endl;
-        std::cout << "Adding matchers to finder" << std::endl;
-    }
-    // Called when AST for TU is ready/has been parsed
-    void HandleTranslationUnit(clang::ASTContext& Context){
-        std::cout << "HandleTU() called" << std::endl;
-        Finder.matchAST(Context);
-    }
-private:
-    // Brings together all Matchers and callbacks when something matches
-    ast_matchers::MatchFinder Finder;
-    MatchHandler Handler;
-    // how are these contructed?
-};
 
-//-----------------------------------------------------------------------------
+llvm::cl::OptionCategory ClangStatCategory("clang-stat options");
+llvm::cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
+llvm::cl::extrahelp MoreHelp("\nMore help text coming soon...\n");
 
-// Responsible for steering when what is executed
-class Action : public ASTFrontendAction {
-public:
-    // Constructor
-    Action(){
-        std::cout << "Creating AST action" << std::endl;
-    }
-    // Called at start of processing a single input
-    bool BeginSourceFileAction(CompilerInstance& CI) {
-        std::cout << "Starting to process file"
-        << getCurrentFile().data() << std::endl;
-        return true;
-    }
-    // Called after frontend is initialized, but before per-file processing
-    std::unique_ptr<clang::ASTConsumer>
-    CreateASTConsumer(
-        CompilerInstance &CI, llvm::StringRef InFile){
-            std::cout << "CreateASTConsumer() called" << std::endl;
-            return std::make_unique<Consumer>(An);
+int main(int argc, const char** argv){
+    // parses all options that command-line tools have in common
+    CommonOptionsParser Parser(argc, argv, ClangStatCategory);
+
+    // Print all file name & locations
+    for (auto SourceFilePath : Parser.getSourcePathList()){
+        std::cout << SourceFilePath << std::endl;
     }
 
-};
+    ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
 
 
-//-----------------------------------------------------------------------------
+    //for now build analysis: simplified: extraction & statistics computation in main
+    // extraction
+    std::string matcherid = "fs";
+    StatementMatcher Matcher = forStmt().bind(matcherid);
+    int numMatches = extract(matcherid, Matcher, Tool);
+    std::cout << "Number of matches " << numMatches << "\n";
 
-// Responsible for building Actions to give ToolAction to ClangTool
-class Factory : public clang::tooling::FrontendActionFactory {
-public:
-    // 'ctor'
-    std::unique_ptr<FrontendAction> create() {
-        std::cout << "Factory created" << std::endl;
-        return std::make_unique<Action>();
-    }
-};
+
+    return 0;
+}
