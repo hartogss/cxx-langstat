@@ -9,3 +9,8 @@
 # ETHZ polybox
 .owncloudsync.log
 .sync_*
+
+# Editors & build dirs
+build/
+cmake-build-debug/
+.idea/
