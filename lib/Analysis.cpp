@@ -12,8 +12,10 @@ using namespace clang::tooling;
 
 // should be abstract class?
 Analysis::Analysis(ClangTool Tool) : Extr(Extractor(Tool)){
-    class Extractor Extractor(Tool);
-    // this->Extractor = Extractor;
+    std::cout<<"Analysis ctor"<<std::endl;
+}
+Analysis::~Analysis(){
+    std::cout<<"Analysis dtor"<<std::endl;
 }
 // step 1: extraction
 void Analysis::extract() {
@@ -22,6 +24,7 @@ void Analysis::extract() {
 void Analysis::analyze(){
 }
 //step 3: visualization (for later)
+
 // combine
 void Analysis::run(){
     std::cout << "Empty Analysis run, stopping." << std::endl;

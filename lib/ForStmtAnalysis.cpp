@@ -29,19 +29,24 @@ StatementMatcher constructMatcher(int d, std::string Name){
 // TODO: why parent ctor?
 ForStmtAnalysis::ForStmtAnalysis(ClangTool Tool, int MaxDepthOption) :
     Analysis(Tool),
-    Extr(Extractor(Tool)), // instantiate extr with Extractor constructor
     MaxDepth(MaxDepthOption) {
+    std::cout<<"FSA ctor"<<std::endl;
+}
+ForStmtAnalysis::~ForStmtAnalysis() {
+    std::cout<<"FSA dtor"<<std::endl;
 }
 // step 1: extraction
 void ForStmtAnalysis::extract() {
     std::string matcherid = "fs";
     std::vector<int> Data;
-    unsigned TotalForLoops = this->Extr.extract(matcherid, forStmt(unless(hasAncestor(forStmt())))); // doesn't this need a bind?
+    // Bind is necessary to retrieve information about the match like location etc.
+    // Without bind the match is still registered, thus we can still count #matches, but nothing else
+    unsigned TotalForLoops = this->Extr.extract("fs1", forStmt(unless(hasAncestor(forStmt()))).bind("fs1")).numMatches;
     std::cout << "#Independent for-loops:" << TotalForLoops << std::endl;
     unsigned ForLoopsFound = 0;
     for (int i=1; i<=this->MaxDepth; i++){
         StatementMatcher Matcher = constructMatcher(i, matcherid);
-        unsigned DataPoint = this->Extr.extract(matcherid, Matcher);
+        unsigned DataPoint = this->Extr.extract(matcherid, Matcher).numMatches;
         ForLoopsFound += DataPoint;
         Data.emplace_back(DataPoint);
         if(ForLoopsFound == TotalForLoops) // stop searching if all possible loops have been found
