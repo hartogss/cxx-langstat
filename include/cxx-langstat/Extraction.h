@@ -5,24 +5,35 @@
 #include "clang/Tooling/Tooling.h"
 
 //-----------------------------------------------------------------------------
+// Contains important data extracted from AST
+// For now, we extract, given a matcher, #matches and their respective locations.
+struct Gist {
+    Gist();
+    ~Gist();
+    unsigned numMatches;
+    std::vector<unsigned> locations;
+};
 
+//-----------------------------------------------------------------------------
 
 class Extractor : public clang::ast_matchers::MatchFinder::MatchCallback {
 public :
+    // ctor, dtor
     Extractor();
-    //ctor
     Extractor(clang::tooling::ClangTool Tool);
+    ~Extractor();
     // Run when match is found after extract call with Matcher
     virtual void run(const clang::ast_matchers::MatchFinder::MatchResult &Result);
     // Call this method to get data from AST
-    int extract(std::string id, clang::ast_matchers::StatementMatcher Matcher);
-    int NumMatches;
+    Gist extract(std::string id, clang::ast_matchers::StatementMatcher Matcher);
 private:
-    // Resets state, possibly better to do that on extract() call
-    unsigned resetState();
+    // Resets state
+    void resetState();
     //
     clang::tooling::ClangTool Tool;
     std::string matcherid;
+    Gist gist;
+
 };
 
 

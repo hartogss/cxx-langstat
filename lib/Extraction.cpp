@@ -14,35 +14,44 @@ using namespace clang::tooling; // CommonOptionsParser
 
 //-----------------------------------------------------------------------------
 
+Gist::Gist() : numMatches(0), locations(){
+    std::cout<<"Gist ctor"<<std::endl;
+}
+Gist::~Gist(){
+    std::cout<<"Gist dtor"<<std::endl;
+}
+
+//-----------------------------------------------------------------------------
+
 // ctor
 Extractor::Extractor(clang::tooling::ClangTool Tool) : Tool(Tool){
-    this->NumMatches=0;
+    std::cout<<"Extractor ctor"<<std::endl;
+}
+Extractor::~Extractor(){
+    std::cout<<"Extractor dtor"<<std::endl;
 }
 void Extractor::run(const MatchFinder::MatchResult &Result) {
     // std::cout << "\033[32mFound match in AST\033[0m" << std::endl;
     const Stmt* node = Result.Nodes.getNodeAs<clang::Stmt>(this->matcherid);
     ASTContext* Context = Result.Context;
-    this->NumMatches++;
+    gist.numMatches++;
 
-    /*if(node){
+    if(node){
         FullSourceLoc Location = Context->getFullLoc(node->getBeginLoc());
         if(Location.isValid()){
-            int LineNumber = Location.getLineNumber();
-            result = LineNumber;
-
+            gist.locations.emplace_back(Location.getLineNumber());
         }
-    }*/
+    }
 }
-
-unsigned Extractor::resetState(){
-    unsigned result = this->NumMatches;
-    this->NumMatches=0;
-    return result;
+void Extractor::resetState(){
+    gist.numMatches=0;
+    gist.locations.clear();
 }
-int Extractor::extract(std::string id, StatementMatcher Matcher){
+Gist Extractor::extract(std::string id, StatementMatcher Matcher){
+    resetState();
     MatchFinder Finder;
     this->matcherid=id;
     Finder.addMatcher(Matcher, this);
     Tool.run(newFrontendActionFactory(&Finder).get());
-    return resetState();
+    return gist; //according to my understanding this returns a copy to caller, how is that copy constructed at the caller?
 }
