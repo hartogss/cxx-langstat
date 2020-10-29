@@ -1,11 +1,15 @@
 # https://github.com/peter-can-talk/cppnow-2017/blob/master/code/mccabe/Makefile
 # https://jonasdevlieghere.com/understanding-the-clang-ast/#astcontext
 # https://stackoverflow.com/questions/10024279/how-to-use-shell-commands-in-makefile
-# https://www.youtube.com/watch?v=_r7i5X0rXJk
+# https://www.youtube.com/watch?v=_r7i5X0rXJk (basic)
+# https://www.youtube.com/watch?v=PiFUuQqW-v8 (tracking, pattern rules)
 
 #HEADERS := -isystem /llvm/include/
 #WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter
 #CXXFLAGS := $(WARNINGS) -std=c++14 -fno-exceptions -fno-rtti -O3 -Os
+
+# $@ target, $< first prerequisite, $^ all prerequisites
+
 
 EXECUTABLE := langstat
 TARGET := Langstat
