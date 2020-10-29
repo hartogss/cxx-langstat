@@ -2,6 +2,7 @@
 # https://llvm.org/docs/CMake.html#embedding-llvm-in-your-project
 # https://www.youtube.com/watch?v=kEGQKzhciKc
 # and of course cmake.org
+# Potential for improve: peek at https://github.com/firolino/clang-tool
 
 cmake_minimum_required(VERSION 3.18.3)
 
@@ -28,9 +29,9 @@ message(STATUS "LLVM Definitions: $${LLVM_DEFINTIONS}")
 add_executable(${PROJECT_NAME} Langstat.cpp)
 
 #
-add_subdirectory(include/cxx-langstat)
+add_subdirectory(include)
 # directory to search for include files
-include_directories(include/cxx-langstat)
+include_directories(include)
 # not this one, want to have includes not only for target
 # target_include_directories(${PROJECT_NAME} PRIVATE include/cxx-langstat)
 

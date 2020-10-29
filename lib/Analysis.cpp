@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-#include "Extraction.h"
-#include "Analysis.h"
+#include "cxx-langstat/Extraction.h"
+#include "cxx-langstat/Analysis.h"
 
 
 using namespace clang::ast_matchers;

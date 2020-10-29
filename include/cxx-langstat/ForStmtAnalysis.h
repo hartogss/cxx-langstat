@@ -4,7 +4,7 @@
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 
-#include "Analysis.h"
+#include "cxx-langstat/Analysis.h"
 
 // need analysis object since we want other analysis to inherit interface
 class ForStmtAnalysis : public Analysis {

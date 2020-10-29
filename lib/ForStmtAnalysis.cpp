@@ -5,8 +5,8 @@
 #include <vector>
 #include <numeric>
 
-#include "Extraction.h"
-#include "ForStmtAnalysis.h"
+#include "cxx-langstat/Extraction.h"
+#include "cxx-langstat/ForStmtAnalysis.h"
 
 // namespaces
 using namespace clang::ast_matchers;
