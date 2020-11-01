@@ -13,7 +13,7 @@ using namespace clang::ast_matchers;
 using namespace clang::tooling; // ClangTool
 
 // Constructs matcher that exactly matches for-loops with depth d (nesting depth)
-StatementMatcher constructMatcher(std::string Name, int d){
+StatementMatcher constructForMatcher(std::string Name, int d){
     StatementMatcher AtLeastDepth = anything();
     int i=1;
     while(i<d){
@@ -24,6 +24,34 @@ StatementMatcher constructMatcher(std::string Name, int d){
     StatementMatcher AtLeastDepthPlus1 = forStmt(EnsureIsOuterMostLoop, hasDescendant(forStmt(AtLeastDepth)));
     AtLeastDepth = forStmt(EnsureIsOuterMostLoop, AtLeastDepth);
     return forStmt(AtLeastDepth, unless(AtLeastDepthPlus1)).bind(Name);
+}
+
+// Constructs matcher that exactly matches mixed loops with depth d (nesting depth)
+StatementMatcher constructMixedMatcher(std::string Name, int d){
+    StatementMatcher AtLeastDepth = anything();
+    int i=1;
+    while(i<d){
+        AtLeastDepth = hasDescendant(stmt(anyOf(
+            forStmt(AtLeastDepth), whileStmt(AtLeastDepth), doStmt(AtLeastDepth)
+        )));
+        i++;
+    }
+    StatementMatcher EnsureIsOuterMostLoop = unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))));
+    StatementMatcher AtLeastDepthPlus1 = stmt(anyOf(
+        forStmt(EnsureIsOuterMostLoop, hasDescendant(stmt(anyOf(
+            forStmt(AtLeastDepth), whileStmt(AtLeastDepth), doStmt(AtLeastDepth))))),
+        whileStmt(EnsureIsOuterMostLoop, hasDescendant(stmt(anyOf(
+            forStmt(AtLeastDepth), whileStmt(AtLeastDepth), doStmt(AtLeastDepth))))),
+        doStmt(EnsureIsOuterMostLoop, hasDescendant(stmt(anyOf(
+            forStmt(AtLeastDepth), whileStmt(AtLeastDepth), doStmt(AtLeastDepth)))))));
+
+    AtLeastDepth = stmt(anyOf(
+        forStmt(EnsureIsOuterMostLoop, AtLeastDepth),
+        whileStmt(EnsureIsOuterMostLoop, AtLeastDepth),
+        doStmt(EnsureIsOuterMostLoop, AtLeastDepth)));
+    return stmt(anyOf(forStmt(AtLeastDepth, unless(AtLeastDepthPlus1)),
+    whileStmt(AtLeastDepth, unless(AtLeastDepthPlus1)),
+    doStmt(AtLeastDepth, unless(AtLeastDepthPlus1)))).bind(Name);
 }
 
 // TODO: why parent ctor?
@@ -40,13 +68,18 @@ void ForStmtAnalysis::extract() {
     // Bind is necessary to retrieve information about the match like location etc.
     // Without bind the match is still registered, thus we can still count #matches, but nothing else
 
+    // Depth analysis
     auto matches = this->Extr.extract("fs1", forStmt(unless(hasAncestor(forStmt()))).bind("fs1"));
+    // auto matches = this->Extr.extract("fs1", stmt(anyOf(forStmt(unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))))),
+        // whileStmt(unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))))),
+        // doStmt(unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))))))).bind("fs1"));
+
     unsigned TopLevelForLoops = matches.size();
     std::cout << "#Top-level for loops:" << TopLevelForLoops << std::endl;
     std::vector<Matches> Data;
     unsigned ForLoopsFound = 0;
     for (int i=1; i<=this->MaxDepth; i++){
-        StatementMatcher Matcher = constructMatcher("fs", i);
+        StatementMatcher Matcher = constructForMatcher("fs", i);
         auto matches = this->Extr.extract("fs", Matcher);
         ForLoopsFound += matches.size();
         Data.emplace_back(matches);
@@ -56,6 +89,12 @@ void ForStmtAnalysis::extract() {
     if(ForLoopsFound < TopLevelForLoops)
         std::cout << "Some for loops deeper than max_depth have not been analyzed" << std::endl;
     analyzeDepth(matches, Data);
+
+    // Analysis of prevalence of different loop statement, i.e. comparing for, while etc.
+    auto ForMatches = this->Extr.extract("fs1", forStmt().bind("fs1"));
+    auto WhileMatches = this->Extr.extract("ws1", whileStmt().bind("ws1"));
+    auto DoWhileMatches = this->Extr.extract("ds1", doStmt().bind("ds1"));
+    analyzeLoopPrevalences(ForMatches, WhileMatches, DoWhileMatches);
 }
 //step 2: compute stats
 void ForStmtAnalysis::analyzeDepth(Matches matches, std::vector<Matches> Data){
@@ -67,6 +106,13 @@ void ForStmtAnalysis::analyzeDepth(Matches matches, std::vector<Matches> Data){
             std::cout << d << "/" << TopLevelForLoops << " of depth " << depth << std::endl;
         depth++;
     }
+}
+void ForStmtAnalysis::analyzeLoopPrevalences(Matches fs, Matches ws, Matches ds){
+    unsigned total = fs.size() + ws.size() + ds.size();
+    std::cout << fs.size() << "/" << total << " are for loops" << std::endl;
+    std::cout << ws.size() << "/" << total << " are while loops" << std::endl;
+    std::cout << ds.size() << "/" << total << " are do-while loops" << std::endl;
+
 }
 //step 3: visualization (for later)
 // combine

@@ -18,6 +18,7 @@ public:
     void extract();
     //step 2: compute stats
     void analyzeDepth(Matches matches, std::vector<Matches> Data);
+    void analyzeLoopPrevalences(Matches fs, Matches ws, Matches ds);
     //step 3: visualization (for later)
 
     // combine
