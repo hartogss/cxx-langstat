@@ -12,7 +12,8 @@ project(cxx-langstat)
 # Resolved nullptr not found error to go away, but nullptr part of languge since c++11?
 set(CMAKE_CXX_STANDARD 14)
 # No run-time type indentification
-set(CMAKE_CXX_FLAGS -fno-rtti)
+set(CMAKE_CXX_FLAGS "-fno-rtti -O0")
+message(STATUS "C++ flags: ${CMAKE_CXX_FLAGS}")
 
 # Loads settings from external project LLVM
 find_package(LLVM REQUIRED CONFIG)
