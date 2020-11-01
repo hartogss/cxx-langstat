@@ -17,7 +17,7 @@ public:
     // step 1: extraction
     void extract();
     //step 2: compute stats
-    void analyze(std::vector<int> Data);
+    void analyzeDepth(Matches matches, std::vector<Matches> Data);
     //step 3: visualization (for later)
 
     // combine
