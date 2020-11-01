@@ -28,30 +28,23 @@ StatementMatcher constructForMatcher(std::string Name, int d){
 
 // Constructs matcher that exactly matches mixed loops with depth d (nesting depth)
 StatementMatcher constructMixedMatcher(std::string Name, int d){
-    StatementMatcher AtLeastDepth = anything();
+    StatementMatcher NumOfDescendantsAtLeastD = anything();
     int i=1;
     while(i<d){
-        AtLeastDepth = hasDescendant(stmt(anyOf(
-            forStmt(AtLeastDepth), whileStmt(AtLeastDepth), doStmt(AtLeastDepth)
-        )));
+        NumOfDescendantsAtLeastD = hasDescendant(stmt(anyOf(
+            forStmt(NumOfDescendantsAtLeastD), whileStmt(NumOfDescendantsAtLeastD), doStmt(NumOfDescendantsAtLeastD))));
         i++;
     }
-    StatementMatcher EnsureIsOuterMostLoop = unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))));
-    StatementMatcher AtLeastDepthPlus1 = stmt(anyOf(
-        forStmt(EnsureIsOuterMostLoop, hasDescendant(stmt(anyOf(
-            forStmt(AtLeastDepth), whileStmt(AtLeastDepth), doStmt(AtLeastDepth))))),
-        whileStmt(EnsureIsOuterMostLoop, hasDescendant(stmt(anyOf(
-            forStmt(AtLeastDepth), whileStmt(AtLeastDepth), doStmt(AtLeastDepth))))),
-        doStmt(EnsureIsOuterMostLoop, hasDescendant(stmt(anyOf(
-            forStmt(AtLeastDepth), whileStmt(AtLeastDepth), doStmt(AtLeastDepth)))))));
+    StatementMatcher NumOfDescendantsAtLeastDPlus1 = hasDescendant(stmt(anyOf(
+            forStmt(NumOfDescendantsAtLeastD), whileStmt(NumOfDescendantsAtLeastD), doStmt(NumOfDescendantsAtLeastD))));
+    StatementMatcher NumOfDescendantsExactlyD = allOf(NumOfDescendantsAtLeastD, unless(NumOfDescendantsAtLeastDPlus1));
+    StatementMatcher IsOuterMostLoop = unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))));
+    StatementMatcher LoopHasExactlyDepthD = allOf(IsOuterMostLoop, NumOfDescendantsExactlyD);
 
-    AtLeastDepth = stmt(anyOf(
-        forStmt(EnsureIsOuterMostLoop, AtLeastDepth),
-        whileStmt(EnsureIsOuterMostLoop, AtLeastDepth),
-        doStmt(EnsureIsOuterMostLoop, AtLeastDepth)));
-    return stmt(anyOf(forStmt(AtLeastDepth, unless(AtLeastDepthPlus1)),
-    whileStmt(AtLeastDepth, unless(AtLeastDepthPlus1)),
-    doStmt(AtLeastDepth, unless(AtLeastDepthPlus1)))).bind(Name);
+    return stmt(anyOf(
+        forStmt(LoopHasExactlyDepthD),
+        whileStmt(LoopHasExactlyDepthD),
+        doStmt(LoopHasExactlyDepthD))).bind(Name);
 }
 
 // TODO: why parent ctor?
@@ -69,17 +62,19 @@ void ForStmtAnalysis::extract() {
     // Without bind the match is still registered, thus we can still count #matches, but nothing else
 
     // Depth analysis
-    auto matches = this->Extr.extract("fs1", forStmt(unless(hasAncestor(forStmt()))).bind("fs1"));
-    // auto matches = this->Extr.extract("fs1", stmt(anyOf(forStmt(unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))))),
-        // whileStmt(unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))))),
-        // doStmt(unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))))))).bind("fs1"));
+    // auto matches = this->Extr.extract("fs1", forStmt(unless(hasAncestor(forStmt()))).bind("fs1"));
+    StatementMatcher IsOuterMostLoop = unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))));
+    auto matches = this->Extr.extract("fs1", stmt(anyOf(
+        forStmt(IsOuterMostLoop),
+        whileStmt(IsOuterMostLoop),
+        doStmt(IsOuterMostLoop))).bind("fs1"));
 
     unsigned TopLevelForLoops = matches.size();
     std::cout << "#Top-level for loops:" << TopLevelForLoops << std::endl;
     std::vector<Matches> Data;
     unsigned ForLoopsFound = 0;
     for (int i=1; i<=this->MaxDepth; i++){
-        StatementMatcher Matcher = constructForMatcher("fs", i);
+        StatementMatcher Matcher = constructMixedMatcher("fs", i);
         auto matches = this->Extr.extract("fs", Matcher);
         ForLoopsFound += matches.size();
         Data.emplace_back(matches);
@@ -103,7 +98,11 @@ void ForStmtAnalysis::analyzeDepth(Matches matches, std::vector<Matches> Data){
     for (auto matches : Data){
         unsigned d = matches.size();
         if (d!=0)
-            std::cout << d << "/" << TopLevelForLoops << " of depth " << depth << std::endl;
+            std::cout << d << "/" << TopLevelForLoops << " of depth " << depth << " @ lines: ";
+            for (auto m : matches){
+                std::cout << m.location << " ";
+            }
+            std::cout << std::endl;
         depth++;
     }
 }
