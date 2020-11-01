@@ -50,6 +50,14 @@ void Extractor::run(const MatchFinder::MatchResult &Result) {
             ForStmt* n = (ForStmt*)node;
             Match m(Location, n, Context);
             matches.emplace_back(m);
+        } else if(StmtKind == "WhileStmt"){
+            WhileStmt* n = (WhileStmt*)node;
+            Match m(Location, n, Context);
+            matches.emplace_back(m);
+        } else if(StmtKind == "DoStmt"){
+            DoStmt* n = (DoStmt*)node;
+            Match m(Location, n, Context);
+            matches.emplace_back(m);
         } else {
             std::cout << "\033[31m->inexplicable stmt\033[0m" << std::endl;
         }
