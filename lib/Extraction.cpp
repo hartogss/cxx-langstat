@@ -14,11 +14,11 @@ using namespace clang::tooling; // CommonOptionsParser
 
 //-----------------------------------------------------------------------------
 
-Gist::Gist() : numMatches(0), locations(){
-    std::cout<<"Gist ctor"<<std::endl;
+Match::Match(unsigned location, const void* node, ASTContext* ctxt) : location(location), node(node), ctxt(ctxt){ //what does () do?
+    // std::cout<<"Match ctor"<<std::endl;
 }
-Gist::~Gist(){
-    std::cout<<"Gist dtor"<<std::endl;
+Match::~Match(){
+    // std::cout<<"Match dtor"<<std::endl;
 }
 
 //-----------------------------------------------------------------------------
@@ -31,27 +31,57 @@ Extractor::~Extractor(){
     std::cout<<"Extractor dtor"<<std::endl;
 }
 void Extractor::run(const MatchFinder::MatchResult &Result) {
-    // std::cout << "\033[32mFound match in AST\033[0m" << std::endl;
-    const Stmt* node = Result.Nodes.getNodeAs<clang::Stmt>(this->matcherid);
-    ASTContext* Context = Result.Context;
-    gist.numMatches++;
+    // maybe need template or switch statement? could also put 'kind' of node into id to trigger right code
+    // one could do this structure of if statement to check what it is
+    // one would however go from more to less specific to see what it is
 
-    if(node){
-        FullSourceLoc Location = Context->getFullLoc(node->getBeginLoc());
-        if(Location.isValid()){
-            gist.locations.emplace_back(Location.getLineNumber());
+    ASTContext* Context = Result.Context;
+
+     // I think this can also match call expr, since expr is a special kind of stmt,
+    if(const Stmt* node = Result.Nodes.getNodeAs<Stmt>(this->matcherid)){
+        unsigned Location = Context->getFullLoc(node->getBeginLoc()).getLineNumber();
+        const char* StmtKind = node->getStmtClassName();
+        if(StmtKind == "CallExpr"){
+            CallExpr* n = (CallExpr*)node;
+            Match m(Location, n, Context);
+            matches.emplace_back(m);
+            std::cout << n->getDirectCallee()->getNameInfo().getAsString() << std::endl;
+        } else if(StmtKind == "ForStmt"){
+            ForStmt* n = (ForStmt*)node;
+            Match m(Location, n, Context);
+            matches.emplace_back(m);
+        } else {
+            std::cout << "\033[31m->inexplicable stmt\033[0m" << std::endl;
         }
+    } else if(const Decl* node = Result.Nodes.getNodeAs<Decl>(this->matcherid)){
+        unsigned Location = Context->getFullLoc(node->getBeginLoc()).getLineNumber();
+        if(const FunctionDecl* node = Result.Nodes.getNodeAs<FunctionDecl>(this->matcherid)){
+            Match m(Location, node, Context);
+            matches.emplace_back(m);
+        } else {
+            std::cout << "\033[31m->inexplicable decl\033[0m" << std::endl;
+        }
+    } else {
+        std::cout << "\033[31m->inexplicable node\033[0m" << std::endl;
     }
 }
 void Extractor::resetState(){
-    gist.numMatches=0;
-    gist.locations.clear();
+    matches.clear(); // does this ensure no memory leak?
 }
-Gist Extractor::extract(std::string id, StatementMatcher Matcher){
+Matches Extractor::extract(std::string id, StatementMatcher Matcher){
     resetState();
     MatchFinder Finder;
     this->matcherid=id;
     Finder.addMatcher(Matcher, this);
     Tool.run(newFrontendActionFactory(&Finder).get());
-    return gist; //according to my understanding this returns a copy to caller, how is that copy constructed at the caller?
+    return matches; //according to my understanding this returns a copy to caller, how is that copy constructed at the caller?
+}
+
+Matches Extractor::extract(std::string id, DeclarationMatcher Matcher){
+    resetState();
+    MatchFinder Finder;
+    this->matcherid=id;
+    Finder.addMatcher(Matcher, this);
+    Tool.run(newFrontendActionFactory(&Finder).get());
+    return matches; //according to my understanding this returns a copy to caller, how is that copy constructed at the caller?
 }
