@@ -57,8 +57,8 @@ set(clang_libs
     clangAnalysis
     clangAST
     clangLex
-    clangBasic
-)
+    clangBasic)
+message(STATUS "Clang libs: $${clang_libs}")
 
 # ---- My library & includes ----
 # Directory to search for include files
