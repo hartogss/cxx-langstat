@@ -6,9 +6,10 @@
 #include "cxx-langstat/Extraction.h"
 #include "cxx-langstat/Analysis.h"
 
-
 using namespace clang::ast_matchers;
 using namespace clang::tooling;
+
+//-----------------------------------------------------------------------------
 
 // should be abstract class?
 Analysis::Analysis(ClangTool Tool) : Extr(Extractor(Tool)){
@@ -24,9 +25,10 @@ void Analysis::extract() {
 void Analysis::analyze(){
 }
 //step 3: visualization (for later)
-
 // combine
 void Analysis::run(){
     std::cout << "Empty Analysis run, stopping." << std::endl;
     extract(); //why 'this' not needed?
 }
+
+//-----------------------------------------------------------------------------
