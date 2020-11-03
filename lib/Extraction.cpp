@@ -11,10 +11,9 @@ using namespace clang; // CompilerInstance, ASTFrontendAction, ASTConsumer
 using namespace clang::ast_matchers; // StatementMatcher, actual AST matchers like forStmt etc.
 using namespace clang::tooling; // CommonOptionsParser
 
-
 //-----------------------------------------------------------------------------
 
-Match::Match(unsigned location, const void* node, ASTContext* ctxt) : location(location), node(node), ctxt(ctxt){ //what does () do?
+Match::Match(unsigned location, const void* node, ASTContext* ctxt) : location(location), node(node), ctxt(ctxt){
     // std::cout<<"Match ctor"<<std::endl;
 }
 Match::~Match(){
@@ -34,9 +33,7 @@ void Extractor::run(const MatchFinder::MatchResult &Result) {
     // maybe need template or switch statement? could also put 'kind' of node into id to trigger right code
     // one could do this structure of if statement to check what it is
     // one would however go from more to less specific to see what it is
-
     ASTContext* Context = Result.Context;
-
      // I think this can also match call expr, since expr is a special kind of stmt,
     if(const Stmt* node = Result.Nodes.getNodeAs<Stmt>(this->matcherid)){
         unsigned Location = Context->getFullLoc(node->getBeginLoc()).getLineNumber();
@@ -45,7 +42,7 @@ void Extractor::run(const MatchFinder::MatchResult &Result) {
             CallExpr* n = (CallExpr*)node;
             Match m(Location, n, Context);
             matches.emplace_back(m);
-            std::cout << n->getDirectCallee()->getNameInfo().getAsString() << std::endl;
+            std::string calleeName = n->getDirectCallee()->getNameInfo().getAsString();
         } else if(StmtKind == "ForStmt"){
             ForStmt* n = (ForStmt*)node;
             Match m(Location, n, Context);
@@ -84,7 +81,6 @@ Matches Extractor::extract(std::string id, StatementMatcher Matcher){
     Tool.run(newFrontendActionFactory(&Finder).get());
     return matches; //according to my understanding this returns a copy to caller, how is that copy constructed at the caller?
 }
-
 Matches Extractor::extract(std::string id, DeclarationMatcher Matcher){
     resetState();
     MatchFinder Finder;
@@ -93,3 +89,5 @@ Matches Extractor::extract(std::string id, DeclarationMatcher Matcher){
     Tool.run(newFrontendActionFactory(&Finder).get());
     return matches; //according to my understanding this returns a copy to caller, how is that copy constructed at the caller?
 }
+
+//-----------------------------------------------------------------------------

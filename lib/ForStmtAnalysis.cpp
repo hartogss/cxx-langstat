@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <vector>
-#include <numeric>
 
 #include "cxx-langstat/Extraction.h"
 #include "cxx-langstat/ForStmtAnalysis.h"
@@ -11,6 +10,8 @@
 // namespaces
 using namespace clang::ast_matchers;
 using namespace clang::tooling; // ClangTool
+
+//-----------------------------------------------------------------------------
 
 // Constructs matcher that exactly matches for-loops with depth d (nesting depth)
 StatementMatcher constructForMatcher(std::string Name, int d){
@@ -36,9 +37,14 @@ StatementMatcher constructMixedMatcher(std::string Name, int d){
         i++;
     }
     StatementMatcher NumOfDescendantsAtLeastDPlus1 = hasDescendant(stmt(anyOf(
-            forStmt(NumOfDescendantsAtLeastD), whileStmt(NumOfDescendantsAtLeastD), doStmt(NumOfDescendantsAtLeastD))));
+            forStmt(NumOfDescendantsAtLeastD),
+            whileStmt(NumOfDescendantsAtLeastD),
+            doStmt(NumOfDescendantsAtLeastD))));
     StatementMatcher NumOfDescendantsExactlyD = allOf(NumOfDescendantsAtLeastD, unless(NumOfDescendantsAtLeastDPlus1));
-    StatementMatcher IsOuterMostLoop = unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))));
+    StatementMatcher IsOuterMostLoop = unless(hasAncestor(stmt(anyOf(
+        forStmt(),
+        whileStmt(),
+        doStmt()))));
     StatementMatcher LoopHasExactlyDepthD = allOf(IsOuterMostLoop, NumOfDescendantsExactlyD);
 
     return stmt(anyOf(
@@ -46,6 +52,8 @@ StatementMatcher constructMixedMatcher(std::string Name, int d){
         whileStmt(LoopHasExactlyDepthD),
         doStmt(LoopHasExactlyDepthD))).bind(Name);
 }
+
+//-----------------------------------------------------------------------------
 
 // TODO: why parent ctor?
 ForStmtAnalysis::ForStmtAnalysis(ClangTool Tool, int MaxDepthOption) :
@@ -97,13 +105,14 @@ void ForStmtAnalysis::analyzeDepth(Matches matches, std::vector<Matches> Data){
     unsigned depth = 1;
     for (auto matches : Data){
         unsigned d = matches.size();
-        if (d!=0)
+        if (d!=0){
             std::cout << d << "/" << TopLevelForLoops << " of depth " << depth << " @ lines: ";
             for (auto m : matches){
                 std::cout << m.location << " ";
             }
             std::cout << std::endl;
         depth++;
+        }
     }
 }
 void ForStmtAnalysis::analyzeLoopPrevalences(Matches fs, Matches ws, Matches ds){
@@ -116,5 +125,8 @@ void ForStmtAnalysis::analyzeLoopPrevalences(Matches fs, Matches ws, Matches ds)
 //step 3: visualization (for later)
 // combine
 void ForStmtAnalysis::run(){
-    extract(); //why 'this' not needed?
+    //why 'this' not needed?
+    extract();
 }
+
+//-----------------------------------------------------------------------------

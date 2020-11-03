@@ -5,8 +5,8 @@
 #include "clang/Tooling/Tooling.h"
 
 //-----------------------------------------------------------------------------
-// Contains important data extracted from AST
-// For now, we extract, given a matcher, #matches and their respective locations.
+// Match object to contain data extracted from AST
+// contains location, pointer to object representing stmt, decl, or type & ASTContent
 struct Match {
     Match(unsigned location, const void* node, clang::ASTContext* ctxt);
     ~Match();
@@ -37,8 +37,8 @@ private:
     clang::tooling::ClangTool Tool;
     std::string matcherid;
     Matches matches;
-
 };
 
+//-----------------------------------------------------------------------------
 
 #endif // EXTRACTION_H
