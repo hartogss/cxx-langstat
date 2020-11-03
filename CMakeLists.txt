@@ -76,6 +76,10 @@ target_link_libraries(${PROJECT_NAME} Extraction Analysis ForStmtAnalysis)
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
 
+# Extra linking needed on ubuntu, not necessary on macOS(macOS doesn't dislike them either)
+target_link_libraries(ForStmtAnalysis Analysis Extraction ${llvm_libs} ${clang_libs})
+target_link_libraries(Analysis Extraction ${llvm_libs} ${clang_libs})
+target_link_libraries(Extraction ${llvm_libs} ${clang_libs})
 
 
 
