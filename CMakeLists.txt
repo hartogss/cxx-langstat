@@ -72,14 +72,16 @@ target_link_directories(${PROJECT_NAME} PUBLIC lib/)
 
 # ---- Link everything together ----
 # Link custom libraries
-target_link_libraries(${PROJECT_NAME} Extraction Analysis ForStmtAnalysis)
+target_link_libraries(${PROJECT_NAME} Analysis ForStmtAnalysis TestAnalysis BaseExtractor MatchingExtractor)
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
 
 # Extra linking needed on ubuntu, not necessary on macOS(macOS doesn't dislike them either)
-target_link_libraries(ForStmtAnalysis Analysis Extraction ${llvm_libs} ${clang_libs})
-target_link_libraries(Analysis Extraction ${llvm_libs} ${clang_libs})
-target_link_libraries(Extraction ${llvm_libs} ${clang_libs})
+target_link_libraries(ForStmtAnalysis Analysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+target_link_libraries(TestAnalysis Analysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+target_link_libraries(Analysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+target_link_libraries(BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+target_link_libraries(MatchingExtractor ${llvm_libs} ${clang_libs})
 
 
 
