@@ -3,7 +3,6 @@
 
 #include <iostream>
 
-#include "cxx-langstat/Extraction.h"
 #include "cxx-langstat/Analysis.h"
 
 using namespace clang::ast_matchers;
@@ -12,7 +11,7 @@ using namespace clang::tooling;
 //-----------------------------------------------------------------------------
 
 // should be abstract class?
-Analysis::Analysis(ClangTool Tool) : Extr(Extractor(Tool)){
+Analysis::Analysis(ClangTool Tool) : Extr(BaseExtractor(Tool)){
     std::cout<<"Analysis ctor"<<std::endl;
 }
 Analysis::~Analysis(){

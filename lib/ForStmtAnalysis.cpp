@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-#include "cxx-langstat/Extraction.h"
+#include "cxx-langstat/BaseExtractor.h"
 #include "cxx-langstat/ForStmtAnalysis.h"
 
 // namespaces
@@ -79,7 +79,7 @@ void ForStmtAnalysis::extract() {
 
     unsigned TopLevelForLoops = matches.size();
     std::cout << "#Top-level for loops:" << TopLevelForLoops << std::endl;
-    std::vector<Matches> Data;
+    std::vector<Matches<clang::Stmt>> Data;
     unsigned ForLoopsFound = 0;
     for (int i=1; i<=this->MaxDepth; i++){
         StatementMatcher Matcher = constructMixedMatcher("fs", i);
@@ -100,7 +100,7 @@ void ForStmtAnalysis::extract() {
     analyzeLoopPrevalences(ForMatches, WhileMatches, DoWhileMatches);
 }
 //step 2: compute stats
-void ForStmtAnalysis::analyzeDepth(Matches matches, std::vector<Matches> Data){
+void ForStmtAnalysis::analyzeDepth(Matches<clang::Stmt> matches, std::vector<Matches<clang::Stmt>> Data){
     unsigned TopLevelForLoops = matches.size();
     unsigned depth = 1;
     for (auto matches : Data){
@@ -115,7 +115,7 @@ void ForStmtAnalysis::analyzeDepth(Matches matches, std::vector<Matches> Data){
         }
     }
 }
-void ForStmtAnalysis::analyzeLoopPrevalences(Matches fs, Matches ws, Matches ds){
+void ForStmtAnalysis::analyzeLoopPrevalences(Matches<clang::Stmt> fs, Matches<clang::Stmt> ws, Matches<clang::Stmt> ds){
     unsigned total = fs.size() + ws.size() + ds.size();
     std::cout << fs.size() << "/" << total << " are for loops" << std::endl;
     std::cout << ws.size() << "/" << total << " are while loops" << std::endl;

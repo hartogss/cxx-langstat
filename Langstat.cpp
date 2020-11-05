@@ -3,8 +3,9 @@
 
 #include <iostream>
 
-#include "cxx-langstat/Extraction.h"
 #include "cxx-langstat/ForStmtAnalysis.h"
+#include "cxx-langstat/TestAnalysis.h"
+
 
 // namespaces
 using namespace clang; // CompilerInstance, ASTFrontendAction, ASTConsumer

@@ -4,6 +4,8 @@
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 
+#include "BaseExtractor.h"
+
 //-----------------------------------------------------------------------------
 
 // should be abstract class
@@ -22,7 +24,7 @@ public:
     void run();
     // std::string name;
 protected:
-    Extractor Extr;
+    BaseExtractor Extr;
 };
 
 //-----------------------------------------------------------------------------
