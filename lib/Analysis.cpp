@@ -14,9 +14,6 @@ using namespace clang::tooling;
 Analysis::Analysis(ClangTool Tool) : Extr(BaseExtractor(Tool)){
     std::cout<<"Analysis ctor"<<std::endl;
 }
-Analysis::~Analysis(){
-    std::cout<<"Analysis dtor"<<std::endl;
-}
 // step 1: extraction
 void Analysis::extract() {
 }

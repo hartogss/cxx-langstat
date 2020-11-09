@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 
-#include "cxx-langstat/BaseExtractor.h"
 #include "cxx-langstat/ForStmtAnalysis.h"
 
 // namespaces
@@ -57,12 +56,9 @@ StatementMatcher constructMixedMatcher(std::string Name, int d){
 
 // TODO: why parent ctor?
 ForStmtAnalysis::ForStmtAnalysis(ClangTool Tool, int MaxDepthOption) :
-    Analysis(Tool),
+    Analysis(Tool), // has to be explicitly called since Analysis has only explicit constructor
     MaxDepth(MaxDepthOption) {
     std::cout<<"FSA ctor"<<std::endl;
-}
-ForStmtAnalysis::~ForStmtAnalysis() {
-    std::cout<<"FSA dtor"<<std::endl;
 }
 // step 1: extraction
 void ForStmtAnalysis::extract() {

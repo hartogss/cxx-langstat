@@ -6,11 +6,9 @@
 #include "cxx-langstat/ForStmtAnalysis.h"
 #include "cxx-langstat/TestAnalysis.h"
 
-
 // namespaces
 using namespace clang; // CompilerInstance, ASTFrontendAction, ASTConsumer
 using namespace clang::tooling; // CommonOptionsParser
-
 
 //-----------------------------------------------------------------------------
 // CL options

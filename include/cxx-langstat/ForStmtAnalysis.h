@@ -12,7 +12,6 @@
 class ForStmtAnalysis : public Analysis {
 public:
     ForStmtAnalysis(clang::tooling::ClangTool Tool, int MaxDepthOption);
-    ~ForStmtAnalysis();
     // step 0: createMatcher(s)/getMatchers? idea is to have library of often-used
     // matchers or maybe even some datastructure of important matches itself
     // step 1: extraction

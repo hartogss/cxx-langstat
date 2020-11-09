@@ -13,7 +13,6 @@
 class Analysis {
 public:
     Analysis(clang::tooling::ClangTool Tool);
-    ~Analysis();
     // step 0: createMatcher(s) ?
     // step 1: extraction
     void extract();
