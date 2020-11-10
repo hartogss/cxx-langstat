@@ -1,10 +1,6 @@
-#include "clang/Tooling/Tooling.h"
-#include "clang/Tooling/CommonOptionsParser.h"
-
 #include <iostream>
 #include <vector>
 
-#include "cxx-langstat/BaseExtractor.h"
 #include "cxx-langstat/TestAnalysis.h"
 #include "clang-tidy/ClangTidy.h"
 #include "clang-tidy/tool/ClangTidyMain.h"

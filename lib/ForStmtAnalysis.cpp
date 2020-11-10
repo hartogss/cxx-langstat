@@ -1,6 +1,3 @@
-#include "clang/Tooling/Tooling.h"
-#include "clang/Tooling/CommonOptionsParser.h"
-
 #include <iostream>
 #include <vector>
 
