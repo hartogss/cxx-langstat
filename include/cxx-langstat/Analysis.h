@@ -13,7 +13,9 @@
 
 class Analysis {
 public:
-    Analysis(clang::tooling::ClangTool Tool);
+    Analysis(clang::tooling::ClangTool Tool) : Extr(BaseExtractor(Tool)){
+
+    }
     // step 0: createMatcher(s) ?
     // step 1: extraction
     virtual void extract()=0;
