@@ -6,6 +6,9 @@
 
 #include "cxx-langstat/BaseExtractor.h"
 #include "cxx-langstat/TestAnalysis.h"
+#include "clang-tidy/ClangTidy.h"
+#include "clang-tidy/tool/ClangTidyMain.h"
+
 
 using namespace clang::ast_matchers;
 using namespace clang::tooling; // ClangTool
@@ -47,3 +50,11 @@ void TestAnalysis::run(){
 }
 
 //-----------------------------------------------------------------------------
+
+void runclangtidy(){
+    // int a = 2;
+    // char* one = "-checks=-*,modernize-use-trailing-return-type";
+    // char* two =  "../test/LoopStructure/BasicLoops.cpp";
+    // const char** in = {one, two};
+    // clang::tidy::clangTidyMain(a, in);
+}

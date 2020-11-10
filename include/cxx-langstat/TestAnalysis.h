@@ -24,6 +24,8 @@ public:
     // std::string name;
 };
 
+void runclangtidy();
+
 //-----------------------------------------------------------------------------
 
 #endif /* TESTANALYSIS_H */
