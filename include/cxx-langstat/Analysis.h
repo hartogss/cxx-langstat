@@ -5,24 +5,23 @@
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/Tooling/Tooling.h"
 
-
 #include "BaseExtractor.h"
 
 //-----------------------------------------------------------------------------
 
-// should be abstract class
-// need analysis object since we want other analysis to inherit interface
+// Abstract Analysis class. Specific analyes should subclass this & implement its methods.
+
 class Analysis {
 public:
     Analysis(clang::tooling::ClangTool Tool);
     // step 0: createMatcher(s) ?
     // step 1: extraction
-    void extract();
+    virtual void extract()=0;
     //step 2: compute stats
-    void analyze();
+    virtual void analyze()=0;
     //step 3: visualization (for later)
     // combine
-    void run();
+    virtual void run()=0;
     // std::string name;
 protected:
     BaseExtractor Extr;

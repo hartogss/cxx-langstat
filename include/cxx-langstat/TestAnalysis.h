@@ -12,15 +12,15 @@
 class TestAnalysis : public Analysis {
 public:
     TestAnalysis(clang::tooling::ClangTool Tool);
-    ~TestAnalysis();
     // step 0: createMatcher(s)/getMatchers? idea is to have library of often-used
     // matchers or maybe even some datastructure of important matches itself
     // step 1: extraction
-    void extract();
+    void extract() override;
     //step 2: compute stats
+    void analyze() override;
     //step 3: visualization (for later)
     // combine
-    void run();
+    void run() override;
     // std::string name;
 };
 

@@ -14,11 +14,16 @@ using namespace clang::tooling; // ClangTool
 // TODO: why parent ctor?
 TestAnalysis::TestAnalysis(ClangTool Tool) : Analysis(Tool) {
 }
-TestAnalysis::~TestAnalysis() {
-}
 // step 1: extraction
 void TestAnalysis::extract() {
+}
+//step 2: compute stats
+void TestAnalysis::analyze(){
 
+}
+//step 3: visualization (for later)
+// combine
+void TestAnalysis::run(){
     //test decl Analysis
     DeclarationMatcher fd = functionDecl().bind("fd");
     auto fdmatches = this->Extr.extract("fd", fd);
@@ -36,13 +41,6 @@ void TestAnalysis::extract() {
         clang::CallExpr* n = (clang::CallExpr*) m.node; //nicer to do this in Extractor::extraction function
         std::cout << n->getDirectCallee()->getNameInfo().getAsString() << "@" << m.location << std::endl;
     }
-}
-//step 2: compute stats
-//step 3: visualization (for later)
-// combine
-void TestAnalysis::run(){
-    //why 'this' not needed?
-    extract();
 }
 
 //-----------------------------------------------------------------------------

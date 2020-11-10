@@ -115,6 +115,11 @@ void ForStmtAnalysis::analyzeLoopPrevalences(Matches<clang::Stmt> fs, Matches<cl
     std::cout << ds.size() << "/" << total << " are do-while loops" << std::endl;
 
 }
+
+void ForStmtAnalysis::analyze(){
+    
+}
+
 //step 3: visualization (for later)
 // combine
 void ForStmtAnalysis::run(){
