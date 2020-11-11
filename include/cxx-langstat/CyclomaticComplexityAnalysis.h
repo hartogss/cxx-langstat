@@ -5,7 +5,6 @@
 
 //-----------------------------------------------------------------------------
 
-
 class CyclomaticComplexityAnalysis : public Analysis {
 public:
     CyclomaticComplexityAnalysis(clang::tooling::ClangTool Tool);

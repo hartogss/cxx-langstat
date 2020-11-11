@@ -32,13 +32,13 @@ void CyclomaticComplexityAnalysis::extract(){
         // llvm::raw_os_ostream OS(std::cout);
         // cfg->print(OS, clang::LangOptions(), true);
         // Strictly speaking, you'd have to subtract -2 each from numNodes & numEdges
-        // because of the LLVM entry & exit block, however this has no effect on CYC.
+        // because of the LLVM entry & exit block. However, this has no effect on CYC.
         unsigned numNodes = cfg->size();
         unsigned numEdges = 0;
         for(auto block = cfg->begin(); block != cfg->end(); block++){
             numEdges += (*block)->succ_size();
         }
-        unsigned CYC = numEdges - numNodes + 2;
+        unsigned CYC = numEdges - numNodes + 2; // 2 since #connected components P=1
         clang::FunctionDecl* n = (clang::FunctionDecl*) match.node; //nicer to do this in Extractor::extraction function
         std::cout << n->getNameInfo().getAsString() << " has CYC " << CYC << std::endl;
     }
