@@ -13,14 +13,14 @@ project(cxx-langstat)
 add_executable(${PROJECT_NAME} Langstat.cpp)
 
 # ---- Compiler ----
-# Resolved nullptr not found error to go away, but nullptr part of languge since c++11?
-set(CMAKE_CXX_STANDARD 14)
+# C++17
+set(CMAKE_CXX_STANDARD 17)
 # C++ Compiler
 message(STATUS "C++ Compiler:" ${CMAKE_CXX_COMPILER})
 # No run-time type indentification
-# -fvisibility=hidden to stop linker complaining about weak symbols
+# -fvisibility=hidden to stop linker complaining about weak symbols when linking clang-tidy
 # -fcolor-diagnostics to enable clang colored output when using ninja
-set(CMAKE_CXX_FLAGS "-fno-rtti -O0 -Wall -Wextra -fvisibility=hidden -fcolor-diagnostics")
+set(CMAKE_CXX_FLAGS "-fno-rtti -O0 -Wall -Wextra -fcolor-diagnostics")
 message(STATUS "C++ flags: ${CMAKE_CXX_FLAGS}")
 
 # ---- LLVM, Clang ----
@@ -42,7 +42,7 @@ message(STATUS "Using ClangConfig.cmake in: ${clang_DIR}")
 
 string(REPLACE "-l" "" llvm_libs ${llvm_libs})
 string(REPLACE " " ";" llvm_libs ${llvm_libs})
-message(STATUS "LLVM libs: $${llvm_libs}")
+# message(STATUS "LLVM libs: $${llvm_libs}")
 # Set clang_libs
 set(clang_libs
     clangFrontendTool
@@ -63,7 +63,7 @@ set(clang_libs
     clangLex
     clangBasic
 )
-message(STATUS "Clang libs: $${clang_libs}")
+# message(STATUS "Clang libs: $${clang_libs}")
 
 set(clang_tidy_libs
 clangTidy;clangTidyAndroidModule;clangTidyAbseilModule;clangTidyBoostModule;
@@ -74,7 +74,7 @@ clangTidyModernizeModule;clangTidyMPIModule;clangTidyObjCModule;clangTidyOpenMPM
 clangTidyPerformanceModule;clangTidyPortabilityModule;clangTidyReadabilityModule;
 clangTidyZirconModule;clangTidyPlugin;clangTidyMain;clangTidyUtils;
 )
-message(STATUS "Clang-tidy libs: ${clang_tidy_libs}")
+# message(STATUS "Clang-tidy libs: ${clang_tidy_libs}")
 
 
 # ---- My library & includes ----
@@ -89,13 +89,19 @@ target_link_directories(${PROJECT_NAME} PUBLIC lib/)
 
 # ---- Link everything together ----
 # Link custom libraries
-target_link_libraries(${PROJECT_NAME} ForStmtAnalysis TestAnalysis BaseExtractor MatchingExtractor)
+target_link_libraries(${PROJECT_NAME} ForStmtAnalysis CyclomaticComplexityAnalysis TestAnalysis BaseExtractor MatchingExtractor)
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
 # target_link_libraries(${PROJECT_NAME} ${clang_tidy_libs})
 
 # Extra linking needed on ubuntu, not necessary on macOS(macOS doesn't dislike them either)
 target_link_libraries(ForStmtAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+target_link_libraries(CyclomaticComplexityAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(TestAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(MatchingExtractor ${llvm_libs} ${clang_libs})
+
+# trying to add target to emit ast s.t. I can apply analyses to themselves
+# add_custom_target(TARGET cca POST_BUILD
+# COMMAND clang++ -emit-ast CyclomaticComplexityAnalysis.cpp -o CyclomaticComplexityAnalysis.ast)
+# add_dependencies(cca ${llvm_libs} ${clang_libs})

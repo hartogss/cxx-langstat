@@ -117,13 +117,13 @@ void ForStmtAnalysis::analyzeLoopPrevalences(Matches<clang::Stmt> fs, Matches<cl
 }
 
 void ForStmtAnalysis::analyze(){
-    
+
 }
 
 //step 3: visualization (for later)
 // combine
 void ForStmtAnalysis::run(){
-    //why 'this' not needed?
+    std::cout << "\033[32mRunning ForStmtAnalysis:\033[0m" << std::endl;
     extract();
 }
 

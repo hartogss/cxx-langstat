@@ -24,13 +24,14 @@ void TestAnalysis::analyze(){
 //step 3: visualization (for later)
 // combine
 void TestAnalysis::run(){
-    //test decl Analysis
+    std::cout << "\033[32mRunning TestAnalysis:\033[0m" << std::endl;
+
     DeclarationMatcher fd = functionDecl().bind("fd");
     auto fdmatches = this->Extr.extract("fd", fd);
     std::cout<< "#fdecls:" << fdmatches.size() << std::endl;
     for(auto m: fdmatches){
         clang::FunctionDecl* n = (clang::FunctionDecl*) m.node; //nicer to do this in Extractor::extraction function
-        std::cout << n->getNameInfo().getAsString() << "@" << m.location << std::endl;
+        std::cout << n->getNameInfo().getAsString() << " @ " << m.location << std::endl;
     }
 
     //test call Analysis
@@ -39,7 +40,7 @@ void TestAnalysis::run(){
     std::cout<< "#callexprs:" << cematches.size() << std::endl;
     for(auto m: cematches){
         clang::CallExpr* n = (clang::CallExpr*) m.node; //nicer to do this in Extractor::extraction function
-        std::cout << n->getDirectCallee()->getNameInfo().getAsString() << "@" << m.location << std::endl;
+        std::cout << n->getDirectCallee()->getNameInfo().getAsString() << " @ " << m.location << std::endl;
     }
 }
 

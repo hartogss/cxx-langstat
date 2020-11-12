@@ -47,7 +47,7 @@ void CyclomaticComplexityAnalysis::analyze(){
 
 }
 void CyclomaticComplexityAnalysis::run() {
-    std::cout << "Measuring cyclomatic complexity:" << std::endl;
+    std::cout << "\033[32mMeasuring cyclomatic complexity:\033[0m" << std::endl;
     extract();
 }
 

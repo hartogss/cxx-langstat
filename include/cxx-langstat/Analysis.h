@@ -9,13 +9,14 @@
 
 //-----------------------------------------------------------------------------
 
-// Abstract Analysis class. Specific analyes should subclass this & implement its methods.
+// Abstract Analysis class. Specific analyses should subclass this & implement its methods.
 
 class Analysis {
 public:
     Analysis(clang::tooling::ClangTool Tool) : Extr(BaseExtractor(Tool)){
 
     }
+    ~Analysis() = default; // should be made virtual in case concrete analyses need special destructors
     // step 0: createMatcher(s) ?
     // step 1: extraction
     virtual void extract()=0;
