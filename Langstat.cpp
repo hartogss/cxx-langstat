@@ -3,13 +3,13 @@
 
 #include <iostream>
 
-#include "cxx-langstat/Extraction.h"
 #include "cxx-langstat/ForStmtAnalysis.h"
+#include "cxx-langstat/TestAnalysis.h"
+#include "cxx-langstat/CyclomaticComplexityAnalysis.h"
 
 // namespaces
 using namespace clang; // CompilerInstance, ASTFrontendAction, ASTConsumer
 using namespace clang::tooling; // CommonOptionsParser
-
 
 //-----------------------------------------------------------------------------
 // CL options
@@ -40,8 +40,15 @@ int main(int argc, const char** argv){
 
     ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
 
-    ForStmtAnalysis A(Tool, FSAMaxDepthOption);
-    A.run();
+    ForStmtAnalysis FSA(Tool, FSAMaxDepthOption);
+    FSA.run();
+
+    CyclomaticComplexityAnalysis CCA(Tool);
+    CCA.run();
+
+    TestAnalysis T(Tool);
+    T.run();
+
 
     return 0;
 }

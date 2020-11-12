@@ -1,10 +1,6 @@
-#include "clang/Tooling/Tooling.h"
-#include "clang/Tooling/CommonOptionsParser.h"
-
 #include <iostream>
 #include <vector>
 
-#include "cxx-langstat/Extraction.h"
 #include "cxx-langstat/ForStmtAnalysis.h"
 
 // namespaces
@@ -57,12 +53,9 @@ StatementMatcher constructMixedMatcher(std::string Name, int d){
 
 // TODO: why parent ctor?
 ForStmtAnalysis::ForStmtAnalysis(ClangTool Tool, int MaxDepthOption) :
-    Analysis(Tool),
+    Analysis(Tool), // has to be explicitly called since Analysis has only explicit constructor
     MaxDepth(MaxDepthOption) {
     std::cout<<"FSA ctor"<<std::endl;
-}
-ForStmtAnalysis::~ForStmtAnalysis() {
-    std::cout<<"FSA dtor"<<std::endl;
 }
 // step 1: extraction
 void ForStmtAnalysis::extract() {
@@ -79,7 +72,7 @@ void ForStmtAnalysis::extract() {
 
     unsigned TopLevelForLoops = matches.size();
     std::cout << "#Top-level for loops:" << TopLevelForLoops << std::endl;
-    std::vector<Matches> Data;
+    std::vector<Matches<clang::Stmt>> Data;
     unsigned ForLoopsFound = 0;
     for (int i=1; i<=this->MaxDepth; i++){
         StatementMatcher Matcher = constructMixedMatcher("fs", i);
@@ -100,7 +93,7 @@ void ForStmtAnalysis::extract() {
     analyzeLoopPrevalences(ForMatches, WhileMatches, DoWhileMatches);
 }
 //step 2: compute stats
-void ForStmtAnalysis::analyzeDepth(Matches matches, std::vector<Matches> Data){
+void ForStmtAnalysis::analyzeDepth(Matches<clang::Stmt> matches, std::vector<Matches<clang::Stmt>> Data){
     unsigned TopLevelForLoops = matches.size();
     unsigned depth = 1;
     for (auto matches : Data){
@@ -115,17 +108,22 @@ void ForStmtAnalysis::analyzeDepth(Matches matches, std::vector<Matches> Data){
         }
     }
 }
-void ForStmtAnalysis::analyzeLoopPrevalences(Matches fs, Matches ws, Matches ds){
+void ForStmtAnalysis::analyzeLoopPrevalences(Matches<clang::Stmt> fs, Matches<clang::Stmt> ws, Matches<clang::Stmt> ds){
     unsigned total = fs.size() + ws.size() + ds.size();
     std::cout << fs.size() << "/" << total << " are for loops" << std::endl;
     std::cout << ws.size() << "/" << total << " are while loops" << std::endl;
     std::cout << ds.size() << "/" << total << " are do-while loops" << std::endl;
 
 }
+
+void ForStmtAnalysis::analyze(){
+
+}
+
 //step 3: visualization (for later)
 // combine
 void ForStmtAnalysis::run(){
-    //why 'this' not needed?
+    std::cout << "\033[32mRunning ForStmtAnalysis:\033[0m" << std::endl;
     extract();
 }
 
