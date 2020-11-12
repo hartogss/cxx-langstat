@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "cxx-langstat/ForStmtAnalysis.h"
+#include "cxx-langstat/LoopDepthAnalysis.h"
 
 using namespace clang::ast_matchers;
 using namespace clang::tooling; // ClangTool
@@ -51,13 +51,13 @@ StatementMatcher constructMixedMatcher(std::string Name, int d){
 //-----------------------------------------------------------------------------
 
 // TODO: why parent ctor?
-ForStmtAnalysis::ForStmtAnalysis(ClangTool Tool, int MaxDepthOption) :
+LoopDepthAnalysis::LoopDepthAnalysis(ClangTool Tool, int MaxDepthOption) :
     Analysis(Tool), // has to be explicitly called since Analysis has only explicit constructor
     MaxDepth(MaxDepthOption) {
     std::cout<<"FSA ctor"<<std::endl;
 }
 // step 1: extraction
-void ForStmtAnalysis::extract() {
+void LoopDepthAnalysis::extract() {
     // Bind is necessary to retrieve information about the match like location etc.
     // Without bind the match is still registered, thus we can still count #matches, but nothing else
 
@@ -86,7 +86,7 @@ void ForStmtAnalysis::extract() {
     analyzeDepth(matches, Data);
 }
 //step 2: compute stats
-void ForStmtAnalysis::analyzeDepth(Matches<clang::Stmt> matches, std::vector<Matches<clang::Stmt>> Data){
+void LoopDepthAnalysis::analyzeDepth(Matches<clang::Stmt> matches, std::vector<Matches<clang::Stmt>> Data){
     unsigned TopLevelForLoops = matches.size();
     unsigned depth = 1;
     for (auto matches : Data){
@@ -102,13 +102,13 @@ void ForStmtAnalysis::analyzeDepth(Matches<clang::Stmt> matches, std::vector<Mat
     }
 }
 
-void ForStmtAnalysis::analyze(){
+void LoopDepthAnalysis::analyze(){
 
 }
 
 //step 3: visualization (for later)
 // combine
-void ForStmtAnalysis::run(){
+void LoopDepthAnalysis::run(){
     std::cout << "\033[32mRunning ForStmtAnalysis:\033[0m" << std::endl;
     extract();
 }

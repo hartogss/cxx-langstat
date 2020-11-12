@@ -5,10 +5,10 @@
 using namespace clang::tooling;
 using namespace clang::ast_matchers;
 
-RangeBasedLoops::RangeBasedLoops(ClangTool Tool) : Analysis(Tool){
+LoopKindAnalysis::LoopKindAnalysis(ClangTool Tool) : Analysis(Tool){
 
 }
-void RangeBasedLoops::extract(){
+void LoopKindAnalysis::extract(){
 
     // Analysis of prevalence of different loop statement, i.e. comparing for, while etc.
     auto ForMatches = Extr.extract("fs1", forStmt().bind("fs1"));
@@ -22,10 +22,10 @@ void RangeBasedLoops::extract(){
     std::cout << DoWhileMatches.size() << "/" << total << " are do-while loops" << std::endl;
     std::cout << RangeBasedForMatches.size() << "/" << total << " are range-based for loops" << std::endl;
 }
-void RangeBasedLoops::analyze(){
+void LoopKindAnalysis::analyze(){
 
 }
-void RangeBasedLoops::run(){
+void LoopKindAnalysis::run(){
     std::cout << "\033[32mCounting the different kinds of loops:\033[0m" << std::endl;
     extract();
 }

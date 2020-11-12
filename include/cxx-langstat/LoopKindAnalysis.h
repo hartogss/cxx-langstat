@@ -1,14 +1,14 @@
-#ifndef LOOPKINDANALISYS_H
-#define LOOPKINDANALISYS_H
+#ifndef LOOPKINDANALYSIS_H
+#define LOOPKINDANALYSIS_H
 
 #include "cxx-langstat/Analysis.h"
 
-class RangeBasedLoops : public Analysis {
+class LoopKindAnalysis : public Analysis {
 public:
-    RangeBasedLoops(clang::tooling::ClangTool Tool);
+    LoopKindAnalysis(clang::tooling::ClangTool Tool);
     void extract() override;
     void analyze() override;
     void run() override;
 };
 
-#endif /* LOOPKINDANALISYS_H */
+#endif /* LOOPKINDANALYSIS_H */

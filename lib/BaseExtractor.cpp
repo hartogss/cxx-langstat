@@ -15,7 +15,7 @@ using namespace clang::tooling; // CommonOptionsParser
 
 // ctor
 BaseExtractor::BaseExtractor(clang::tooling::ClangTool Tool) : Tool(Tool){
-    std::cout<<"Extractor ctor"<<std::endl;
+    std::cout<<"BaseExtractor ctor"<<std::endl;
 }
 Matches<clang::Stmt> BaseExtractor::extract(std::string id, StatementMatcher Matcher){
     MatchingExtractor<Stmt> extr(Tool, id);

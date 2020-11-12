@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "cxx-langstat/ForStmtAnalysis.h"
+#include "cxx-langstat/LoopDepthAnalysis.h"
 #include "cxx-langstat/TestAnalysis.h"
 #include "cxx-langstat/CyclomaticComplexityAnalysis.h"
 #include "cxx-langstat/LoopKindAnalysis.h"
@@ -41,8 +41,8 @@ int main(int argc, const char** argv){
 
     ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
 
-    ForStmtAnalysis FSA(Tool, FSAMaxDepthOption);
-    FSA.run();
+    LoopDepthAnalysis LDA(Tool, FSAMaxDepthOption);
+    LDA.run();
 
     CyclomaticComplexityAnalysis CCA(Tool);
     CCA.run();
@@ -50,8 +50,8 @@ int main(int argc, const char** argv){
     // TestAnalysis T(Tool);
     // T.run();
 
-    RangeBasedLoops RBA(Tool);
-    RBA.run();
+    LoopKindAnalysis LKA(Tool);
+    LKA.run();
 
 
     return 0;

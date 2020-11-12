@@ -1,5 +1,5 @@
 # add_library(Extraction Extraction.cpp)
-add_library(ForStmtAnalysis ForStmtAnalysis.cpp)
+add_library(LoopDepthAnalysis LoopDepthAnalysis.cpp)
 add_library(TestAnalysis TestAnalysis.cpp)
 add_library(BaseExtractor BaseExtractor.cpp)
 add_library(MatchingExtractor MatchingExtractor.cpp)
