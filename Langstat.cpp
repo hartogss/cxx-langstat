@@ -6,6 +6,7 @@
 #include "cxx-langstat/ForStmtAnalysis.h"
 #include "cxx-langstat/TestAnalysis.h"
 #include "cxx-langstat/CyclomaticComplexityAnalysis.h"
+#include "cxx-langstat/LoopKindAnalysis.h"
 
 // namespaces
 using namespace clang; // CompilerInstance, ASTFrontendAction, ASTConsumer
@@ -46,8 +47,11 @@ int main(int argc, const char** argv){
     CyclomaticComplexityAnalysis CCA(Tool);
     CCA.run();
 
-    TestAnalysis T(Tool);
-    T.run();
+    // TestAnalysis T(Tool);
+    // T.run();
+
+    RangeBasedLoops RBA(Tool);
+    RBA.run();
 
 
     return 0;

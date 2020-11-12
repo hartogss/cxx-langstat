@@ -3,7 +3,6 @@
 
 #include "cxx-langstat/ForStmtAnalysis.h"
 
-// namespaces
 using namespace clang::ast_matchers;
 using namespace clang::tooling; // ClangTool
 
@@ -85,12 +84,6 @@ void ForStmtAnalysis::extract() {
     if(ForLoopsFound < TopLevelForLoops)
         std::cout << "Some for loops deeper than max_depth have not been analyzed" << std::endl;
     analyzeDepth(matches, Data);
-
-    // Analysis of prevalence of different loop statement, i.e. comparing for, while etc.
-    auto ForMatches = this->Extr.extract("fs1", forStmt().bind("fs1"));
-    auto WhileMatches = this->Extr.extract("ws1", whileStmt().bind("ws1"));
-    auto DoWhileMatches = this->Extr.extract("ds1", doStmt().bind("ds1"));
-    analyzeLoopPrevalences(ForMatches, WhileMatches, DoWhileMatches);
 }
 //step 2: compute stats
 void ForStmtAnalysis::analyzeDepth(Matches<clang::Stmt> matches, std::vector<Matches<clang::Stmt>> Data){
@@ -107,13 +100,6 @@ void ForStmtAnalysis::analyzeDepth(Matches<clang::Stmt> matches, std::vector<Mat
         depth++;
         }
     }
-}
-void ForStmtAnalysis::analyzeLoopPrevalences(Matches<clang::Stmt> fs, Matches<clang::Stmt> ws, Matches<clang::Stmt> ds){
-    unsigned total = fs.size() + ws.size() + ds.size();
-    std::cout << fs.size() << "/" << total << " are for loops" << std::endl;
-    std::cout << ws.size() << "/" << total << " are while loops" << std::endl;
-    std::cout << ds.size() << "/" << total << " are do-while loops" << std::endl;
-
 }
 
 void ForStmtAnalysis::analyze(){

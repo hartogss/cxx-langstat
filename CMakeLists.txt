@@ -89,7 +89,10 @@ target_link_directories(${PROJECT_NAME} PUBLIC lib/)
 
 # ---- Link everything together ----
 # Link custom libraries
-target_link_libraries(${PROJECT_NAME} ForStmtAnalysis CyclomaticComplexityAnalysis TestAnalysis BaseExtractor MatchingExtractor)
+target_link_libraries(${PROJECT_NAME}
+    ForStmtAnalysis CyclomaticComplexityAnalysis LoopKindAnalysis
+    TestAnalysis
+    BaseExtractor MatchingExtractor)
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
 # target_link_libraries(${PROJECT_NAME} ${clang_tidy_libs})
