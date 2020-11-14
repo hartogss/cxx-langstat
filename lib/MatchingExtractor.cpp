@@ -1,5 +1,3 @@
-#include "clang/Tooling/Tooling.h"
-#include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 
 #include <iostream>
@@ -8,27 +6,24 @@
 
 using namespace clang; // CompilerInstance, ASTFrontendAction, ASTConsumer
 using namespace clang::ast_matchers; // StatementMatcher, actual AST matchers like forStmt etc.
-using namespace clang::tooling; // CommonOptionsParser
 
 //-----------------------------------------------------------------------------
 
 template<typename T>
-Match<T>::Match(unsigned location, const T* node, ASTContext* ctxt) : location(location), node(node), ctxt(ctxt){
-    // std::cout<<"Match ctor"<<std::endl;
+Match<T>::Match(unsigned location, const T* node, clang::ASTContext* ctxt) :
+    location(location),
+    node(node),
+    ctxt(ctxt){
 }
 
 //-----------------------------------------------------------------------------
 
-// ctor
 template<typename T>
 MatchingExtractor<T>::MatchingExtractor(std::string id) : matcherid(id){
     std::cout<<"MatchingExtractor ctor"<<std::endl;
 }
 template<typename T>
 void MatchingExtractor<T>::run(const MatchFinder::MatchResult &Result) {
-    // maybe need template or switch statement? could also put 'kind' of node into id to trigger right code
-    // one could do this structure of if statement to check what it is
-    // one would however go from more to less specific to see what it is
     if(const T* node = Result.Nodes.getNodeAs<T>(this->matcherid)) {
         ASTContext* Context = Result.Context;
         unsigned Location = Context->getFullLoc(node->getBeginLoc()).getLineNumber();

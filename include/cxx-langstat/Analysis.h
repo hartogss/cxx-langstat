@@ -3,12 +3,10 @@
 
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
-#include "clang/Tooling/Tooling.h"
 
 #include "BaseExtractor.h"
 
 //-----------------------------------------------------------------------------
-
 // Abstract Analysis class. Specific analyses should subclass this & implement its methods.
 
 class Analysis {
@@ -32,4 +30,4 @@ protected:
 
 //-----------------------------------------------------------------------------
 
-#endif /* ANALYSIS_H */
+#endif // ANALYSIS_H

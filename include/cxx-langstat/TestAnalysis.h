@@ -28,4 +28,4 @@ void runclangtidy();
 
 //-----------------------------------------------------------------------------
 
-#endif /* TESTANALYSIS_H */
+#endif // TESTANALYSIS_H

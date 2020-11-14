@@ -21,25 +21,23 @@ using namespace clang::ast_matchers;
 // Consumes the AST, i.e. does computations on it
 class Consumer : public ASTConsumer {
 public:
-    // Constructor, how is finder & handler constructed?
     Consumer(){
-        std::cout << "Consumer() called" << std::endl;
     }
     // Called when AST for TU is ready/has been parsed
     void HandleTranslationUnit(clang::ASTContext& Context){
-        std::cout << "HandleTU() called" << std::endl;
+        std::cout << "Handling the translation unit" << std::endl;
 
         CyclomaticComplexityAnalysis CCA(Context);
         CCA.run();
-
-        UsingAnalysis UA(Context);
-        UA.run();
 
         LoopDepthAnalysis LDA(Context, 4);
         LDA.run();
 
         LoopKindAnalysis LKA(Context);
         LKA.run();
+
+        UsingAnalysis UA(Context);
+        UA.run();
     }
 };
 
@@ -48,18 +46,25 @@ public:
 class Action : public ASTFrontendAction {
 public:
     Action(){
-        std::cout << "Creating AST action" << std::endl;
+        std::cout << "Creating AST Action" << std::endl;
+    }
+    // Called at start of processing a single input
+    bool BeginSourceFileAction(CompilerInstance& CI) {
+        std::cout
+        << "Starting to process " << getCurrentFile().str()
+        << " AST=" << isCurrentFileAST() << std::endl;
+        return true;
     }
     // Called after frontend is initialized, but before per-file processing
     virtual std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(
         CompilerInstance &CI, llvm::StringRef InFile){
-            std::cout << "CreateASTConsumer() called" << std::endl;
+            std::cout << "Creating AST Consumer" << std::endl;
             return std::make_unique<Consumer>();
     }
-    // Called at start of processing a single input
-    bool BeginSourceFileAction(CompilerInstance& CI) {
-        std::cout << "Starting to process file" << std::endl;
-        return true;
+    //
+    void EndSourceFileAction(){
+        std::cout
+        << "Finished processing " << getCurrentFile().str() << std::endl;
     }
 };
 
@@ -93,5 +98,5 @@ int main(int argc, const char** argv){
 
     ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
 
-    return Tool.run(new Factory()); // input file, .cpp or .ast
+    return Tool.run(std::make_unique<Factory>().get()); // input file, .cpp or .ast
 }

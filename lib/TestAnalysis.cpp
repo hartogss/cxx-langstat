@@ -5,9 +5,7 @@
 #include "clang-tidy/ClangTidy.h"
 #include "clang-tidy/tool/ClangTidyMain.h"
 
-
 using namespace clang::ast_matchers;
-using namespace clang::tooling; // ClangTool
 
 //-----------------------------------------------------------------------------
 

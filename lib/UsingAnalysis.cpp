@@ -4,7 +4,6 @@
 #include "cxx-langstat/UsingAnalysis.h"
 
 using namespace clang::ast_matchers;
-using namespace clang::tooling;
 
 //-----------------------------------------------------------------------------
 // Question: How many typedef, how many aliases?

@@ -17,7 +17,7 @@ template<typename T>
 using Matches = std::vector<Match<T>>; // allows to do Matches<T>
 
 //-----------------------------------------------------------------------------
-
+// Callback class executed on match
 template<typename T>
 class MatchingExtractor : public clang::ast_matchers::MatchFinder::MatchCallback {
 public:

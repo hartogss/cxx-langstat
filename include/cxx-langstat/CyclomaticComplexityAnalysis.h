@@ -14,6 +14,6 @@ public:
 
 };
 
-#endif /* CYCLOMATICCOMPLEXITY_H */
+#endif // CYCLOMATICCOMPLEXITY_H
 
 //-----------------------------------------------------------------------------

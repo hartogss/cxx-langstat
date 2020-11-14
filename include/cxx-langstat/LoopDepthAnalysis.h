@@ -33,4 +33,4 @@ private:
 
 //-----------------------------------------------------------------------------
 
-#endif /* LOOPDEPTHANALYSIS_H */
+#endif // LOOPDEPTHANALYSIS_H
