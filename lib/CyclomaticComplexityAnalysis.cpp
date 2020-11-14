@@ -39,7 +39,7 @@ void CyclomaticComplexityAnalysis::extract(){
             numEdges += (*block)->succ_size();
         }
         unsigned CYC = numEdges - numNodes + 2; // 2 since #connected components P=1
-        std::cout << dyn_cast<clang::NamedDecl>(match.node)/->getNameAsString()
+        std::cout << dyn_cast<clang::NamedDecl>(match.node)->getNameAsString()
             << " has CYC " << CYC << std::endl;
     }
 }

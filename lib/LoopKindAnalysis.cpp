@@ -20,11 +20,11 @@ void LoopKindAnalysis::extract(){
     std::cout << ForMatches.size() << "/" << total
     << " are for loops\n"
     << WhileMatches.size() << "/" << total
-    << " are while loops"
+    << " are while loops\n"
     << DoWhileMatches.size() << "/" << total
-    << " are do-while loops"
+    << " are do-while loops\n"
     << RangeBasedForMatches.size() << "/" << total
-    << " are range-based for loops" << std::endl;
+    << " are range-based for loops\n";
 }
 void LoopKindAnalysis::analyze(){
 
