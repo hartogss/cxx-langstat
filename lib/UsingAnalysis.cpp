@@ -11,7 +11,7 @@ using namespace clang::tooling;
 // How many typedefs have been abandoned because of the ease of alias templates?
 
 
-UsingAnalysis::UsingAnalysis(ClangTool Tool) : Analysis(Tool){
+UsingAnalysis::UsingAnalysis(clang::ASTContext& Context) : Analysis(Context){
 
 }
 void UsingAnalysis::extract() {

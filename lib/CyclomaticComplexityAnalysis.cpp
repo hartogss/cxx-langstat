@@ -13,7 +13,7 @@ using namespace clang::ast_matchers;
 //-----------------------------------------------------------------------------
 
 CyclomaticComplexityAnalysis::CyclomaticComplexityAnalysis
-(clang::tooling::ClangTool Tool) : Analysis(Tool){
+(clang::ASTContext& Context) : Analysis(Context){
 
 }
 void CyclomaticComplexityAnalysis::extract(){

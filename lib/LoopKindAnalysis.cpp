@@ -5,7 +5,7 @@
 using namespace clang::tooling;
 using namespace clang::ast_matchers;
 
-LoopKindAnalysis::LoopKindAnalysis(ClangTool Tool) : Analysis(Tool){
+LoopKindAnalysis::LoopKindAnalysis(clang::ASTContext& Context) : Analysis(Context){
 
 }
 void LoopKindAnalysis::extract(){

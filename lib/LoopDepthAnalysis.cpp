@@ -51,8 +51,8 @@ StatementMatcher constructMixedMatcher(std::string Name, int d){
 //-----------------------------------------------------------------------------
 
 // TODO: why parent ctor?
-LoopDepthAnalysis::LoopDepthAnalysis(ClangTool Tool, int MaxDepthOption) :
-    Analysis(Tool), // has to be explicitly called since Analysis has only explicit constructor
+LoopDepthAnalysis::LoopDepthAnalysis(clang::ASTContext& Context, int MaxDepthOption) :
+    Analysis(Context), // has to be explicitly called since Analysis has only explicit constructor
     MaxDepth(MaxDepthOption) {
     std::cout<<"FSA ctor"<<std::endl;
 }

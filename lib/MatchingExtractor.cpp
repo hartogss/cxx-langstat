@@ -21,7 +21,7 @@ Match<T>::Match(unsigned location, const T* node, ASTContext* ctxt) : location(l
 
 // ctor
 template<typename T>
-MatchingExtractor<T>::MatchingExtractor(clang::tooling::ClangTool Tool, std::string id) : Tool(Tool), matcherid(id){
+MatchingExtractor<T>::MatchingExtractor(std::string id) : matcherid(id){
     std::cout<<"MatchingExtractor ctor"<<std::endl;
 }
 template<typename T>

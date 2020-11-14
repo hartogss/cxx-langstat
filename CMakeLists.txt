@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.18.3)
 # Sets ${PROJECT_NAME}
 project(cxx-langstat)
 # Define executable to be built
-add_executable(${PROJECT_NAME} Langstat.cpp)
+add_executable(${PROJECT_NAME} Driver.cpp)
 
 # ---- Compiler ----
 # C++17

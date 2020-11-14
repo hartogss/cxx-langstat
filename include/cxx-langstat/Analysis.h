@@ -13,7 +13,7 @@
 
 class Analysis {
 public:
-    Analysis(clang::tooling::ClangTool Tool) : Extr(BaseExtractor(Tool)){
+    Analysis(clang::ASTContext& Context) : Extr(BaseExtractor(Context)){
 
     }
     ~Analysis() = default; // should be made virtual in case concrete analyses need special destructors

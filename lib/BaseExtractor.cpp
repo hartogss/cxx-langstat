@@ -14,21 +14,21 @@ using namespace clang::tooling; // CommonOptionsParser
 //-----------------------------------------------------------------------------
 
 // ctor
-BaseExtractor::BaseExtractor(clang::tooling::ClangTool Tool) : Tool(Tool){
+BaseExtractor::BaseExtractor(clang::ASTContext& Context) : Context(Context){
     std::cout<<"BaseExtractor ctor"<<std::endl;
 }
 Matches<clang::Stmt> BaseExtractor::extract(std::string id, StatementMatcher Matcher){
-    MatchingExtractor<Stmt> extr(Tool, id);
+    MatchingExtractor<Stmt> extr(id);
     MatchFinder Finder;
     Finder.addMatcher(Matcher, &extr);
-    Tool.run(newFrontendActionFactory(&Finder).get());
+    Finder.matchAST(Context);
     return extr.matches;
 }
 Matches<clang::Decl> BaseExtractor::extract(std::string id, DeclarationMatcher Matcher){
-    MatchingExtractor<Decl> extr(Tool, id);
+    MatchingExtractor<Decl> extr(id);
     MatchFinder Finder;
     Finder.addMatcher(Matcher, &extr);
-    Tool.run(newFrontendActionFactory(&Finder).get());
+    Finder.matchAST(Context);
     return extr.matches;
 }
 

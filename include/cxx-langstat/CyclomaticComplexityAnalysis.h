@@ -7,7 +7,7 @@
 
 class CyclomaticComplexityAnalysis : public Analysis {
 public:
-    CyclomaticComplexityAnalysis(clang::tooling::ClangTool Tool);
+    CyclomaticComplexityAnalysis(clang::ASTContext& Context);
     void extract() override;
     void analyze() override;
     void run() override;

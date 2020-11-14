@@ -12,7 +12,7 @@ using namespace clang::tooling; // ClangTool
 //-----------------------------------------------------------------------------
 
 // TODO: why parent ctor?
-TestAnalysis::TestAnalysis(ClangTool Tool) : Analysis(Tool) {
+TestAnalysis::TestAnalysis(clang::ASTContext& Context) : Analysis(Context) {
 }
 // step 1: extraction
 void TestAnalysis::extract() {

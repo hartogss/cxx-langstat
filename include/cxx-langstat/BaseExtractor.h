@@ -10,12 +10,12 @@
 class BaseExtractor{
 public :
     // ctor, dtor
-    BaseExtractor(clang::tooling::ClangTool Tool);
+    BaseExtractor(clang::ASTContext& Context);
     // Responsible for invoking appropriate concrete Extractor
     Matches<clang::Stmt> extract(std::string id, clang::ast_matchers::StatementMatcher Matcher);
     Matches<clang::Decl> extract(std::string id, clang::ast_matchers::DeclarationMatcher Matcher);
 private:
-    clang::tooling::ClangTool Tool;
+    clang::ASTContext& Context;
 };
 
 //-----------------------------------------------------------------------------
