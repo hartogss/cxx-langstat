@@ -90,7 +90,10 @@ target_link_directories(${PROJECT_NAME} PUBLIC lib/)
 # ---- Link everything together ----
 # Link custom libraries
 target_link_libraries(${PROJECT_NAME}
-    LoopDepthAnalysis CyclomaticComplexityAnalysis LoopKindAnalysis
+    LoopDepthAnalysis
+    CyclomaticComplexityAnalysis
+    LoopKindAnalysis
+    UsingAnalysis
     TestAnalysis
     BaseExtractor MatchingExtractor)
 # Link LLVM & Clang libs

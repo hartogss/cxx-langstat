@@ -39,8 +39,7 @@ void CyclomaticComplexityAnalysis::extract(){
             numEdges += (*block)->succ_size();
         }
         unsigned CYC = numEdges - numNodes + 2; // 2 since #connected components P=1
-        clang::FunctionDecl* n = (clang::FunctionDecl*) match.node; //nicer to do this in Extractor::extraction function
-        std::cout << n->getNameInfo().getAsString() << " has CYC " << CYC << std::endl;
+        std::cout << dyn_cast<clang::NamedDecl>(match.node)->getNameAsString() << " has CYC " << CYC << std::endl;
     }
 }
 void CyclomaticComplexityAnalysis::analyze(){

@@ -7,6 +7,7 @@
 #include "cxx-langstat/TestAnalysis.h"
 #include "cxx-langstat/CyclomaticComplexityAnalysis.h"
 #include "cxx-langstat/LoopKindAnalysis.h"
+#include "cxx-langstat/UsingAnalysis.h"
 
 // namespaces
 using namespace clang; // CompilerInstance, ASTFrontendAction, ASTConsumer
@@ -52,6 +53,9 @@ int main(int argc, const char** argv){
 
     LoopKindAnalysis LKA(Tool);
     LKA.run();
+
+    UsingAnalysis UA(Tool);
+    UA.run();
 
 
     return 0;
