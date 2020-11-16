@@ -1,20 +1,45 @@
 //1
-struct simple {
+struct tuple {
     int x;
+    int y;
 };
 
-typedef simple s_one; // simple typedef
-using s_two = simple; // simple alias
+typedef tuple pair_typedef; // typedef
+using pair_alias = tuple; // alias
+
 
 //2
 template<typename T>
-struct simple2 {
+struct tuple2 {
     T x;
+    T y;
 };
-// typedef
-using s2_two = simple2<int>; // also simple alias
+
+// typedef & alias
+typedef tuple2<int> intpair_typedef; //typedef
+using intpair_alias = tuple2<int>; // alias
+
+// templatized typedef
 template<typename T>
-using s2_two2 = simple2<T>; // alias template
+struct Tpair_typedef {
+    typedef tuple2<T> type;
+};
+// not templatized typedefs
+// since either contain other non-typedef field or no typedef field at all
+template<typename T>
+struct Tpair_typedef2 {
+    int x;
+    typedef tuple2<T> type;
+};
+template<typename T>
+struct empty {
+
+};
+//templatized alias
+template<typename T>
+using Tpair_alias = tuple2<T>; // alias template
+
+
 
 int main(int argc, char** argv){
 

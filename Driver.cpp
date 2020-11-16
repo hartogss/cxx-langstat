@@ -27,14 +27,14 @@ public:
     void HandleTranslationUnit(clang::ASTContext& Context){
         std::cout << "Handling the translation unit" << std::endl;
 
-        CyclomaticComplexityAnalysis CCA(Context);
-        CCA.run();
-
-        LoopDepthAnalysis LDA(Context, 4);
-        LDA.run();
-
-        LoopKindAnalysis LKA(Context);
-        LKA.run();
+        // CyclomaticComplexityAnalysis CCA(Context);
+        // CCA.run();
+        //
+        // LoopDepthAnalysis LDA(Context, 4);
+        // LDA.run();
+        //
+        // LoopKindAnalysis LKA(Context);
+        // LKA.run();
 
         UsingAnalysis UA(Context);
         UA.run();

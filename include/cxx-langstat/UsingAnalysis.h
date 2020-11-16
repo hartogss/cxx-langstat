@@ -15,6 +15,7 @@ public:
 private:
     Matches<clang::Decl> TypeDefDecls;
     Matches<clang::Decl> TypeAliasDecls;
+    Matches<clang::Decl> TypeAliasTemplateDecls;
 };
 
 //-----------------------------------------------------------------------------
