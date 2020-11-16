@@ -37,8 +37,8 @@ execute_process(COMMAND llvm-config --libs
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-find_package(clang REQUIRED CONFIG)
-message(STATUS "Using ClangConfig.cmake in: ${clang_DIR}")
+# find_package(clang REQUIRED CONFIG)
+# message(STATUS "Using ClangConfig.cmake in: ${clang_DIR}")
 
 string(REPLACE "-l" "" llvm_libs ${llvm_libs})
 string(REPLACE " " ";" llvm_libs ${llvm_libs})
@@ -90,12 +90,12 @@ target_link_directories(${PROJECT_NAME} PUBLIC lib/)
 # ---- Link everything together ----
 # Link custom libraries
 target_link_libraries(${PROJECT_NAME}
+    BaseExtractor MatchingExtractor
     LoopDepthAnalysis
     CyclomaticComplexityAnalysis
     LoopKindAnalysis
     UsingAnalysis
-    TestAnalysis
-    BaseExtractor MatchingExtractor)
+    )
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
 # target_link_libraries(${PROJECT_NAME} ${clang_tidy_libs})
