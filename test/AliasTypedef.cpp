@@ -19,7 +19,7 @@ struct tuple2 {
 typedef tuple2<int> intpair_typedef; //typedef
 using intpair_alias = tuple2<int>; // alias
 
-// templatized typedef
+// "typedef template"
 template<typename T>
 struct Tpair_typedef {
     typedef tuple2<T> type;
@@ -35,7 +35,12 @@ template<typename T>
 struct empty {
 
 };
-//templatized alias
+template<typename T>
+struct Tpair_typedef3 {
+    void method();
+    typedef tuple2<T> type;
+};
+// alias template
 template<typename T>
 using Tpair_alias = tuple2<T>; // alias template
 

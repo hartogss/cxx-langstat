@@ -13,9 +13,10 @@ public:
     void analyze() override;
     void run() override;
 private:
-    Matches<clang::Decl> TypeDefDecls;
+    Matches<clang::Decl> TypedefDecls;
     Matches<clang::Decl> TypeAliasDecls;
     Matches<clang::Decl> TypeAliasTemplateDecls;
+    Matches<clang::Decl> TypedefTemplateDecls;
 };
 
 //-----------------------------------------------------------------------------
