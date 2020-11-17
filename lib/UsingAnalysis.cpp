@@ -6,6 +6,17 @@
 using namespace clang::ast_matchers;
 
 //-----------------------------------------------------------------------------
+
+std::string getDeclName(Match<clang::Decl> node){
+    if(auto n = dyn_cast<clang::NamedDecl>(node.node)){
+        return n->getNameAsString();
+    } else {
+        std::cout << "Decl @ " << node.location << "cannot be resolved" << std::endl;
+        return "INVALID";
+    }
+}
+
+//-----------------------------------------------------------------------------
 // Question: Did programmers abandon typedef in favor of aliases (e.g.
 // using newType = oldType<int> )?
 // What's the reason for that development?
@@ -65,31 +76,27 @@ void UsingAnalysis::extract() {
 void UsingAnalysis::analyze(){
     std::cout << "\033[33mTypedef found:\033[0m\n";
     for(auto m : TypedefDecls){
-        std::cout
-        << dyn_cast<clang::NamedDecl>(m.node)->getNameAsString()
+        std::cout << getDeclName(m)
         << " @ " << m.location << std::endl;
     }
     std::cout << "\033[33mType aliases found:\033[0m\n";
     for(Match<clang::Decl> m : TypeAliasDecls){
-        if (auto n = dyn_cast<clang::NamedDecl>(m.node)){
-            std::cout
-            << n->getNameAsString()
-            << " @ " << m.location << std::endl;
-        }
+        std::cout << getDeclName(m)
+        << " @ " << m.location << std::endl;
     }
     std::cout << "\033[33m\"Typedef templates\" found:\033[0m\n";
     for(auto m : TypedefTemplateDecls){
-        std::cout << dyn_cast<clang::NamedDecl>(m.node)->getNameAsString()
+        std::cout << getDeclName(m)
         << " @ " << m.location << std::endl;
     }
     std::cout << "\033[33m\"Typedef templates\" found:\033[0m\n";
     for(auto m : td){
-        std::cout << dyn_cast<clang::NamedDecl>(m.node)->getNameAsString()
+        std::cout << getDeclName(m)
         << " @ " << m.location << std::endl;
     }
     std::cout << "\033[33mType alias templates found:\033[0m\n";
     for(auto m : TypeAliasTemplateDecls){
-        std::cout << dyn_cast<clang::NamedDecl>(m.node)->getNameAsString()
+        std::cout << getDeclName(m)
         << " @ " << m.location << std::endl;
     }
 }
