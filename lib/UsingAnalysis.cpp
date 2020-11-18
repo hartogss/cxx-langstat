@@ -28,16 +28,29 @@ UsingAnalysis::UsingAnalysis(clang::ASTContext& Context) : Analysis(Context){
 
 }
 void UsingAnalysis::extract() {
-    // Want typedef to be in main file
-    auto typedef_ = typedefDecl(isExpansionInMainFile()).bind("typedef");
+    // Count all typedefs that are explicitly written by programmer (high level)
+    // Concretely, that means:
+    // - in main file
+    // - not generated automatically in class template specializations
+    // - not part of instantiations
+    // Additionally: don't want them to be part of "template typedefs", in
+    // our statistics want to know how many were templatized & how many were not
+    auto typedef_ = typedefDecl(
+        isExpansionInMainFile(),
+        unless(isInstantiated())) // I think fixes s.t. specializations are
+                                  // ignored, got idea from UseUsingCheck.cpp,
+                                  // which is from clang-tidy
+    .bind("typedef");
+
     // Type aliases, however, only those that are not part of type alias
     // templates. Type alias template contains type alias node in clang AST.
     auto typeAlias = typeAliasDecl(unless(hasParent(typeAliasTemplateDecl())))
     .bind("alias");
+
     // Of course there are no typedef templates in C++, but we consider the
     // following idiom mostly used prior to C++11 to be a "typedef template":
     // template<typename T>
-    // struct Pair {
+    //     struct Pair {
     // typedef Tuple<T> type; // don't have to name this 'type'
     // };
     // We thus say that a class template is a "typedef decl" if it contains only
@@ -56,6 +69,7 @@ void UsingAnalysis::extract() {
                 cxxRecordDecl())))))))) // Must be allowed to contain cxxrecord,
                                         // instrinsic to clang AST
     .bind("typedeftemplate");
+
     //
     auto typeAliasTemplate = typeAliasTemplateDecl().bind("aliastemplate");
 
@@ -75,29 +89,26 @@ void UsingAnalysis::extract() {
 }
 void UsingAnalysis::analyze(){
     std::cout << "\033[33mTypedef found:\033[0m\n";
+    std::cout << TypedefDecls.size() << std::endl;
     for(auto m : TypedefDecls){
         std::cout << getDeclName(m)
         << " @ " << m.location << std::endl;
     }
     std::cout << "\033[33mType aliases found:\033[0m\n";
     for(Match<clang::Decl> m : TypeAliasDecls){
-        std::cout << getDeclName(m)
-        << " @ " << m.location << std::endl;
+        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
     }
     std::cout << "\033[33m\"Typedef templates\" found:\033[0m\n";
     for(auto m : TypedefTemplateDecls){
-        std::cout << getDeclName(m)
-        << " @ " << m.location << std::endl;
+        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
     }
-    std::cout << "\033[33m\"Typedef templates\" found:\033[0m\n";
+    std::cout << "\033[33mTypedefs from \"Typedef templates\"\033[0m\n";
     for(auto m : td){
-        std::cout << getDeclName(m)
-        << " @ " << m.location << std::endl;
+        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
     }
     std::cout << "\033[33mType alias templates found:\033[0m\n";
     for(auto m : TypeAliasTemplateDecls){
-        std::cout << getDeclName(m)
-        << " @ " << m.location << std::endl;
+        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
     }
 }
 void UsingAnalysis::run(){

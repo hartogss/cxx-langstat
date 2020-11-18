@@ -41,8 +41,9 @@ void MatchingExtractor<T>::resetState(){
 
 //-----------------------------------------------------------------------------
 
-// request instantiations of MatchingExtractor template s.t. linker can find them
-// bad: have to do this for every instantiation needed
+// Request instantiations of MatchingExtractor template s.t. linker can find them
+// Bad: have to do this for every instantiation needed
+// This is called explicit instantiation
 template class MatchingExtractor<clang::Stmt>;
 template class MatchingExtractor<clang::Decl>;
 
