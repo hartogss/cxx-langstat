@@ -82,34 +82,38 @@ void UsingAnalysis::extract() {
     TypedefDecls = Extr.extract("typedef", typedef_);
     TypeAliasDecls = Extr.extract("alias", typeAlias);
     TypedefTemplateDecls = Extr.extract("typedeftemplate", typedefTemplate);
-    td = Extr.extract("td", typedefTemplate);
     TypeAliasTemplateDecls = Extr.extract("aliastemplate", typeAliasTemplate);
+
+    // need to do extra work to remove from typedefdecls those decls that occur
+    // in typedeftemplatedecls (to get distinciton between typedef and typedef templates)
+    td = Extr.extract("td", typedefTemplate);
+    for(auto decl : td){
+        for(unsigned i=0; i<TypedefDecls.size(); i++){
+            auto d = TypedefDecls[i];
+            if (decl == d)
+                TypedefDecls.erase(TypedefDecls.begin()+i);
+        }
+    }
 
     analyze();
 }
 void UsingAnalysis::analyze(){
     std::cout << "\033[33mTypedef found:\033[0m\n";
     std::cout << TypedefDecls.size() << std::endl;
-    for(auto m : TypedefDecls){
-        std::cout << getDeclName(m)
-        << " @ " << m.location << std::endl;
-    }
+    for(auto m : TypedefDecls)
+        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
     std::cout << "\033[33mType aliases found:\033[0m\n";
-    for(Match<clang::Decl> m : TypeAliasDecls){
+    for(Match<clang::Decl> m : TypeAliasDecls)
         std::cout << getDeclName(m) << " @ " << m.location << std::endl;
-    }
     std::cout << "\033[33m\"Typedef templates\" found:\033[0m\n";
-    for(auto m : TypedefTemplateDecls){
+    for(auto m : TypedefTemplateDecls)
         std::cout << getDeclName(m) << " @ " << m.location << std::endl;
-    }
     std::cout << "\033[33mTypedefs from \"Typedef templates\"\033[0m\n";
-    for(auto m : td){
+    for(auto m : td)
         std::cout << getDeclName(m) << " @ " << m.location << std::endl;
-    }
     std::cout << "\033[33mType alias templates found:\033[0m\n";
-    for(auto m : TypeAliasTemplateDecls){
+    for(auto m : TypeAliasTemplateDecls)
         std::cout << getDeclName(m) << " @ " << m.location << std::endl;
-    }
 }
 void UsingAnalysis::run(){
     std::cout << "\033[32mRunning UsingAnalysis:\033[0m" << std::endl;

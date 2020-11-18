@@ -11,6 +11,9 @@ struct Match {
     unsigned location;
     const T* node;
     clang::ASTContext* ctxt;
+    bool operator==(Match<T> m){
+        return (location == m.location && node == m.node && ctxt == m.ctxt);
+    }
 };
 
 template<typename T>
@@ -27,7 +30,7 @@ public:
     Matches<T> matches;
 private:
     void resetState();
-    std::string matcherid;
+    std::string matcherid
 };
 
 //-----------------------------------------------------------------------------
