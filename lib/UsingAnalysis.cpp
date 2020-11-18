@@ -60,7 +60,7 @@ void UsingAnalysis::extract() {
         // Must have typedefDecl
         // has() will ensure only first typedef is matched. if want to allow
         // for multiple typedefs in a template, we have to use forEach()
-        has(typedefDecl(isPublic()).bind("td")),
+        forEach(typedefDecl().bind("td")),
         // Must not have decl that is not typedef, access specifier or cxxrecord
         unless(has(decl(
             unless(anyOf(

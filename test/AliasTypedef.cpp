@@ -27,6 +27,13 @@ struct Tpair_typedef {
     typedef tuple<T> type;
 };
 
+// Sure, why won't you have 2 typedefs in there?
+template<typename T>
+struct Tpair_typedef1 {
+    typedef tuple<T> type;
+    typedef tuple<T> type2;
+};
+
 // Not a "typedef template" since it contains no tyedef
 template<typename T>
 struct empty {
@@ -47,6 +54,7 @@ struct Tpair_typedef3 {
 };
 
 // "typedef template" since access specifier is public
+// Also a good example of a "typedef template".
 template<typename T>
 class Tpair_typedef4 {
 public:
@@ -54,24 +62,25 @@ public:
 };
 Tpair_typedef4<int>::type test;
 
-// Not considered "typedef template" since only itself and derived classes can
-// use it.
-// Note that then the typedef contained is then counted as a regular typedef.
+// "typedef template" since itself and derived classes can use it.
+// Derived classes can use any way they like, itself can only use it to typedef
+// other types, otherwise it isn't a "typedef" template anymore.
+// Untypical example
 template<typename T>
 class Tpair_typedef5 {
 protected:
     typedef tuple<T> type;
 };
+// Tpair_typedef5<int>::type test51; illegal, type is protected
 template<typename T>
 class der : public Tpair_typedef5<T> {
-    Tpair_typedef5<int>::type tuple;
+    Tpair_typedef5<int>::type type2;
 };
 
-// Depends on perspective. For now, I don't consider private typedefs to be
-// "typedef templates", since they can only be used by other typedefs in the
-// class template. Any other statement would cause it not to be a "typedef
-// template" anymore.
-// Note that then the typedef contained is then counted as a regular typedef.
+// Considered a "typedef template", because can declare a second public typedef
+// inside of class which can then be seen a normal "template typedef" free
+// to be used by anyone.
+// Untypical example
 template<typename T>
 class Tpair_typedef6 {
 private:
@@ -79,7 +88,8 @@ private:
 public:
     typedef Tpair_typedef6<T>::type type2;
 };
-Tpair_typedef6<float>::type2 test6;
+// Tpair_typedef6<float>::type2 test61; // illegal, type2 is private
+Tpair_typedef6<float>::type2 test62;
 
 // alias template
 template<typename T>
