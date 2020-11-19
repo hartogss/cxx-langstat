@@ -19,24 +19,42 @@ Match<T>::Match(unsigned location, const T* node, clang::ASTContext* ctxt) :
 //-----------------------------------------------------------------------------
 
 template<typename T>
-MatchingExtractor<T>::MatchingExtractor(std::string id) : matcherid(id){
+MatchingExtractor<T>::MatchingExtractor(std::string id) : matcherids(){
+    matcherids.emplace_back(id);
     std::cout<<"MatchingExtractor ctor"<<std::endl;
+}
+template<typename ...Types>
+auto construct(Types... ids){
+    if constexpr(sizeof...(Types) > 0){
+        return std::vector<std::string>{ids...};
+    } else
+        return std::vector<std::string>();
+}
+
+template<typename T>
+template<typename ...Types>
+MatchingExtractor<T>::MatchingExtractor(Types... ids) :
+    matcherids(construct(ids...)),
+    matches(std::array<Matches<T>, sizeof...(Types)>()){
+        std::cout<<"MatchingExtractor special ctor"<<std::endl;
 }
 template<typename T>
 void MatchingExtractor<T>::run(const MatchFinder::MatchResult &Result) {
-    if(const T* node = Result.Nodes.getNodeAs<T>(this->matcherid)) {
-        ASTContext* Context = Result.Context;
-        unsigned Location = Context->getFullLoc(node->getBeginLoc()).getLineNumber();
-        // const char* StmtKind = node->getStmtClassName();
-        Match<T> m(Location, node, Context);
-        matches.emplace_back(m);
-    } else {
-        std::cout << "Error extracting type" << std::endl;
+    for (auto matcherid : this->matcherids) {
+        if(const T* node = Result.Nodes.getNodeAs<T>(matcherid)) {
+            ASTContext* Context = Result.Context;
+            unsigned Location = Context->getFullLoc(node->getBeginLoc()).getLineNumber();
+            // const char* StmtKind = node->getStmtClassName();
+            Match<T> m(Location, node, Context);
+            matches[0].emplace_back(m);
+        } else {
+            std::cout << "Error extracting type" << std::endl;
+        }
     }
 }
 template<typename T>
 void MatchingExtractor<T>::resetState(){
-    matches.clear(); // does this ensure no memory leak?
+    // matches.clear(); // does this ensure no memory leak?
 }
 
 //-----------------------------------------------------------------------------
@@ -46,6 +64,8 @@ void MatchingExtractor<T>::resetState(){
 // This is called explicit instantiation
 template class MatchingExtractor<clang::Stmt>;
 template class MatchingExtractor<clang::Decl>;
+
+template MatchingExtractor<clang::Decl>::MatchingExtractor(char const*, char const*);
 
 // not necessary, because constructed by MatchingExtractor
 // template struct Match<clang::Stmt>;

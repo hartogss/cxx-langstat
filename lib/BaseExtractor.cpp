@@ -20,7 +20,7 @@ Matches<Stmt> BaseExtractor::extract(std::string id,
         MatchFinder Finder;
         Finder.addMatcher(Matcher, &extr);
         Finder.matchAST(Context);
-        return extr.matches;
+        return extr.matches[0];
 }
 Matches<Decl> BaseExtractor::extract(std::string id,
     DeclarationMatcher Matcher){
@@ -28,7 +28,21 @@ Matches<Decl> BaseExtractor::extract(std::string id,
         MatchFinder Finder;
         Finder.addMatcher(Matcher, &extr);
         Finder.matchAST(Context);
+        return extr.matches[0];
+}
+template<typename M, typename ...Types>
+std::array<Matches<clang::Decl>, sizeof...(Types)>
+BaseExtractor::extract2(M Matcher,
+    Types... ids){
+        MatchingExtractor<Decl> extr(ids...);
+        MatchFinder Finder;
+        Finder.addMatcher(Matcher, &extr);
+        Finder.matchAST(Context);
         return extr.matches;
 }
+
+template
+std::array<Matches<clang::Decl>, 2> BaseExtractor::extract2<DeclarationMatcher, char const*, char const*>(DeclarationMatcher,
+    char const*, char const*);
 
 //-----------------------------------------------------------------------------

@@ -25,12 +25,14 @@ template<typename T>
 class MatchingExtractor : public clang::ast_matchers::MatchFinder::MatchCallback {
 public:
     MatchingExtractor(std::string id);
+    template<typename ...Types>
+    MatchingExtractor(Types... ids);
     // Run when match is found after extract call with Matcher
     virtual void run(const clang::ast_matchers::MatchFinder::MatchResult &Result);
-    Matches<T> matches;
+    std::array<Matches<T>, 2> matches;
 private:
     void resetState();
-    std::string matcherid
+    std::vector<std::string> matcherids;
 };
 
 //-----------------------------------------------------------------------------
