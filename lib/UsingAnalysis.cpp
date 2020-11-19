@@ -104,7 +104,6 @@ void UsingAnalysis::extract() {
     analyze();
 }
 void UsingAnalysis::analyze(){
-    std::cout << "\033[33mTypedef found:\033[0m " << TypedefDecls.size() << "\n";
     printStatistics("Typedef found:", TypedefDecls);
     printStatistics("Type aliases found:", TypeAliasDecls);
     printStatistics("\"Typedef templates\" found:", TypedefTemplateDecls);
