@@ -16,6 +16,12 @@ std::string getDeclName(Match<clang::Decl> node){
     }
 }
 
+void printStatistics(std::string text, Matches<clang::Decl> matches){
+    std::cout << "\033[33m" << text << "\033[0m " << matches.size() << "\n";
+    for(auto m : matches)
+        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
+}
+
 //-----------------------------------------------------------------------------
 // Question: Did programmers abandon typedef in favor of aliases (e.g.
 // using newType = oldType<int> )?
@@ -98,22 +104,12 @@ void UsingAnalysis::extract() {
     analyze();
 }
 void UsingAnalysis::analyze(){
-    std::cout << "\033[33mTypedef found:\033[0m\n";
-    std::cout << TypedefDecls.size() << std::endl;
-    for(auto m : TypedefDecls)
-        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
-    std::cout << "\033[33mType aliases found:\033[0m\n";
-    for(Match<clang::Decl> m : TypeAliasDecls)
-        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
-    std::cout << "\033[33m\"Typedef templates\" found:\033[0m\n";
-    for(auto m : TypedefTemplateDecls)
-        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
-    std::cout << "\033[33mTypedefs from \"Typedef templates\"\033[0m\n";
-    for(auto m : td)
-        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
-    std::cout << "\033[33mType alias templates found:\033[0m\n";
-    for(auto m : TypeAliasTemplateDecls)
-        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
+    std::cout << "\033[33mTypedef found:\033[0m " << TypedefDecls.size() << "\n";
+    printStatistics("Typedef found:", TypedefDecls);
+    printStatistics("Type aliases found:", TypeAliasDecls);
+    printStatistics("\"Typedef templates\" found:", TypedefTemplateDecls);
+    printStatistics("Typedefs from \"Typedef templates\":", td);
+    printStatistics("Type alias templates found:", TypeAliasTemplateDecls);
 }
 void UsingAnalysis::run(){
     std::cout << "\033[32mRunning UsingAnalysis:\033[0m" << std::endl;

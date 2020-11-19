@@ -30,7 +30,7 @@ public:
     Matches<T> matches;
 private:
     void resetState();
-    std::string matcherid
+    std::string matcherid;
 };
 
 //-----------------------------------------------------------------------------
