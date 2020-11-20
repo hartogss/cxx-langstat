@@ -11,24 +11,27 @@ struct Match {
     unsigned location;
     const T* node;
     clang::ASTContext* ctxt;
+    bool operator==(Match<T> m){
+        return (location == m.location && node == m.node && ctxt == m.ctxt);
+    }
 };
 
 template<typename T>
 using Matches = std::vector<Match<T>>; // allows to do Matches<T>
 
 //-----------------------------------------------------------------------------
-
-template<typename T>
+// Callback class executed on match
+template<typename T, typename ...Types>
 class MatchingExtractor : public clang::ast_matchers::MatchFinder::MatchCallback {
 public:
-    MatchingExtractor(clang::tooling::ClangTool Tool, std::string id);
+    MatchingExtractor(std::string id);
+    MatchingExtractor(Types... ids);
     // Run when match is found after extract call with Matcher
     virtual void run(const clang::ast_matchers::MatchFinder::MatchResult &Result);
-    Matches<T> matches;
+    std::array<Matches<T>, sizeof...(Types)> matches;
 private:
     void resetState();
-    clang::tooling::ClangTool Tool;
-    std::string matcherid;
+    std::vector<std::string> matcherids;
 };
 
 //-----------------------------------------------------------------------------

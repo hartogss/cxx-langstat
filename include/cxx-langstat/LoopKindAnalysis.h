@@ -5,7 +5,7 @@
 
 class LoopKindAnalysis : public Analysis {
 public:
-    LoopKindAnalysis(clang::tooling::ClangTool Tool);
+    LoopKindAnalysis(clang::ASTContext& Context);
     void extract() override;
     void analyze() override;
     void run() override;

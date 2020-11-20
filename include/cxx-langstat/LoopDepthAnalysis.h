@@ -11,7 +11,7 @@
 // need analysis object since we want other analysis to inherit interface
 class LoopDepthAnalysis : public Analysis {
 public:
-    LoopDepthAnalysis(clang::tooling::ClangTool Tool, int MaxDepthOption);
+    LoopDepthAnalysis(clang::ASTContext& Context, int MaxDepthOption);
     // step 0: createMatcher(s)/getMatchers? idea is to have library of often-used
     // matchers or maybe even some datastructure of important matches itself
     // step 1: extraction
@@ -33,4 +33,4 @@ private:
 
 //-----------------------------------------------------------------------------
 
-#endif /* LOOPDEPTHANALYSIS_H */
+#endif // LOOPDEPTHANALYSIS_H

@@ -13,7 +13,7 @@ using namespace clang::ast_matchers;
 //-----------------------------------------------------------------------------
 
 CyclomaticComplexityAnalysis::CyclomaticComplexityAnalysis
-(clang::tooling::ClangTool Tool) : Analysis(Tool){
+(clang::ASTContext& Context) : Analysis(Context){
 
 }
 void CyclomaticComplexityAnalysis::extract(){
@@ -39,7 +39,8 @@ void CyclomaticComplexityAnalysis::extract(){
             numEdges += (*block)->succ_size();
         }
         unsigned CYC = numEdges - numNodes + 2; // 2 since #connected components P=1
-        std::cout << dyn_cast<clang::NamedDecl>(match.node)->getNameAsString() << " has CYC " << CYC << std::endl;
+        std::cout << dyn_cast<clang::NamedDecl>(match.node)->getNameAsString()
+            << " has CYC " << CYC << std::endl;
     }
 }
 void CyclomaticComplexityAnalysis::analyze(){

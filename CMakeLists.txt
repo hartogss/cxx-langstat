@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.18.3)
 # Sets ${PROJECT_NAME}
 project(cxx-langstat)
 # Define executable to be built
-add_executable(${PROJECT_NAME} Langstat.cpp)
+add_executable(${PROJECT_NAME} Driver.cpp)
 
 # ---- Compiler ----
 # C++17
@@ -37,8 +37,8 @@ execute_process(COMMAND llvm-config --libs
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-find_package(clang REQUIRED CONFIG)
-message(STATUS "Using ClangConfig.cmake in: ${clang_DIR}")
+# find_package(clang REQUIRED CONFIG)
+# message(STATUS "Using ClangConfig.cmake in: ${clang_DIR}")
 
 string(REPLACE "-l" "" llvm_libs ${llvm_libs})
 string(REPLACE " " ";" llvm_libs ${llvm_libs})
@@ -90,22 +90,22 @@ target_link_directories(${PROJECT_NAME} PUBLIC lib/)
 # ---- Link everything together ----
 # Link custom libraries
 target_link_libraries(${PROJECT_NAME}
-    LoopDepthAnalysis
+    BaseExtractor MatchingExtractor
     CyclomaticComplexityAnalysis
+    LoopDepthAnalysis
     LoopKindAnalysis
     UsingAnalysis
-    TestAnalysis
-    BaseExtractor MatchingExtractor)
+    )
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
 # target_link_libraries(${PROJECT_NAME} ${clang_tidy_libs})
 
 # Extra linking needed on ubuntu, not necessary on macOS(macOS doesn't dislike them either)
-target_link_libraries(LoopDepthAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
-target_link_libraries(CyclomaticComplexityAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
-target_link_libraries(TestAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(MatchingExtractor ${llvm_libs} ${clang_libs})
+target_link_libraries(CyclomaticComplexityAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+target_link_libraries(LoopDepthAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+target_link_libraries(TestAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 
 # trying to add target to emit ast s.t. I can apply analyses to themselves
 # add_custom_target(TARGET cca POST_BUILD

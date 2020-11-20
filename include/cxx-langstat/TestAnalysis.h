@@ -11,7 +11,7 @@
 // need analysis object since we want other analysis to inherit interface
 class TestAnalysis : public Analysis {
 public:
-    TestAnalysis(clang::tooling::ClangTool Tool);
+    TestAnalysis(clang::ASTContext& Context);
     // step 0: createMatcher(s)/getMatchers? idea is to have library of often-used
     // matchers or maybe even some datastructure of important matches itself
     // step 1: extraction
@@ -28,4 +28,4 @@ void runclangtidy();
 
 //-----------------------------------------------------------------------------
 
-#endif /* TESTANALYSIS_H */
+#endif // TESTANALYSIS_H

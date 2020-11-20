@@ -5,14 +5,12 @@
 #include "clang-tidy/ClangTidy.h"
 #include "clang-tidy/tool/ClangTidyMain.h"
 
-
 using namespace clang::ast_matchers;
-using namespace clang::tooling; // ClangTool
 
 //-----------------------------------------------------------------------------
 
 // TODO: why parent ctor?
-TestAnalysis::TestAnalysis(ClangTool Tool) : Analysis(Tool) {
+TestAnalysis::TestAnalysis(clang::ASTContext& Context) : Analysis(Context) {
 }
 // step 1: extraction
 void TestAnalysis::extract() {
