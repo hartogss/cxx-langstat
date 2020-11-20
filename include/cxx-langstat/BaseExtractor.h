@@ -16,9 +16,9 @@ public :
         clang::ast_matchers::StatementMatcher Matcher);
     Matches<clang::Decl> extract(std::string id,
         clang::ast_matchers::DeclarationMatcher Matcher);
-    template<typename M, typename ...Types>
-    std::array<Matches<clang::Decl>, sizeof...(Types)> extract2(M Matcher,
-        Types... ids);
+    template<typename MatcherType, typename ...Types>
+    std::array<Matches<clang::Decl>, sizeof...(Types)>
+    extract2(MatcherType Matcher, Types... ids);
 private:
     clang::ASTContext& Context;
 };
