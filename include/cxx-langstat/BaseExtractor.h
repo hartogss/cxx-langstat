@@ -16,9 +16,24 @@ public :
         clang::ast_matchers::StatementMatcher Matcher);
     Matches<clang::Decl> extract(std::string id,
         clang::ast_matchers::DeclarationMatcher Matcher);
+    template<typename NodeType, typename ...Types>
+    std::array<Matches<NodeType>, sizeof...(Types)>
+    extract2(clang::ast_matchers::internal::Matcher<NodeType> Matcher, Types... ids);
 private:
     clang::ASTContext& Context;
 };
+
+// Implementation s.t. explicit instantiation is not necessary
+// Might move this to a BaseExtractor.tpp file
+template<typename NodeType, typename ...Types>
+std::array<Matches<NodeType>, sizeof...(Types)>
+BaseExtractor::extract2(clang::ast_matchers::internal::Matcher<NodeType> Matcher, Types... ids){
+        MatchingExtractor<NodeType, Types...> extr(ids...);
+        clang::ast_matchers::MatchFinder Finder;
+        Finder.addMatcher(Matcher, &extr);
+        Finder.matchAST(Context);
+        return extr.matches;
+}
 
 //-----------------------------------------------------------------------------
 

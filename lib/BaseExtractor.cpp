@@ -16,19 +16,19 @@ BaseExtractor::BaseExtractor(clang::ASTContext& Context) : Context(Context){
 }
 Matches<Stmt> BaseExtractor::extract(std::string id,
     StatementMatcher Matcher){
-        MatchingExtractor<Stmt> extr(id);
+        MatchingExtractor<Stmt, const char*> extr(id);
         MatchFinder Finder;
         Finder.addMatcher(Matcher, &extr);
         Finder.matchAST(Context);
-        return extr.matches;
+        return extr.matches[0];
 }
 Matches<Decl> BaseExtractor::extract(std::string id,
     DeclarationMatcher Matcher){
-        MatchingExtractor<Decl> extr(id);
+        MatchingExtractor<Decl, const char*> extr(id);
         MatchFinder Finder;
         Finder.addMatcher(Matcher, &extr);
         Finder.matchAST(Context);
-        return extr.matches;
+        return extr.matches[0];
 }
 
 //-----------------------------------------------------------------------------
