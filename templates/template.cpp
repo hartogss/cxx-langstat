@@ -4,7 +4,6 @@
 #include "template.h"
 
 using namespace clang::ast_matchers;
-using namespace clang::tooling;
 
 //-----------------------------------------------------------------------------
 
@@ -18,6 +17,7 @@ void Template::analyze(){
 
 }
 //step 3: visualization (for later)
+
 // combine
 void Template::run(){
 }
