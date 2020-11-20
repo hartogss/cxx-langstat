@@ -62,13 +62,12 @@ void MatchingExtractor<T, Types...>::resetState(){
 // Request instantiations of MatchingExtractor template s.t. linker can find them
 // Bad: have to do this for every instantiation needed
 // This is called explicit instantiation
-template class MatchingExtractor<clang::Stmt, const char*>;
-template class MatchingExtractor<clang::Decl, const char*>;
-
-template class
-MatchingExtractor<clang::Decl, const char*, const char*>;
-template class
-MatchingExtractor<clang::Decl, const char*, const char*, const char*>;
+template class MatchingExtractor<Stmt, const char*>;
+template class MatchingExtractor<Stmt, const char*, const char*>;
+template class MatchingExtractor<Stmt, const char*, const char*, const char*>;
+template class MatchingExtractor<Decl, const char*>;
+template class MatchingExtractor<Decl, const char*, const char*>;
+template class MatchingExtractor<Decl, const char*, const char*, const char*>;
 
 
 // not necessary, because constructed by MatchingExtractor
