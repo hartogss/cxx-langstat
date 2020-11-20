@@ -18,7 +18,10 @@ CyclomaticComplexityAnalysis::CyclomaticComplexityAnalysis
 }
 void CyclomaticComplexityAnalysis::extract(){
     auto id = "fd";
-    auto fDecl = functionDecl().bind(id);
+    auto fDecl = functionDecl(
+        unless(isImplicit()), // Should not be compiler-generated
+        has(compoundStmt()))  // Should be defined, i.e have a body
+    .bind(id);
     auto matches = Extr.extract(id, fDecl);
     for(auto match : matches){
         // http://clang.llvm.org/doxygen/classclang_1_1CFG.html#details
