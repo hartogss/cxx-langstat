@@ -65,12 +65,10 @@ void MatchingExtractor<T, Types...>::resetState(){
 template class MatchingExtractor<clang::Stmt, const char*>;
 template class MatchingExtractor<clang::Decl, const char*>;
 
-template
-MatchingExtractor<clang::Decl, const char*, const char*>::
-MatchingExtractor(char const*, char const*);
-template
-MatchingExtractor<clang::Decl, const char*, const char*, const char*>::
-MatchingExtractor(char const*, char const*, const char*);
+template class
+MatchingExtractor<clang::Decl, const char*, const char*>;
+template class
+MatchingExtractor<clang::Decl, const char*, const char*, const char*>;
 
 
 // not necessary, because constructed by MatchingExtractor

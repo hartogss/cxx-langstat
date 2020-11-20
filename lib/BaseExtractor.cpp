@@ -40,11 +40,14 @@ BaseExtractor::extract2(MatcherType Matcher, Types... ids){
         return extr.matches;
 }
 
+// explicit instantiations of extract method
 template
-std::array<Matches<clang::Decl>, 2> BaseExtractor::extract2<DeclarationMatcher, const char*, const char*>(DeclarationMatcher,
-    const char*, const char*);
+std::array<Matches<clang::Decl>, 2>
+BaseExtractor::extract2<DeclarationMatcher, const char*, const char*>
+(DeclarationMatcher, const char*, const char*);
 template
-std::array<Matches<clang::Decl>, 3> BaseExtractor::extract2<DeclarationMatcher, const char*, const char*, const char*>(DeclarationMatcher,
-    const char*, const char*, const char*);
+std::array<Matches<clang::Decl>, 3>
+BaseExtractor::extract2<DeclarationMatcher, const char*, const char*, const char*>
+(DeclarationMatcher, const char*, const char*, const char*);
 
 //-----------------------------------------------------------------------------
