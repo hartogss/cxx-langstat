@@ -30,24 +30,5 @@ Matches<Decl> BaseExtractor::extract(std::string id,
         Finder.matchAST(Context);
         return extr.matches[0];
 }
-template<typename MatcherType, typename ...Types>
-std::array<Matches<Decl>, sizeof...(Types)>
-BaseExtractor::extract2(MatcherType Matcher, Types... ids){
-        MatchingExtractor<Decl, Types...> extr(ids...);
-        MatchFinder Finder;
-        Finder.addMatcher(Matcher, &extr);
-        Finder.matchAST(Context);
-        return extr.matches;
-}
-
-// explicit instantiations of extract method
-template
-std::array<Matches<clang::Decl>, 2>
-BaseExtractor::extract2<DeclarationMatcher, const char*, const char*>
-(DeclarationMatcher, const char*, const char*);
-template
-std::array<Matches<clang::Decl>, 3>
-BaseExtractor::extract2<DeclarationMatcher, const char*, const char*, const char*>
-(DeclarationMatcher, const char*, const char*, const char*);
 
 //-----------------------------------------------------------------------------
