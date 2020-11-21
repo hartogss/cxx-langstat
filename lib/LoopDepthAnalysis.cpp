@@ -24,32 +24,25 @@ StatementMatcher constructForMatcher(std::string Name, int d){
 
 // Constructs matcher that exactly matches mixed loops with depth d (nesting depth)
 StatementMatcher constructMixedMatcher(std::string Name, int d){
+    auto loopStmt = [](auto m){
+        return stmt(anyOf(forStmt(m), whileStmt(m), doStmt(m)));
+    };
     StatementMatcher NumOfDescendantsAtLeastD = anything();
     int i=1;
     while(i<d){
-        NumOfDescendantsAtLeastD = hasDescendant(stmt(anyOf(
-            forStmt(NumOfDescendantsAtLeastD),
-            whileStmt(NumOfDescendantsAtLeastD),
-            doStmt(NumOfDescendantsAtLeastD))));
+        NumOfDescendantsAtLeastD = hasDescendant(
+            loopStmt(NumOfDescendantsAtLeastD));
         i++;
     }
-    StatementMatcher NumOfDescendantsAtLeastDPlus1 = hasDescendant(stmt(anyOf(
-            forStmt(NumOfDescendantsAtLeastD),
-            whileStmt(NumOfDescendantsAtLeastD),
-            doStmt(NumOfDescendantsAtLeastD))));
+    StatementMatcher NumOfDescendantsAtLeastDPlus1 =
+        hasDescendant(loopStmt(NumOfDescendantsAtLeastD));
     StatementMatcher NumOfDescendantsExactlyD =
         allOf(NumOfDescendantsAtLeastD, unless(NumOfDescendantsAtLeastDPlus1));
-    StatementMatcher IsOuterMostLoop = unless(hasAncestor(stmt(anyOf(
-        forStmt(),
-        whileStmt(),
-        doStmt()))));
+    StatementMatcher IsOuterMostLoop =
+        unless(hasAncestor(loopStmt(anything())));
     StatementMatcher LoopHasExactlyDepthD =
         allOf(IsOuterMostLoop, NumOfDescendantsExactlyD);
-
-    return stmt(anyOf(
-        forStmt(LoopHasExactlyDepthD),
-        whileStmt(LoopHasExactlyDepthD),
-        doStmt(LoopHasExactlyDepthD))).bind(Name);
+    return loopStmt(LoopHasExactlyDepthD).bind(Name);
 }
 
 //-----------------------------------------------------------------------------
