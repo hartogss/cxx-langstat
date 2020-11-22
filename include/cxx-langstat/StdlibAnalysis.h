@@ -7,7 +7,7 @@
 
 class StdlibAnalysis : public Analysis {
 public:
-    StdlibAnalysis(clang::tooling::ClangTool Tool);
+    StdlibAnalysis(clang::ASTContext& Context);
     void extract() override;
     void analyze() override;
     void run() override;

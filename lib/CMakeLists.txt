@@ -1,8 +1,9 @@
-# add_library(Extraction Extraction.cpp)
-add_library(LoopDepthAnalysis LoopDepthAnalysis.cpp)
-add_library(TestAnalysis TestAnalysis.cpp)
 add_library(BaseExtractor BaseExtractor.cpp)
 add_library(MatchingExtractor MatchingExtractor.cpp)
+
 add_library(CyclomaticComplexityAnalysis CyclomaticComplexityAnalysis.cpp)
+add_library(LoopDepthAnalysis LoopDepthAnalysis.cpp)
 add_library(LoopKindAnalysis LoopKindAnalysis.cpp)
+add_library(StdlibAnalysis StdlibAnalysis.cpp)
+add_library(TestAnalysis TestAnalysis.cpp)
 add_library(UsingAnalysis UsingAnalysis.cpp)

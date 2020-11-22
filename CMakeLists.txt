@@ -45,37 +45,12 @@ string(REPLACE " " ";" llvm_libs ${llvm_libs})
 # message(STATUS "LLVM libs: $${llvm_libs}")
 # Set clang_libs
 set(clang_libs
-    clangFrontendTool
-    clangRewriteFrontend
-    clangDynamicASTMatchers
-    clangTooling
-    clangFrontend
-    clangToolingCore
-    clangASTMatchers
-    clangParse
-    clangDriver
-    clangSerialization
-    clangRewrite
-    clangSema
-    clangEdit
-    clangAnalysis
-    clangAST
-    clangLex
-    clangBasic
+    clangFrontendTool clangRewriteFrontend clangDynamicASTMatchers
+    clangTooling clangFrontend clangToolingCore clangASTMatchers
+    clangParse clangDriver clangSerialization clangRewrite clangSema
+    clangEdit clangAnalysis clangAST clangLex clangBasic
 )
 # message(STATUS "Clang libs: $${clang_libs}")
-
-set(clang_tidy_libs
-clangTidy;clangTidyAndroidModule;clangTidyAbseilModule;clangTidyBoostModule;
-clangTidyBugproneModule;clangTidyCERTModule;clangTidyCppCoreGuidelinesModule;
-clangTidyDarwinModule;clangTidyFuchsiaModule;clangTidyGoogleModule;clangTidyHICPPModule;
-clangTidyLinuxKernelModule;clangTidyLLVMModule;clangTidyLLVMLibcModule;clangTidyMiscModule;
-clangTidyModernizeModule;clangTidyMPIModule;clangTidyObjCModule;clangTidyOpenMPModule;
-clangTidyPerformanceModule;clangTidyPortabilityModule;clangTidyReadabilityModule;
-clangTidyZirconModule;clangTidyPlugin;clangTidyMain;clangTidyUtils;
-)
-# message(STATUS "Clang-tidy libs: ${clang_tidy_libs}")
-
 
 # ---- My library & includes ----
 # Directory to search for include files
@@ -94,6 +69,7 @@ target_link_libraries(${PROJECT_NAME}
     CyclomaticComplexityAnalysis
     LoopDepthAnalysis
     LoopKindAnalysis
+    StdlibAnalysis
     UsingAnalysis
     )
 # Link LLVM & Clang libs
@@ -106,6 +82,26 @@ target_link_libraries(MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(CyclomaticComplexityAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(LoopDepthAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(TestAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+
+
+
+
+
+
+
+
+# Testing, not yet already
+# clangtidy libs I could once need
+set(clang_tidy_libs
+clangTidy;clangTidyAndroidModule;clangTidyAbseilModule;clangTidyBoostModule;
+clangTidyBugproneModule;clangTidyCERTModule;clangTidyCppCoreGuidelinesModule;
+clangTidyDarwinModule;clangTidyFuchsiaModule;clangTidyGoogleModule;clangTidyHICPPModule;
+clangTidyLinuxKernelModule;clangTidyLLVMModule;clangTidyLLVMLibcModule;clangTidyMiscModule;
+clangTidyModernizeModule;clangTidyMPIModule;clangTidyObjCModule;clangTidyOpenMPModule;
+clangTidyPerformanceModule;clangTidyPortabilityModule;clangTidyReadabilityModule;
+clangTidyZirconModule;clangTidyPlugin;clangTidyMain;clangTidyUtils;
+)
+# message(STATUS "Clang-tidy libs: ${clang_tidy_libs}")
 
 # trying to add target to emit ast s.t. I can apply analyses to themselves
 # add_custom_target(TARGET cca POST_BUILD

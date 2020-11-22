@@ -12,6 +12,7 @@
 #include "cxx-langstat/CyclomaticComplexityAnalysis.h"
 #include "cxx-langstat/LoopDepthAnalysis.h"
 #include "cxx-langstat/LoopKindAnalysis.h"
+#include "cxx-langstat/StdlibAnalysis.h"
 #include "cxx-langstat/UsingAnalysis.h"
 
 using namespace clang;
@@ -26,18 +27,21 @@ public:
     // Called when AST for TU is ready/has been parsed
     void HandleTranslationUnit(clang::ASTContext& Context){
         std::cout << "Handling the translation unit" << std::endl;
+        //
+        // CyclomaticComplexityAnalysis CCA(Context);
+        // CCA.run();
+        //
+        // LoopDepthAnalysis LDA(Context, 4);
+        // LDA.run();
+        //
+        // LoopKindAnalysis LKA(Context);
+        // LKA.run();
+        //
+        // UsingAnalysis UA(Context);
+        // UA.run();
 
-        CyclomaticComplexityAnalysis CCA(Context);
-        CCA.run();
-
-        LoopDepthAnalysis LDA(Context, 4);
-        LDA.run();
-
-        LoopKindAnalysis LKA(Context);
-        LKA.run();
-
-        UsingAnalysis UA(Context);
-        UA.run();
+        StdlibAnalysis SLA(Context);
+        SLA.run();
     }
 };
 
