@@ -19,13 +19,21 @@ int main(int argc, char** argv){
 
     // vector<float> badvec;
 
+    // template<typename T>
+    // array<T, 2> Tarr;
+
     using namespace std;
     array<float, 3> badarr;
+    array<std::vector<int>, 3> badarr2;
+    vector<bool> badvec;
+
+
 
     // Do we include parameter variable decls?
     // Do we include variable template decls?
     // declarations vs definitions, how do we count them?
     // what about pointer to standard library types?
     // qualifiers? access specifiers? static? extern?
+    // explicit use of 'struct' keyword, namespaces?
 
 }
