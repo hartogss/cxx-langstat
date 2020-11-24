@@ -71,6 +71,7 @@ target_link_libraries(${PROJECT_NAME}
     LoopKindAnalysis
     StdlibAnalysis
     UsingAnalysis
+    VariableTemplateAnalysis
     )
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
