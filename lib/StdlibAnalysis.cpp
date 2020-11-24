@@ -2,6 +2,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include "llvm/Support/raw_ostream.h"
+
 #include "cxx-langstat/StdlibAnalysis.h"
 
 using namespace clang;
@@ -32,6 +34,7 @@ std::string getBaseType(const DeclaratorDecl* Node){
     else
         return "unknown";
 }
+// http://llvm.org/doxygen/classllvm_1_1raw__string__ostream.html
 std::string getInnerType(const DeclaratorDecl* Node){
     auto QualType = Node->getType();
     // Pointer to underlying unqualified type
@@ -44,9 +47,20 @@ std::string getInnerType(const DeclaratorDecl* Node){
     }
     // Is it always a templatespecializationtype?
     if(auto t = dyn_cast<TemplateSpecializationType>(TypePtr)){
-        const TemplateArgument* Targs = t->getArgs();
-        auto QualType = Targs->getAsType();
-        return QualType->getLocallyUnqualifiedSingleStepDesugaredType().getAsString();
+        auto numTargs = t->getNumArgs();
+        std::string res = "";
+        if(numTargs>1)
+            res.append("(");
+        for(unsigned idx=0; idx<numTargs; idx++){
+            if(idx)
+                res.append(",");
+            auto Targ = t->getArg(idx);
+            llvm::raw_string_ostream OS(res);
+            Targ.dump(OS);
+        }
+        if(numTargs>1)
+            res.append(")");
+        return res;
     } else {
         return "fail";
     }
@@ -121,8 +135,11 @@ void printStats(std::string text, Matches<Decl> Matches){
     for(auto [key, val] : ContainerOccurrences){
         std::cout << key << "(" << val << "): ";
         auto range = ContainerOfTypes.equal_range(key);
-        for (auto it = range.first; it != range.second; it++)
-            std::cout << it->second << ", ";
+        for (auto it = range.first; it != range.second; it++){
+            if(it!=range.first)
+                std::cout << ", ";
+            std::cout << it->second;
+        }
         std::cout << std::endl;
     }
 }
