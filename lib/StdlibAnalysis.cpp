@@ -29,12 +29,23 @@ std::string getCompleteType(const DeclaratorDecl* Node){
     return Node->getType().getAsString();
 }
 std::string getBaseType(const DeclaratorDecl* Node){
-    if(auto BTI = Node->getType().getBaseTypeIdentifier())
-        return BTI->getName().str();
-    else
-        return "unknown";
+    auto QualType = Node->getType();
+    const Type* TypePtr = QualType.getTypePtr();
+    if(auto ElaboratedTypePtr = dyn_cast<ElaboratedType>(TypePtr)){
+        TypePtr = ElaboratedTypePtr->getNamedType().getTypePtr();
+    }
+    if(auto t = dyn_cast<TemplateSpecializationType>(TypePtr)){
+        std::string res = "";
+        llvm::raw_string_ostream OS(res);
+        t->getTemplateName().dump(OS);
+        return res;
+    } else {
+        return "fail";
+    }
 }
 // http://llvm.org/doxygen/classllvm_1_1raw__string__ostream.html
+// Inspiration to use dump to stringify: http://clang.llvm.org/doxygen/
+// classclang_1_1TemplateArgument.html#af831654c11a86c68ec44950e1575b9c6
 std::string getInnerType(const DeclaratorDecl* Node){
     auto QualType = Node->getType();
     // Pointer to underlying unqualified type

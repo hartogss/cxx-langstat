@@ -1,6 +1,8 @@
 #include <vector>
 #include <array>
 #include <map>
+#include <set>
+#include <unordered_set>
 
 // Test with "vector" in different namespace
 // None should match
@@ -30,6 +32,7 @@ void simplefunc(){
     dvec = {2.0}; // definition has no effect
     volatile std::array<int, 4> i4arr;
     // vector<float> badvec; // will not work because of missing namespace qual.
+    std::map<float, n::vector> wmap;
 
     using namespace std;
     array<float, 3> badarr;
@@ -50,6 +53,8 @@ int func3(){
     std::vector<T> Tvec;
     return 0;
 }
+template<typename ...Ts>
+std::unordered_set<Ts...> Tsset;
 
 // Field declarations should match too, but be reported separately.
 struct s {
