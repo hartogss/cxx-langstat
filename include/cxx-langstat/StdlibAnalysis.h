@@ -11,6 +11,11 @@ public:
     void extract() override;
     void analyze() override;
     void run() override;
+private:
+    Matches<clang::Decl> VarDecls;
+    Matches<clang::Decl> StdContainerVarDecls;
+    Matches<clang::Decl> StdContainerFieldDecls;
+
 };
 
 //-----------------------------------------------------------------------------

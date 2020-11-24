@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 #include "cxx-langstat/StdlibAnalysis.h"
 
@@ -17,19 +18,21 @@ std::string getDeclName(Match<clang::Decl> m){
         return "INVALID";
     }
 }
-void printStatistics(std::string text, Matches<clang::Decl> matches){
+void printDecls(std::string text, Matches<clang::Decl> matches){
     std::cout << "\033[33m" << text << "\033[0m " << matches.size() << "\n";
     for(auto m : matches)
         std::cout << getDeclName(m) << " @ " << m.location << std::endl;
 }
-
-std::string getCompleteType(const VarDecl* Node){
+std::string getCompleteType(const DeclaratorDecl* Node){
     return Node->getType().getAsString();
 }
-std::string getBaseType(const VarDecl* Node){
-    return Node->getType().getBaseTypeIdentifier()->getName().str();
+std::string getBaseType(const DeclaratorDecl* Node){
+    if(auto BTI = Node->getType().getBaseTypeIdentifier())
+        return BTI->getName().str();
+    else
+        return "unknown";
 }
-std::string getInnerType(const VarDecl* Node){
+std::string getInnerType(const DeclaratorDecl* Node){
     auto QualType = Node->getType();
     // Pointer to underlying unqualified type
     const Type* TypePtr = QualType.getTypePtr();
@@ -41,7 +44,9 @@ std::string getInnerType(const VarDecl* Node){
     }
     // Is it always a templatespecializationtype?
     if(auto t = dyn_cast<TemplateSpecializationType>(TypePtr)){
-        return t->getArgs()->getAsType()->getLocallyUnqualifiedSingleStepDesugaredType().getAsString();
+        const TemplateArgument* Targs = t->getArgs();
+        auto QualType = Targs->getAsType();
+        return QualType->getLocallyUnqualifiedSingleStepDesugaredType().getAsString();
     } else {
         return "fail";
     }
@@ -57,62 +62,100 @@ std::string getInnerType(const VarDecl* Node){
 StdlibAnalysis::StdlibAnalysis(clang::ASTContext& Context) : Analysis(Context) {
 }
 void StdlibAnalysis::extract() {
-
-    std::array<std::string, 2> ContainerTypes = {"vector", "array"};
-    // auto isAnyStdContainer = [](){
-    //     return
-    // }
-
     // All variable declarations
-    auto Variable = varDecl(
+    DeclarationMatcher Variable = varDecl(
         isExpansionInMainFile(),
-        unless(parmVarDecl())
+        unless(hasAncestor(cxxConstructorDecl(isImplicit())))
     ).bind("vd");
-    auto varDecls = Extr.extract("vd", Variable);
-    printStatistics("Contains following variable decls:", varDecls);
-
     // Variable declarations of std container type
-    auto StdContainerVariable = varDecl(
+    auto isAnyStdContainer = hasAnyName( // Copied from UseAutoCheck.cpp
+        "array", "vector",
+        "forward_list", "list",
+        "map", "multimap",
+        "set", "multiset",
+        "unordered_map", "unordered_multimap",
+        "unordered_set", "unordered_multiset",
+        "queue", "priority_queue", "stack", "deque"
+        );
+    auto requirements = hasType(namedDecl( // previously cxxRecordDecl
+            isAnyStdContainer,
+            isInStdNamespace()));
+    DeclarationMatcher StdContainerVariable = decl(
         isExpansionInMainFile(),
-        hasType(cxxRecordDecl(
-            hasAnyName("vector", "array"),
-            isInStdNamespace())))
+        varDecl(requirements))
     .bind("stdcvd");
+    DeclarationMatcher StdContainerField = decl(
+        isExpansionInMainFile(),
+        fieldDecl(requirements))
+    .bind("stdcfd");
 
-    auto StdContainerVarDecls = Extr.extract("stdcvd", StdContainerVariable);
-    printStatistics("num variable decls", StdContainerVarDecls);
-    for(auto m : StdContainerVarDecls) {
-    // need to check that cast does not return NULL
-        if (auto Node = dyn_cast<VarDecl>(m.node)){
-            std::cout << Node->getType().getTypePtr()->getTypeClassName() << std::endl;
-            std::cout << getCompleteType(Node) << std::endl;
-            std::cout << getBaseType(Node) << std::endl;
-            std::cout << getInnerType(Node) << std::endl;
-
-
-
-            std::cout << Node->getType().getTypePtr()->getLocallyUnqualifiedSingleStepDesugaredType().getAsString() << std::endl;
-            // std::cout << Node->getType().getTypePtr()->isDependentType() << std::endl;
-            // std::cout << Node->getType().getTypePtr()->hasIntegerRepresentation() << std::endl;
-            // std::cout << Node->getType().getTypePtr()->isInstantiationDependentType() << std::endl;
-
-
-            std::cout << "--------" << std::endl;
-
-            // std::cout << Node->getType().getCanonicalType().getAsString() << std::endl;
-            // std::cout << Node->getType().getTypePtr()->getCanonicalTypeInternal().getAsString() << std::endl; // gives the same as line above, but without qualifiers since stripped away
+    VarDecls = Extr.extract("vd", Variable);
+    StdContainerVarDecls = Extr.extract("stdcvd", StdContainerVariable);
+    StdContainerFieldDecls = Extr.extract("stdcfd", StdContainerField);
+    // printDecls("Contains following variable decls:", VarDecls);
+    // printDecls("Variable decls of standard library type:", StdContainerVarDecls);
+    // printDecls("Field decls of standard library type:", StdContainerFieldDecls);
+}
+template<typename T>
+void printStats(std::string text, Matches<Decl> Matches){
+    std::cout << "\033[33m" << text << "\033[0m " << Matches.size() << "\n";
+    std::unordered_map<std::string, unsigned> ContainerOccurrences;
+    std::unordered_multimap<std::string, std::string> ContainerOfTypes;
+    for(auto m : Matches) {
+        if(auto Node = dyn_cast<T>(m.node)){
+            auto CompleteType = getCompleteType(Node);
+            auto BaseType = getBaseType(Node);
+            auto InnerType = getInnerType(Node);
+            if(ContainerOccurrences.count(BaseType) == 0)
+                ContainerOccurrences[BaseType] = 1;
+            else
+                ContainerOccurrences[BaseType]++;
+            ContainerOfTypes.insert({BaseType, InnerType});
+            // std::cout << m.location << std::endl;
+            // std::cout << Node->getType().getTypePtr()->getTypeClassName() << std::endl;
+            // std::cout << Node->getType().getTypePtr()->getLocallyUnqualifiedSingleStepDesugaredType().getAsString() << std::endl;
+            // std::cout << CompleteType << " is " << BaseType << " of " << InnerType << std::endl;
+            // std::cout << "--------" << std::endl;
         }
     }
-    // const char* StmtKind = m.node->getDeclKindName();
-
+    for(auto [key, val] : ContainerOccurrences){
+        std::cout << key << "(" << val << "): ";
+        auto range = ContainerOfTypes.equal_range(key);
+        for (auto it = range.first; it != range.second; it++)
+            std::cout << it->second << ", ";
+        std::cout << std::endl;
+    }
 }
 void StdlibAnalysis::analyze(){
-
+    printStats<VarDecl>("Variable decls of standard library type:",
+        StdContainerVarDecls);
+    printStats<FieldDecl>("Field decls of standard library type:",
+        StdContainerFieldDecls);
 }
 void StdlibAnalysis::run(){
     std::cout << "\033[32mRunning standard library analysis:\033[0m" << std::endl;
     extract();
-
+    analyze();
 }
 
 //-----------------------------------------------------------------------------
+
+// std::cout << Node->getType().getTypePtr()->isDependentType() << std::endl;
+// std::cout << Node->getType().getTypePtr()->hasIntegerRepresentation() << std::endl;
+// std::cout << Node->getType().getTypePtr()->isInstantiationDependentType() << std::endl;
+// std::cout << Node->getType().getCanonicalType().getAsString() << std::endl;
+// std::cout << Node->getType().getTypePtr()->getCanonicalTypeInternal().getAsString() << std::endl; // gives the same as line above, but without qualifiers since stripped away
+
+// std::array<std::string, 2> ContainerTypes = {"vector", "array"};
+// auto isAnyStdContainer = [](auto ContainerTypes){
+//     return hasAnyName()
+// };
+
+// const char* StmtKind = m.node->getDeclKindName();
+
+// TypeMatcher stdtypes = type().bind("t");
+// auto t = Extr.extract("t", stdtypes);
+// for(auto match : t){
+//     std::cout << match.node->getAsString()
+//         << " @ " << match.location << std::endl;
+// }
