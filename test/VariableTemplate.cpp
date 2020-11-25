@@ -3,14 +3,30 @@
 //-----------------------------------------------------------------------------
 
 // Old way Nr. 1:
+// Class template with static data (CTSD).
 // 'data' should be static because everybody using this should see the same?
+// Access specifier doesn't matter, similar reasoning to "template typedef" idiom.
+// Could also be struct instead.
 template<typename T>
-class s {
+class s1 {
 public:
     static T data;
 };
+// Also CTSD.
+template<typename T>
+class s2 {
+    static T data;
+    static T data_prime;
+};
+// Not CTSD, contains nonstatic data.
+template<typename T>
+class s3 {
+    static T data;
+    int d2;
+};
+
 template<>
-int s<int>::data = 42;
+int s1<int>::data = 42;
 // template<>
 // int s3<double>::data = 41.0;
 
@@ -70,7 +86,7 @@ constexpr T f9(){
     typedef T T_prime;
     return data;
 }
-// Debatable.
+// Debatable. Considered CFT for now.
 template<typename T>
 constexpr T f10(){
     T data;
@@ -78,6 +94,7 @@ constexpr T f10(){
     return data;
 }
 
+//-----------------------------------------------------------------------------
 
 // Now: variable templates (since C++14)
 template<typename T>
@@ -87,7 +104,7 @@ constexpr T pi = T(3.14); // T() is the cxxUnresolvedConstructExpr
 template<typename T>
 constexpr T pi2 = 3.14;
 
-class s2 {
+class vtc {
     template<typename T>
     static constexpr T pi3 = T(3);
     // void method(){

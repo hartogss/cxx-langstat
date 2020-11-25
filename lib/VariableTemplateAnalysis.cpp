@@ -16,7 +16,6 @@ std::string getDeclName(Match<clang::Decl> node){
         return "INVALID";
     }
 }
-
 void printStatistics(std::string text, Matches<clang::Decl> matches){
     std::cout << "\033[33m" << text << ":\033[0m " << matches.size() << "\n";
     for(auto m : matches)
@@ -31,17 +30,24 @@ void printStatistics(std::string text, Matches<clang::Decl> matches){
 VariableTemplateAnalysis::VariableTemplateAnalysis(ASTContext& Context) :
     Analysis(Context) {
 }
-
-// clang::ast_matchers::AST_MATCHER(VarTemplateDecl, has){
-//
-// }
-
 void VariableTemplateAnalysis::extract(){
+    // First pre-C++14 idiom to get variable template functionality:
+    // Class templates with static data.
+    // Seems like static members of classes in AST are vars, not fields.
+    // Essentially the same matcher as for typedefs in UsingAnalysis.cpp,
+    // but static vardecl instead of typedefs.
+    DeclarationMatcher ClassWithStaticMember = classTemplateDecl(has(cxxRecordDecl(
+        // Must have static member
+        forEach(varDecl(isStaticStorageClass()).bind("staticmember")),
+        // Mustn't have decl that is not static member, access spec or cxxrecord
+        unless(has(decl(
+            unless(anyOf(
+                varDecl(isStaticStorageClass()),
+                accessSpecDecl(),
+                cxxRecordDecl()))))))))
+    .bind("classwithstaticmember");
 
-    DeclarationMatcher ClassWithStaticVar =
-    cxxRecordDecl(has(varDecl(isStaticStorageClass())))
-    .bind("classwithstaticvar");
-
+    // Second pre-C++14 idiom:
     DeclarationMatcher ConstexprFunction = functionTemplateDecl(
         isExpansionInMainFile(),
         // FunctionDecl that is Constexpr
@@ -50,7 +56,7 @@ void VariableTemplateAnalysis::extract(){
             // whose body contains
             has(compoundStmt(
                 // at least a variable declaration and a return that returns it
-                has(declStmt(has(varDecl().bind("datadecl")))),
+                forEach(declStmt(has(varDecl().bind("datadecl")))),
                 has(returnStmt(has(
                     declRefExpr(to(varDecl(equalsBoundNode("datadecl"))))))),
                 // and does not contain anything else. Sufficient to filter for
@@ -62,21 +68,21 @@ void VariableTemplateAnalysis::extract(){
                         returnStmt()))))))))))
     .bind("constexprfunction");
 
+    // C++14 variable templates
     // "Write" matcher for variable templates that didn't exist yet:
     // http://clang.llvm.org/docs/LibASTMatchers.html#writing-your-own-matchers
     // https://clang.llvm.org/doxygen/ASTMatchersInternal_8cpp_source.html
     internal::VariadicDynCastAllOfMatcher<Decl, VarTemplateDecl> varTemplateDecl;
     DeclarationMatcher VariableTemplate = varTemplateDecl().bind("variabletemplate");
 
-    auto ClassWithStaticVarDecls = Extr.extract("classwithstaticvar", ClassWithStaticVar);
-    auto ConstexprFunctionDecls = Extr.extract("constexprfunction", ConstexprFunction);
-    auto VariableTemplateDecls = Extr.extract("variabletemplate", VariableTemplate);
-
-    printStatistics("Class templates with static data", ClassWithStaticVarDecls);
-    printStatistics("Constexpr function templates", ConstexprFunctionDecls);
-    printStatistics("Variable templates", VariableTemplateDecls);
+    ClassWithStaticMemberDecls = Extr.extract("classwithstaticmember", ClassWithStaticMember);
+    ConstexprFunctionDecls = Extr.extract("constexprfunction", ConstexprFunction);
+    VariableTemplateDecls = Extr.extract("variabletemplate", VariableTemplate);
 }
 void VariableTemplateAnalysis::analyze(){
+    printStatistics("Class templates with static member", ClassWithStaticMemberDecls);
+    printStatistics("Constexpr function templates", ConstexprFunctionDecls);
+    printStatistics("Variable templates", VariableTemplateDecls);
 }
 void VariableTemplateAnalysis::run(){
     extract();

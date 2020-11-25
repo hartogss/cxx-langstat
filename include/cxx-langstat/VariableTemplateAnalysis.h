@@ -11,6 +11,10 @@ public:
     void extract() override;
     void analyze() override;
     void run() override;
+private:
+    Matches<clang::Decl> ClassWithStaticMemberDecls;
+    Matches<clang::Decl> ConstexprFunctionDecls;
+    Matches<clang::Decl> VariableTemplateDecls;
 };
 
 //-----------------------------------------------------------------------------
