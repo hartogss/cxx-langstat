@@ -7,7 +7,7 @@ using namespace clang::ast_matchers;
 
 //-----------------------------------------------------------------------------
 
-Template::Template(ClangTool Tool) : Analysis(Tool) {
+Template::Template(clang::ASTContext& Context) : Analysis(Context) {
 }
 // step 1: extraction
 void Template::extract() {
@@ -20,6 +20,8 @@ void Template::analyze(){
 
 // combine
 void Template::run(){
+    extract();
+    analyze();
 }
 
 //-----------------------------------------------------------------------------
