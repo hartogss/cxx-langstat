@@ -81,11 +81,15 @@ constexpr T f10(){
 
 // Now: variable templates (since C++14)
 template<typename T>
-constexpr T pi = T(3.14); // what does T() do?
+constexpr T pi = T(3.14); // T() is the cxxUnresolvedConstructExpr
+// pi is a T constructed by T(3.14), where T() is a constructor call?
+
+template<typename T>
+constexpr T pi2 = 3.14;
 
 class s2 {
     template<typename T>
-    static constexpr T pi2 = T(3);
+    static constexpr T pi3 = T(3);
     // void method(){
     //     template<typename T>
     //     static constexpr T pi2 = T(3);
@@ -94,12 +98,14 @@ class s2 {
 };
 
 int main(int argc, char** argv){
-    s<int> s1;
-    s1.data = 3;
-    s<int> s2;
-    pi<double>;
+    // s<int> s1;
+    // s1.data = 3;
+    // s<int> s2;
     pi<int>;
-    int x = 3;
+    pi2<int>;
+    // std::cout << pi<int> << std::endl;
+    // std::cout << pi2<bool> << std::endl;
+    // int x = 3;
     // std::cout << s<int>::data << std::endl;
     // std::cout << s<double>::data << std::endl;
     // std::cout << s1.data << std::endl;

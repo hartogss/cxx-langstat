@@ -31,6 +31,11 @@ void printStatistics(std::string text, Matches<clang::Decl> matches){
 VariableTemplateAnalysis::VariableTemplateAnalysis(ASTContext& Context) :
     Analysis(Context) {
 }
+
+// clang::ast_matchers::AST_MATCHER(VarTemplateDecl, has){
+//
+// }
+
 void VariableTemplateAnalysis::extract(){
 
     DeclarationMatcher ClassWithStaticVar =
@@ -57,9 +62,11 @@ void VariableTemplateAnalysis::extract(){
                         returnStmt()))))))))))
     .bind("constexprfunction");
 
-    DeclarationMatcher VariableTemplate = varDecl(
-        has(cxxUnresolvedConstructExpr())
-    ).bind("variabletemplate");
+    // "Write" matcher for variable templates that didn't exist yet:
+    // http://clang.llvm.org/docs/LibASTMatchers.html#writing-your-own-matchers
+    // https://clang.llvm.org/doxygen/ASTMatchersInternal_8cpp_source.html
+    internal::VariadicDynCastAllOfMatcher<Decl, VarTemplateDecl> varTemplateDecl;
+    DeclarationMatcher VariableTemplate = varTemplateDecl().bind("variabletemplate");
 
     auto ClassWithStaticVarDecls = Extr.extract("classwithstaticvar", ClassWithStaticVar);
     auto ConstexprFunctionDecls = Extr.extract("constexprfunction", ConstexprFunction);
@@ -68,9 +75,6 @@ void VariableTemplateAnalysis::extract(){
     printStatistics("Class templates with static data", ClassWithStaticVarDecls);
     printStatistics("Constexpr function templates", ConstexprFunctionDecls);
     printStatistics("Variable templates", VariableTemplateDecls);
-
-
-
 }
 void VariableTemplateAnalysis::analyze(){
 }
