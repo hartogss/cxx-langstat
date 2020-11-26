@@ -70,6 +70,7 @@ target_link_libraries(${PROJECT_NAME}
     LoopDepthAnalysis
     LoopKindAnalysis
     StdlibAnalysis
+    TemplateInstantiationAnalysis
     UsingAnalysis
     VariableTemplateAnalysis
     )
