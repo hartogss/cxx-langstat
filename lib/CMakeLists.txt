@@ -1,5 +1,6 @@
 add_library(BaseExtractor BaseExtractor.cpp)
 add_library(MatchingExtractor MatchingExtractor.cpp)
+add_library(Utils Utils.cpp)
 
 add_library(CyclomaticComplexityAnalysis CyclomaticComplexityAnalysis.cpp)
 add_library(LoopDepthAnalysis LoopDepthAnalysis.cpp)

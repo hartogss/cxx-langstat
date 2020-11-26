@@ -5,26 +5,13 @@
 #include "llvm/Support/raw_ostream.h"
 
 #include "cxx-langstat/StdlibAnalysis.h"
+#include "cxx-langstat/Utils.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
 
 //-----------------------------------------------------------------------------
 
-std::string getDeclName(Match<clang::Decl> m){
-    if(auto n = dyn_cast<clang::NamedDecl>(m.node)){
-        return n->getNameAsString();
-        // vs. getQualifiednameAsString() ?
-    } else {
-        std::cout << "Decl @ " << m.location << "cannot be resolved\n";
-        return "INVALID";
-    }
-}
-void printDecls(std::string text, Matches<clang::Decl> matches){
-    std::cout << "\033[33m" << text << "\033[0m " << matches.size() << "\n";
-    for(auto m : matches)
-        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
-}
 std::string getCompleteType(const DeclaratorDecl* Node){
     return Node->getType().getAsString();
 }

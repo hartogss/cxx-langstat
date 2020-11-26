@@ -4,18 +4,10 @@
 #include "llvm/Support/raw_ostream.h"
 
 #include "cxx-langstat/TemplateInstantiationAnalysis.h"
+#include "cxx-langstat/Utils.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
-
-std::string getDeclName(Match<clang::Decl> node){
-    if(auto n = dyn_cast<clang::NamedDecl>(node.node)){
-        return n->getNameAsString();
-    } else {
-        std::cout << "Decl @ " << node.location << "cannot be resolved" << std::endl;
-        return "INVALID";
-    }
-}
 
 //-----------------------------------------------------------------------------
 // Compute statistics on arguments used to instantiate templates.
@@ -43,7 +35,7 @@ void TemplateInstantiationAnalysis::extract() {
         // auto specKind = cast<FunctionDecl>(m.node)->getTemplateSpecializationKindForInstantiation();
         // std::cout << specKind << std::endl;
         auto TALptr = cast<FunctionDecl>(m.node)->getTemplateSpecializationArgs();
-        for(auto idx=0; idx<TALptr->size(); idx++){
+        for(unsigned idx=0; idx<TALptr->size(); idx++){
             std::string res;
             auto Targ = TALptr->get(idx);
             llvm::raw_string_ostream OS(res);
@@ -56,6 +48,7 @@ void TemplateInstantiationAnalysis::extract() {
 void TemplateInstantiationAnalysis::analyze(){
 }
 void TemplateInstantiationAnalysis::run(){
+    std::cout << "\033[32mRunning template instantiation analysis:\033[0m" << std::endl;
     extract();
     analyze();
 }

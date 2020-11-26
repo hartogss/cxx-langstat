@@ -65,7 +65,7 @@ target_link_directories(${PROJECT_NAME} PUBLIC lib/)
 # ---- Link everything together ----
 # Link custom libraries
 target_link_libraries(${PROJECT_NAME}
-    BaseExtractor MatchingExtractor
+    BaseExtractor MatchingExtractor Utils
     CyclomaticComplexityAnalysis
     LoopDepthAnalysis
     LoopKindAnalysis

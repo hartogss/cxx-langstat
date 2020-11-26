@@ -2,25 +2,10 @@
 #include <vector>
 
 #include "cxx-langstat/VariableTemplateAnalysis.h"
+#include "cxx-langstat/Utils.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
-
-//-----------------------------------------------------------------------------
-
-std::string getDeclName(Match<clang::Decl> node){
-    if(auto n = dyn_cast<clang::NamedDecl>(node.node)){
-        return n->getNameAsString();
-    } else {
-        std::cout << "Decl @ " << node.location << "cannot be resolved" << std::endl;
-        return "INVALID";
-    }
-}
-void printStatistics(std::string text, Matches<clang::Decl> matches){
-    std::cout << "\033[33m" << text << ":\033[0m " << matches.size() << "\n";
-    for(auto m : matches)
-        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
-}
 
 //-----------------------------------------------------------------------------
 // Question: did programmers abandon classes with static fields and constexpr
