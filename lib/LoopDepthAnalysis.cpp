@@ -25,7 +25,7 @@ StatementMatcher constructForMatcher(std::string Name, int d){
 // Constructs matcher that exactly matches mixed loops with depth d (nesting depth)
 StatementMatcher constructMixedMatcher(std::string Name, int d){
     auto loopStmt = [](auto m){
-        return stmt(anyOf(forStmt(m), whileStmt(m), doStmt(m)));
+        return stmt(anyOf(forStmt(m), whileStmt(m), doStmt(m), cxxForRangeStmt(m)));
     };
     StatementMatcher NumOfDescendantsAtLeastD = anything();
     int i=1;

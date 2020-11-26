@@ -88,6 +88,15 @@ void loop7(){
     }
 }
 
+void loop8(){
+    int arr[] = {1,2};
+    for(auto i : arr){
+        for(;;){
+
+        }
+    }
+}
+
 
 
 int main(int argc, char** argv){
