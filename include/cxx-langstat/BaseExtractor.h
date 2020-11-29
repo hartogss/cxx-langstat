@@ -16,10 +16,9 @@ public :
     Matches<NodeType>
     extract(std::string id,
         clang::ast_matchers::internal::Matcher<NodeType> Matcher);
-    template<typename NodeType, typename ...Types>
-    std::array<Matches<NodeType>, sizeof...(Types)>
-    extract2(clang::ast_matchers::internal::Matcher<NodeType> Matcher,
-        Types... ids);
+    template<typename NodeType>
+    std::vector<clang::ast_matchers::MatchFinder::MatchResult >
+    extract2(clang::ast_matchers::internal::Matcher<NodeType> Matcher);
 private:
     clang::ASTContext& Context;
 };
@@ -30,21 +29,20 @@ template<typename NodeType>
 Matches<NodeType>
 BaseExtractor::extract(std::string id,
     clang::ast_matchers::internal::Matcher<NodeType> Matcher){
-        MatchingExtractor<NodeType, const char*> extr(id);
-        clang::ast_matchers::MatchFinder Finder;
-        Finder.addMatcher(Matcher, &extr);
-        Finder.matchAST(Context);
-        return extr.matches[0];
-}
-template<typename NodeType, typename ...Types>
-std::array<Matches<NodeType>, sizeof...(Types)>
-BaseExtractor::extract2(clang::ast_matchers::internal::Matcher<NodeType> Matcher,
-    Types... ids){
-        MatchingExtractor<NodeType, Types...> extr(ids...);
+        MatchingExtractor<NodeType> extr(id);
         clang::ast_matchers::MatchFinder Finder;
         Finder.addMatcher(Matcher, &extr);
         Finder.matchAST(Context);
         return extr.matches;
+}
+template<typename NodeType>
+std::vector<clang::ast_matchers::MatchFinder::MatchResult >
+BaseExtractor::extract2(clang::ast_matchers::internal::Matcher<NodeType> Matcher){
+        MatchingExtractor<NodeType> extr("");
+        clang::ast_matchers::MatchFinder Finder;
+        Finder.addMatcher(Matcher, &extr);
+        Finder.matchAST(Context);
+        return extr.Results;
 }
 
 //-----------------------------------------------------------------------------
