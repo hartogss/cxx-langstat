@@ -42,10 +42,11 @@ void update(const TemplateArgument& TArg, std::map<std::string, unsigned>& Mappi
             break;
         case TemplateArgument::Declaration:
         case TemplateArgument::Integral:
-            // FTInstNonTypeArguments++; break;
+            Mapping["nontype"]++;
+            break;
         case TemplateArgument::Template:
-        Mapping["template"]++;
-        break;
+            Mapping["template"]++;
+            break;
         // in case that it is a pack, can that be a pack of templates?
         // parameter pack can be of anything
     }
@@ -55,15 +56,10 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
 (clang::ASTContext& Context) : Analysis(Context) {
 }
 void TemplateInstantiationAnalysis::extract() {
-    // auto m1 = classTemplateSpecializationDecl(
-    //     isExpansionInMainFile(),
-    //     has(
-    //         cxxRecordDecl(isInstantiated())
-    // )).bind("classinsts");
-
     // Oddly enough, the result of this matcher will give back a pointer to the
-    // classTemplateSpecializationDecl containing the instantiated CXXRecordDecl,
-    // not a pointer to the cxxRecordDecl. This is why the cast below is OK.
+    // ClassTemplateSpecializationDecl containing the instantiated CXXRecordDecl,
+    // not a pointer to the cxxRecordDecl. This is why a cast to
+    // ClassTemplateSpecializationDecl is OK.
     // Note that because it returns ClassTemplateSpecializationDecl*, the
     // location reported here is wrong for implicit instantiations because they
     // are subtrees of the CTSD. Explicit instantiation locations are reported
@@ -71,11 +67,41 @@ void TemplateInstantiationAnalysis::extract() {
     auto ClassInstMatcher = cxxRecordDecl(
         isExpansionInMainFile(),
         isTemplateInstantiation())
-    .bind("classinsts");
-    auto ClassInsts = Extr.extract("classinsts", ClassInstMatcher);
-    for(auto m : ClassInsts){
-        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
-        if(auto Node = cast<ClassTemplateSpecializationDecl>(m.node)){
+    .bind("ClassInsts");
+    auto ClassResults = Extr.extract2(ClassInstMatcher);
+    ClassInsts = getASTNodes<ClassTemplateSpecializationDecl>(ClassResults, "ClassInsts");
+
+    // In contrast, this result gives a pointer to a functionDecl, which has
+    // too has a function we can call to get the template arguments.
+    // Here, the location reported is in both explicit and implicit cases wrong,
+    // the location where the function template is defined is returned
+    // (to be precise, the line where the return value is specified).
+    auto FuncInstMatcher = functionDecl(
+        isExpansionInMainFile(),
+        isTemplateInstantiation())
+    .bind("FuncInsts");
+    auto FuncResults = Extr.extract2(FuncInstMatcher);
+    FuncInsts = getASTNodes<FunctionDecl>(FuncResults, "FuncInsts");
+
+    // Same behavior as with classTemplates: gives pointer to a
+    // varSpecializationDecl. However, the location reported is that of the
+    // varDecl itself... no matter if explicit or implicit instantiation.
+    auto VarInstMatcher = varDecl(
+        isExpansionInMainFile(),
+        isTemplateInstantiation())
+    .bind("VarInsts");
+    auto VarResults = Extr.extract2(VarInstMatcher);
+    VarInsts = getASTNodes<VarTemplateSpecializationDecl>(VarResults, "VarInsts");
+}
+
+template<typename TemplateInstType>
+void printStats(Matches<TemplateInstType> Insts){
+    std::map<std::string, unsigned> ArgKinds {
+        {"nontype", 0}, {"type", 0}, {"template", 0},
+    };
+    for(auto match : Insts){
+        // std::cout << getDeclName(match) << " @ " << match.location << std::endl;
+        if(auto Node = cast<TemplateInstType>(match.node)){
             // https://stackoverflow.com/questions/44397953/retrieve-template-parameters-from-cxxconstructexpr-in-clang-ast
             // Check why it works like this and the other does not
             TemplateArgumentList const& TAList(
@@ -87,28 +113,26 @@ void TemplateInstantiationAnalysis::extract() {
                 llvm::raw_string_ostream OS(res);
                 TArg.dump(OS);
                 std::cout << res << "\n";
+                update(TArg, ArgKinds);
             }
         }
     }
+    for(auto [key, val] : ArgKinds){
+        std::cout << key << ": " << val << "\n";
+    }
     std::cout << "--------\n";
-
-
-    std::map<std::string, unsigned> FuncTempArgKinds {
+    // old way by getting vardecl type
+    // if(auto Node = cast<VarDecl>(m.node)){
+    //     std::cout << "test: " << get(Node->getType().getTypePtr()) << std::endl;
+    // }
+}
+template<>
+void printStats(Matches<FunctionDecl> Insts){
+    std::map<std::string, unsigned> ArgKinds {
         {"nontype", 0}, {"type", 0}, {"template", 0},
     };
-
-    // In contrast, this result gives a pointer to a functionDecl, which has
-    // too has a function we can call to get the template arguments.
-    // Here, the location reported is in both explicit and implicit cases wrong,
-    // the location where the function template is defined is returned
-    // (to be precise, the line where the return value is specified).
-    auto FuncInstMatcher = functionDecl(
-        isExpansionInMainFile(),
-        isTemplateInstantiation())
-    .bind("funcinsts");
-    auto FuncInsts = Extr.extract("funcinsts", FuncInstMatcher);
-    for(auto m : FuncInsts){
-        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
+    for(auto m : Insts){
+        // std::cout << getDeclName(m) << " @ " << m.location << std::endl;
         // auto specKind = cast<FunctionDecl>(m.node)->getTemplateSpecializationKindForInstantiation();
         // std::cout << "specialization kind: " << specKind << std::endl;
         if(auto Node = cast<FunctionDecl>(m.node)){
@@ -119,83 +143,20 @@ void TemplateInstantiationAnalysis::extract() {
                 llvm::raw_string_ostream OS(res);
                 TArg.dump(OS);
                 std::cout << res << "\n";
-                update(TArg, FuncTempArgKinds);
-                // std::cout << dyn_cast<FunctionDecl>(m.node)->getType().getTypePtr()->getTypeClassName() << std::endl;
+                update(TArg, ArgKinds);
             }
         }
     }
-    for(auto [key, val] : FuncTempArgKinds){
+    for(auto [key, val] : ArgKinds){
         std::cout << key << ": " << val << "\n";
     }
     std::cout << "--------\n";
-
-
-
-
-    // Same behavior as with classTemplates: gives pointer to a
-    // varSpecializationDecl. However, the location reported is that of the
-    // varDecl itself... no matter if explicit or implicit instantiation.
-    auto VarInstMatcher = varDecl(
-        isExpansionInMainFile(),
-        isTemplateInstantiation())
-    .bind("varinsts");
-    auto VarInsts = Extr.extract("varinsts", VarInstMatcher);
-    for(auto m : VarInsts){
-        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
-        if(auto Node = cast<VarTemplateSpecializationDecl>(m.node)){
-            TemplateArgumentList const& TAList(
-                Node->getTemplateInstantiationArgs());
-            for(unsigned idx=0; idx<TAList.size(); idx++){
-                std::string res;
-                auto TArg = TAList.get(idx);
-                llvm::raw_string_ostream OS(res);
-                TArg.dump(OS);
-                std::cout << res << "\n";
-            }
-        }
-        // old way by getting vardecl type
-        // if(auto Node = cast<VarDecl>(m.node)){
-        //     auto specKind = Node->getTemplateSpecializationKindForInstantiation();
-        //     std::cout << "specialization kind: " << specKind << std::endl;
-        //     std::cout << Node->getType().getTypePtr()->getTypeClassName() << std::endl;
-        //     std::cout << "test: " << get(Node->getType().getTypePtr()) << std::endl;
-        // }
-    }
-}
-
-std::string get(const Type* t){
-    if(auto tprime = dyn_cast<ElaboratedType>(t)){
-        auto subt = tprime->getNamedType().getTypePtr();
-        return get(subt);
-    }
-    if(auto tprime = dyn_cast<TemplateSpecializationType>(t)){
-        auto numTargs = tprime->getNumArgs();
-        std::string res = "";
-        if(numTargs>1)
-            res.append("(");
-        for(unsigned idx=0; idx<numTargs; idx++){
-            if(idx)
-                res.append(",");
-            auto Targ = tprime->getArg(idx);
-            llvm::raw_string_ostream OS(res);
-            Targ.dump(OS);
-        }
-        if(numTargs>1)
-            res.append(")");
-        return res;
-    }
-    if(auto tprime = dyn_cast<SubstTemplateTypeParmType>(t)){
-        return tprime->getReplacementType().getAsString();
-        // auto TTPT = n->getReplacedParameter();
-        // std::cout << "pp " << TTPT->isParameterPack() << std::endl;
-    }
-    if(auto tprime = dyn_cast<BuiltinType>(t)){
-        return tprime->desugar().getAsString();
-    }
-    return "fail";
 }
 
 void TemplateInstantiationAnalysis::analyze(){
+    printStats<ClassTemplateSpecializationDecl>(ClassInsts);
+    printStats<FunctionDecl>(FuncInsts);
+    printStats<VarTemplateSpecializationDecl>(VarInsts);
 }
 void TemplateInstantiationAnalysis::run(){
     std::cout << "\033[32mRunning template instantiation analysis:\033[0m\n";
@@ -204,3 +165,35 @@ void TemplateInstantiationAnalysis::run(){
 }
 
 //-----------------------------------------------------------------------------
+
+// std::string get(const Type* t){
+//     if(auto tprime = dyn_cast<ElaboratedType>(t)){
+//         auto subt = tprime->getNamedType().getTypePtr();
+//         return get(subt);
+//     }
+//     if(auto tprime = dyn_cast<TemplateSpecializationType>(t)){
+//         auto numTargs = tprime->getNumArgs();
+//         std::string res = "";
+//         if(numTargs>1)
+//             res.append("(");
+//         for(unsigned idx=0; idx<numTargs; idx++){
+//             if(idx)
+//                 res.append(",");
+//             auto Targ = tprime->getArg(idx);
+//             llvm::raw_string_ostream OS(res);
+//             Targ.dump(OS);
+//         }
+//         if(numTargs>1)
+//             res.append(")");
+//         return res;
+//     }
+//     if(auto tprime = dyn_cast<SubstTemplateTypeParmType>(t)){
+//         return tprime->getReplacementType().getAsString();
+//         // auto TTPT = n->getReplacedParameter();
+//         // std::cout << "pp " << TTPT->isParameterPack() << std::endl;
+//     }
+//     if(auto tprime = dyn_cast<BuiltinType>(t)){
+//         return tprime->desugar().getAsString();
+//     }
+//     return "fail";
+// }

@@ -11,6 +11,10 @@ public:
     void extract() override;
     void analyze() override;
     void run() override;
+private:
+    Matches<clang::ClassTemplateSpecializationDecl> ClassInsts;
+    Matches<clang::FunctionDecl> FuncInsts;
+    Matches<clang::VarTemplateSpecializationDecl> VarInsts;
 };
 
 //-----------------------------------------------------------------------------
