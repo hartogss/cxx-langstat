@@ -65,9 +65,9 @@ void VariableTemplateAnalysis::extract(){
     VariableTemplateDecls = Extr.extract("variabletemplate", VariableTemplate);
 }
 void VariableTemplateAnalysis::analyze(){
-    printStatistics("Class templates with static member", ClassWithStaticMemberDecls);
-    printStatistics("Constexpr function templates", ConstexprFunctionDecls);
-    printStatistics("Variable templates", VariableTemplateDecls);
+    printMatches("Class templates with static member", ClassWithStaticMemberDecls);
+    printMatches("Constexpr function templates", ConstexprFunctionDecls);
+    printMatches("Variable templates", VariableTemplateDecls);
 }
 void VariableTemplateAnalysis::run(){
     extract();

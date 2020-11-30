@@ -88,11 +88,11 @@ void UsingAnalysis::extract() {
     analyze();
 }
 void UsingAnalysis::analyze(){
-    printStatistics("Typedef found", TypedefDecls);
-    printStatistics("Type aliases found", TypeAliasDecls);
-    printStatistics("\"Typedef templates\" found", TypedefTemplateDecls);
-    printStatistics("Typedefs from \"Typedef templates\"", td);
-    printStatistics("Type alias templates found", TypeAliasTemplateDecls);
+    printMatches("Typedef found", TypedefDecls);
+    printMatches("Type aliases found", TypeAliasDecls);
+    printMatches("\"Typedef templates\" found", TypedefTemplateDecls);
+    printMatches("Typedefs from \"Typedef templates\"", td);
+    printMatches("Type alias templates found", TypeAliasTemplateDecls);
 }
 void UsingAnalysis::run(){
     std::cout << "\033[32mRunning UsingAnalysis:\033[0m" << std::endl;
