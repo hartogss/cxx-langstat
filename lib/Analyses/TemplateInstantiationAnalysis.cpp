@@ -18,6 +18,7 @@ using namespace clang::ast_matchers;
 // - functions (including member methods), &
 // - variables (including class static member variables, (not
 // class field, those cannot be templated if they're not static))
+// - alias
 // Template instantiations counted should stem from either explicit instantiations
 // written by programmers or from implicit ones through 'natural usage'.
 //
@@ -38,22 +39,42 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
 }
 void TemplateInstantiationAnalysis::extract() {
 
-    auto m1 = cxxRecordDecl(isExpansionInMainFile(), isTemplateInstantiation()).bind("classinsts");
-    auto ClassInsts = Extr.extract("classinsts", m1);
+
+    // auto m1 = classTemplateSpecializationDecl(
+    //     isExpansionInMainFile(),
+    //     has(
+    //         cxxRecordDecl(isInstantiated())
+    // )).bind("classinsts");
+
+
+    // Oddly enough, the result of this matcher will give back a pointer to the
+    // classTemplateSpecializationDecl containing the instantiated CXXRecordDecl,
+    // not a pointer to the cxxRecordDecl. This is why the cast below is OK.
+    // Note that because it returns ClassTemplateSpecializationDecl*, the
+    // location reported here is wrong for implicit instantiations because they
+    // are subtrees of the CTSD. Explicit instantiation locations are reported
+    // correctly.
+    auto ClassInstMatcher = cxxRecordDecl(
+        isExpansionInMainFile(),
+        isTemplateInstantiation())
+    .bind("classinsts");
+    auto ClassInsts = Extr.extract("classinsts", ClassInstMatcher);
     for(auto m : ClassInsts){
-        std::cout << getDeclName(m) << std::endl;
-        // auto specKind = cast<FunctionDecl>(m.node)->getTemplateSpecializationKindForInstantiation();
-        // std::cout << specKind << std::endl;
-        // auto TALptr = cast<FunctionDecl>(m.node)->getTemplateSpecializationArgs();
-        // for(unsigned idx=0; idx<TALptr->size(); idx++){
-            // std::string res;
-            // auto Targ = TALptr->get(idx);
-            // llvm::raw_string_ostream OS(res);
-            // Targ.dump(OS);
-            // std::cout << res << "\n";
-            // std::cout << dyn_cast<CXXRecordDecl>(m.node)->getType().getTypePtr()->getTypeClassName() << std::endl;
-            // std::cout << "2: " << getInnerType(dyn_cast<FunctionDecl>(m.node)) << std::endl;
-        // }
+
+        std::cout << getDeclName(m) << " @ " << m.location << std::endl;
+        if(auto Node = cast<ClassTemplateSpecializationDecl>(m.node)){
+            // https://stackoverflow.com/questions/44397953/retrieve-template-parameters-from-cxxconstructexpr-in-clang-ast
+            // Check why it works like this and the other does not
+            TemplateArgumentList const& TAList(Node->getTemplateArgs());
+            // auto TAList = Node->getTemplateInstantiationArgs();
+            for(unsigned idx=0; idx<TAList.size(); idx++){
+                std::string res;
+                auto Targ = TAList.get(idx);
+                llvm::raw_string_ostream OS(res);
+                Targ.dump(OS);
+                std::cout << res << "\n";
+            }
+        }
     }
     std::cout << "--------" << std::endl;
 
@@ -159,7 +180,7 @@ std::string get(const Type* t){
 void TemplateInstantiationAnalysis::analyze(){
 }
 void TemplateInstantiationAnalysis::run(){
-    std::cout << "\033[32mRunning template instantiation analysis:\033[0m" << std::endl;
+    std::cout << "\033[32mRunning template instantiation analysis:\033[0m\n";
     extract();
     analyze();
 }
