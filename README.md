@@ -32,8 +32,80 @@ Currently the matchers for this analysis grow exponentially with the maximum loo
 Computes statistics on usage `for, while, do-while` and range-based `for` loops in C++. Especially interesting to use to see the adoption of range-based `for` since C++11.
 #### Standard Library Container Usage (SLA)
 Counts occurences of standard library containers `array, vector, forward_list, list, map, multimap, set, multiset, unordered_map, unordered_multimap, unordered_set, unordered_multiset, queue, prioity_queue, stack, deque` as variables or record member fields and for each type outputs what types they contain.
+#### Template Parameters (TPA)
+Counts each kind of template (class, function, variable, alias), how many were variadic/use parameter packs and outputs counts on what kind of template parameters were used (non-tupe template parameters, type template parameters and template template parameters).
+#### WIP: Template instantiations (TIA)
+In contrast to TPA, checks what arguments were used to instantiate templates.
 #### `using` (UA)
 C++11 introduced type aliases (`using` keyword) which are similar to `typedef`s, but additionally can be templated. This analysis aims to find out if programmers shifted from typedefs to aliases, possibly due to the fact that aliases can be templated. The analysis gives you usage figures of typedefs, aliases, "typedef templates" (an idiom used to get around above said typedef limitation) and alias templates.
+<table>
+<tr>
+<th> Pre-C++11 </th>
+<th> Alias </th>
+</tr>
+<tr>
+<td>
+
+  ```c++
+  // Regular typedef
+  typedef std::vector<int> IntVector;
+  // "typedef template" idiom
+  template<typename T>
+  struct TVector {
+    typedef std::vector<T> type; // doesn't have to be named 'type'
+  };
+  ```
+</td>
+<td>
+  
+  ```c++
+ // alias
+ using IntVector = std::vector<int>;
+ // alias template
+ template<typename T>
+ using TVector = std::vector<T>;
+  ```
+</td>
+</tr>
+</table>
+
 #### WIP: Variable Templates (VTA)
 C++14 added variable templates. Previously, one used either class templates with a static data member or constexpr function templates returning the desired value. We here analyze whether programmers transitioned in favor of the new concept by reporting usage of the three constructs.
+<table>
+<tr>
+<th> Class template with static member </th>
+<th> Constexpr function template </th>
+<th> Variable template (since C++14) </th>
+</tr>
+<tr>
+<td>
+
+  ```c++
+  template<typename T>
+  class Widget {
+  public:
+      static T data;
+  };
+  ```
+</td>
+<td>
+  
+  ```c++
+  template<typename T>
+  constexpr T f1(){
+      T data;
+      return data;
+  }
+  ```
+</td>
+
+<td>
+  
+  ```c++
+  template<typename T>
+  T data;
+  ```
+</td>
+</tr>
+</table>
 
