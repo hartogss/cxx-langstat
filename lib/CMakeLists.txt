@@ -7,6 +7,7 @@ add_library(LoopDepthAnalysis LoopDepthAnalysis.cpp)
 add_library(LoopKindAnalysis LoopKindAnalysis.cpp)
 add_library(StdlibAnalysis StdlibAnalysis.cpp)
 add_library(TemplateInstantiationAnalysis TemplateInstantiationAnalysis.cpp)
+add_library(TemplateParameterAnalysis TemplateParameterAnalysis)
 add_library(UsingAnalysis UsingAnalysis.cpp)
 add_library(VariableTemplateAnalysis VariableTemplateAnalysis.cpp)
 
