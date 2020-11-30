@@ -4,6 +4,7 @@
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 
 #include "cxx-langstat/MatchingExtractor.h"
+#include "cxx-langstat/Utils.h"
 
 //-----------------------------------------------------------------------------
 
@@ -29,20 +30,17 @@ template<typename NodeType>
 Matches<NodeType>
 BaseExtractor::extract(std::string id,
     clang::ast_matchers::internal::Matcher<NodeType> Matcher){
-        MatchingExtractor<NodeType> extr(id);
-        clang::ast_matchers::MatchFinder Finder;
-        Finder.addMatcher(Matcher, &extr);
-        Finder.matchAST(Context);
-        return extr.matches;
+        auto Results = this->extract2(Matcher);
+        return getASTNodes<NodeType>(Results, id);
 }
 template<typename NodeType>
 std::vector<clang::ast_matchers::MatchFinder::MatchResult >
 BaseExtractor::extract2(clang::ast_matchers::internal::Matcher<NodeType> Matcher){
-        MatchingExtractor<NodeType> extr("");
+        MatchingExtractor Callback;
         clang::ast_matchers::MatchFinder Finder;
-        Finder.addMatcher(Matcher, &extr);
+        Finder.addMatcher(Matcher, &Callback);
         Finder.matchAST(Context);
-        return extr.Results;
+        return Callback.Results;
 }
 
 //-----------------------------------------------------------------------------

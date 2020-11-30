@@ -18,34 +18,14 @@ Match<T>::Match(unsigned location, const T* node, clang::ASTContext* ctxt) :
 
 //-----------------------------------------------------------------------------
 
-template<typename T>
-MatchingExtractor<T>::MatchingExtractor(std::string id) : matcherid(id){
+MatchingExtractor::MatchingExtractor(){
     std::cout<<"MatchingExtractor ctor"<<std::endl;
 }
 
-template<typename T>
-void MatchingExtractor<T>::run(const MatchFinder::MatchResult &Result) {
-
-    auto Mapping = Result.Nodes.getMap();
-    for(auto [key, val] : Mapping)
-        std::cout <<"key" << key << std::endl;
-
+void MatchingExtractor::run(const MatchFinder::MatchResult &Result) {
     Results.emplace_back(Result);
-
-    if(const T* node = Result.Nodes.getNodeAs<T>(matcherid)) {
-        ASTContext* Context = Result.Context;
-        unsigned Location = Context->getFullLoc(node->getBeginLoc()).getLineNumber();
-        // const char* StmtKind = node->getStmtClassName();
-        Match<T> m(Location, node, Context);
-        matches.emplace_back(m);
-    } else {
-        std::cout << "Error extracting type" << std::endl;
-    }
-    std::cout << "-----" << std::endl;
-
 }
-template<typename T>
-void MatchingExtractor<T>::resetState(){
+void MatchingExtractor::resetState(){
     // matches.clear(); // does this ensure no memory leak?
 }
 
@@ -54,12 +34,11 @@ void MatchingExtractor<T>::resetState(){
 // Request instantiations of MatchingExtractor template s.t. linker can find them
 // Bad: have to do this for every instantiation needed
 // This is called explicit instantiation
-template class MatchingExtractor<Stmt>;
-template class MatchingExtractor<Decl>;
+// template class MatchingExtractor<Stmt>;
+// template class MatchingExtractor<Decl>;
 
 
-// not necessary, because constructed by MatchingExtractor
-// template struct Match<clang::Stmt>;
-// template struct Match<clang::Decl>;
+template struct Match<clang::Stmt>;
+template struct Match<clang::Decl>;
 
 //-----------------------------------------------------------------------------

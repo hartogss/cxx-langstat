@@ -21,17 +21,14 @@ using Matches = std::vector<Match<T>>; // allows to do Matches<T>
 
 //-----------------------------------------------------------------------------
 // Callback class executed on match
-template<typename T>
 class MatchingExtractor : public clang::ast_matchers::MatchFinder::MatchCallback {
 public:
-    MatchingExtractor(std::string id);
+    MatchingExtractor();
     // Run when match is found after extract call with Matcher
     virtual void run(const clang::ast_matchers::MatchFinder::MatchResult &Result);
-    Matches<T> matches;
     std::vector<clang::ast_matchers::MatchFinder::MatchResult> Results;
 private:
     void resetState();
-    std::string matcherid;
 };
 
 //-----------------------------------------------------------------------------
