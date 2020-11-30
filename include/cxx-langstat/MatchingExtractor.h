@@ -7,7 +7,11 @@
 // and the ASTContext
 template<typename T>
 struct Match {
-    Match<T>(unsigned location, const T* node, clang::ASTContext* ctxt);
+    Match<T>(unsigned location, const T* node, clang::ASTContext* ctxt) :
+        location(location),
+        node(node),
+        ctxt(ctxt){
+    }
     unsigned location;
     const T* node;
     clang::ASTContext* ctxt;
