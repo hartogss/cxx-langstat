@@ -1,3 +1,4 @@
+// Class templates
 template<int N>
 class Widget1 {};
 
@@ -23,7 +24,16 @@ template<template<typename T> class...>
 class Widget3_p {};
 
 // ----------------------------------------------------------------------------
+// Function templates
+template<typename ...T, typename ...U>
+void func1(){}
+class Widget_f1 {
+    template<template<unsigned N> class c>
+    void method1();
+};
 
+// ----------------------------------------------------------------------------
+// Alias templates
 template<int N>
 using Alias1 = Widget1<N>;
 
@@ -41,6 +51,21 @@ using cAlias2 = Widget2_p<T>;
 
 template<template <typename T> class c>
 using cAlias3 = Widget3<c>;
+
+// ----------------------------------------------------------------------------
+// Mixing templates
+// Class template with function/method template
+template<typename U>
+class Widget_m1 {
+    template<template<unsigned N> class c>
+    void method1();
+};
+// Class template with variable template
+template<typename U>
+class Widget_m2 {
+    template<template<unsigned N> class c>
+    static U data;
+};
 
 
 
