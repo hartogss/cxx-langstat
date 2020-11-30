@@ -3,7 +3,7 @@
 
 // #include "llvm/Support/raw_ostream.h"
 
-#include "cxx-langstat/TemplateParameterAnalysis.h"
+#include "cxx-langstat/Analyses/TemplateParameterAnalysis.h"
 #include "cxx-langstat/Utils.h"
 
 using namespace clang;

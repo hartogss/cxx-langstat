@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "cxx-langstat/LoopKindAnalysis.h"
+#include "cxx-langstat/Analyses/LoopKindAnalysis.h"
 
 using namespace clang::ast_matchers;
 

@@ -4,7 +4,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include "clang/AST/TemplateBase.h"
 
-#include "cxx-langstat/TemplateInstantiationAnalysis.h"
+#include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 #include "cxx-langstat/Utils.h"
 
 using namespace clang;

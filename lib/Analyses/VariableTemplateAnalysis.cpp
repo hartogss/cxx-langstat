@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "cxx-langstat/VariableTemplateAnalysis.h"
+#include "cxx-langstat/Analyses/VariableTemplateAnalysis.h"
 #include "cxx-langstat/Utils.h"
 
 using namespace clang;

@@ -9,11 +9,14 @@
 #include <iostream>
 
 //
-#include "cxx-langstat/CyclomaticComplexityAnalysis.h"
-#include "cxx-langstat/LoopDepthAnalysis.h"
-#include "cxx-langstat/LoopKindAnalysis.h"
-#include "cxx-langstat/StdlibAnalysis.h"
-#include "cxx-langstat/UsingAnalysis.h"
+#include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
+#include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
+#include "cxx-langstat/Analyses/LoopKindAnalysis.h"
+#include "cxx-langstat/Analyses/StdlibAnalysis.h"
+#include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
+#include "cxx-langstat/Analyses/TemplateParameterAnalysis.h"
+#include "cxx-langstat/Analyses/UsingAnalysis.h"
+#include "cxx-langstat/Analyses/VariableTemplateAnalysis.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
@@ -27,21 +30,22 @@ public:
     // Called when AST for TU is ready/has been parsed
     void HandleTranslationUnit(clang::ASTContext& Context){
         std::cout << "Handling the translation unit" << std::endl;
-        //
         // CyclomaticComplexityAnalysis CCA(Context);
         // CCA.run();
-        //
-        // LoopDepthAnalysis LDA(Context, 4);
-        // LDA.run();
-        //
+        LoopDepthAnalysis LDA(Context, 4);
+        LDA.run();
         // LoopKindAnalysis LKA(Context);
         // LKA.run();
-        //
+        // StdlibAnalysis SLA(Context);
+        // SLA.run();
+        // TemplateInstantiationAnalysis TIA(Context);
+        // TIA.run();
+        TemplateParameterAnalysis TPA(Context);
+        TPA.run();
         // UsingAnalysis UA(Context);
         // UA.run();
-
-        StdlibAnalysis SLA(Context);
-        SLA.run();
+        // VariableTemplateAnalysis VTA(Context);
+        // VTA.run();
     }
 };
 
@@ -56,7 +60,7 @@ public:
     bool BeginSourceFileAction(CompilerInstance& CI) {
         std::cout
         << "Starting to process " << getCurrentFile().str()
-        << " AST=" << isCurrentFileAST() << std::endl;
+        << ". AST=" << isCurrentFileAST() << ".\n";
         return true;
     }
     // Called after frontend is initialized, but before per-file processing
@@ -68,7 +72,7 @@ public:
     //
     void EndSourceFileAction(){
         std::cout
-        << "Finished processing " << getCurrentFile().str() << std::endl;
+        << "Finished processing " << getCurrentFile().str() << ".\n";
     }
 };
 

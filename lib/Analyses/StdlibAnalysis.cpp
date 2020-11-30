@@ -4,7 +4,7 @@
 
 #include "llvm/Support/raw_ostream.h"
 
-#include "cxx-langstat/StdlibAnalysis.h"
+#include "cxx-langstat/Analyses/StdlibAnalysis.h"
 #include "cxx-langstat/Utils.h"
 
 using namespace clang;

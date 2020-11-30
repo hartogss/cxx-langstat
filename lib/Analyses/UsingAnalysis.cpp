@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "cxx-langstat/UsingAnalysis.h"
+#include "cxx-langstat/Analyses/UsingAnalysis.h"
 #include "cxx-langstat/Utils.h"
 
 using namespace clang::ast_matchers;

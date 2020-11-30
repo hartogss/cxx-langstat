@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#include "cxx-langstat/CyclomaticComplexityAnalysis.h"
+#include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 
 using namespace clang::ast_matchers;
 

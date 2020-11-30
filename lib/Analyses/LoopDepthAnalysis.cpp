@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "cxx-langstat/LoopDepthAnalysis.h"
+#include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
 
 using namespace clang::ast_matchers;
 

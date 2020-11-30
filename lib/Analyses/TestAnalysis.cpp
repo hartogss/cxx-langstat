@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "cxx-langstat/TestAnalysis.h"
+#include "cxx-langstat/Analyses/TestAnalysis.h"
 #include "clang-tidy/ClangTidy.h"
 #include "clang-tidy/tool/ClangTidyMain.h"
 
