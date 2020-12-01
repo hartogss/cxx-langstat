@@ -47,8 +47,7 @@ std::string getInnerType(const DeclaratorDecl* Node){
     if(auto t = dyn_cast<TemplateSpecializationType>(TypePtr)){
         auto numTargs = t->getNumArgs();
         std::string res = "";
-        if(numTargs>1)
-            res.append("(");
+        res.append("<");
         for(unsigned idx=0; idx<numTargs; idx++){
             if(idx)
                 res.append(",");
@@ -56,8 +55,7 @@ std::string getInnerType(const DeclaratorDecl* Node){
             llvm::raw_string_ostream OS(res);
             Targ.dump(OS);
         }
-        if(numTargs>1)
-            res.append(")");
+        res.append(">");
         return res;
     } else {
         return "fail";
@@ -87,7 +85,8 @@ void StdlibAnalysis::extract() {
         "set", "multiset",
         "unordered_map", "unordered_multimap",
         "unordered_set", "unordered_multiset",
-        "queue", "priority_queue", "stack", "deque"
+        "queue", "priority_queue", "stack", "deque",
+        "tuple"
         );
     auto requirements = hasType(namedDecl( // previously cxxRecordDecl
             isAnyStdContainer,

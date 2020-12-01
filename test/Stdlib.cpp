@@ -34,10 +34,13 @@ void simplefunc(){
     // vector<float> badvec; // will not work because of missing namespace qual.
     std::map<float, n::vector> wmap;
 
+    std::tuple<int, int> tup;
+
     using namespace std;
     array<float, 3> badarr;
     array<std::vector<int>, 3> badarr2;
     vector<bool> badvec;
+    tuple<float, float> tup2;
 
     // Anti-examples
     n::vector pseudovec;
