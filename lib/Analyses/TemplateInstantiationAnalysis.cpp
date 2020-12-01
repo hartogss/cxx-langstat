@@ -2,9 +2,11 @@
 #include <vector>
 
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/ADT/StringRef.h"
 #include "clang/AST/TemplateBase.h"
 
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
+#include "cxx-langstat/Stats.h"
 #include "cxx-langstat/Utils.h"
 
 using namespace clang;
@@ -104,29 +106,23 @@ void printStats(std::string text, const Matches<TemplateInstType>& Insts){
     };
     for(auto match : Insts){
         std::cout << getMatchDeclName(match) << " @ " << match.location << "\n";
-        if(auto Node = cast<TemplateInstType>(match.node)){
-            // https://stackoverflow.com/questions/44397953/retrieve-template-
-            // parameters-from-cxxconstructexpr-in-clang-ast
-            // Check why it works like this and the other does not
-            const TemplateArgumentList& TAList(
-                Node->getTemplateInstantiationArgs());
-            // auto TAList = Node->getTemplateInstantiationArgs();
-            for(unsigned idx=0; idx<TAList.size(); idx++){
-                std::string res;
-                auto TArg = TAList.get(idx);
-                llvm::raw_string_ostream OS(res);
-                TArg.dump(OS);
-                std::cout << res << "\n";
-                updateArgKinds(TArg, ArgKinds);
-            }
+        // https://stackoverflow.com/questions/44397953/retrieve-template-
+        // parameters-from-cxxconstructexpr-in-clang-ast
+        // Check why it works like this and the other does not
+        const TemplateArgumentList& TAList(
+            match.node->getTemplateInstantiationArgs());
+        // auto TAList = Node->getTemplateInstantiationArgs();
+        for(unsigned idx=0; idx<TAList.size(); idx++){
+            std::string res;
+            auto TArg = TAList.get(idx);
+            llvm::raw_string_ostream OS(res);
+            TArg.dump(OS);
+            std::cout << res << "\n";
+            updateArgKinds(TArg, ArgKinds);
         }
     }
     for(auto [key, val] : ArgKinds)
         std::cout << key << ": " << val << "\n";
-    // old way by getting vardecl type
-    // if(auto Node = cast<VarDecl>(m.node)){
-    //     std::cout << "test: " << get(Node->getType().getTypePtr()) << std::endl;
-    // }
 }
 template<>
 void printStats(std::string text, const Matches<FunctionDecl>& Insts){
@@ -139,25 +135,50 @@ void printStats(std::string text, const Matches<FunctionDecl>& Insts){
         // auto specKind = cast<FunctionDecl>(m.node)->
         // getTemplateSpecializationKindForInstantiation();
         // std::cout << "specialization kind: " << specKind << std::endl;
-        if(auto Node = cast<FunctionDecl>(match.node)){
-            auto TALPtr = Node->getTemplateSpecializationArgs();
-            for(unsigned idx=0; idx<TALPtr->size(); idx++){
-                std::string res;
-                auto TArg = TALPtr->get(idx);
-                llvm::raw_string_ostream OS(res);
-                TArg.dump(OS);
-                std::cout << res << "\n";
-                updateArgKinds(TArg, ArgKinds);
-            }
+        auto TALPtr = match.node->getTemplateSpecializationArgs();
+        for(unsigned idx=0; idx<TALPtr->size(); idx++){
+            std::string res;
+            auto TArg = TALPtr->get(idx);
+            llvm::raw_string_ostream OS(res);
+            TArg.dump(OS);
+            std::cout << res << "\n";
+            updateArgKinds(TArg, ArgKinds);
         }
+
     }
     for(auto [key, val] : ArgKinds)
         std::cout << key << ": " << val << "\n";
 }
 
+void gatherStats(const Matches<ClassTemplateSpecializationDecl>& Insts){
+    Stats hdr("template", "#non-type parameters", "#type parameters",
+        "#template parameters");
+    Stats<std::string, unsigned, unsigned, unsigned> stats;
+    constexpr StringRef str("test.csv");
+    std::error_code EC;
+    llvm::raw_fd_ostream stream(str, EC);
+    for(auto match : Insts){
+        std::map<std::string, unsigned> ArgKinds {
+            {"nontype", 0}, {"type", 0}, {"template", 0},
+        };
+        const TemplateArgumentList& TAList(
+            match.node->getTemplateInstantiationArgs());
+        auto numTArgs = TAList.size();
+        for(unsigned idx=0; idx<numTArgs; idx++){
+            auto TArg = TAList.get(idx);
+            updateArgKinds(TArg, ArgKinds);
+        }
+        stats.gather(getMatchDeclName(match), ArgKinds["nontype"], ArgKinds["type"],
+            ArgKinds["template"]);
+    }
+    hdr.writeToFile(std::move(stream));
+    stats.writeToFile(std::move(stream));
+}
+
 void TemplateInstantiationAnalysis::analyze(){
     printStats<ClassTemplateSpecializationDecl>("Class instantiations",
         ClassInsts);
+    gatherStats(ClassInsts);
     printStats<FunctionDecl>("Function instantiations",
         FuncInsts);
     printStats<VarTemplateSpecializationDecl>("Variable instantiations",
