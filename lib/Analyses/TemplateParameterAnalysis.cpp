@@ -91,10 +91,9 @@ void TemplateParameterAnalysis::extract(){
 }
 using DM = Matches<Decl>;
 void printStats(std::string text, DM t, DM tnonty, DM tty, DM ttemp){
-    std::cout << "\033[33m" << text << "\033[0m " << t.size() << "\n";
+    printMatches(text, t);
     auto WithoutParamPack = 0;
     auto WithParamPack = 0;
-
     for(auto match : t){
         // Cast cannot fail, upcast from guaranteed some of class-,func-,var-,
         // alias-templatedecl

@@ -21,15 +21,17 @@ void VariableTemplateAnalysis::extract(){
     // Seems like static members of classes in AST are vars, not fields.
     // Essentially the same matcher as for typedefs in UsingAnalysis.cpp,
     // but static vardecl instead of typedefs.
-    DeclarationMatcher ClassWithStaticMember = classTemplateDecl(has(cxxRecordDecl(
-        // Must have static member
-        forEach(varDecl(isStaticStorageClass()).bind("staticmember")),
-        // Mustn't have decl that is not static member, access spec or cxxrecord
-        unless(has(decl(
-            unless(anyOf(
-                varDecl(isStaticStorageClass()),
-                accessSpecDecl(),
-                cxxRecordDecl()))))))))
+    DeclarationMatcher ClassWithStaticMember = classTemplateDecl(
+        isExpansionInMainFile(),
+        has(cxxRecordDecl(
+            // Must have static member
+            forEach(varDecl(isStaticStorageClass()).bind("staticmember")),
+            // Mustn't have decl that is not static member, access spec or cxxrecord
+            unless(has(decl(
+                unless(anyOf(
+                    varDecl(isStaticStorageClass()),
+                    accessSpecDecl(),
+                    cxxRecordDecl()))))))))
     .bind("classwithstaticmember");
 
     // Second pre-C++14 idiom:
@@ -58,7 +60,9 @@ void VariableTemplateAnalysis::extract(){
     // http://clang.llvm.org/docs/LibASTMatchers.html#writing-your-own-matchers
     // https://clang.llvm.org/doxygen/ASTMatchersInternal_8cpp_source.html
     internal::VariadicDynCastAllOfMatcher<Decl, VarTemplateDecl> varTemplateDecl;
-    DeclarationMatcher VariableTemplate = varTemplateDecl().bind("variabletemplate");
+    DeclarationMatcher VariableTemplate = varTemplateDecl(
+        isExpansionInMainFile())
+    .bind("variabletemplate");
 
     ClassWithStaticMemberDecls = Extr.extract("classwithstaticmember", ClassWithStaticMember);
     ConstexprFunctionDecls = Extr.extract("constexprfunction", ConstexprFunction);
@@ -70,6 +74,7 @@ void VariableTemplateAnalysis::analyze(){
     printMatches("Variable templates", VariableTemplateDecls);
 }
 void VariableTemplateAnalysis::run(){
+    std::cout << "\033[32mRunning variable template analysis:\033[0m\n";
     extract();
     analyze();
 }

@@ -25,7 +25,9 @@ StatementMatcher constructForMatcher(std::string Name, int d){
 // Constructs matcher that exactly matches mixed loops with depth d (nesting depth)
 StatementMatcher constructMixedMatcher(std::string Name, int d){
     auto loopStmt = [](auto m){
-        return stmt(anyOf(forStmt(m), whileStmt(m), doStmt(m), cxxForRangeStmt(m)));
+        return stmt(
+            isExpansionInMainFile(),
+            anyOf(forStmt(m), whileStmt(m), doStmt(m), cxxForRangeStmt(m)));
     };
     StatementMatcher NumOfDescendantsAtLeastD = anything();
     int i=1;
@@ -62,10 +64,13 @@ void LoopDepthAnalysis::extract() {
     // auto matches = this->Extr.extract("fs1", forStmt(unless(hasAncestor(forStmt()))).bind("fs1"));
     StatementMatcher IsOuterMostLoop =
         unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))));
-    auto matches = this->Extr.extract("fs1", stmt(anyOf(
-        forStmt(IsOuterMostLoop),
-        whileStmt(IsOuterMostLoop),
-        doStmt(IsOuterMostLoop))).bind("fs1"));
+    auto matches = this->Extr.extract("fs1", stmt(
+        isExpansionInMainFile(),
+        anyOf(
+            forStmt(IsOuterMostLoop),
+            whileStmt(IsOuterMostLoop),
+            doStmt(IsOuterMostLoop)))
+    .bind("fs1"));
 
     unsigned TopLevelForLoops = matches.size();
     std::cout << "#Top-level for loops:" << TopLevelForLoops << std::endl;

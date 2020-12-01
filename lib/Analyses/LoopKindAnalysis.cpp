@@ -10,10 +10,15 @@ LoopKindAnalysis::LoopKindAnalysis(clang::ASTContext& Context) : Analysis(Contex
 void LoopKindAnalysis::extract(){
 
     // Analysis of prevalence of different loop statement, i.e. comparing for, while etc.
-    auto ForMatches = Extr.extract("fs1", forStmt().bind("fs1"));
-    auto WhileMatches = Extr.extract("ws1", whileStmt().bind("ws1"));
-    auto DoWhileMatches = Extr.extract("ds1", doStmt().bind("ds1"));
-    auto RangeBasedForMatches = Extr.extract("forrange", cxxForRangeStmt().bind("forrange"));
+    auto ForMatches = Extr.extract("fs1", forStmt(isExpansionInMainFile())
+    .bind("fs1"));
+    auto WhileMatches = Extr.extract("ws1", whileStmt(isExpansionInMainFile())
+    .bind("ws1"));
+    auto DoWhileMatches = Extr.extract("ds1", doStmt(isExpansionInMainFile())
+    .bind("ds1"));
+    auto RangeBasedForMatches = Extr.extract("forrange",
+    cxxForRangeStmt(isExpansionInMainFile())
+    .bind("forrange"));
 
     unsigned total = ForMatches.size() + WhileMatches.size()
         + DoWhileMatches.size() + RangeBasedForMatches.size();

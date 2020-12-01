@@ -19,6 +19,7 @@ CyclomaticComplexityAnalysis::CyclomaticComplexityAnalysis
 void CyclomaticComplexityAnalysis::extract(){
     auto id = "fd";
     auto fDecl = functionDecl(
+        isExpansionInMainFile(),
         unless(isImplicit()), // Should not be compiler-generated
         has(compoundStmt()))  // Should be defined, i.e have a body
     .bind(id);

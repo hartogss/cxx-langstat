@@ -34,7 +34,9 @@ void UsingAnalysis::extract() {
 
     // Type aliases, however, only those that are not part of type alias
     // templates. Type alias template contains type alias node in clang AST.
-    auto typeAlias = typeAliasDecl(unless(hasParent(typeAliasTemplateDecl())))
+    auto typeAlias = typeAliasDecl(
+        isExpansionInMainFile(),
+        unless(hasParent(typeAliasTemplateDecl())))
     .bind("alias");
 
     // Of course there are no typedef templates in C++, but we consider the
@@ -47,6 +49,7 @@ void UsingAnalysis::extract() {
     // typedefs, nothing else.
     // Requires the typedef in the template to be public.
     auto typedefTemplate = classTemplateDecl(has(cxxRecordDecl(
+        isExpansionInMainFile(),
         // Must have typedefDecl
         // has() will ensure only first typedef is matched. if want to allow
         // for multiple typedefs in a template, we have to use forEach()
@@ -61,7 +64,9 @@ void UsingAnalysis::extract() {
     .bind("typedeftemplate");
 
     //
-    auto typeAliasTemplate = typeAliasTemplateDecl().bind("aliastemplate");
+    auto typeAliasTemplate = typeAliasTemplateDecl(
+        isExpansionInMainFile())
+    .bind("aliastemplate");
 
     // Note: Left works only in clang-query, right works in both CQ and LibTooling
     // has(anyOf(...)) -> has(decl(anyOf(...)))
