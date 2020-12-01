@@ -114,7 +114,7 @@ void LoopDepthAnalysis::analyze(){
 //step 3: visualization (for later)
 // combine
 void LoopDepthAnalysis::run(){
-    std::cout << "\033[32mRunning ForStmtAnalysis:\033[0m" << std::endl;
+    std::cout << "\033[32mRunning loop depth analysis:\033[0m" << std::endl;
     extract();
 }
 

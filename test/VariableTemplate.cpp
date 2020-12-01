@@ -102,7 +102,7 @@ constexpr T pi = T(3.14); // T() is the cxxUnresolvedConstructExpr
 // pi is a T constructed by T(3.14), where T() is a constructor call?
 
 template<typename T>
-constexpr T pi2 = 3.14;
+T pi2;
 
 class vtc {
     template<typename T>
