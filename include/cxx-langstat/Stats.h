@@ -17,7 +17,8 @@ public:
         for(auto tup : Data) {
             // https://stackoverflow.com/questions/1198260/how-can-you-iterate-over-the-elements-of-an-stdtuple
             std::apply([&](auto&&... args) {
-                ((stream << args << " "), ...);}, tup);
+                ((stream << args << ", "), ...);
+                }, tup);
             stream << "\n";
         }
     }
@@ -25,3 +26,11 @@ private:
     // Data points
     std::vector<std::tuple<Types...>> Data;
 };
+
+template<typename ...Types>
+void write(std::tuple<Types...> t, llvm::raw_fd_ostream&& stream){
+    std::apply([&](auto&&... args) {
+        ((stream << args << ","), ...);
+    }, t);
+    stream << "\n";
+}

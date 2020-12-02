@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/Support/raw_os_ostream.h"
 #include "llvm/ADT/StringRef.h"
 #include "clang/AST/TemplateBase.h"
 
@@ -33,27 +34,6 @@ using namespace clang::ast_matchers;
 //      - non-types: what types did those parameters have, possible range of values used?
 //      - types: what types were templates instantiated with?
 //      - templates: names of template used.
-
-void updateArgKinds(const TemplateArgument& TArg,
-    std::map<std::string, unsigned>& Mapping){
-        switch (TArg.getKind()){
-            case TemplateArgument::Null:
-            case TemplateArgument::NullPtr:
-                break;
-            case TemplateArgument::Type:
-                Mapping["type"]++;
-                break;
-            case TemplateArgument::Declaration:
-            case TemplateArgument::Integral:
-                Mapping["nontype"]++;
-                break;
-            case TemplateArgument::Template:
-                Mapping["template"]++;
-                break;
-            // in case that it is a pack, can that be a pack of templates?
-            // parameter pack can be of anything
-        }
-}
 
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
 (clang::ASTContext& Context) : Analysis(Context) {
@@ -98,6 +78,54 @@ void TemplateInstantiationAnalysis::extract() {
     VarInsts = getASTNodes<VarTemplateSpecializationDecl>(VarResults, "VarInsts");
 }
 
+template<typename T>
+const TemplateArgumentList& getTemplateArgs(const Match<T>& Match);
+template<>
+const TemplateArgumentList&
+getTemplateArgs(const Match<ClassTemplateSpecializationDecl>& Match){
+    const TemplateArgumentList& TAList(
+        Match.node->getTemplateInstantiationArgs());
+    return TAList;
+}
+template<>
+const TemplateArgumentList&
+getTemplateArgs(const Match<VarTemplateSpecializationDecl>& Match){
+    const TemplateArgumentList& TAList(
+        Match.node->getTemplateInstantiationArgs());
+    return TAList;
+}
+template<>
+const TemplateArgumentList&
+getTemplateArgs(const Match<FunctionDecl>& Match){
+    auto TALPtr = Match.node->getTemplateSpecializationArgs();
+    return *TALPtr;
+}
+
+void updateArgKinds(const TemplateArgument& TArg,
+    std::map<std::string, unsigned>& Mapping){
+        switch (TArg.getKind()){
+            case TemplateArgument::Null:
+            case TemplateArgument::NullPtr:
+                break;
+            case TemplateArgument::Type:
+                Mapping["type"]++;
+                break;
+            case TemplateArgument::Declaration:
+            case TemplateArgument::Integral:
+                Mapping["nontype"]++;
+                break;
+            case TemplateArgument::Template:
+                Mapping["template"]++;
+                break;
+            case TemplateArgument::Pack:
+                for(auto it=TArg.pack_begin(); it!=TArg.pack_end(); it++)
+                    updateArgKinds(*it, Mapping);
+                break;
+            // in case that it is a pack, can that be a pack of templates?
+            // parameter pack can be of anything
+        }
+}
+
 template<typename TemplateInstType>
 void printStats(std::string text, const Matches<TemplateInstType>& Insts){
     std::cout << "\033[33m" << text << "\033[0m " << Insts.size() << "\n";
@@ -109,80 +137,95 @@ void printStats(std::string text, const Matches<TemplateInstType>& Insts){
         // https://stackoverflow.com/questions/44397953/retrieve-template-
         // parameters-from-cxxconstructexpr-in-clang-ast
         // Check why it works like this and the other does not
-        const TemplateArgumentList& TAList(
-            match.node->getTemplateInstantiationArgs());
+        const TemplateArgumentList& TAList(getTemplateArgs(match));
         // auto TAList = Node->getTemplateInstantiationArgs();
         for(unsigned idx=0; idx<TAList.size(); idx++){
             std::string res;
             auto TArg = TAList.get(idx);
             llvm::raw_string_ostream OS(res);
             TArg.dump(OS);
-            std::cout << res << "\n";
             updateArgKinds(TArg, ArgKinds);
         }
     }
     for(auto [key, val] : ArgKinds)
         std::cout << key << ": " << val << "\n";
 }
-template<>
-void printStats(std::string text, const Matches<FunctionDecl>& Insts){
-    std::cout << "\033[33m" << text << "\033[0m " << Insts.size() << "\n";
-    std::map<std::string, unsigned> ArgKinds {
+
+void getArgAndKindAsStrings(const TemplateArgument& TArg,
+    std::multimap<std::string, std::string>& TArgs) {
+        std::string Result;
+        llvm::raw_string_ostream stream(Result);
+        switch (TArg.getKind()){
+            case TemplateArgument::Type:
+                TArg.dump(stream);
+                TArgs.emplace("type", Result);
+                break;
+            case TemplateArgument::Expression:
+                std::cout << "expr";
+                std::cout << std::endl;
+                break;
+            case TemplateArgument::Null:
+            case TemplateArgument::NullPtr:
+            case TemplateArgument::Declaration:
+            case TemplateArgument::Integral:
+                TArg.dump(stream);
+                TArgs.emplace("non-type", Result);
+                break;
+            case TemplateArgument::Template:
+                TArg.dump(stream);
+                TArgs.emplace("template", Result);
+                break;
+            case TemplateArgument::Pack:
+                for(auto it=TArg.pack_begin(); it!=TArg.pack_end(); it++)
+                    getArgAndKindAsStrings(*it, TArgs);
+                break;
+            // Still two cases missing
+        }
+}
+
+template<typename T>
+void gatherStats(const Matches<T>& Insts, llvm::raw_ostream&& stream){
+    stream << "Templates, #Non-type params, #Type params, #Template params"
+        "\n";
+    const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
+    std::map<std::string, unsigned> ArgKindCounts {
         {"nontype", 0}, {"type", 0}, {"template", 0},
     };
     for(auto match : Insts){
-        std::cout << getMatchDeclName(match) << " @ " << match.location << "\n";
-        // auto specKind = cast<FunctionDecl>(m.node)->
-        // getTemplateSpecializationKindForInstantiation();
-        // std::cout << "specialization kind: " << specKind << std::endl;
-        auto TALPtr = match.node->getTemplateSpecializationArgs();
-        for(unsigned idx=0; idx<TALPtr->size(); idx++){
-            std::string res;
-            auto TArg = TALPtr->get(idx);
-            llvm::raw_string_ostream OS(res);
-            TArg.dump(OS);
-            std::cout << res << "\n";
-            updateArgKinds(TArg, ArgKinds);
-        }
-
-    }
-    for(auto [key, val] : ArgKinds)
-        std::cout << key << ": " << val << "\n";
-}
-
-void gatherStats(const Matches<ClassTemplateSpecializationDecl>& Insts){
-    Stats hdr("template", "#non-type parameters", "#type parameters",
-        "#template parameters");
-    Stats<std::string, unsigned, unsigned, unsigned> stats;
-    constexpr StringRef str("test.csv");
-    std::error_code EC;
-    llvm::raw_fd_ostream stream(str, EC);
-    for(auto match : Insts){
-        std::map<std::string, unsigned> ArgKinds {
-            {"nontype", 0}, {"type", 0}, {"template", 0},
-        };
-        const TemplateArgumentList& TAList(
-            match.node->getTemplateInstantiationArgs());
+        std::multimap<std::string, std::string> TArgs;
+        const TemplateArgumentList& TAList(getTemplateArgs(match));
         auto numTArgs = TAList.size();
         for(unsigned idx=0; idx<numTArgs; idx++){
             auto TArg = TAList.get(idx);
-            updateArgKinds(TArg, ArgKinds);
+            getArgAndKindAsStrings(TArg, TArgs);
         }
-        stats.gather(getMatchDeclName(match), ArgKinds["nontype"], ArgKinds["type"],
-            ArgKinds["template"]);
+        stream << getMatchDeclName(match);
+        for(auto key : ArgKinds)
+            stream << "," << TArgs.count(key);
+        for(auto key : ArgKinds){
+            auto range = TArgs.equal_range(key);
+            for (auto it = range.first; it != range.second; it++)
+                stream << "," << it->second;
+        }
+        stream << '\n';
     }
-    hdr.writeToFile(std::move(stream));
-    stats.writeToFile(std::move(stream));
 }
 
 void TemplateInstantiationAnalysis::analyze(){
     printStats<ClassTemplateSpecializationDecl>("Class instantiations",
         ClassInsts);
-    gatherStats(ClassInsts);
     printStats<FunctionDecl>("Function instantiations",
         FuncInsts);
     printStats<VarTemplateSpecializationDecl>("Variable instantiations",
         VarInsts);
+
+    constexpr StringRef str("test.csv");
+    std::error_code EC;
+    llvm::raw_fd_ostream stream(str, EC);
+    llvm::raw_os_ostream stream2(std::cout);
+    gatherStats(ClassInsts, std::move(stream));
+    gatherStats(FuncInsts, std::move(stream));
+    gatherStats(VarInsts, std::move(stream));
 }
 void TemplateInstantiationAnalysis::run(){
     std::cout << "\033[32mRunning template instantiation analysis:\033[0m\n";
@@ -191,35 +234,3 @@ void TemplateInstantiationAnalysis::run(){
 }
 
 //-----------------------------------------------------------------------------
-
-// std::string get(const Type* t){
-//     if(auto tprime = dyn_cast<ElaboratedType>(t)){
-//         auto subt = tprime->getNamedType().getTypePtr();
-//         return get(subt);
-//     }
-//     if(auto tprime = dyn_cast<TemplateSpecializationType>(t)){
-//         auto numTargs = tprime->getNumArgs();
-//         std::string res = "";
-//         if(numTargs>1)
-//             res.append("(");
-//         for(unsigned idx=0; idx<numTargs; idx++){
-//             if(idx)
-//                 res.append(",");
-//             auto Targ = tprime->getArg(idx);
-//             llvm::raw_string_ostream OS(res);
-//             Targ.dump(OS);
-//         }
-//         if(numTargs>1)
-//             res.append(")");
-//         return res;
-//     }
-//     if(auto tprime = dyn_cast<SubstTemplateTypeParmType>(t)){
-//         return tprime->getReplacementType().getAsString();
-//         // auto TTPT = n->getReplacedParameter();
-//         // std::cout << "pp " << TTPT->isParameterPack() << std::endl;
-//     }
-//     if(auto tprime = dyn_cast<BuiltinType>(t)){
-//         return tprime->desugar().getAsString();
-//     }
-//     return "fail";
-// }
