@@ -78,30 +78,25 @@ void TemplateInstantiationAnalysis::extract() {
     VarInsts = getASTNodes<VarTemplateSpecializationDecl>(VarResults, "VarInsts");
 }
 
-template<typename T>
-const TemplateArgumentList& getTemplateArgs(const Match<T>& Match);
-template<>
 const TemplateArgumentList&
 getTemplateArgs(const Match<ClassTemplateSpecializationDecl>& Match){
     const TemplateArgumentList& TAList(
         Match.node->getTemplateInstantiationArgs());
     return TAList;
 }
-template<>
 const TemplateArgumentList&
 getTemplateArgs(const Match<VarTemplateSpecializationDecl>& Match){
     const TemplateArgumentList& TAList(
         Match.node->getTemplateInstantiationArgs());
     return TAList;
 }
-template<>
 const TemplateArgumentList&
 getTemplateArgs(const Match<FunctionDecl>& Match){
     auto TALPtr = Match.node->getTemplateSpecializationArgs();
     return *TALPtr;
 }
 
-void updateArgKinds(const TemplateArgument& TArg,
+void updateArgKindCounts(const TemplateArgument& TArg,
     std::map<std::string, unsigned>& Mapping){
         switch (TArg.getKind()){
             case TemplateArgument::Null:
@@ -119,7 +114,7 @@ void updateArgKinds(const TemplateArgument& TArg,
                 break;
             case TemplateArgument::Pack:
                 for(auto it=TArg.pack_begin(); it!=TArg.pack_end(); it++)
-                    updateArgKinds(*it, Mapping);
+                    updateArgKindCounts(*it, Mapping);
                 break;
             // in case that it is a pack, can that be a pack of templates?
             // parameter pack can be of anything
@@ -144,14 +139,14 @@ void printStats(std::string text, const Matches<TemplateInstType>& Insts){
             auto TArg = TAList.get(idx);
             llvm::raw_string_ostream OS(res);
             TArg.dump(OS);
-            updateArgKinds(TArg, ArgKinds);
+            updateArgKindCounts(TArg, ArgKinds);
         }
     }
     for(auto [key, val] : ArgKinds)
         std::cout << key << ": " << val << "\n";
 }
 
-void getArgAndKindAsStrings(const TemplateArgument& TArg,
+void updateArgsAndKinds(const TemplateArgument& TArg,
     std::multimap<std::string, std::string>& TArgs) {
         std::string Result;
         llvm::raw_string_ostream stream(Result);
@@ -177,7 +172,7 @@ void getArgAndKindAsStrings(const TemplateArgument& TArg,
                 break;
             case TemplateArgument::Pack:
                 for(auto it=TArg.pack_begin(); it!=TArg.pack_end(); it++)
-                    getArgAndKindAsStrings(*it, TArgs);
+                    updateArgsAndKinds(*it, TArgs);
                 break;
             // Still two cases missing
         }
@@ -197,7 +192,7 @@ void gatherStats(const Matches<T>& Insts, llvm::raw_ostream&& stream){
         auto numTArgs = TAList.size();
         for(unsigned idx=0; idx<numTArgs; idx++){
             auto TArg = TAList.get(idx);
-            getArgAndKindAsStrings(TArg, TArgs);
+            updateArgsAndKinds(TArg, TArgs);
         }
         stream << getMatchDeclName(match);
         for(auto key : ArgKinds)
