@@ -108,54 +108,6 @@ getTemplateArgs(const Match<FunctionDecl>& Match){
     }
 }
 
-void updateArgKindCounts(const TemplateArgument& TArg,
-    std::map<std::string, unsigned>& Mapping){
-        switch (TArg.getKind()){
-            case TemplateArgument::Null:
-            case TemplateArgument::NullPtr:
-                break;
-            case TemplateArgument::Type:
-                Mapping["type"]++;
-                break;
-            case TemplateArgument::Declaration:
-            case TemplateArgument::Integral:
-                Mapping["nontype"]++;
-                break;
-            case TemplateArgument::Template:
-                Mapping["template"]++;
-                break;
-            case TemplateArgument::Pack:
-                for(auto it=TArg.pack_begin(); it!=TArg.pack_end(); it++)
-                    updateArgKindCounts(*it, Mapping);
-                break;
-            // in case that it is a pack, can that be a pack of templates?
-            // parameter pack can be of anything
-        }
-}
-
-template<typename TemplateInstType>
-void printStats(std::string text, const Matches<TemplateInstType>& Insts){
-    std::cout << "\033[33m" << text << "\033[0m " << Insts.size() << "\n";
-    std::map<std::string, unsigned> ArgKinds {
-        {"nontype", 0}, {"type", 0}, {"template", 0},
-    };
-    for(auto match : Insts){
-        std::cout << getMatchDeclName(match) << " @ " << match.location << "\n";
-        // https://stackoverflow.com/questions/44397953/retrieve-template-
-        // parameters-from-cxxconstructexpr-in-clang-ast
-        const TemplateArgumentList& TAList(getTemplateArgs(match));
-        for(unsigned idx=0; idx<TAList.size(); idx++){
-            std::string res;
-            auto TArg = TAList.get(idx);
-            llvm::raw_string_ostream OS(res);
-            TArg.dump(OS);
-            updateArgKindCounts(TArg, ArgKinds);
-        }
-    }
-    for(auto [key, val] : ArgKinds)
-        std::cout << key << ": " << val << "\n";
-}
-
 void updateArgsAndKinds(const TemplateArgument& TArg,
     std::multimap<std::string, std::string>& TArgs) {
         std::string Result;
@@ -189,33 +141,7 @@ void updateArgsAndKinds(const TemplateArgument& TArg,
 }
 
 template<typename T>
-void gatherStats(const Matches<T>& Insts, llvm::raw_ostream&& stream){
-    stream << "Templates, #Non-type params, #Type params, #Template params"
-        "\n";
-    const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
-    for(auto match : Insts){
-        std::multimap<std::string, std::string> TArgs;
-        const TemplateArgumentList& TAList(getTemplateArgs(match));
-        auto numTArgs = TAList.size();
-        for(unsigned idx=0; idx<numTArgs; idx++){
-            auto TArg = TAList.get(idx);
-            updateArgsAndKinds(TArg, TArgs);
-        }
-        stream << getMatchDeclName(match);
-        for(auto key : ArgKinds)
-            stream << "," << TArgs.count(key);
-        for(auto key : ArgKinds){
-            auto range = TArgs.equal_range(key);
-            for (auto it = range.first; it != range.second; it++)
-                stream << "," << it->second;
-        }
-        stream << '\n';
-    }
-}
-
-template<typename T>
-void gatherStats2(const Matches<T>& Insts, std::ofstream&& file){
-
+void gatherStats(const Matches<T>& Insts, std::ofstream&& file){
     const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
     for(auto match : Insts){
         std::multimap<std::string, std::string> TArgs;
@@ -239,21 +165,11 @@ void gatherStats2(const Matches<T>& Insts, std::ofstream&& file){
 }
 
 void TemplateInstantiationAnalysis::analyze(){
-    printStats<ClassTemplateSpecializationDecl>("Class instantiations",
-        ClassInsts);
-    printStats<FunctionDecl>("Function instantiations",
-        FuncInsts);
-    printStats<VarTemplateSpecializationDecl>("Variable instantiations",
-        VarInsts);
-
-    constexpr StringRef str("test.csv");
-    std::error_code EC;
-    llvm::raw_fd_ostream stream(str, EC);
     llvm::raw_os_ostream stream2(std::cout);
     std::ofstream o("test.json");
-    gatherStats2(ClassInsts, std::move(o));
-    gatherStats2(FuncInsts, std::move(o));
-    gatherStats2(VarInsts, std::move(o));
+    gatherStats(ClassInsts, std::move(o));
+    gatherStats(FuncInsts, std::move(o));
+    gatherStats(VarInsts, std::move(o));
 }
 void TemplateInstantiationAnalysis::run(){
     std::cout << "\033[32mRunning template instantiation analysis:\033[0m\n";
