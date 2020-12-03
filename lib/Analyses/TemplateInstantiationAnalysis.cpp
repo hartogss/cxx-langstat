@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <stdlib.h>
 
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/raw_os_ostream.h"
@@ -21,7 +22,8 @@ using namespace clang::ast_matchers;
 // - classes,
 // - functions (including member methods), &
 // - variables (including class static member variables, (not
-// class field, those cannot be templated if they're not static))
+//   class field, those cannot be templated if they're not static))
+//
 // Template instantiations counted should stem from either explicit instantiations
 // written by programmers or from implicit ones through 'natural usage'.
 //
@@ -80,20 +82,23 @@ void TemplateInstantiationAnalysis::extract() {
 
 const TemplateArgumentList&
 getTemplateArgs(const Match<ClassTemplateSpecializationDecl>& Match){
-    const TemplateArgumentList& TAList(
-        Match.node->getTemplateInstantiationArgs());
-    return TAList;
+    return Match.node->getTemplateInstantiationArgs();
 }
 const TemplateArgumentList&
 getTemplateArgs(const Match<VarTemplateSpecializationDecl>& Match){
-    const TemplateArgumentList& TAList(
-        Match.node->getTemplateInstantiationArgs());
-    return TAList;
+    return Match.node->getTemplateInstantiationArgs();
 }
 const TemplateArgumentList&
 getTemplateArgs(const Match<FunctionDecl>& Match){
     auto TALPtr = Match.node->getTemplateSpecializationArgs();
-    return *TALPtr;
+    if(TALPtr!=nullptr)
+        return *TALPtr;
+    else {
+        std::cerr << "Template argument list ptr is nullptr,"
+            << " function declaration at line " << Match.location
+            << " was not a template specialization" << '\n';
+        exit(1);
+    }
 }
 
 void updateArgKindCounts(const TemplateArgument& TArg,
@@ -131,9 +136,7 @@ void printStats(std::string text, const Matches<TemplateInstType>& Insts){
         std::cout << getMatchDeclName(match) << " @ " << match.location << "\n";
         // https://stackoverflow.com/questions/44397953/retrieve-template-
         // parameters-from-cxxconstructexpr-in-clang-ast
-        // Check why it works like this and the other does not
         const TemplateArgumentList& TAList(getTemplateArgs(match));
-        // auto TAList = Node->getTemplateInstantiationArgs();
         for(unsigned idx=0; idx<TAList.size(); idx++){
             std::string res;
             auto TArg = TAList.get(idx);
