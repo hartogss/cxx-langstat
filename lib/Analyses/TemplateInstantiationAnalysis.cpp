@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <stdlib.h>
 
@@ -7,12 +8,15 @@
 #include "llvm/ADT/StringRef.h"
 #include "clang/AST/TemplateBase.h"
 
+#include <nlohmann/json.hpp>
+
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 #include "cxx-langstat/Stats.h"
 #include "cxx-langstat/Utils.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
+using ordered_json = nlohmann::ordered_json;
 
 
 //-----------------------------------------------------------------------------
@@ -88,6 +92,9 @@ const TemplateArgumentList&
 getTemplateArgs(const Match<VarTemplateSpecializationDecl>& Match){
     return Match.node->getTemplateInstantiationArgs();
 }
+// Is this memory-safe?
+// Probably yes, assuming the template arguments being stored on the heap,
+// being freed only later by the clang library.
 const TemplateArgumentList&
 getTemplateArgs(const Match<FunctionDecl>& Match){
     auto TALPtr = Match.node->getTemplateSpecializationArgs();
@@ -186,9 +193,6 @@ void gatherStats(const Matches<T>& Insts, llvm::raw_ostream&& stream){
     stream << "Templates, #Non-type params, #Type params, #Template params"
         "\n";
     const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
-    std::map<std::string, unsigned> ArgKindCounts {
-        {"nontype", 0}, {"type", 0}, {"template", 0},
-    };
     for(auto match : Insts){
         std::multimap<std::string, std::string> TArgs;
         const TemplateArgumentList& TAList(getTemplateArgs(match));
@@ -209,6 +213,31 @@ void gatherStats(const Matches<T>& Insts, llvm::raw_ostream&& stream){
     }
 }
 
+template<typename T>
+void gatherStats2(const Matches<T>& Insts, std::ofstream&& file){
+
+    const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
+    for(auto match : Insts){
+        std::multimap<std::string, std::string> TArgs;
+        const TemplateArgumentList& TAList(getTemplateArgs(match));
+        auto numTArgs = TAList.size();
+        for(unsigned idx=0; idx<numTArgs; idx++){
+            auto TArg = TAList.get(idx);
+            updateArgsAndKinds(TArg, TArgs);
+        }
+        ordered_json j;
+        j["templatename"] = getMatchDeclName(match);
+        for(auto key : ArgKinds){
+            auto range = TArgs.equal_range(key);
+            std::vector<std::string> v;
+            for (auto it = range.first; it != range.second; it++)
+                v.emplace_back(it->second);
+            j[key] = v;
+        }
+        file << j.dump(4) << '\n';
+    }
+}
+
 void TemplateInstantiationAnalysis::analyze(){
     printStats<ClassTemplateSpecializationDecl>("Class instantiations",
         ClassInsts);
@@ -221,9 +250,10 @@ void TemplateInstantiationAnalysis::analyze(){
     std::error_code EC;
     llvm::raw_fd_ostream stream(str, EC);
     llvm::raw_os_ostream stream2(std::cout);
-    gatherStats(ClassInsts, std::move(stream));
-    gatherStats(FuncInsts, std::move(stream));
-    gatherStats(VarInsts, std::move(stream));
+    std::ofstream o("test.json");
+    gatherStats2(ClassInsts, std::move(o));
+    gatherStats2(FuncInsts, std::move(o));
+    gatherStats2(VarInsts, std::move(o));
 }
 void TemplateInstantiationAnalysis::run(){
     std::cout << "\033[32mRunning template instantiation analysis:\033[0m\n";
