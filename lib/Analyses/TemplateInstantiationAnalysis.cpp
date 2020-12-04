@@ -42,8 +42,24 @@ using ordered_json = nlohmann::ordered_json;
 //      - templates: names of template used.
 
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
-(clang::ASTContext& Context) : Analysis(Context) {
-}
+(clang::ASTContext& Context) : Analysis(Context),
+    ClassInstMatcher(
+    cxxRecordDecl(
+        isExpansionInMainFile(),
+        isTemplateInstantiation())
+    .bind("ClassInsts")
+    ) {
+        std::cout << "TIA: standard constructor\n";
+    }
+
+TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
+(ASTContext& Context, internal::Matcher<clang::NamedDecl> Names) :
+    Analysis(Context), ClassInstMatcher(
+        cxxRecordDecl(
+            Names,
+            isTemplateInstantiation())
+        .bind("ClassInsts")
+    ) {}
 void TemplateInstantiationAnalysis::extract() {
     // Oddly enough, the result of this matcher will give back a pointer to the
     // ClassTemplateSpecializationDecl containing the instantiated CXXRecordDecl,
@@ -53,10 +69,8 @@ void TemplateInstantiationAnalysis::extract() {
     // location reported here is wrong for implicit instantiations because they
     // are subtrees of the CTSD. Explicit instantiation locations are reported
     // correctly.
-    auto ClassInstMatcher = cxxRecordDecl(
-        isExpansionInMainFile(),
-        isTemplateInstantiation())
-    .bind("ClassInsts");
+
+    // Matcher constructed by ctor
     auto ClassResults = Extr.extract2(ClassInstMatcher);
     ClassInsts = getASTNodes<ClassTemplateSpecializationDecl>(ClassResults,
         "ClassInsts");
@@ -153,6 +167,8 @@ void gatherStats(const Matches<T>& Insts, std::ofstream&& file){
         }
         ordered_json j;
         j["templatename"] = getMatchDeclName(match);
+        // j["location"] = match.node->getSourceRange().printToString(match.ctxt->getSourceManager());
+        j["location"] = match.location;
         for(auto key : ArgKinds){
             auto range = TArgs.equal_range(key);
             std::vector<std::string> v;

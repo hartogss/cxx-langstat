@@ -86,7 +86,8 @@ void StdlibAnalysis::extract() {
         "unordered_map", "unordered_multimap",
         "unordered_set", "unordered_multiset",
         "queue", "priority_queue", "stack", "deque",
-        "tuple"
+        "pair", "tuple",
+        "unique_ptr", "shared_ptr", "weak_ptr"
         );
     auto requirements = hasType(namedDecl( // previously cxxRecordDecl
             isAnyStdContainer,

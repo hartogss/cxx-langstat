@@ -69,7 +69,10 @@ target_link_libraries(${PROJECT_NAME}
     CyclomaticComplexityAnalysis
     LoopDepthAnalysis
     LoopKindAnalysis
+
     StdlibAnalysis
+    StdlibAnalysis2
+    
     TemplateInstantiationAnalysis
     TemplateParameterAnalysis
     UsingAnalysis
