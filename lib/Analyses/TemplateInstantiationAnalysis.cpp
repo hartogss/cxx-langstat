@@ -58,6 +58,7 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
     Analysis(Context),
     ClassInstMatcher(
         cxxRecordDecl(
+            isExpansionInSystemHeader(),
             Names,
             isTemplateInstantiation())
         .bind("ClassInsts")
