@@ -177,8 +177,8 @@ void gatherStats(const Matches<T>& Insts, std::ofstream&& file){
         }
         ordered_json j;
         j["templatename"] = getMatchDeclName(match);
-        // j["location"] = match.node->getSourceRange().printToString(match.ctxt->getSourceManager());
-        j["location"] = match.location;
+        j["location"] = match.node->getPointOfInstantiation().
+            printToString(match.ctxt->getSourceManager());
         for(auto key : ArgKinds){
             auto range = TArgs.equal_range(key);
             std::vector<std::string> v;
