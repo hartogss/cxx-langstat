@@ -1,100 +1,86 @@
-#include <vector>
+// #include<tuple>
+// #include<optional>
+
 #include <array>
+#include <vector>
+#include <forward_list>
+#include <list>
 #include <map>
 #include <set>
+#include <unordered_map>
 #include <unordered_set>
+#include <queue>
+#include <stack>
+#include <deque>
 
-// Test with "vector" in different namespace
-// None should match
-namespace n {
-    struct vector {
-        int x;
-    };
-    struct derivedVector : vector {
+#include <tuple>
 
-    };
-} // namespace n
-// Test with std::vector parameter variable declaration
-int parmvarfunc(std::vector<int> vec){
-    return 0;
-}
-// Returning directly does not match
-// Might change, because returning declared variable would match
-std::vector<int> func2(){
-    return std::vector<int>{1,2};
-}
-void simplefunc(){
-    // Prototypical examples
-    std::vector<int> intvec;
-    std::array<int, 2> intarr;
-    const std::array<int, 1> cintarr = {1};
-    std::vector<double> dvec;
-    dvec = {2.0}; // definition has no effect
-    volatile std::array<int, 4> i4arr;
-    // vector<float> badvec; // will not work because of missing namespace qual.
-    std::map<float, n::vector> wmap;
-
-    std::tuple<int, int> tup;
-
-    using namespace std;
-    array<float, 3> badarr;
-    array<std::vector<int>, 3> badarr2;
-    vector<bool> badvec;
-    tuple<float, float> tup2;
-
-    // Anti-examples
-    n::vector pseudovec;
-    n::derivedVector pseudovec2;
-    int x;
-}
-// Template variable, should match.
 template<typename T>
-std::array<T, 2> Tarr;
-// Template function, local variable should match.
-template<typename T>
-int func3(){
-    std::vector<T> Tvec;
-    return 0;
-}
-template<typename ...Ts>
-std::unordered_set<Ts...> Tsset;
-
-// Field declarations should match too, but be reported separately.
-struct s {
-    std::vector<int> v1;
-};
-struct s1 {
-    struct {
-        std::vector<int> v1;
-    };
-};
-template<typename T>
-class c1 {
-    std::map<T, int> m1;
+class Widget {
+    // std::vector<char> v; // works too
 };
 
 int main(int argc, char** argv){
+    // Never a problem to get instantiations of custom templates in main file
+    Widget<double> w;
 
+    // #################### Standard library containers ####################
+    // Assuming isExpansionInMainFile() is not used:
+    // √
+    std::array<int, 1> arr;
+    // √
+    std::vector<int> vec;
+    // √
+    std::forward_list<int> flist;
+    // √
+    std::list<int> list;
+    // Causes 2 extra pair instances
+    std::map<int, int> map;
+    // Causes 2 extra pair instances
+    std::multimap<int, int> mmap;
+    // √
+    std::set<int> set;
+    // √
+    std::multiset<int> mset;
+    // Causes 2 extra pair instances
+    std::unordered_map<int, int> umap;
+    // Causes 2 extra pair instances
+    std::unordered_multimap<int, int> ummap;
+    // √
+    std::unordered_set<int> uset;
+    // √
+    std::unordered_multiset<int> umset;
+    // Causes additional deque instantiation, allocator residue
+    std::queue<int> q;
+    // √
+    std::priority_queue<int> pq;
+    // Causes additional deque instantiation
+    std::stack<int> s;
+    //  √
+    std::deque<int> d;
+
+
+    // #################### Standard library utilities ####################
+    //
+    // √
+    std::pair<int, int> p;
+    // √
+    std::tuple<int,int, int> t;
+
+    // Dynamic memory management
+    // Causes 3 extra found instances
+    std::unique_ptr<int> uptr;
+    // √
+    std::shared_ptr<int> sptr;
+    // √
+    std::weak_ptr<int> wptr;
+
+
+
+    // //
+    // std::pair<Widget<float>, Widget<float>> opt; // nicely, find CTSD of name 'pair'
+    // std::vector<Widget<float>> vec2; // somewhat nicely, alias somewhere I think
+    // std::unique_ptr<Widget<float>> ptr; // somewhat nice if we ignore the deleter
+    // // but has extra match with void type
+    // std::array<int, 4> arr2; // perfect
 }
-
-
-// - Do we include parameter variable decls? Yes
-// - Do we include variable template decls?
-// - Declarations vs definitions, how do we count them? We count only decls,
-//   as those are given by decl().
-// - What about pointers to standard library types?
-// - Qualifiers? access specifiers? static? extern? Don't care, all stripped
-//   away.
-// - Explicit use of 'struct' keyword, namespaces? ignored by converting
-//   ElaboratedType to TemplateSpecializationType first if necessary.
-// - What about templates? std::vector<T>? Ideally, returns that there is a
-//   vector and reports that one of them had template type. Still problem with
-//   returning base type.
-// - Field decls? Indirect field decls? Reported separately.
-// - What about references defined through structured bindings? Not relevant,
-//   because it is definition, not declaration?
-// - What about returning standard library type literals (e.g. return
-//   std:vector<int>{1,2}) ?
-
-// Fundamental question: do we match decls with certain types or do we match
-// types directly?
