@@ -1,19 +1,20 @@
-// #include<tuple>
 // #include<optional>
 
-#include <array>
-#include <vector>
-#include <forward_list>
-#include <list>
-#include <map>
-#include <set>
-#include <unordered_map>
-#include <unordered_set>
-#include <queue>
-#include <stack>
-#include <deque>
+#include <array> // unique_ptr<void>, pair<ulong, ulong>
+#include <vector> // unique_ptr<void>, pair<ulong, ulong>
+#include <forward_list> // unique_ptr<void>, pair<ulong, ulong>
+#include <list> // unique_ptr<void>, pair<ulong, ulong>
+#include <map> // unique_ptr<void>, pair<ulong, ulong>
+#include <set> // unique_ptr<void>, pair<ulong, ulong>
+#include <unordered_map> // unique_ptr<void>, pair<ulong, ulong>
+#include <unordered_set> // unique_ptr<void>, pair<ulong, ulong>
+#include <queue> // unique_ptr<void>, pair<ulong, ulong>
+#include <stack> // unique_ptr<void>, pair<ulong, ulong>
+#include <deque> // unique_ptr<void>, pair<ulong, ulong>
 
-#include <tuple>
+#include <tuple> // pair<ulong, ulong>
+
+#include <memory> // unique_ptr<void>, pair<ulong, ulong>
 
 template<typename T>
 class Widget {
@@ -34,27 +35,27 @@ int main(int argc, char** argv){
     std::forward_list<int> flist;
     // √
     std::list<int> list;
-    // Causes 2 extra pair instances
+    // Causes extra pair<const T, U>
     std::map<int, int> map;
-    // Causes 2 extra pair instances
+    // Causes extra pair<const T, U>
     std::multimap<int, int> mmap;
     // √
     std::set<int> set;
     // √
     std::multiset<int> mset;
-    // Causes 2 extra pair instances
+    // Causes extra pair<const T, U>, unique_ptr<__hash_node_base, __bucket_list_deallocator>
     std::unordered_map<int, int> umap;
-    // Causes 2 extra pair instances
+    // Causes extra pair<const T, U>, unique_ptr<__hash_node_base, __bucket_list_deallocator>
     std::unordered_multimap<int, int> ummap;
-    // √
+    // Causes unique_ptr<__hash_node_base, __bucket_list_deallocator>
     std::unordered_set<int> uset;
-    // √
+    // Causes unique_ptr<__hash_node_base, __bucket_list_deallocator>
     std::unordered_multiset<int> umset;
-    // Causes additional deque instantiation, allocator residue
+    // Causes extra deque<T, allocator>
     std::queue<int> q;
-    // √
+    // Causes extra vector<U>
     std::priority_queue<int> pq;
-    // Causes additional deque instantiation
+    // Causes extra deque<T, allocator>
     std::stack<int> s;
     //  √
     std::deque<int> d;
@@ -68,7 +69,7 @@ int main(int argc, char** argv){
     std::tuple<int,int, int> t;
 
     // Dynamic memory management
-    // Causes 3 extra found instances
+    // √
     std::unique_ptr<int> uptr;
     // √
     std::shared_ptr<int> sptr;
