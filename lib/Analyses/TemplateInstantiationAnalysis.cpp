@@ -42,7 +42,8 @@ using ordered_json = nlohmann::ordered_json;
 //      - templates: names of template used.
 
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
-(clang::ASTContext& Context) : Analysis(Context),
+(clang::ASTContext& Context) :
+    Analysis(Context),
     ClassInstMatcher(
     cxxRecordDecl(
         isExpansionInMainFile(),
@@ -54,12 +55,16 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
 
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
 (ASTContext& Context, internal::Matcher<clang::NamedDecl> Names) :
-    Analysis(Context), ClassInstMatcher(
+    Analysis(Context),
+    ClassInstMatcher(
         cxxRecordDecl(
             Names,
             isTemplateInstantiation())
         .bind("ClassInsts")
-    ) {}
+    ) {
+        analyzeFuncInsts = false;
+        analyzeVarInsts = false;
+    }
 void TemplateInstantiationAnalysis::extract() {
     // Oddly enough, the result of this matcher will give back a pointer to the
     // ClassTemplateSpecializationDecl containing the instantiated CXXRecordDecl,
@@ -84,8 +89,10 @@ void TemplateInstantiationAnalysis::extract() {
         isExpansionInMainFile(),
         isTemplateInstantiation())
     .bind("FuncInsts");
-    auto FuncResults = Extr.extract2(FuncInstMatcher);
-    FuncInsts = getASTNodes<FunctionDecl>(FuncResults, "FuncInsts");
+    if(analyzeFuncInsts){
+        auto FuncResults = Extr.extract2(FuncInstMatcher);
+        FuncInsts = getASTNodes<FunctionDecl>(FuncResults, "FuncInsts");
+    }
 
     // Same behavior as with classTemplates: gives pointer to a
     // varSpecializationDecl. However, the location reported is that of the
@@ -94,8 +101,11 @@ void TemplateInstantiationAnalysis::extract() {
         isExpansionInMainFile(),
         isTemplateInstantiation())
     .bind("VarInsts");
-    auto VarResults = Extr.extract2(VarInstMatcher);
-    VarInsts = getASTNodes<VarTemplateSpecializationDecl>(VarResults, "VarInsts");
+    if(analyzeVarInsts){
+        auto VarResults = Extr.extract2(VarInstMatcher);
+        VarInsts = getASTNodes<VarTemplateSpecializationDecl>(VarResults,
+            "VarInsts");
+    }
 }
 
 const TemplateArgumentList&
@@ -184,8 +194,10 @@ void TemplateInstantiationAnalysis::analyze(){
     llvm::raw_os_ostream stream2(std::cout);
     std::ofstream o("test.json");
     gatherStats(ClassInsts, std::move(o));
-    gatherStats(FuncInsts, std::move(o));
-    gatherStats(VarInsts, std::move(o));
+    if(analyzeFuncInsts)
+        gatherStats(FuncInsts, std::move(o));
+    if(analyzeVarInsts)
+        gatherStats(VarInsts, std::move(o));
 }
 void TemplateInstantiationAnalysis::run(){
     std::cout << "\033[32mRunning template instantiation analysis:\033[0m\n";

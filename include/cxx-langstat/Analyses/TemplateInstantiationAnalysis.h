@@ -18,6 +18,8 @@ private:
     Matches<clang::ClassTemplateSpecializationDecl> ClassInsts;
     Matches<clang::FunctionDecl> FuncInsts;
     Matches<clang::VarTemplateSpecializationDecl> VarInsts;
+    bool analyzeFuncInsts = true;
+    bool analyzeVarInsts = true;
 };
 
 //-----------------------------------------------------------------------------
