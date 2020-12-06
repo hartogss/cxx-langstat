@@ -10,7 +10,8 @@ using namespace clang::ast_matchers;
 //-----------------------------------------------------------------------------
 
 // TODO: why parent ctor?
-TestAnalysis::TestAnalysis(clang::ASTContext& Context) : Analysis(Context) {
+TestAnalysis::TestAnalysis(llvm::StringRef InFile,
+    clang::ASTContext& Context) : Analysis(InFile, Context) {
 }
 // step 1: extraction
 void TestAnalysis::extract() {

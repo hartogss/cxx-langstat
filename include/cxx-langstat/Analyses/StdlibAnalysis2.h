@@ -7,7 +7,7 @@
 
 class StdlibAnalysis2 : public Analysis {
 public:
-    StdlibAnalysis2(clang::ASTContext& Context);
+    StdlibAnalysis2(llvm::StringRef InFile, clang::ASTContext& Context);
     void extract() override;
     void analyze() override;
     void run() override;

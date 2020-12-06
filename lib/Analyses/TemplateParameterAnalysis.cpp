@@ -20,8 +20,9 @@ using namespace clang::ast_matchers;
 // - Apply TPA to template template parameters.
 
 
-TemplateParameterAnalysis::TemplateParameterAnalysis(clang::ASTContext& Context)
-    : Analysis(Context) {
+TemplateParameterAnalysis::TemplateParameterAnalysis(llvm::StringRef InFile,
+    clang::ASTContext& Context) :
+        Analysis(InFile, Context) {
 }
 void TemplateParameterAnalysis::extract(){
 

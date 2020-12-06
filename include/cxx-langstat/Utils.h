@@ -1,6 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+// #include "llvm/ADT/StringRef.h"
+
 //-----------------------------------------------------------------------------
 
 // For a match whose node is a decl that can be a nameddecl, return its
@@ -56,6 +58,8 @@ getASTNodes(std::vector<clang::ast_matchers::MatchFinder::MatchResult> Results,
             std::cout << "Cannot get node as type for id \"" << id << "\"\n";
         return Matches;
 }
+
+std::string getFileForStatDump(llvm::StringRef InFile);
 
 //-----------------------------------------------------------------------------
 

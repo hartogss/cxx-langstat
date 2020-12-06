@@ -8,7 +8,7 @@
 // need analysis object since we want other analysis to inherit interface
 class UsingAnalysis : public Analysis {
 public:
-    UsingAnalysis(clang::ASTContext& Context);
+    UsingAnalysis(llvm::StringRef InFile, clang::ASTContext& Context);
     void extract() override;
     void analyze() override;
     void run() override;

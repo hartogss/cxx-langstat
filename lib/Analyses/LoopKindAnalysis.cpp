@@ -4,7 +4,8 @@
 
 using namespace clang::ast_matchers;
 
-LoopKindAnalysis::LoopKindAnalysis(clang::ASTContext& Context) : Analysis(Context){
+LoopKindAnalysis::LoopKindAnalysis(llvm::StringRef InFile,
+    clang::ASTContext& Context) : Analysis(InFile, Context){
 
 }
 void LoopKindAnalysis::extract(){

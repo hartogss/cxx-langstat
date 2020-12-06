@@ -7,7 +7,8 @@
 
 class TemplateParameterAnalysis : public Analysis {
 public:
-    TemplateParameterAnalysis(clang::ASTContext& Context);
+    TemplateParameterAnalysis(llvm::StringRef InFile,
+        clang::ASTContext& Context);
     void extract() override;
     void analyze() override;
     void run() override;

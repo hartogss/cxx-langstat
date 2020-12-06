@@ -7,7 +7,8 @@
 
 class VariableTemplateAnalysis : public Analysis {
 public:
-    VariableTemplateAnalysis(clang::ASTContext& Context);
+    VariableTemplateAnalysis(llvm::StringRef InFile,
+        clang::ASTContext& Context);
     void extract() override;
     void analyze() override;
     void run() override;

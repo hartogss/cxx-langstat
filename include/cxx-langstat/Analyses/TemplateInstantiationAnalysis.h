@@ -7,8 +7,10 @@
 
 class TemplateInstantiationAnalysis : public Analysis {
 public:
-    TemplateInstantiationAnalysis(clang::ASTContext& Context);
-    TemplateInstantiationAnalysis(clang::ASTContext& Context,
+    TemplateInstantiationAnalysis(llvm::StringRef InFile,
+        clang::ASTContext& Context);
+    TemplateInstantiationAnalysis(llvm::StringRef InFile,
+        clang::ASTContext& Context,
         clang::ast_matchers::internal::Matcher<clang::NamedDecl> Names);
     void extract() override;
     void analyze() override;

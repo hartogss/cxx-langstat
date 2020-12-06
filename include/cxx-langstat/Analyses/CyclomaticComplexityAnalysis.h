@@ -7,11 +7,11 @@
 
 class CyclomaticComplexityAnalysis : public Analysis {
 public:
-    CyclomaticComplexityAnalysis(clang::ASTContext& Context);
+    CyclomaticComplexityAnalysis(llvm::StringRef InFile,
+        clang::ASTContext& Context);
     void extract() override;
     void analyze() override;
     void run() override;
-
 };
 
 #endif // CYCLOMATICCOMPLEXITY_H

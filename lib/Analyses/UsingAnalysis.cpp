@@ -14,7 +14,8 @@ using namespace clang::ast_matchers;
 // Could also be because "typedef templates" require typename or ::type to be
 // used.
 
-UsingAnalysis::UsingAnalysis(clang::ASTContext& Context) : Analysis(Context){
+UsingAnalysis::UsingAnalysis(llvm::StringRef InFile,
+    clang::ASTContext& Context) : Analysis(InFile, Context){
 
 }
 void UsingAnalysis::extract() {

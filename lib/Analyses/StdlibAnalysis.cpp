@@ -69,7 +69,8 @@ std::string getInnerType(const DeclaratorDecl* Node){
 // passed around? What sizes do they occur (#elements, constexpr)?
 // Usage in templates and TMP?
 
-StdlibAnalysis::StdlibAnalysis(clang::ASTContext& Context) : Analysis(Context) {
+StdlibAnalysis::StdlibAnalysis(llvm::StringRef InFile,
+    clang::ASTContext& Context) : Analysis(InFile, Context) {
 }
 void StdlibAnalysis::extract() {
     // All variable declarations

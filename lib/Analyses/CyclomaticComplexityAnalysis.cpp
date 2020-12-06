@@ -13,7 +13,8 @@ using namespace clang::ast_matchers;
 //-----------------------------------------------------------------------------
 
 CyclomaticComplexityAnalysis::CyclomaticComplexityAnalysis
-(clang::ASTContext& Context) : Analysis(Context){
+(llvm::StringRef InFile, clang::ASTContext& Context) :
+    Analysis(InFile, Context){
 
 }
 void CyclomaticComplexityAnalysis::extract(){

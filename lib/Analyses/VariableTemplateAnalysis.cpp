@@ -12,8 +12,9 @@ using namespace clang::ast_matchers;
 // functions returning the value in favor of variable templates, which were
 // introduced in C++14?
 
-VariableTemplateAnalysis::VariableTemplateAnalysis(ASTContext& Context) :
-    Analysis(Context) {
+VariableTemplateAnalysis::VariableTemplateAnalysis(llvm::StringRef InFile,
+    ASTContext& Context) :
+        Analysis(InFile, Context) {
 }
 void VariableTemplateAnalysis::extract(){
     // First pre-C++14 idiom to get variable template functionality:

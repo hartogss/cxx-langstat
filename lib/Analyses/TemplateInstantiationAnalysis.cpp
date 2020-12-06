@@ -42,8 +42,8 @@ using ordered_json = nlohmann::ordered_json;
 //      - templates: names of template used.
 
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
-(clang::ASTContext& Context) :
-    Analysis(Context),
+(llvm::StringRef InFile, clang::ASTContext& Context) :
+    Analysis(InFile, Context),
     ClassInstMatcher(
     cxxRecordDecl(
         isExpansionInMainFile(),
@@ -54,18 +54,19 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
     }
 
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
-(ASTContext& Context, internal::Matcher<clang::NamedDecl> Names) :
-    Analysis(Context),
-    ClassInstMatcher(
-        cxxRecordDecl(
-            isExpansionInSystemHeader(),
-            Names,
-            isTemplateInstantiation())
-        .bind("ClassInsts")
-    ) {
-        analyzeFuncInsts = false;
-        analyzeVarInsts = false;
-    }
+(llvm::StringRef InFile, ASTContext& Context,
+    internal::Matcher<clang::NamedDecl> Names) :
+        Analysis(InFile, Context),
+        ClassInstMatcher(
+            cxxRecordDecl(
+                isExpansionInSystemHeader(),
+                Names,
+                isTemplateInstantiation())
+            .bind("ClassInsts")
+        ) {
+            analyzeFuncInsts = false;
+            analyzeVarInsts = false;
+        }
 void TemplateInstantiationAnalysis::extract() {
     // Oddly enough, the result of this matcher will give back a pointer to the
     // ClassTemplateSpecializationDecl containing the instantiated CXXRecordDecl,
@@ -191,9 +192,10 @@ void gatherStats(const Matches<T>& Insts, std::ofstream&& file){
     }
 }
 
+
 void TemplateInstantiationAnalysis::analyze(){
     llvm::raw_os_ostream stream2(std::cout);
-    std::ofstream o("test.json");
+    std::ofstream o(getFileForStatDump(InFile));
     gatherStats(ClassInsts, std::move(o));
     if(analyzeFuncInsts)
         gatherStats(FuncInsts, std::move(o));

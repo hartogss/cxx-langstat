@@ -11,7 +11,8 @@
 // need analysis object since we want other analysis to inherit interface
 class LoopDepthAnalysis : public Analysis {
 public:
-    LoopDepthAnalysis(clang::ASTContext& Context, int MaxDepthOption);
+    LoopDepthAnalysis(llvm::StringRef InFile, clang::ASTContext& Context,
+        int MaxDepthOption);
     // step 0: createMatcher(s)/getMatchers? idea is to have library of often-used
     // matchers or maybe even some datastructure of important matches itself
     // step 1: extraction
