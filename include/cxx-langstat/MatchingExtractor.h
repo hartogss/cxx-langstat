@@ -18,6 +18,10 @@ struct Match {
     bool operator==(Match<T> m){
         return (location == m.location && node == m.node && ctxt == m.ctxt);
     }
+    // https://stackoverflow.com/questions/2758080/how-to-sort-an-stl-vector
+    bool operator<(const Match<T>& m) const{
+        return (node < m.node);
+    }
 };
 
 template<typename T>

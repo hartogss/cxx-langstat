@@ -61,6 +61,21 @@ getASTNodes(std::vector<clang::ast_matchers::MatchFinder::MatchResult> Results,
 
 std::string getFileForStatDump(llvm::StringRef InFile);
 
+template<typename T>
+void removeDuplicateMatches(Matches<T>& Matches){
+    if(!std::is_sorted(Matches.begin(), Matches.end())){
+        std::sort(Matches.begin(), Matches.end());
+    }
+    unsigned s = Matches.size();
+    for(unsigned idx=0; idx<s-1; idx++){
+        if(Matches[idx]==Matches[idx+1]){
+            Matches.erase(Matches.begin()+idx+1);
+            idx--;
+            s--;
+        }
+    }
+}
+
 //-----------------------------------------------------------------------------
 
 #endif // UTILS_H
