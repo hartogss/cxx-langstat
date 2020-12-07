@@ -10,8 +10,7 @@
 template<typename T>
 std::string getMatchDeclName(Match<T> Match){
     if(auto n = dyn_cast<clang::NamedDecl>(Match.node)){
-        return n->getNameAsString();
-        // vs. getQualifiednameAsString() ?
+        return n->getQualifiedNameAsString(); // includes namespace qualifiers
     } else {
         std::cout << "Decl @ " << Match.location << "cannot be resolved\n";
         return "INVALID";
