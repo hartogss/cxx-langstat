@@ -41,8 +41,17 @@ using ordered_json = nlohmann::ordered_json;
 //      - types: what types were templates instantiated with?
 //      - templates: names of template used.
 
+// Regular TIA doesn't care what name the template had
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
-(llvm::StringRef InFile, clang::ASTContext& Context) :
+(llvm::StringRef InFile, ASTContext& Context) :
+    TemplateInstantiationAnalysis(InFile, Context, anything()) {
+}
+
+// Can restrict TIA with hasName or hasAnyName matcher to only look for instant-
+// iations of certain class templates
+TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
+(llvm::StringRef InFile, clang::ASTContext& Context,
+    internal::Matcher<clang::NamedDecl> Names) :
     Analysis(InFile, Context),
     ClassInstMatcher(
         decl(
@@ -52,13 +61,16 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
             declaratorDecl(
                 isExpansionInMainFile(),
                 hasType(
-                    classTemplateSpecializationDecl(isTemplateInstantiation())
+                    classTemplateSpecializationDecl(
+                        Names,
+                        isTemplateInstantiation())
                     .bind("ClassInsts")))
             .bind("implicitdecl"),
             // Explicit instantiations that are not explicit specializations,
             // which is ensured by isTemplateInstantiation() according to
             // matcher reference
             classTemplateSpecializationDecl(
+                Names,
                 isExpansionInMainFile(),
                 unless(hasParent(classTemplateDecl())),
                 isTemplateInstantiation())
@@ -67,30 +79,9 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
         std::cout << "TIA: standard constructor\n";
 }
 
-TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
-(llvm::StringRef InFile, ASTContext& Context,
-    internal::Matcher<clang::NamedDecl> Names) :
-        Analysis(InFile, Context),
-        ClassInstMatcher(
-            cxxRecordDecl(
-                isExpansionInSystemHeader(),
-                Names,
-                isTemplateInstantiation())
-            .bind("ClassInsts")
-        ) {
-            analyzeFuncInsts = false;
-            analyzeVarInsts = false;
-}
 void TemplateInstantiationAnalysis::extract() {
-    // Oddly enough, the result of this matcher will give back a pointer to the
-    // ClassTemplateSpecializationDecl containing the instantiated CXXRecordDecl,
-    // not a pointer to the cxxRecordDecl. This is why a cast to
-    // ClassTemplateSpecializationDecl is OK.
-    // Note that because it returns ClassTemplateSpecializationDecl*, the
-    // location reported here is wrong for implicit instantiations because they
-    // are subtrees of the CTSD. Explicit instantiation locations are reported
-    // correctly.
-
+    // Result of the class insts matcher will give back a pointer to the
+    // ClassTemplateSpecializationDecl (CTSD).
     // Matcher constructed by ctor
     auto ClassResults = Extr.extract2(ClassInstMatcher);
     ClassInsts = getASTNodes<ClassTemplateSpecializationDecl>(ClassResults,
@@ -99,8 +90,8 @@ void TemplateInstantiationAnalysis::extract() {
 
     // In contrast, this result gives a pointer to a functionDecl, which has
     // too has a function we can call to get the template arguments.
-    // Here, the location reported is in both explicit and implicit cases wrong,
-    // the location where the function template is defined is returned
+    // Here, the location reported is in both explicit and implicit cases
+    // the location where the function template is defined
     // (to be precise, the line where the return value is specified).
     auto FuncInstMatcher = functionDecl(
         isExpansionInMainFile(),
@@ -185,6 +176,14 @@ void updateArgsAndKinds(const TemplateArgument& TArg,
         }
 }
 
+// Note about the reported locations:
+// For explicit instantiations, a 'single' CTSD match in the AST is returned
+// which contains info about the correct location.
+// For implicit instantiations (i.e. 'natural' usage e.g. through the use
+// of variables), the location of the CTSD is also reported. However, since
+// that is a subtree of the tree representing the ClassTemplateDecl, we
+// have to do some extra work to get the location of where the instantiation
+// in the code actually occurred, the line where the programmer wrote it.
 template<typename T>
 std::string TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<T>& Match){
@@ -206,6 +205,11 @@ std::string TemplateInstantiationAnalysis::getInstantiationLocation(
 
 std::string TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<FunctionDecl>& Match){
+        return Match.node->getPointOfInstantiation().
+            printToString(Context.getSourceManager());
+}
+std::string TemplateInstantiationAnalysis::getInstantiationLocation(
+    const Match<VarTemplateSpecializationDecl>& Match){
         return Match.node->getPointOfInstantiation().
             printToString(Context.getSourceManager());
 }
