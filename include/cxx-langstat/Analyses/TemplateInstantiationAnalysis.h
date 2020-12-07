@@ -18,10 +18,15 @@ public:
 private:
     clang::ast_matchers::DeclarationMatcher ClassInstMatcher;
     Matches<clang::ClassTemplateSpecializationDecl> ClassInsts;
+    Matches<clang::DeclaratorDecl> ImplicitInsts;
     Matches<clang::FunctionDecl> FuncInsts;
     Matches<clang::VarTemplateSpecializationDecl> VarInsts;
     bool analyzeFuncInsts = true;
     bool analyzeVarInsts = true;
+    template<typename T>
+    std::string getInstantiationLocation(const Match<T> Match);
+    template<typename T>
+    void gatherStats(Matches<T>& Insts, std::ofstream&& file);
 };
 
 //-----------------------------------------------------------------------------

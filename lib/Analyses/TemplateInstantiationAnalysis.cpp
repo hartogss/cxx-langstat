@@ -41,14 +41,40 @@ using ordered_json = nlohmann::ordered_json;
 //      - types: what types were templates instantiated with?
 //      - templates: names of template used.
 
+// TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
+// (llvm::StringRef InFile, clang::ASTContext& Context) :
+//     Analysis(InFile, Context),
+//     ClassInstMatcher(
+//     cxxRecordDecl(
+//         isExpansionInMainFile(),
+//         isTemplateInstantiation())
+//     .bind("ClassInsts")
+//     ) {
+//         std::cout << "TIA: standard constructor\n";
+//     }
+
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
 (llvm::StringRef InFile, clang::ASTContext& Context) :
     Analysis(InFile, Context),
     ClassInstMatcher(
-    cxxRecordDecl(
-        isExpansionInMainFile(),
-        isTemplateInstantiation())
-    .bind("ClassInsts")
+        decl(
+            anyOf(
+            // Implicit uses: varDecl, fieldDecl, any other?
+            // Return types?
+            declaratorDecl(
+                isExpansionInMainFile(),
+                hasType(
+                    classTemplateSpecializationDecl(isTemplateInstantiation())
+                    .bind("ClassInsts")))
+            .bind("implicitdecl"),
+            // Explicit instantiations that are not explicit specializations,
+            // which is ensure by isTemplateInstantiation() according to
+            // matcher reference
+            classTemplateSpecializationDecl(
+                isExpansionInMainFile(),
+                unless(hasParent(classTemplateDecl())),
+                isTemplateInstantiation())
+            .bind("ClassInsts")))
     ) {
         std::cout << "TIA: standard constructor\n";
     }
@@ -81,6 +107,7 @@ void TemplateInstantiationAnalysis::extract() {
     auto ClassResults = Extr.extract2(ClassInstMatcher);
     ClassInsts = getASTNodes<ClassTemplateSpecializationDecl>(ClassResults,
         "ClassInsts");
+    ImplicitInsts = getASTNodes<DeclaratorDecl>(ClassResults, "implicitdecl");
 
     // In contrast, this result gives a pointer to a functionDecl, which has
     // too has a function we can call to get the template arguments.
@@ -99,7 +126,9 @@ void TemplateInstantiationAnalysis::extract() {
     // Same behavior as with classTemplates: gives pointer to a
     // varSpecializationDecl. However, the location reported is that of the
     // varDecl itself... no matter if explicit or implicit instantiation.
-    auto VarInstMatcher = varDecl(
+    internal::VariadicDynCastAllOfMatcher<Decl, VarTemplateSpecializationDecl>
+        varTemplateSpecializationDecl;
+    auto VarInstMatcher = varTemplateSpecializationDecl(
         isExpansionInMainFile(),
         isTemplateInstantiation())
     .bind("VarInsts");
@@ -107,6 +136,8 @@ void TemplateInstantiationAnalysis::extract() {
         auto VarResults = Extr.extract2(VarInstMatcher);
         VarInsts = getASTNodes<VarTemplateSpecializationDecl>(VarResults,
             "VarInsts");
+        if(VarInsts.size())
+            removeDuplicateMatches(VarInsts);
     }
 }
 
@@ -167,7 +198,26 @@ void updateArgsAndKinds(const TemplateArgument& TArg,
 }
 
 template<typename T>
-void gatherStats(const Matches<T>& Insts, std::ofstream&& file){
+std::string TemplateInstantiationAnalysis::getInstantiationLocation(
+    const Match<T> Match){
+    static int i = 0;
+    switch(Match.node->getSpecializationKind()){
+        case TSK_Undeclared:
+        case TSK_ExplicitSpecialization:
+            return "invalid";
+        case TSK_ImplicitInstantiation:
+            i++;
+            return (ImplicitInsts[i-1].node->getInnerLocStart()).
+                printToString(Context.getSourceManager());
+        case TSK_ExplicitInstantiationDeclaration:
+        case TSK_ExplicitInstantiationDefinition:
+            return Match.node->getPointOfInstantiation().
+                printToString(Context.getSourceManager());
+    }
+}
+
+template<typename T>
+void TemplateInstantiationAnalysis::gatherStats(Matches<T>& Insts, std::ofstream&& file){
     const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
     for(auto match : Insts){
         std::multimap<std::string, std::string> TArgs;
@@ -177,18 +227,22 @@ void gatherStats(const Matches<T>& Insts, std::ofstream&& file){
             auto TArg = TAList.get(idx);
             updateArgsAndKinds(TArg, TArgs);
         }
-        ordered_json j;
-        j["templatename"] = getMatchDeclName(match);
-        j["location"] = match.node->getPointOfInstantiation().
-            printToString(match.ctxt->getSourceManager());
+        ordered_json super;
+        ordered_json instance;
+        ordered_json arguments;
+        instance["location"] = getInstantiationLocation(match);
         for(auto key : ArgKinds){
             auto range = TArgs.equal_range(key);
             std::vector<std::string> v;
             for (auto it = range.first; it != range.second; it++)
                 v.emplace_back(it->second);
-            j[key] = v;
+            arguments[key] = v;
         }
-        file << j.dump(4) << '\n';
+        instance["arguments"] = arguments;
+        instance["specialization kind"] = match.node->getSpecializationKind();
+        super[getMatchDeclName(match)] = instance;
+        // file << j.dump(4) << '\n';
+        file << super.dump(4) << '\n';
     }
 }
 
@@ -197,8 +251,8 @@ void TemplateInstantiationAnalysis::analyze(){
     llvm::raw_os_ostream stream2(std::cout);
     std::ofstream o(getFileForStatDump(InFile));
     gatherStats(ClassInsts, std::move(o));
-    if(analyzeFuncInsts)
-        gatherStats(FuncInsts, std::move(o));
+    // if(analyzeFuncInsts)
+        // gatherStats(FuncInsts, std::move(o));
     if(analyzeVarInsts)
         gatherStats(VarInsts, std::move(o));
 }

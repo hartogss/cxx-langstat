@@ -13,7 +13,8 @@ class Analysis {
 public:
     Analysis(llvm::StringRef InFile, clang::ASTContext& Context) :
     InFile(InFile),
-    Extr(BaseExtractor(Context)){
+    Extr(BaseExtractor(Context)),
+    Context(Context){
 
     }
     // should be made virtual in case concrete analyses need special destructors
@@ -30,6 +31,7 @@ public:
 protected:
     llvm::StringRef InFile;
     BaseExtractor Extr;
+    clang::ASTContext& Context;
 };
 
 //-----------------------------------------------------------------------------
