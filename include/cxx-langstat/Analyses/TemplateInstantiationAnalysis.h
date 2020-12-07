@@ -15,14 +15,14 @@ public:
     void extract() override;
     void analyze() override;
     void run() override;
+    bool analyzeFuncInsts = true;
+    bool analyzeVarInsts = true;
 private:
     clang::ast_matchers::DeclarationMatcher ClassInstMatcher;
     Matches<clang::ClassTemplateSpecializationDecl> ClassInsts;
     Matches<clang::DeclaratorDecl> ImplicitInsts;
     Matches<clang::FunctionDecl> FuncInsts;
     Matches<clang::VarTemplateSpecializationDecl> VarInsts;
-    bool analyzeFuncInsts = true;
-    bool analyzeVarInsts = true;
     template<typename T>
     std::string getInstantiationLocation(const Match<T>& Match);
     std::string getInstantiationLocation(const Match<clang::FunctionDecl>& Match);
