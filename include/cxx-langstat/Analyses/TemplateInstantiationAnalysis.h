@@ -24,7 +24,8 @@ private:
     bool analyzeFuncInsts = true;
     bool analyzeVarInsts = true;
     template<typename T>
-    std::string getInstantiationLocation(const Match<T> Match);
+    std::string getInstantiationLocation(const Match<T>& Match);
+    std::string getInstantiationLocation(const Match<clang::FunctionDecl>& Match);
     template<typename T>
     void gatherStats(Matches<T>& Insts, std::ofstream&& file);
 };
