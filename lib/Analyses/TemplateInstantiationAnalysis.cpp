@@ -31,14 +31,14 @@ using ordered_json = nlohmann::ordered_json;
 // written by programmers or from implicit ones through 'natural usage'.
 //
 // Remember that template parameters can be non-types, types or templates.
-// Goal: for each class, function, variable, report:
-// - Number of instantiations
-// - for individually non-types, types, templates parameters report how often
-// they occured.
-// - what those arguments actually were:
-//      - non-types: what types did those parameters have, possible range of values used?
-//      - types: what types were templates instantiated with?
-//      - templates: names of template used.
+// Goal: for each instantiation report:
+// - classes: for each class report with which arguments it was reported
+//   with. if a class was instantiated with the same arguments multiple times,
+//   report it every time, s.t. we can count them.
+// - functions: for each function report with which arguments it was reported
+//   with. if a function was instantiated with the same arguments multiple times,
+//   report it once only. (boolean statistic only)
+// - variables: same as with functions
 
 // Regular TIA doesn't care what name the template had
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
@@ -147,6 +147,8 @@ void TemplateInstantiationAnalysis::extract() {
     }
 }
 
+// Overloaded function to get template arguments depending whether it's a class
+// function, or variable.
 const TemplateArgumentList&
 getTemplateArgs(const Match<ClassTemplateSpecializationDecl>& Match){
     return Match.node->getTemplateInstantiationArgs();
@@ -171,6 +173,9 @@ getTemplateArgs(const Match<FunctionDecl>& Match){
     }
 }
 
+// Given a mapping from template argumend kind to actual arguments and a given,
+// previously unseen argument, check what kind the argument has and add it
+// to the mapping.
 void updateArgsAndKinds(const TemplateArgument& TArg,
     std::multimap<std::string, std::string>& TArgs) {
         std::string Result;
@@ -209,10 +214,11 @@ void updateArgsAndKinds(const TemplateArgument& TArg,
 // For explicit instantiations, a 'single' CTSD match in the AST is returned
 // which contains info about the correct location.
 // For implicit instantiations (i.e. 'natural' usage e.g. through the use
-// of variables), the location of the CTSD is also reported. However, since
-// that is a subtree of the tree representing the ClassTemplateDecl, we
+// of variables, fields), the location of the CTSD is also reported. However,
+// since that is a subtree of the tree representing the ClassTemplateDecl, we
 // have to do some extra work to get the location of where the instantiation
-// in the code actually occurred, the line where the programmer wrote it.
+// in the code actually occurred, that is, the line where the programmer wrote
+// the variable or the field.
 std::string TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<ClassTemplateSpecializationDecl>& Match, bool isImplicit){
     static int i = 0;
@@ -232,7 +238,7 @@ std::string TemplateInstantiationAnalysis::getInstantiationLocation(
             printToString(Context.getSourceManager());
 }
 
-
+// Given a vector of matches, create a JSON object storing all instantiations.
 template<typename T>
 void TemplateInstantiationAnalysis::gatherStats(Matches<T>& Insts,
     std::string InstKind, bool AreImplicit, std::ofstream&& file){
