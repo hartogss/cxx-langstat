@@ -46,6 +46,8 @@ void StdlibAnalysis2::run(){
         "unique_ptr", "shared_ptr", "weak_ptr"
         );
     TemplateInstantiationAnalysis Helper(InFile, Context, isAnyStdContainer);
+    Helper.analyzeFuncInsts=false;
+    Helper.analyzeVarInsts=false;
     Helper.run();
 }
 
