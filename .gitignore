@@ -17,3 +17,6 @@ cmake-build-debug/
 
 # Ignore AST files (for now)
 *.ast
+
+# Ignore llvm-lit temporary output
+test/unit/Output
