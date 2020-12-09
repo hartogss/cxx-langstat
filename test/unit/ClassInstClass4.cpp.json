@@ -1,0 +1,36 @@
+{
+    "Super": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass4.cpp:20:1",
+        "arguments": {
+            "non-type": [],
+            "type": [
+                "int"
+            ],
+            "template": []
+        }
+    }
+}
+{
+    "Sub": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass4.cpp:17:5",
+        "arguments": {
+            "non-type": [],
+            "type": [
+                "int"
+            ],
+            "template": []
+        }
+    }
+}
+{
+    "Super": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass4.cpp:21:1",
+        "arguments": {
+            "non-type": [],
+            "type": [
+                "int"
+            ],
+            "template": []
+        }
+    }
+}

@@ -1,0 +1,72 @@
+{
+    "Widget1": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass2.cpp:22:5",
+        "arguments": {
+            "non-type": [],
+            "type": [
+                "char"
+            ],
+            "template": []
+        }
+    }
+}
+{
+    "Widget1": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass2.cpp:23:5",
+        "arguments": {
+            "non-type": [],
+            "type": [
+                "int"
+            ],
+            "template": []
+        }
+    }
+}
+{
+    "Widget2": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass2.cpp:22:5",
+        "arguments": {
+            "non-type": [],
+            "type": [
+                "char"
+            ],
+            "template": []
+        }
+    }
+}
+{
+    "Widget1": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass2.cpp:23:5",
+        "arguments": {
+            "non-type": [],
+            "type": [
+                "int"
+            ],
+            "template": []
+        }
+    }
+}
+{
+    "f3": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass2.cpp:26:5",
+        "arguments": {
+            "non-type": [],
+            "type": [],
+            "template": [
+                "Widget1"
+            ]
+        }
+    }
+}
+{
+    "f3": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass2.cpp:28:5",
+        "arguments": {
+            "non-type": [],
+            "type": [],
+            "template": [
+                "Widget2"
+            ]
+        }
+    }
+}

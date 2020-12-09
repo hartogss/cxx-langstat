@@ -1,6 +1,6 @@
-// RUN: clang++ %s -emit-ast -o %s.ast
-// RUN: %S/../../build/cxx-langstat %s.ast
-// RUN: diff %s.ast.json %s.json
+// RUN: clang++ %s -emit-ast -o %t1.ast
+// RUN: %S/../../build/cxx-langstat %t1.ast --
+// RUN: diff %t1.ast.json %s.json
 
 
 // #include<optional>
