@@ -11,27 +11,23 @@
 
 class Analysis {
 public:
-    Analysis(llvm::StringRef InFile, clang::ASTContext& Context) :
-    InFile(InFile),
-    Extr(BaseExtractor(Context)),
-    Context(Context){
-
+    Analysis(){
     }
     // should be made virtual in case concrete analyses need special destructors
     ~Analysis() = default;
     // step 0: createMatcher(s) ?
     // step 1: extraction
-    virtual void extract()=0;
-    //step 2: compute stats
-    virtual void analyze()=0;
+
     //step 3: visualization (for later)
     // combine
-    virtual void run()=0;
+    virtual void run(llvm::StringRef InFile, clang::ASTContext& Context)=0;
     // std::string name;
-protected:
+    virtual void print(){
+        std::cout << "rpint" << std::endl;
+    }
+
     llvm::StringRef InFile;
-    BaseExtractor Extr;
-    clang::ASTContext& Context;
+    BaseExtractor Extractor;
 };
 
 //-----------------------------------------------------------------------------

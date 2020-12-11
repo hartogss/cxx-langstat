@@ -11,7 +11,7 @@ using namespace clang::ast_matchers; // StatementMatcher, actual AST matchers li
 //-----------------------------------------------------------------------------
 
 // ctor
-BaseExtractor::BaseExtractor(clang::ASTContext& Context) : Context(Context){
+BaseExtractor::BaseExtractor(){
     std::cout<<"BaseExtractor ctor"<<std::endl;
 }
 

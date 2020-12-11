@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME} Driver.cpp)
 set(CMAKE_CXX_STANDARD 17)
 # C++ Compiler
 message(STATUS "C++ Compiler:" ${CMAKE_CXX_COMPILER})
+set(CLANGXX ${CMAKE_CXX_COMPILER})
 # No run-time type indentification
 # -fvisibility=hidden to stop linker complaining about weak symbols when linking clang-tidy
 # -fcolor-diagnostics to enable clang colored output when using ninja
@@ -66,17 +67,19 @@ target_link_directories(${PROJECT_NAME} PUBLIC lib/)
 # Link custom libraries
 target_link_libraries(${PROJECT_NAME}
     BaseExtractor MatchingExtractor Utils
-    CyclomaticComplexityAnalysis
+    AnalysisRegistry AnalysisList
+
+    # CyclomaticComplexityAnalysis
     LoopDepthAnalysis
     LoopKindAnalysis
 
-    StdlibAnalysis
-    StdlibAnalysis2
-    
-    TemplateInstantiationAnalysis
-    TemplateParameterAnalysis
-    UsingAnalysis
-    VariableTemplateAnalysis
+    # StdlibAnalysis
+    # StdlibAnalysis2
+
+    # TemplateInstantiationAnalysis
+    # TemplateParameterAnalysis
+    # UsingAnalysis
+    # VariableTemplateAnalysis
     )
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
@@ -85,9 +88,9 @@ target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
 # Extra linking needed on ubuntu, not necessary on macOS(macOS doesn't dislike them either)
 target_link_libraries(BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(MatchingExtractor ${llvm_libs} ${clang_libs})
-target_link_libraries(CyclomaticComplexityAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
-target_link_libraries(LoopDepthAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
-target_link_libraries(TestAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+# target_link_libraries(CyclomaticComplexityAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+# target_link_libraries(LoopDepthAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+# target_link_libraries(TestAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 
 
 

@@ -3,34 +3,40 @@
 #include "cxx-langstat/AnalysisRegistry.h"
 #include "cxx-langstat/AnalysisList.h"
 
-#include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
-
-class test {
-
-};
+#include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
+#include "cxx-langstat/Analyses/LoopKindAnalysis.h"
 
 
-AnalysisRegistry::AnalysisRegistry(clang::ASTContext& Context) : Context(Context), EnabledAnalyses() {
-    Setup();
+AnalysisRegistry::AnalysisRegistry(std::string EAS) {
+    std::cout << "AR created" << std::endl;
+    createAllAnalyses();
+    setEnabledAnalyses(EAS);
 }
-void AnalysisRegistry::Setup(){
-    auto t = std::make_unique<test>();
-    auto t1 =
-        std::make_unique<TemplateInstantiationAnalysis>(llvm::StringRef("weirdfile.cpp"), Context);
-    AnalysisMapping.emplace("tia", std::move(t1));
-}
-
-void AnalysisRegistry::setEnabledAnalyses(std::string S){
-    AnalysisList A(S);
-    std::cout << A.Items.size() << std::endl;
-    EnabledAnalyses = A;
-
+// AnalysisRegistry::~AnalysisRegistry(){
+//     std::cout << "AR dtor" << std::endl;
+// }
+void AnalysisRegistry::createAllAnalyses(){
+    std::cout << "Creating analyses" << std::endl;
+    // auto t1 = std::make_unique<LoopDepthAnalysis>();
+    // auto t2 = std::make_unique<LoopKindAnalysis>();
+    // AnalysisMapping.emplace("lda", std::move(t1));
+    // AnalysisMapping.emplace("lka", std::move(t2));
+    // std::cout << AnalysisMapping["lda"].get() << std::endl;
+    AnalysisMapping.emplace("lda", new LoopDepthAnalysis());
 }
 
-void AnalysisRegistry::runEnabledAnalyses(){
-    for(auto an : EnabledAnalyses.Items){
-        std::cout << "1" << std::endl;
-        auto a = an.Name.str();
-        AnalysisMapping[a]->run();
+void AnalysisRegistry::setEnabledAnalyses(std::string EAS){
+    std::cout << "Enabling analyses: ";
+    AnalysisList List(EAS);
+    std::cout << "Number of analyses: " << List.Items.size() << std::endl;
+    EnabledAnalyses = List; //why not use copy constructor,move ctor
+}
+
+void AnalysisRegistry::runEnabledAnalyses(llvm::StringRef InFile, clang::ASTContext& Context){
+    std::cout << "Running analyses." << std::endl;
+    for(auto EA : EnabledAnalyses.Items){
+        auto name = EA.Name.str();
+        // AnalysisMapping[name]->run("weirdfile.cpp", Context);
+        AnalysisMapping[name]->print();
     }
 }

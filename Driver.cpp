@@ -9,46 +9,43 @@
 #include <iostream>
 
 //
-#include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
+// #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 #include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
-#include "cxx-langstat/Analyses/LoopKindAnalysis.h"
-#include "cxx-langstat/Analyses/StdlibAnalysis.h"
-#include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
-#include "cxx-langstat/Analyses/TemplateParameterAnalysis.h"
-#include "cxx-langstat/Analyses/UsingAnalysis.h"
-#include "cxx-langstat/Analyses/VariableTemplateAnalysis.h"
+// #include "cxx-langstat/Analyses/LoopKindAnalysis.h"
+
+// #include "cxx-langstat/Analyses/StdlibAnalysis.h"
+// #include "cxx-langstat/Analyses/StdlibAnalysis2.h"
+
+// #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
+// #include "cxx-langstat/Analyses/TemplateParameterAnalysis.h"
+// #include "cxx-langstat/Analyses/UsingAnalysis.h"
+// #include "cxx-langstat/Analyses/VariableTemplateAnalysis.h"
+
+#include "cxx-langstat/AnalysisRegistry.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
 
+//-----------------------------------------------------------------------------
 
 // Consumes the AST, i.e. does computations on it
 class Consumer : public ASTConsumer {
 public:
-    Consumer(){
+    Consumer(llvm::StringRef InFile) : InFile(InFile){
     }
     // Called when AST for TU is ready/has been parsed
     void HandleTranslationUnit(clang::ASTContext& Context){
         std::cout << "Handling the translation unit" << std::endl;
-        CyclomaticComplexityAnalysis CCA(Context);
-        CCA.run();
-        LoopDepthAnalysis LDA(Context, 4);
-        LDA.run();
-        LoopKindAnalysis LKA(Context);
-        LKA.run();
-        StdlibAnalysis SLA(Context);
-        SLA.run();
-        TemplateInstantiationAnalysis TIA(Context);
-        TIA.run();
-        TemplateParameterAnalysis TPA(Context);
-        TPA.run();
-        UsingAnalysis UA(Context);
-        UA.run();
-        VariableTemplateAnalysis VTA(Context);
-        VTA.run();
-    }
-};
 
+        // AnalysisRegistry RA("lda");
+        // RA.runEnabledAnalyses(InFile, Context);
+        Registry.runEnabledAnalyses(InFile, Context);
+
+    }
+public:
+    llvm::StringRef InFile;
+    static AnalysisRegistry Registry;
+};
 
 // Responsible for steering when what is executed
 class Action : public ASTFrontendAction {
@@ -67,7 +64,7 @@ public:
     virtual std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(
         CompilerInstance &CI, llvm::StringRef InFile){
             std::cout << "Creating AST Consumer" << std::endl;
-            return std::make_unique<Consumer>();
+            return std::make_unique<Consumer>(getCurrentFile());
     }
     //
     void EndSourceFileAction(){
@@ -75,19 +72,6 @@ public:
         << "Finished processing " << getCurrentFile().str() << ".\n";
     }
 };
-
-
-using namespace clang::tooling;
-// Options in CLI specific/nongeneric to clang-stat
-llvm::cl::OptionCategory ClangStatCategory("clang-stat options");
-llvm::cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
-llvm::cl::extrahelp MoreHelp("\nMore help text coming soon...\n");
-// CL options
-llvm::cl::opt<bool> FSOption(
-    "forstmt",
-    llvm::cl::desc("Whether we want to catch for statements "),
-    llvm::cl::cat(ClangStatCategory)
-);
 
 // Responsible for building Actions
 class Factory : public clang::tooling::FrontendActionFactory {
@@ -99,12 +83,30 @@ public:
 };
 
 
+//-----------------------------------------------------------------------------
+// Global variables
+using namespace clang::tooling;
+// Options in CLI specific to cxx-langstat
+llvm::cl::OptionCategory CXXLangstatCategory("cxx-langstat options", "description");
+llvm::cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
+// llvm::cl::extrahelp MoreHelp("\nMore help text coming soon...\n");
+// CL options
+llvm::cl::opt<std::string> AnalysesOption(
+    "analyses",
+    llvm::cl::desc("Comma-separated list of analyses"),
+    llvm::cl::cat(CXXLangstatCategory)
+);
+
+AnalysisRegistry Consumer::Registry = AnalysisRegistry("lda");
+
 int main(int argc, const char** argv){
 
     // parses all options that command-line tools have in common
-    CommonOptionsParser Parser(argc, argv, ClangStatCategory);
+    CommonOptionsParser Parser(argc, argv, CXXLangstatCategory);
+
+
 
     ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
-
+    // Tool is run for every file specified in source path list
     return Tool.run(std::make_unique<Factory>().get()); // input file, .cpp or .ast
 }

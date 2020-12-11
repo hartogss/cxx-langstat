@@ -9,14 +9,15 @@
 
 class AnalysisRegistry {
 public:
-    AnalysisRegistry(clang::ASTContext& Context);
-    void setEnabledAnalyses(std::string);
-    void runEnabledAnalyses();
+    AnalysisRegistry(std::string EAS);
+    // ~AnalysisRegistry();
+    void runEnabledAnalyses(llvm::StringRef InFile, clang::ASTContext& Context);
 private:
-    void Setup();
+    void createAllAnalyses();
+    void setEnabledAnalyses(std::string);
     AnalysisList EnabledAnalyses;
-    std::map<std::string, std::unique_ptr<Analysis>> AnalysisMapping;
-    clang::ASTContext& Context;
+    std::map<std::string, Analysis*> AnalysisMapping;
+    // clang::ASTContext& Context;
 };
 
 #endif // ANALYSISREGISTRY_H
