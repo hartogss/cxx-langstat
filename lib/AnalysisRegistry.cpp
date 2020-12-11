@@ -17,12 +17,11 @@ AnalysisRegistry::AnalysisRegistry(std::string EAS) {
 // }
 void AnalysisRegistry::createAllAnalyses(){
     std::cout << "Creating analyses" << std::endl;
-    // auto t1 = std::make_unique<LoopDepthAnalysis>();
-    // auto t2 = std::make_unique<LoopKindAnalysis>();
-    // AnalysisMapping.emplace("lda", std::move(t1));
-    // AnalysisMapping.emplace("lka", std::move(t2));
-    // std::cout << AnalysisMapping["lda"].get() << std::endl;
-    AnalysisMapping.emplace("lda", new LoopDepthAnalysis());
+    auto t1 = std::make_unique<LoopDepthAnalysis>();
+    auto t2 = std::make_unique<LoopKindAnalysis>();
+    AnalysisMapping.emplace("lda", std::move(t1));
+    AnalysisMapping.emplace("lka", std::move(t2));
+    std::cout << AnalysisMapping["lda"].get() << std::endl;
 }
 
 void AnalysisRegistry::setEnabledAnalyses(std::string EAS){
@@ -36,7 +35,7 @@ void AnalysisRegistry::runEnabledAnalyses(llvm::StringRef InFile, clang::ASTCont
     std::cout << "Running analyses." << std::endl;
     for(auto EA : EnabledAnalyses.Items){
         auto name = EA.Name.str();
-        // AnalysisMapping[name]->run("weirdfile.cpp", Context);
-        AnalysisMapping[name]->print();
+        AnalysisMapping[name]->run("testfile.cpp", Context);
+        // AnalysisMapping[name]->print();
     }
 }

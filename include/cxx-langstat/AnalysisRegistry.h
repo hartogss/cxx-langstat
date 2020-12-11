@@ -16,7 +16,7 @@ private:
     void createAllAnalyses();
     void setEnabledAnalyses(std::string);
     AnalysisList EnabledAnalyses;
-    std::map<std::string, Analysis*> AnalysisMapping;
+    std::map<std::string, std::unique_ptr<Analysis>> AnalysisMapping;
     // clang::ASTContext& Context;
 };
 

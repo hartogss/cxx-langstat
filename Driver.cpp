@@ -97,6 +97,7 @@ llvm::cl::opt<std::string> AnalysesOption(
     llvm::cl::cat(CXXLangstatCategory)
 );
 
+// set registry for ast consumer, use loop depth analysis only
 AnalysisRegistry Consumer::Registry = AnalysisRegistry("lda");
 
 int main(int argc, const char** argv){
