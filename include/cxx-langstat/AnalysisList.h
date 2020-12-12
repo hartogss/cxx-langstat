@@ -14,6 +14,7 @@ public:
         llvm::StringRef Name;
     };
     std::vector<AnalysisListItem> Items;
+    bool contains(std::string s);
 };
 
 #endif // ANALYSISLIST_H

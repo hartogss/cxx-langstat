@@ -7,10 +7,26 @@
 #include "cxx-langstat/Analyses/LoopKindAnalysis.h"
 
 
-AnalysisRegistry::AnalysisRegistry(std::string EAS) {
+AnalysisRegistry::AnalysisRegistry() {
     std::cout << "AR created" << std::endl;
+
+    // auto t1 = std::make_unique<LoopDepthAnalysis>();
+    // auto t2 = std::make_unique<LoopKindAnalysis>();
+    //
+    // // Analyses.emplace_back(std::move(t1));
+    //
+    // Analyses.emplace_back(std::move(t1));
+    // Analyses.emplace_back(std::move(t2));
+    createAllAnalyses();
+
+}
+AnalysisRegistry::AnalysisRegistry(std::string EAS) {
+    std::cout << "AR2 created" << std::endl;
     createAllAnalyses();
     setEnabledAnalyses(EAS);
+
+    auto t1 = std::make_unique<LoopDepthAnalysis>();
+    Analyses.emplace_back(std::move(t1));
 }
 // AnalysisRegistry::~AnalysisRegistry(){
 //     std::cout << "AR dtor" << std::endl;
@@ -19,9 +35,10 @@ void AnalysisRegistry::createAllAnalyses(){
     std::cout << "Creating analyses" << std::endl;
     auto t1 = std::make_unique<LoopDepthAnalysis>();
     auto t2 = std::make_unique<LoopKindAnalysis>();
-    AnalysisMapping.emplace("lda", std::move(t1));
-    AnalysisMapping.emplace("lka", std::move(t2));
-    std::cout << AnalysisMapping["lda"].get() << std::endl;
+    Analyses.emplace_back(std::move(t1));
+    Analyses.emplace_back(std::move(t2));
+    Abbrev.emplace_back("lda");
+    Abbrev.emplace_back("lka");
 }
 
 void AnalysisRegistry::setEnabledAnalyses(std::string EAS){

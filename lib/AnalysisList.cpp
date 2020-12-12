@@ -27,3 +27,11 @@ AnalysisList::AnalysisList(llvm::StringRef Ans){
     }
     std::cout << std::endl;
 }
+
+bool AnalysisList::contains(std::string s){
+    for(const AnalysisListItem& Item : Items){
+        if(Item.Name.str()==s)
+            return true;
+    }
+    return false;
+}
