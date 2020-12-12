@@ -50,10 +50,10 @@ StatementMatcher constructMixedMatcher(std::string Name, int d){
 //-----------------------------------------------------------------------------
 
 LoopDepthAnalysis::LoopDepthAnalysis() : Analysis(){
-            std::cout<<"FSA ctor"<<std::endl;
+            std::cout<<"LDA ctor\n";
 }
 LoopDepthAnalysis::~LoopDepthAnalysis(){
-    std::cout << "destory" << std::endl;
+    std::cout << "LDA dtor\n";
 }
 // step 1: extraction
 void LoopDepthAnalysis::extract(clang::ASTContext& Context) {
@@ -63,7 +63,7 @@ void LoopDepthAnalysis::extract(clang::ASTContext& Context) {
     // Depth analysis
     // auto matches = this->Extr.extract("fs1", forStmt(unless(hasAncestor(forStmt()))).bind("fs1"));
     StatementMatcher IsOuterMostLoop =
-        unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt()))));
+        unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt(), cxxForRangeStmt()))));
     auto matches = this->Extractor.extract(Context, "fs1", stmt(
         isExpansionInMainFile(),
         anyOf(
