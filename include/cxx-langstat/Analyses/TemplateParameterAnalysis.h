@@ -9,7 +9,7 @@ class TemplateParameterAnalysis : public Analysis {
 public:
     TemplateParameterAnalysis()=default;
     void extract();
-    void analyze();
+    void gatherStatistics();
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 private:
     Matches<clang::Decl> ClassTemplates;

@@ -1,13 +1,14 @@
 #include <iostream>
 #include <vector>
 
-// #include "llvm/Support/raw_ostream.h"
+#include <nlohmann/json.hpp>
 
 #include "cxx-langstat/Analyses/TemplateParameterAnalysis.h"
 #include "cxx-langstat/Utils.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
+using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
 // For each kind of template (class, function, variable, alias) individually:
@@ -23,115 +24,112 @@ using namespace clang::ast_matchers;
 void TemplateParameterAnalysis::extract(){
 
     // Should be defined already according to matcher reference, but doesn't
-    // compile nor work in clang-query. File bug report soon.
+    // compile nor work in clang-query. Should file bug report soon.
     internal::VariadicDynCastAllOfMatcher<Decl, TemplateTemplateParmDecl>
     templateTemplateParmDecl;
 
     internal::VariadicDynCastAllOfMatcher<Decl, VarTemplateDecl> varTemplateDecl;
 
-    auto tt = forEach(decl(anyOf(
-        nonTypeTemplateParmDecl().bind("nontypes"),
-        templateTypeParmDecl().bind("types"),
-        templateTemplateParmDecl().bind("templates"))));
-    auto CTParmMatcher = classTemplateDecl(
-        isExpansionInMainFile(), tt);
-    auto FTParmMatcher = functionTemplateDecl(
-        isExpansionInMainFile(), tt);
-    auto VTParmMatcher = varTemplateDecl(
-        isExpansionInMainFile(), tt);
-    auto ATParmMatcher = typeAliasTemplateDecl(
-        isExpansionInMainFile(), tt);
-
     auto CTResults = Extractor.extract2(*Context,
         classTemplateDecl(isExpansionInMainFile())
     .bind("ct"));
-    auto CTParmResults = Extractor.extract2(*Context, CTParmMatcher);
     ClassTemplates = getASTNodes<Decl>(CTResults, "ct");
-    ClassTemplateNonTypeParameters = getASTNodes<Decl>(CTParmResults,
-        "nontypes");
-    ClassTemplateTypeParameters = getASTNodes<Decl>(CTParmResults,
-        "types");
-    ClassTemplateTemplateParameters = getASTNodes<Decl>(CTParmResults,
-        "templates");
 
     auto FTResults = Extractor.extract2(*Context,
         functionTemplateDecl(isExpansionInMainFile())
     .bind("ft"));
-    auto FTParmResults = Extractor.extract2(*Context, FTParmMatcher);
     FunctionTemplates = getASTNodes<Decl>(FTResults, "ft");
-    FunctionTemplateNonTypeParameters = getASTNodes<Decl>(FTParmResults,
-        "nontypes");
-    FunctionTemplateTypeParameters = getASTNodes<Decl>(FTParmResults,
-        "types");
-    FunctionTemplateTemplateParameters = getASTNodes<Decl>(FTParmResults,
-        "templates");
 
     auto VTResults = Extractor.extract2(*Context,
         varTemplateDecl(isExpansionInMainFile())
     .bind("vt"));
-    auto VTParmResults = Extractor.extract2(*Context, VTParmMatcher);
     VariableTemplates = getASTNodes<Decl>(VTResults, "vt");
-    VariableTemplateNonTypeParameters = getASTNodes<Decl>(VTParmResults,
-        "nontypes");
-    VariableTemplateTypeParameters = getASTNodes<Decl>(VTParmResults,
-        "types");
-    VariableTemplateTemplateParameters = getASTNodes<Decl>(VTParmResults,
-        "templates");
 
     auto ATResults = Extractor.extract2(*Context,
         typeAliasTemplateDecl(isExpansionInMainFile())
     .bind("at"));
-    auto ATParmResults = Extractor.extract2(*Context, ATParmMatcher);
     AliasTemplates = getASTNodes<Decl>(ATResults, "at");
-    AliasTemplateNonTypeParameters = getASTNodes<Decl>(ATParmResults,
-        "nontypes");
-    AliasTemplateTypeParameters = getASTNodes<Decl>(ATParmResults,
-        "types");
-    AliasTemplateTemplateParameters = getASTNodes<Decl>(ATParmResults,
-        "templates");
 }
-using DM = Matches<Decl>;
-void printStats(std::string text, DM t, DM tnonty, DM tty, DM ttemp){
-    printMatches(text, t);
-    auto WithoutParamPack = 0;
-    auto WithParamPack = 0;
-    for(auto match : t){
-        // Cast cannot fail, upcast from guaranteed some of class-,func-,var-,
-        // alias-templatedecl
-        auto Node = cast<TemplateDecl>(match.node);
-        auto TemplateParametersPtr = Node->getTemplateParameters();
-        if(TemplateParametersPtr->hasParameterPack()){
-            WithParamPack++;
-        } else {
-            WithoutParamPack++;
-        }
-        // unsigned numTemplateParams = TemplateParametersPtr->size();
-        // for(unsigned idx=0; idx<numTemplateParams; idx++)
-        //     auto ParamDeclPtr = TemplateParametersPtr->getParam(idx);
+
+std::string getTemplateParmKind(NamedDecl* D){
+    auto kind = cast<Decl>(D)->getDeclKindName();
+    if(strcmp(kind, "NonTypeTemplateParm") == 0)
+        return "non-type";
+    else if(strcmp(kind, "TemplateTypeParm") == 0)
+        return "type";
+    else if(strcmp(kind, "TemplateTemplateParm") == 0)
+        return "template";
+    else {
+        std::cout << "invalid template parameter kind!\n";
+        return "?";
     }
-    std::cout << "#Non-type template parameters: " << tnonty.size() << std::endl;
-    std::cout << "#Type template parameters: " << tty.size() << std::endl;
-    std::cout << "#Template template parameters: "<< ttemp.size() << std::endl;
-    std::cout << "Parameter packs used: " << WithParamPack << "/"
-        << WithoutParamPack + WithParamPack << std::endl;
 }
-void TemplateParameterAnalysis::analyze(){
-    printStats("Class Templates", ClassTemplates,
-        ClassTemplateNonTypeParameters,
-        ClassTemplateTypeParameters,
-        ClassTemplateTemplateParameters);
-    printStats("Function Templates", FunctionTemplates,
-        FunctionTemplateNonTypeParameters,
-        FunctionTemplateTypeParameters,
-        FunctionTemplateTemplateParameters);
-    printStats("Variable Templates", VariableTemplates,
-        VariableTemplateNonTypeParameters,
-        VariableTemplateTypeParameters,
-        VariableTemplateTemplateParameters);
-    printStats("Alias Templates", AliasTemplates,
-        AliasTemplateNonTypeParameters,
-        AliasTemplateTypeParameters,
-        AliasTemplateTemplateParameters);
+
+void TemplateParameterAnalysis::gatherStatistics(){
+    ordered_json CTs;
+    for(auto match : ClassTemplates){
+        ordered_json CT;
+        CT["location"] = match.location;
+        auto TParms = cast<TemplateDecl>(match.node)->getTemplateParameters();
+        CT["uses param. pack"] = TParms->hasParameterPack();
+        std::map<std::string, unsigned> ParmKindCounts = {
+            {"non-type",0},{"type",0},{"template",0},};
+        for(unsigned idx=0; idx<TParms->size(); idx++)
+            ParmKindCounts[getTemplateParmKind(TParms->getParam(idx))]++;
+        CT["parameters"]["non-type"] = ParmKindCounts["non-type"];
+        CT["parameters"]["type"] = ParmKindCounts["type"];
+        CT["parameters"]["template"] = ParmKindCounts["template"];
+        CTs[getMatchDeclName(match)] = CT;
+    }
+    ordered_json FTs;
+    for(auto match : FunctionTemplates){
+        ordered_json FT;
+        FT["location"] = match.location;
+        auto TParms = cast<TemplateDecl>(match.node)->getTemplateParameters();
+        FT["uses param. pack"] = TParms->hasParameterPack();
+        std::map<std::string, unsigned> ParmKindCounts = {
+            {"non-type",0},{"type",0},{"template",0},};
+        for(unsigned idx=0; idx<TParms->size(); idx++)
+            ParmKindCounts[getTemplateParmKind(TParms->getParam(idx))]++;
+        FT["parameters"]["non-type"] = ParmKindCounts["non-type"];
+        FT["parameters"]["type"] = ParmKindCounts["type"];
+        FT["parameters"]["template"] = ParmKindCounts["template"];
+        FTs[getMatchDeclName(match)] = FT;
+    }
+    ordered_json VTs;
+    for(auto match : VariableTemplates){
+        ordered_json VT;
+        VT["location"] = match.location;
+        auto TParms = cast<TemplateDecl>(match.node)->getTemplateParameters();
+        VT["uses param. pack"] = TParms->hasParameterPack();
+        std::map<std::string, unsigned> ParmKindCounts = {
+            {"non-type",0},{"type",0},{"template",0},};
+        for(unsigned idx=0; idx<TParms->size(); idx++)
+            ParmKindCounts[getTemplateParmKind(TParms->getParam(idx))]++;
+        VT["parameters"]["non-type"] = ParmKindCounts["non-type"];
+        VT["parameters"]["type"] = ParmKindCounts["type"];
+        VT["parameters"]["template"] = ParmKindCounts["template"];
+        VTs[getMatchDeclName(match)] = VT;
+    }
+    ordered_json ATs;
+    for(auto match : AliasTemplates){
+        ordered_json AT;
+        AT["location"] = match.location;
+        auto TParms = cast<TemplateDecl>(match.node)->getTemplateParameters();
+        AT["uses param. pack"] = TParms->hasParameterPack();
+        std::map<std::string, unsigned> ParmKindCounts = {
+            {"non-type",0},{"type",0},{"template",0},};
+        for(unsigned idx=0; idx<TParms->size(); idx++)
+            ParmKindCounts[getTemplateParmKind(TParms->getParam(idx))]++;
+        AT["parameters"]["non-type"] = ParmKindCounts["non-type"];
+        AT["parameters"]["type"] = ParmKindCounts["type"];
+        AT["parameters"]["template"] = ParmKindCounts["template"];
+        ATs[getMatchDeclName(match)] = AT;
+    }
+    Result["class templates"] = CTs;
+    Result["function templates"] = FTs;
+    Result["variable templates"] = VTs;
+    Result["alias templates"] = ATs;
 }
 
 void TemplateParameterAnalysis::run(llvm::StringRef InFile,
@@ -139,7 +137,7 @@ void TemplateParameterAnalysis::run(llvm::StringRef InFile,
         this->Context = &Context;
         std::cout << "\033[32mRunning template parameter analysis:\033[0m\n";
         extract();
-        analyze();
+        gatherStatistics();
 }
 
 //-----------------------------------------------------------------------------
