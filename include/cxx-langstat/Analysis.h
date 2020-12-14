@@ -20,9 +20,14 @@ public:
     // Run analysis
     virtual void run(llvm::StringRef InFile, clang::ASTContext& Context)=0;
     // make private and use getters and setters
+    const nlohmann::ordered_json& getResult(){
+        return Result;
+    }
+protected:
     llvm::StringRef InFile;
     BaseExtractor Extractor;
     clang::ASTContext* Context;
+    nlohmann::ordered_json Result;
 };
 
 //-----------------------------------------------------------------------------

@@ -31,7 +31,7 @@ void LoopKindAnalysis::extract(clang::ASTContext& Context){
     loops["while"] = WhileMatches.size();
     loops["do-while"] = DoWhileMatches.size();
     loops["for-range"] = RangeBasedForMatches.size();
-    std::cout << loops.dump(4) << std::endl;
+    Result = loops;
 }
 
 void LoopKindAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context){

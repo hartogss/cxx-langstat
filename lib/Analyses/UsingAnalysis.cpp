@@ -122,7 +122,6 @@ void UsingAnalysis::gatherStatistics(){
     Result["aliases"] = Aliases;
     Result["typedef templates"] = TypedefTemplates;
     Result["alias templates"] = AliasTemplates;
-    std::cout << Result.dump(4) << std::endl;
 }
 void UsingAnalysis::run(llvm::StringRef InFile, ASTContext& Context){
     std::cout << "\033[32mRunning UsingAnalysis:\033[0m" << std::endl;

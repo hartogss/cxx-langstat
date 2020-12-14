@@ -18,8 +18,6 @@ private:
     Matches<clang::Decl> TypeAliasTemplateDecls;
     Matches<clang::Decl> TypedefTemplateDecls;
     Matches<clang::Decl> td;
-
-    nlohmann::ordered_json Result;
 };
 
 //-----------------------------------------------------------------------------

@@ -8,10 +8,13 @@
 // standard includes
 #include <iostream>
 
+#include <nlohmann/json.hpp>
+
 #include "cxx-langstat/AnalysisRegistry.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
+using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
 
@@ -26,13 +29,18 @@ public:
     void HandleTranslationUnit(clang::ASTContext& Context){
         std::cout << "Handling the translation unit" << std::endl;
 
+        ordered_json AllAnalysesResult;
+
         int i=0;
         for(auto ab : Registry->Abbrev) {
             if(Registry->EnabledAnalyses.contains(ab)){
                 Registry->Analyses[i]->run(InFile, Context);
+                AllAnalysesResult[ab]=Registry->Analyses[i]->getResult();
             }
             i++;
         }
+
+        std::cout << AllAnalysesResult.dump(4) << std::endl;
     }
 public:
     llvm::StringRef InFile;
@@ -109,5 +117,6 @@ int main(int argc, const char** argv){
     Tool.run(std::make_unique<Factory>().get()); // input file, .cpp or .ast
     // Not really important here, but good practice
     delete Registry;
+    std::cout << "here" << std::endl;
     return 0;
 }

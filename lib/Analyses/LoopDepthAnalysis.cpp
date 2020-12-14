@@ -109,7 +109,7 @@ void LoopDepthAnalysis::analyzeDepth(Matches<clang::Stmt> matches,
                 depth++;
             }
         }
-        std::cout << loops.dump(4) << std::endl;
+        Result = loops;
 }
 
 //step 3: visualization (for later)

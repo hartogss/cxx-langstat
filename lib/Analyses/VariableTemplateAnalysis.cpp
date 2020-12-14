@@ -6,6 +6,7 @@
 
 using namespace clang;
 using namespace clang::ast_matchers;
+using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
 // Question: did programmers abandon classes with static fields and constexpr
@@ -68,17 +69,37 @@ void VariableTemplateAnalysis::extract(){
     VariableTemplateDecls = Extractor.extract(*Context, "variabletemplate",
         VariableTemplate);
 }
-void VariableTemplateAnalysis::analyze(){
-    printMatches("Class templates with static member", ClassWithStaticMemberDecls);
-    printMatches("Constexpr function templates", ConstexprFunctionDecls);
-    printMatches("Variable templates", VariableTemplateDecls);
+void VariableTemplateAnalysis::gatherStatistics(){
+    // Possible improvment: report if class template contains multiple static
+    // member vars
+    ordered_json CTSMs;
+    for(auto match : ClassWithStaticMemberDecls){
+        ordered_json CTSM;
+        CTSM["location"] = match.location;
+        CTSMs[getMatchDeclName(match)] = CTSM;
+    }
+    ordered_json CTFs;
+    for(auto match : ConstexprFunctionDecls){
+        ordered_json CTF;
+        CTF["location"] = match.location;
+        CTFs[getMatchDeclName(match)] = CTF;
+    }
+    ordered_json VTs;
+    for(auto match : VariableTemplateDecls){
+        ordered_json VT;
+        VT["location"] = match.location;
+        VTs[getMatchDeclName(match)] = VT;
+    }
+    Result["class templates with static member"] = CTSMs;
+    Result["constexpr function templates"] = CTFs;
+    Result["variable templates"] = VTs;
 }
 void VariableTemplateAnalysis::run(llvm::StringRef InFile,
     clang::ASTContext& Context){
         std::cout << "\033[32mRunning variable template analysis:\033[0m\n";
-        this->Context = &Context; 
+        this->Context = &Context;
         extract();
-        analyze();
+        gatherStatistics();
 }
 
 //-----------------------------------------------------------------------------

@@ -43,7 +43,7 @@ void CyclomaticComplexityAnalysis::extract(){
         unsigned CYC = numEdges - numNodes + 2; // 2 since #connected components P=1
         fdecls[getMatchDeclName(match)] = CYC;
     }
-    std::cout << fdecls.dump(4) << std::endl;
+    Result["fdecls"] = fdecls;
 }
 
 void CyclomaticComplexityAnalysis::run(llvm::StringRef InFile,
