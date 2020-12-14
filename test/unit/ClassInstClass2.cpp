@@ -21,4 +21,4 @@ template class Super<float>;
 
 // The explicit instantiations don't define data/variables, but define classes
 // i.e. define what they should look like, it makes sense to have for each super
-// instantiation a sub instantiation.
+// instantiation a sub<int> instantiation.

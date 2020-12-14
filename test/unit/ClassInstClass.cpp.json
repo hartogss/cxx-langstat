@@ -1,48 +1,54 @@
 {
-    "Super": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass.cpp:19:1",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "Super": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass.cpp:20:1",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "float"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "Sub": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass.cpp:17:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "Sub": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass.cpp:17:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "float"
-            ],
-            "template": []
-        }
+    "tia": {
+        "explicit class insts": {
+            "Super": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass.cpp:19:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass.cpp:20:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "float"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "implicit class insts": {
+            "Sub": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass.cpp:17:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass.cpp:17:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "float"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "func insts": null,
+        "var insts": null
     }
 }

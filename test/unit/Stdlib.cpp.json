@@ -1,390 +1,391 @@
 {
-    "std::__1::array": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:44:5",
-        "arguments": {
-            "non-type": [
-                "1"
+    "tia": {
+        "explicit class insts": null,
+        "implicit class insts": {
+            "std::__1::array": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:44:5",
+                    "arguments": {
+                        "non-type": [
+                            "1"
+                        ],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:45:5",
+                    "arguments": {
+                        "non-type": [
+                            "1"
+                        ],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "type": [
-                "int"
+            "std::__1::vector": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:47:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::allocator<int>"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::array": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:45:5",
-        "arguments": {
-            "non-type": [
-                "1"
+            "std::__1::forward_list": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:49:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::allocator<int>"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "type": [
-                "int"
+            "std::__1::list": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:51:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::allocator<int>"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::vector": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:47:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "std::__1::allocator<int>"
+            "std::__1::map": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:53:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "int",
+                            "std::__1::less<int>",
+                            "std::__1::allocator<std::__1::pair<const int, int> >"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::forward_list": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:49:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "std::__1::allocator<int>"
+            "std::__1::multimap": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:55:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "int",
+                            "std::__1::less<int>",
+                            "std::__1::allocator<std::__1::pair<const int, int> >"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::list": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:51:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "std::__1::allocator<int>"
+            "std::__1::set": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:57:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::less<int>",
+                            "std::__1::allocator<int>"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::map": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:53:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "int",
-                "std::__1::less<int>",
-                "std::__1::allocator<std::__1::pair<const int, int> >"
+            "std::__1::multiset": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:59:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::less<int>",
+                            "std::__1::allocator<int>"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::multimap": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:55:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "int",
-                "std::__1::less<int>",
-                "std::__1::allocator<std::__1::pair<const int, int> >"
+            "std::__1::unordered_map": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:61:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "int",
+                            "std::__1::hash<int>",
+                            "std::__1::equal_to<int>",
+                            "std::__1::allocator<std::__1::pair<const int, int> >"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::set": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:57:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "std::__1::less<int>",
-                "std::__1::allocator<int>"
+            "std::__1::unordered_multimap": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:63:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "int",
+                            "std::__1::hash<int>",
+                            "std::__1::equal_to<int>",
+                            "std::__1::allocator<std::__1::pair<const int, int> >"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::multiset": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:59:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "std::__1::less<int>",
-                "std::__1::allocator<int>"
+            "std::__1::unordered_set": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:65:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::hash<int>",
+                            "std::__1::equal_to<int>",
+                            "std::__1::allocator<int>"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::unordered_map": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:61:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "int",
-                "std::__1::hash<int>",
-                "std::__1::equal_to<int>",
-                "std::__1::allocator<std::__1::pair<const int, int> >"
+            "std::__1::unordered_multiset": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:67:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::hash<int>",
+                            "std::__1::equal_to<int>",
+                            "std::__1::allocator<int>"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::unordered_multimap": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:63:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "int",
-                "std::__1::hash<int>",
-                "std::__1::equal_to<int>",
-                "std::__1::allocator<std::__1::pair<const int, int> >"
+            "std::__1::queue": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:69:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::deque<int, std::__1::allocator<int> >"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::unordered_set": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:65:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "std::__1::hash<int>",
-                "std::__1::equal_to<int>",
-                "std::__1::allocator<int>"
+            "std::__1::priority_queue": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:71:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::vector<int, std::__1::allocator<int> >",
+                            "std::__1::less<int>"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::unordered_multiset": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:67:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "std::__1::hash<int>",
-                "std::__1::equal_to<int>",
-                "std::__1::allocator<int>"
+            "std::__1::stack": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:73:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::deque<int, std::__1::allocator<int> >"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::queue": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:69:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "std::__1::deque<int, std::__1::allocator<int> >"
+            "std::__1::deque": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:75:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::allocator<int>"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::priority_queue": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:71:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "std::__1::vector<int, std::__1::allocator<int> >",
-                "std::__1::less<int>"
+            "Widget": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:85:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::stack": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:73:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "std::__1::deque<int, std::__1::allocator<int> >"
+            "std::__1::pair": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:91:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:92:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::deque": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:75:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "std::__1::allocator<int>"
+            "std::__1::tuple": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:94:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "int",
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:95:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "char",
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "Widget": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:85:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int"
+            "std::__1::unique_ptr": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:99:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::default_delete<int>"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::pair": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:91:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "int"
+            "std::__1::shared_ptr": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:101:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::pair": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:92:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "int"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::tuple": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:94:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "int",
-                "int"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::tuple": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:95:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "char",
-                "int"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::unique_ptr": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:99:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "std::__1::default_delete<int>"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::shared_ptr": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:101:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "std::__1::weak_ptr": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:103:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "f": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:78:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "std::__1::vector<double, std::__1::allocator<double> >"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "f": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:79:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "std::__1::vector<int, std::__1::allocator<int> >"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "Tvec": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:82:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "Tvec": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:81:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "float"
-            ],
-            "template": []
+            "std::__1::weak_ptr": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:103:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "func insts": {
+            "f": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:78:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "std::__1::vector<double, std::__1::allocator<double> >"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:79:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "std::__1::vector<int, std::__1::allocator<int> >"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "var insts": {
+            "Tvec": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:82:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/Stdlib.cpp:81:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "float"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
         }
     }
 }

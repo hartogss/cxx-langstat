@@ -1,200 +1,192 @@
 {
-    "Widget1": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:20:1",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "float"
+    "tia": {
+        "explicit class insts": {
+            "Widget1": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:20:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "float"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "Widget1_p": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:43:1",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "int"
+            "Widget1_p": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:43:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:44:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "Widget1<double>"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:45:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "double",
+                            "float",
+                            "unsigned int",
+                            "Widget1<int>"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "Widget1_p": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:44:1",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "Widget1<double>"
+            "Widget2_p": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:51:1",
+                    "arguments": {
+                        "non-type": [
+                            "3",
+                            "1",
+                            "4"
+                        ],
+                        "type": [],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:56:1",
+                    "arguments": {
+                        "non-type": [
+                            "3"
+                        ],
+                        "type": [],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "Widget1_p": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:45:1",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "int",
-                "double",
-                "float",
-                "unsigned int",
-                "Widget1<int>"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "Widget2_p": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:51:1",
-        "arguments": {
-            "non-type": [
-                "3",
-                "1",
-                "4"
-            ],
-            "type": [],
-            "template": []
-        }
-    }
-}
-{
-    "Widget2_p": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:56:1",
-        "arguments": {
-            "non-type": [
-                "3"
-            ],
-            "type": [],
-            "template": []
-        }
-    }
-}
-{
-    "Widget3": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:62:1",
-        "arguments": {
-            "non-type": [],
-            "type": [],
-            "template": [
-                "Widget1"
+            "Widget3": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:62:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [],
+                        "template": [
+                            "Widget1"
+                        ]
+                    }
+                }
             ]
-        }
-    }
-}
-{
-    "Widget1": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:24:1",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "double"
+        },
+        "implicit class insts": {
+            "Widget1": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:24:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "double"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:25:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "double"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:26:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "Widget1<bool>"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:28:8",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "char"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:32:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "void"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:36:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "void"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "Widget1": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:25:1",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "double"
+            "Widget1_p": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:47:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "double",
+                            "Widget1<int>"
+                        ],
+                        "template": []
+                    }
+                }
             ],
-            "template": []
-        }
-    }
-}
-{
-    "Widget1": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:26:1",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "Widget1<bool>"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "Widget1": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:28:8",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "char"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "Widget1": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:32:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "void"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "Widget1": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:36:5",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "void"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "Widget1_p": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:47:1",
-        "arguments": {
-            "non-type": [],
-            "type": [
-                "double",
-                "Widget1<int>"
-            ],
-            "template": []
-        }
-    }
-}
-{
-    "Widget3": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:61:1",
-        "arguments": {
-            "non-type": [],
-            "type": [],
-            "template": [
-                "Widget1"
+            "Widget3": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:61:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [],
+                        "template": [
+                            "Widget1"
+                        ]
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:63:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [],
+                        "template": [
+                            "Widget1"
+                        ]
+                    }
+                }
             ]
-        }
-    }
-}
-{
-    "Widget3": {
-        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInsts.cpp:63:1",
-        "arguments": {
-            "non-type": [],
-            "type": [],
-            "template": [
-                "Widget1"
-            ]
-        }
+        },
+        "func insts": null,
+        "var insts": null
     }
 }
