@@ -5,6 +5,7 @@
 #include "cxx-langstat/Utils.h"
 
 using namespace clang::ast_matchers;
+using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
 // Question: Did programmers abandon typedef in favor of aliases (e.g.

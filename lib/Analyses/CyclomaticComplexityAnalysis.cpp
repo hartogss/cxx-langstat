@@ -9,6 +9,7 @@
 #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 
 using namespace clang::ast_matchers;
+using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
 
@@ -20,6 +21,8 @@ void CyclomaticComplexityAnalysis::extract(){
         has(compoundStmt()))  // Should be defined, i.e have a body
     .bind(id);
     auto matches = Extractor.extract(*Context, id, fDecl);
+
+    ordered_json fdecls;
     for(auto match : matches){
         // http://clang.llvm.org/doxygen/classclang_1_1CFG.html#details
         // CFG is intraprocedural flow of a statement.
@@ -35,13 +38,12 @@ void CyclomaticComplexityAnalysis::extract(){
         // because of the LLVM entry & exit block. However, this has no effect on CYC.
         unsigned numNodes = cfg->size();
         unsigned numEdges = 0;
-        for(auto block = cfg->begin(); block != cfg->end(); block++){
+        for(auto block = cfg->begin(); block != cfg->end(); block++)
             numEdges += (*block)->succ_size();
-        }
         unsigned CYC = numEdges - numNodes + 2; // 2 since #connected components P=1
-        std::cout << dyn_cast<clang::NamedDecl>(match.node)->getNameAsString()
-            << " has CYC " << CYC << std::endl;
+        fdecls[getMatchDeclName(match)] = CYC;
     }
+    std::cout << fdecls.dump(4) << std::endl;
 }
 
 void CyclomaticComplexityAnalysis::run(llvm::StringRef InFile,

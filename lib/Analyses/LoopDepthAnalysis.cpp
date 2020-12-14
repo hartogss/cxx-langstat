@@ -4,6 +4,7 @@
 #include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
 
 using namespace clang::ast_matchers;
+using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
 
@@ -91,6 +92,8 @@ void LoopDepthAnalysis::extract() {
 //step 2: compute stats
 void LoopDepthAnalysis::analyzeDepth(Matches<clang::Stmt> matches,
     std::vector<Matches<clang::Stmt>> Data){
+
+        ordered_json loops;
         unsigned TopLevelForLoops = matches.size();
         unsigned depth = 1;
         for (auto matches : Data){
@@ -98,13 +101,15 @@ void LoopDepthAnalysis::analyzeDepth(Matches<clang::Stmt> matches,
             if (d!=0){
                 std::cout << d << "/" << TopLevelForLoops << " of depth "
                 << depth << " @ lines: ";
+                std::vector<unsigned> locations;
                 for (auto m : matches){
-                    std::cout << m.location << " ";
+                    locations.emplace_back(m.location);
                 }
-                std::cout << std::endl;
+                loops[std::to_string(depth)] = locations;
                 depth++;
             }
         }
+        std::cout << loops.dump(4) << std::endl;
 }
 
 //step 3: visualization (for later)

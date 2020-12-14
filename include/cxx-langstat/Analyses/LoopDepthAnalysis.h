@@ -15,14 +15,11 @@ public:
     ~LoopDepthAnalysis();
     void extract();
     void analyzeDepth(Matches<clang::Stmt> matches, std::vector<Matches<clang::Stmt>> Data);
-    void analyzeLoopPrevalences(
-        Matches<clang::Stmt> fs,
-        Matches<clang::Stmt> ws,
-        Matches<clang::Stmt> ds);
     // combine
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 private:
     int MaxDepth;
+    
 };
 
 //-----------------------------------------------------------------------------

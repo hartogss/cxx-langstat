@@ -4,6 +4,9 @@
 
 using namespace clang::ast_matchers;
 
+using ordered_json = nlohmann::ordered_json;
+
+
 LoopKindAnalysis::LoopKindAnalysis(){
     std::cout << "LKA ctor\n";
 }
@@ -23,16 +26,12 @@ void LoopKindAnalysis::extract(clang::ASTContext& Context){
     cxxForRangeStmt(isExpansionInMainFile())
     .bind("forrange"));
 
-    unsigned total = ForMatches.size() + WhileMatches.size()
-        + DoWhileMatches.size() + RangeBasedForMatches.size();
-    std::cout << ForMatches.size() << "/" << total
-    << " are for loops\n"
-    << WhileMatches.size() << "/" << total
-    << " are while loops\n"
-    << DoWhileMatches.size() << "/" << total
-    << " are do-while loops\n"
-    << RangeBasedForMatches.size() << "/" << total
-    << " are range-based for loops\n";
+    ordered_json loops;
+    loops["for"] = ForMatches.size();
+    loops["while"] = WhileMatches.size();
+    loops["do-while"] = DoWhileMatches.size();
+    loops["for-range"] = RangeBasedForMatches.size();
+    std::cout << loops.dump(4) << std::endl;
 }
 
 void LoopKindAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context){
