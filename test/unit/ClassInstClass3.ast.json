@@ -1,0 +1,24 @@
+{
+    "Super": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass3.cpp:20:1",
+        "arguments": {
+            "non-type": [],
+            "type": [
+                "int"
+            ],
+            "template": []
+        }
+    }
+}
+{
+    "Super": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass3.cpp:21:1",
+        "arguments": {
+            "non-type": [],
+            "type": [
+                "int"
+            ],
+            "template": []
+        }
+    }
+}

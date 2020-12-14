@@ -1,0 +1,24 @@
+{
+    "f1": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstFunc.cpp:17:5",
+        "arguments": {
+            "non-type": [],
+            "type": [
+                "int"
+            ],
+            "template": []
+        }
+    }
+}
+{
+    "f2": {
+        "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstFunc.cpp:20:15",
+        "arguments": {
+            "non-type": [],
+            "type": [
+                "int"
+            ],
+            "template": []
+        }
+    }
+}
