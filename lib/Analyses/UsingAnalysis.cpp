@@ -4,6 +4,7 @@
 #include "cxx-langstat/Analyses/UsingAnalysis.h"
 #include "cxx-langstat/Utils.h"
 
+using namespace clang;
 using namespace clang::ast_matchers;
 using ordered_json = nlohmann::ordered_json;
 
@@ -61,7 +62,7 @@ void UsingAnalysis::extract() {
                                         // instrinsic to clang AST
     .bind("typedeftemplate");
 
-    //
+    // Alias template
     auto typeAliasTemplate = typeAliasTemplateDecl(
         isExpansionInMainFile())
     .bind("aliastemplate");
@@ -70,18 +71,17 @@ void UsingAnalysis::extract() {
     // has(anyOf(...)) -> has(decl(anyOf(...)))
     // has(unless(...)) -> has(decl(unless(...)))
 
-    // auto m2 = decl(unless(typeAliasTemplateDecl())).bind("using"); //causes matches.size() to be 1, but for (auto) over that lists prints a lot more
-
     TypedefDecls = Extractor.extract(*Context, "typedef", typedef_);
     TypeAliasDecls = Extractor.extract(*Context, "alias", typeAlias);
-    TypedefTemplateDecls = Extractor.extract(*Context, "typedeftemplate",
-        typedefTemplate);
+    auto typedeftemplateresults = Extractor.extract2(*Context, typedefTemplate);
+    TypedefTemplateDecls = getASTNodes<Decl>(typedeftemplateresults, "typedeftemplate");
+    td = getASTNodes<Decl>(typedeftemplateresults, "td");
     TypeAliasTemplateDecls = Extractor.extract(*Context, "aliastemplate",
         typeAliasTemplate);
 
     // need to do extra work to remove from typedefdecls those decls that occur
-    // in typedeftemplatedecls (to get distinciton between typedef and typedef templates)
-    td = Extractor.extract(*Context, "td", typedefTemplate);
+    // in typedeftemplatedecls (to get distinciton between typedef and typedef
+    // templates)
     for(auto decl : td){
         for(unsigned i=0; i<TypedefDecls.size(); i++){
             auto d = TypedefDecls[i];
@@ -89,20 +89,46 @@ void UsingAnalysis::extract() {
                 TypedefDecls.erase(TypedefDecls.begin()+i);
         }
     }
-
-    analyze();
 }
-void UsingAnalysis::analyze(){
-    printMatches("Typedef found", TypedefDecls);
-    printMatches("Type aliases found", TypeAliasDecls);
-    printMatches("\"Typedef templates\" found", TypedefTemplateDecls);
-    printMatches("Typedefs from \"Typedef templates\"", td);
-    printMatches("Type alias templates found", TypeAliasTemplateDecls);
+void UsingAnalysis::gatherStatistics(){
+    // Possible improvement: for each typedef/alias, state what type was aliased
+    ordered_json Typedefs;
+    for(auto match : TypedefDecls){
+        ordered_json Typedef;
+        Typedef["location"] = match.location;
+        Typedefs[getMatchDeclName(match)] = Typedef;
+    }
+    ordered_json Aliases;
+    for(auto match : TypeAliasDecls){
+        ordered_json Alias;
+        Alias["location"] = match.location;
+        Aliases[getMatchDeclName(match)] = Alias;
+    }
+    // possible improvement: state all typedef of a typdef template, since
+    // it can contain multiple
+    ordered_json TypedefTemplates;
+    for(auto match : TypedefTemplateDecls){
+        ordered_json TypedefTemplate;
+        TypedefTemplate["location"] = match.location;
+        TypedefTemplates[getMatchDeclName(match)] = TypedefTemplate;
+    }
+    ordered_json AliasTemplates;
+    for(auto match : TypeAliasTemplateDecls){
+        ordered_json AliasTemplate;
+        AliasTemplate["location"] = match.location;
+        AliasTemplates[getMatchDeclName(match)] = AliasTemplate;
+    }
+    Result["typedefs"] = Typedefs;
+    Result["aliases"] = Aliases;
+    Result["typedef templates"] = TypedefTemplates;
+    Result["alias templates"] = AliasTemplates;
+    std::cout << Result.dump(4) << std::endl;
 }
-void UsingAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context){
+void UsingAnalysis::run(llvm::StringRef InFile, ASTContext& Context){
     std::cout << "\033[32mRunning UsingAnalysis:\033[0m" << std::endl;
     this->Context = &Context;
     extract();
+    gatherStatistics();
 }
 
 //-----------------------------------------------------------------------------

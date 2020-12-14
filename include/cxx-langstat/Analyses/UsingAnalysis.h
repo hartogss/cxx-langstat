@@ -10,7 +10,7 @@ class UsingAnalysis : public Analysis {
 public:
     UsingAnalysis()=default;
     void extract();
-    void analyze();
+    void gatherStatistics();
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 private:
     Matches<clang::Decl> TypedefDecls;
@@ -18,6 +18,8 @@ private:
     Matches<clang::Decl> TypeAliasTemplateDecls;
     Matches<clang::Decl> TypedefTemplateDecls;
     Matches<clang::Decl> td;
+
+    nlohmann::ordered_json Result;
 };
 
 //-----------------------------------------------------------------------------
