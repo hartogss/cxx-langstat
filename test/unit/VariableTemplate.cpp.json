@@ -1,0 +1,31 @@
+{
+    "vta": {
+        "class templates with static member": {
+            "s1": {
+                "location": 10
+            },
+            "s2": {
+                "location": 16
+            }
+        },
+        "constexpr function templates": {
+            "f1": {
+                "location": 37
+            },
+            "f10": {
+                "location": 90
+            }
+        },
+        "variable templates": {
+            "pi": {
+                "location": 100
+            },
+            "pi2": {
+                "location": 104
+            },
+            "vtc::pi3": {
+                "location": 108
+            }
+        }
+    }
+}
