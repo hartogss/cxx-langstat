@@ -40,6 +40,7 @@ void StdlibAnalysis2::run(llvm::StringRef InFile, clang::ASTContext& Context){
     Helper.analyzeFuncInsts=false;
     Helper.analyzeVarInsts=false;
     Helper.run(InFile, Context);
+    Result = Helper.getResult();
 }
 
 //-----------------------------------------------------------------------------
