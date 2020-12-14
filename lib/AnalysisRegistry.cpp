@@ -5,6 +5,7 @@
 
 #include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
 #include "cxx-langstat/Analyses/LoopKindAnalysis.h"
+#include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 
 
 AnalysisRegistry::AnalysisRegistry() {
@@ -18,8 +19,10 @@ void AnalysisRegistry::createAllAnalyses(){
     std::cout << "Creating analyses" << std::endl;
     Analyses.emplace_back(std::make_unique<LoopDepthAnalysis>()); // std::move
     Analyses.emplace_back(std::make_unique<LoopKindAnalysis>());
+    Analyses.emplace_back(std::make_unique<TemplateInstantiationAnalysis>());
     Abbrev.emplace_back("lda");
     Abbrev.emplace_back("lka");
+    Abbrev.emplace_back("tia");
 }
 
 void AnalysisRegistry::setEnabledAnalyses(std::string EAS){

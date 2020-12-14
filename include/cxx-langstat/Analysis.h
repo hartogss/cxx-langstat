@@ -18,16 +18,12 @@ public:
     // step 0: createMatcher(s) ?
     // step 1: extraction
 
-    //step 3: visualization (for later)
-    // combine
+    // Run analysis
     virtual void run(llvm::StringRef InFile, clang::ASTContext& Context)=0;
-    // std::string name;
-    virtual void print(){
-        std::cout << "rpint" << std::endl;
-    }
 
     llvm::StringRef InFile;
     BaseExtractor Extractor;
+    clang::ASTContext* Context;
 };
 
 //-----------------------------------------------------------------------------

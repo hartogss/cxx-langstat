@@ -41,19 +41,16 @@ using ordered_json = nlohmann::ordered_json;
 // - variables: same as with functions
 
 // Regular TIA doesn't care what name the template had
-TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
-(llvm::StringRef InFile, ASTContext& Context) :
-    TemplateInstantiationAnalysis(InFile, Context, anything()) {
+TemplateInstantiationAnalysis::TemplateInstantiationAnalysis() :
+    TemplateInstantiationAnalysis(anything()) {
 }
 
 internal::VariadicDynCastAllOfMatcher<Decl, VarTemplateDecl> varTemplateDecl;
 
 // Can restrict TIA with hasName or hasAnyName matcher to only look for instant-
 // iations of certain class templates
-TemplateInstantiationAnalysis::TemplateInstantiationAnalysis
-(llvm::StringRef InFile, clang::ASTContext& Context,
+TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
     internal::Matcher<clang::NamedDecl> Names) :
-    Analysis(InFile, Context),
     ClassInstMatcher(
         decl(
             anyOf(
@@ -108,7 +105,7 @@ void TemplateInstantiationAnalysis::extract() {
     // Result of the class insts matcher will give back a pointer to the
     // ClassTemplateSpecializationDecl (CTSD).
     // Matcher constructed by ctor
-    auto ClassResults = Extr.extract2(ClassInstMatcher);
+    auto ClassResults = Extractor.extract2(*Context, ClassInstMatcher);
     ClassExplicitInsts = getASTNodes<ClassTemplateSpecializationDecl>(ClassResults,
         "ExplicitCTSD");
     ClassImplicitInsts = getASTNodes<ClassTemplateSpecializationDecl>(ClassResults,
@@ -129,7 +126,7 @@ void TemplateInstantiationAnalysis::extract() {
         isTemplateInstantiation())
     .bind("FuncInsts");
     if(analyzeFuncInsts){
-        auto FuncResults = Extr.extract2(FuncInstMatcher);
+        auto FuncResults = Extractor.extract2(*Context, FuncInstMatcher);
         FuncInsts = getASTNodes<FunctionDecl>(FuncResults, "FuncInsts");
     }
 
@@ -143,7 +140,7 @@ void TemplateInstantiationAnalysis::extract() {
         isTemplateInstantiation())
     .bind("VarInsts");
     if(analyzeVarInsts){
-        auto VarResults = Extr.extract2(VarInstMatcher);
+        auto VarResults = Extractor.extract2(*Context, VarInstMatcher);
         VarInsts = getASTNodes<VarTemplateSpecializationDecl>(VarResults,
             "VarInsts");
         if(VarInsts.size())
@@ -230,17 +227,17 @@ std::string TemplateInstantiationAnalysis::getInstantiationLocation(
     if(isImplicit){
         i++;
         return (ImplicitInsts[i-1].node->getInnerLocStart()).
-            printToString(Context.getSourceManager());
+            printToString(Context->getSourceManager());
     } else{
         return Match.node->getTemplateKeywordLoc().
-            printToString(Context.getSourceManager());
+            printToString(Context->getSourceManager());
     }
 }
 template<typename T>
 std::string TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<T>& Match, bool imp){
         return Match.node->getPointOfInstantiation().
-            printToString(Context.getSourceManager());
+            printToString(Context->getSourceManager());
 }
 
 // Given a vector of matches, create a JSON object storing all instantiations.
@@ -274,20 +271,19 @@ void TemplateInstantiationAnalysis::gatherStats(Matches<T>& Insts,
     }
 }
 
-void TemplateInstantiationAnalysis::analyze(){
+void TemplateInstantiationAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context){
+    std::cout << "\033[32mRunning template instantiation analysis:\033[0m\n";
+    this->Context = &Context;
+    extract();
     llvm::raw_os_ostream stream2(std::cout);
     std::ofstream o(getFileForStatDump(InFile));
+    std::cout << getFileForStatDump(InFile) << std::endl;
     gatherStats(ClassExplicitInsts, "class", false, std::move(o));
     gatherStats(ClassImplicitInsts, "class", true, std::move(o));
     if(analyzeFuncInsts)
         gatherStats(FuncInsts, "func", false, std::move(o));
     if(analyzeVarInsts)
         gatherStats(VarInsts, "var", false, std::move(o));
-}
-void TemplateInstantiationAnalysis::run(){
-    std::cout << "\033[32mRunning template instantiation analysis:\033[0m\n";
-    extract();
-    analyze();
 }
 
 //-----------------------------------------------------------------------------

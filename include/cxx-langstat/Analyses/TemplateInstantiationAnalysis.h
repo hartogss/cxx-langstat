@@ -5,16 +5,14 @@
 
 //-----------------------------------------------------------------------------
 
-class TemplateInstantiationAnalysis : public Analysis {
+class TemplateInstantiationAnalysis final : public Analysis {
 public:
-    TemplateInstantiationAnalysis(llvm::StringRef InFile,
-        clang::ASTContext& Context);
-    TemplateInstantiationAnalysis(llvm::StringRef InFile,
-        clang::ASTContext& Context,
+    TemplateInstantiationAnalysis();
+    TemplateInstantiationAnalysis(
         clang::ast_matchers::internal::Matcher<clang::NamedDecl> Names);
-    void extract() override;
-    void analyze() override;
-    void run() override;
+
+    void extract();
+    void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
     bool analyzeFuncInsts = true;
     bool analyzeVarInsts = true;
 private:

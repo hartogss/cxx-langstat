@@ -76,7 +76,7 @@ target_link_libraries(${PROJECT_NAME}
     # StdlibAnalysis
     # StdlibAnalysis2
 
-    # TemplateInstantiationAnalysis
+    TemplateInstantiationAnalysis
     # TemplateParameterAnalysis
     # UsingAnalysis
     # VariableTemplateAnalysis
