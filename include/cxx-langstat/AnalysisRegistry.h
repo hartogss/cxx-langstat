@@ -1,22 +1,24 @@
 #ifndef ANALYSISREGISTRY_H
 #define ANALYSISREGISTRY_H
 
-#include <map>
 #include <memory>
 #include "cxx-langstat/Analysis.h"
 
 #include "cxx-langstat/AnalysisList.h"
+#include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
+
 
 class AnalysisRegistry {
 public:
-    AnalysisRegistry(clang::ASTContext& Context);
+    AnalysisRegistry();
+    ~AnalysisRegistry();
+    // Don't know why I have to go the extra mile here and not just use std::map
+    std::vector<std::unique_ptr<Analysis>> Analyses;
     void setEnabledAnalyses(std::string);
-    void runEnabledAnalyses();
-private:
-    void Setup();
     AnalysisList EnabledAnalyses;
-    std::map<std::string, std::unique_ptr<Analysis>> AnalysisMapping;
-    clang::ASTContext& Context;
+    std::vector<std::string> Abbrev;
+private:
+    void createAllAnalyses();
 };
 
 #endif // ANALYSISREGISTRY_H

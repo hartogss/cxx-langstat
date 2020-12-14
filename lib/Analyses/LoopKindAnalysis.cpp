@@ -4,20 +4,19 @@
 
 using namespace clang::ast_matchers;
 
-LoopKindAnalysis::LoopKindAnalysis(llvm::StringRef InFile,
-    clang::ASTContext& Context) : Analysis(InFile, Context){
+LoopKindAnalysis::LoopKindAnalysis(){
 
 }
-void LoopKindAnalysis::extract(){
+void LoopKindAnalysis::extract(clang::ASTContext& Context){
 
     // Analysis of prevalence of different loop statement, i.e. comparing for, while etc.
-    auto ForMatches = Extr.extract("fs1", forStmt(isExpansionInMainFile())
+    auto ForMatches = Extractor.extract(Context, "fs1", forStmt(isExpansionInMainFile())
     .bind("fs1"));
-    auto WhileMatches = Extr.extract("ws1", whileStmt(isExpansionInMainFile())
+    auto WhileMatches = Extractor.extract(Context, "ws1", whileStmt(isExpansionInMainFile())
     .bind("ws1"));
-    auto DoWhileMatches = Extr.extract("ds1", doStmt(isExpansionInMainFile())
+    auto DoWhileMatches = Extractor.extract(Context, "ds1", doStmt(isExpansionInMainFile())
     .bind("ds1"));
-    auto RangeBasedForMatches = Extr.extract("forrange",
+    auto RangeBasedForMatches = Extractor.extract(Context, "forrange",
     cxxForRangeStmt(isExpansionInMainFile())
     .bind("forrange"));
 
@@ -32,11 +31,9 @@ void LoopKindAnalysis::extract(){
     << RangeBasedForMatches.size() << "/" << total
     << " are range-based for loops\n";
 }
-void LoopKindAnalysis::analyze(){
 
-}
-void LoopKindAnalysis::run(){
+void LoopKindAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context){
     std::cout << "\033[32mCounting the different kinds of loops:\033[0m"
     << std::endl;
-    extract();
+    extract(Context);
 }

@@ -3,34 +3,28 @@
 #include "cxx-langstat/AnalysisRegistry.h"
 #include "cxx-langstat/AnalysisList.h"
 
-#include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
-
-class test {
-
-};
+#include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
+#include "cxx-langstat/Analyses/LoopKindAnalysis.h"
 
 
-AnalysisRegistry::AnalysisRegistry(clang::ASTContext& Context) : Context(Context), EnabledAnalyses() {
-    Setup();
+AnalysisRegistry::AnalysisRegistry() {
+    std::cout << "Registry ctor" << std::endl;
+    createAllAnalyses();
 }
-void AnalysisRegistry::Setup(){
-    auto t = std::make_unique<test>();
-    auto t1 =
-        std::make_unique<TemplateInstantiationAnalysis>(llvm::StringRef("weirdfile.cpp"), Context);
-    AnalysisMapping.emplace("tia", std::move(t1));
+AnalysisRegistry::~AnalysisRegistry(){
+    std::cout << "Registry dtor" << std::endl;
 }
-
-void AnalysisRegistry::setEnabledAnalyses(std::string S){
-    AnalysisList A(S);
-    std::cout << A.Items.size() << std::endl;
-    EnabledAnalyses = A;
-
+void AnalysisRegistry::createAllAnalyses(){
+    std::cout << "Creating analyses" << std::endl;
+    Analyses.emplace_back(std::make_unique<LoopDepthAnalysis>()); // std::move
+    Analyses.emplace_back(std::make_unique<LoopKindAnalysis>());
+    Abbrev.emplace_back("lda");
+    Abbrev.emplace_back("lka");
 }
 
-void AnalysisRegistry::runEnabledAnalyses(){
-    for(auto an : EnabledAnalyses.Items){
-        std::cout << "1" << std::endl;
-        auto a = an.Name.str();
-        AnalysisMapping[a]->run();
-    }
+void AnalysisRegistry::setEnabledAnalyses(std::string EAS){
+    std::cout << "Enabling analyses: ";
+    AnalysisList List(EAS);
+    std::cout << "Number of analyses: " << List.Items.size() << std::endl;
+    EnabledAnalyses = List; //why not use copy constructor,move ctor
 }
