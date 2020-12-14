@@ -7,11 +7,10 @@
 
 class TemplateParameterAnalysis : public Analysis {
 public:
-    TemplateParameterAnalysis(llvm::StringRef InFile,
-        clang::ASTContext& Context);
-    void extract() override;
-    void analyze() override;
-    void run() override;
+    TemplateParameterAnalysis()=default;
+    void extract();
+    void analyze();
+    void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 private:
     Matches<clang::Decl> ClassTemplates;
     Matches<clang::Decl> ClassTemplateNonTypeParameters;

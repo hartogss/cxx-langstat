@@ -7,16 +7,14 @@
 
 class StdlibAnalysis2 : public Analysis {
 public:
-    StdlibAnalysis2(llvm::StringRef InFile, clang::ASTContext& Context);
-    void extract() override;
-    void analyze() override;
-    void run() override;
+    StdlibAnalysis2()=default;
+    void extract();
+    void analyze();
+    void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 private:
     Matches<clang::Decl> VarDecls;
     Matches<clang::Decl> StdContainerVarDecls;
     Matches<clang::Decl> StdContainerFieldDecls;
-    clang::ASTContext& Context;
-
 };
 
 //-----------------------------------------------------------------------------

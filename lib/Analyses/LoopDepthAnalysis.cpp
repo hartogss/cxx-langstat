@@ -56,7 +56,7 @@ LoopDepthAnalysis::~LoopDepthAnalysis(){
     std::cout << "LDA dtor\n";
 }
 // step 1: extraction
-void LoopDepthAnalysis::extract(clang::ASTContext& Context) {
+void LoopDepthAnalysis::extract() {
     // Bind is necessary to retrieve information about the match like location etc.
     // Without bind the match is still registered, thus we can still count #matches, but nothing else
 
@@ -64,7 +64,7 @@ void LoopDepthAnalysis::extract(clang::ASTContext& Context) {
     // auto matches = this->Extr.extract("fs1", forStmt(unless(hasAncestor(forStmt()))).bind("fs1"));
     StatementMatcher IsOuterMostLoop =
         unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt(), cxxForRangeStmt()))));
-    auto matches = this->Extractor.extract(Context, "fs1", stmt(
+    auto matches = this->Extractor.extract(*Context, "fs1", stmt(
         isExpansionInMainFile(),
         anyOf(
             forStmt(IsOuterMostLoop),
@@ -78,7 +78,7 @@ void LoopDepthAnalysis::extract(clang::ASTContext& Context) {
     unsigned ForLoopsFound = 0;
     for (int i=1; i<=this->MaxDepth; i++){
         StatementMatcher Matcher = constructMixedMatcher("fs", i);
-        auto matches = this->Extractor.extract(Context, "fs", Matcher);
+        auto matches = this->Extractor.extract(*Context, "fs", Matcher);
         ForLoopsFound += matches.size();
         Data.emplace_back(matches);
         if(ForLoopsFound == TopLevelForLoops) // stop searching if all possible loops have been found
@@ -107,18 +107,15 @@ void LoopDepthAnalysis::analyzeDepth(Matches<clang::Stmt> matches,
         }
 }
 
-void LoopDepthAnalysis::analyze(){
-
-}
-
 //step 3: visualization (for later)
 // combine
 void LoopDepthAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context
     ){
         std::cout << "\033[32mRunning loop depth analysis:\033[0m" << std::endl;
+        this->Context = &Context;
         MaxDepth=4;
         this->InFile = InFile;
-        extract(Context);
+        extract();
 }
 
 //-----------------------------------------------------------------------------

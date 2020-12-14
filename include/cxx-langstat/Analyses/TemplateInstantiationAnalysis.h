@@ -10,7 +10,6 @@ public:
     TemplateInstantiationAnalysis();
     TemplateInstantiationAnalysis(
         clang::ast_matchers::internal::Matcher<clang::NamedDecl> Names);
-
     void extract();
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
     bool analyzeFuncInsts = true;

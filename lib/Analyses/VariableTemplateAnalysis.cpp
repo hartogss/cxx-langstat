@@ -12,10 +12,6 @@ using namespace clang::ast_matchers;
 // functions returning the value in favor of variable templates, which were
 // introduced in C++14?
 
-VariableTemplateAnalysis::VariableTemplateAnalysis(llvm::StringRef InFile,
-    ASTContext& Context) :
-        Analysis(InFile, Context) {
-}
 void VariableTemplateAnalysis::extract(){
     // First pre-C++14 idiom to get variable template functionality:
     // Class templates with static data.
@@ -65,19 +61,24 @@ void VariableTemplateAnalysis::extract(){
         isExpansionInMainFile())
     .bind("variabletemplate");
 
-    ClassWithStaticMemberDecls = Extr.extract("classwithstaticmember", ClassWithStaticMember);
-    ConstexprFunctionDecls = Extr.extract("constexprfunction", ConstexprFunction);
-    VariableTemplateDecls = Extr.extract("variabletemplate", VariableTemplate);
+    ClassWithStaticMemberDecls = Extractor.extract(*Context,
+        "classwithstaticmember", ClassWithStaticMember);
+    ConstexprFunctionDecls = Extractor.extract(*Context, "constexprfunction",
+        ConstexprFunction);
+    VariableTemplateDecls = Extractor.extract(*Context, "variabletemplate",
+        VariableTemplate);
 }
 void VariableTemplateAnalysis::analyze(){
     printMatches("Class templates with static member", ClassWithStaticMemberDecls);
     printMatches("Constexpr function templates", ConstexprFunctionDecls);
     printMatches("Variable templates", VariableTemplateDecls);
 }
-void VariableTemplateAnalysis::run(){
-    std::cout << "\033[32mRunning variable template analysis:\033[0m\n";
-    extract();
-    analyze();
+void VariableTemplateAnalysis::run(llvm::StringRef InFile,
+    clang::ASTContext& Context){
+        std::cout << "\033[32mRunning variable template analysis:\033[0m\n";
+        this->Context = &Context; 
+        extract();
+        analyze();
 }
 
 //-----------------------------------------------------------------------------

@@ -17,19 +17,10 @@ using namespace clang::ast_matchers;
 // passed around? What sizes do they occur (#elements, constexpr)?
 // Usage in templates and TMP?
 
-StdlibAnalysis2::StdlibAnalysis2(llvm::StringRef InFile,
-    clang::ASTContext& Context) :
-        Analysis(InFile, Context),
-        Context(Context){
-}
-void StdlibAnalysis2::extract() {
 
-}
-void StdlibAnalysis2::analyze(){
-
-}
-void StdlibAnalysis2::run(){
+void StdlibAnalysis2::run(llvm::StringRef InFile, clang::ASTContext& Context){
     std::cout << "\033[32mRunning standard library analysis:\033[0m" << std::endl;
+    this->Context = &Context;
     auto isAnyStdContainer = hasAnyName( // Copied from UseAutoCheck.cpp
         // Standard library containers
         "array", "vector",
@@ -45,10 +36,10 @@ void StdlibAnalysis2::run(){
         // Dynamic memory
         "unique_ptr", "shared_ptr", "weak_ptr"
         );
-    TemplateInstantiationAnalysis Helper(InFile, Context, isAnyStdContainer);
+    TemplateInstantiationAnalysis Helper(isAnyStdContainer);
     Helper.analyzeFuncInsts=false;
     Helper.analyzeVarInsts=false;
-    Helper.run();
+    Helper.run(InFile, Context);
 }
 
 //-----------------------------------------------------------------------------

@@ -12,11 +12,6 @@ using namespace clang::ast_matchers;
 
 //-----------------------------------------------------------------------------
 
-CyclomaticComplexityAnalysis::CyclomaticComplexityAnalysis
-(llvm::StringRef InFile, clang::ASTContext& Context) :
-    Analysis(InFile, Context){
-
-}
 void CyclomaticComplexityAnalysis::extract(){
     auto id = "fd";
     auto fDecl = functionDecl(
@@ -24,7 +19,7 @@ void CyclomaticComplexityAnalysis::extract(){
         unless(isImplicit()), // Should not be compiler-generated
         has(compoundStmt()))  // Should be defined, i.e have a body
     .bind(id);
-    auto matches = Extr.extract(id, fDecl);
+    auto matches = Extractor.extract(*Context, id, fDecl);
     for(auto match : matches){
         // http://clang.llvm.org/doxygen/classclang_1_1CFG.html#details
         // CFG is intraprocedural flow of a statement.
@@ -48,12 +43,12 @@ void CyclomaticComplexityAnalysis::extract(){
             << " has CYC " << CYC << std::endl;
     }
 }
-void CyclomaticComplexityAnalysis::analyze(){
 
-}
-void CyclomaticComplexityAnalysis::run() {
-    std::cout << "\033[32mMeasuring cyclomatic complexity:\033[0m" << std::endl;
-    extract();
+void CyclomaticComplexityAnalysis::run(llvm::StringRef InFile,
+    clang::ASTContext& Context) {
+        std::cout << "\033[32mMeasuring cyclomatic complexity:\033[0m" << std::endl;
+        this->Context = &Context;
+        extract();
 }
 
 //-----------------------------------------------------------------------------

@@ -20,10 +20,6 @@ using namespace clang::ast_matchers;
 // - Apply TPA to template template parameters.
 
 
-TemplateParameterAnalysis::TemplateParameterAnalysis(llvm::StringRef InFile,
-    clang::ASTContext& Context) :
-        Analysis(InFile, Context) {
-}
 void TemplateParameterAnalysis::extract(){
 
     // Should be defined already according to matcher reference, but doesn't
@@ -46,9 +42,10 @@ void TemplateParameterAnalysis::extract(){
     auto ATParmMatcher = typeAliasTemplateDecl(
         isExpansionInMainFile(), tt);
 
-    auto CTResults = Extr.extract2(classTemplateDecl(isExpansionInMainFile())
+    auto CTResults = Extractor.extract2(*Context,
+        classTemplateDecl(isExpansionInMainFile())
     .bind("ct"));
-    auto CTParmResults = Extr.extract2(CTParmMatcher);
+    auto CTParmResults = Extractor.extract2(*Context, CTParmMatcher);
     ClassTemplates = getASTNodes<Decl>(CTResults, "ct");
     ClassTemplateNonTypeParameters = getASTNodes<Decl>(CTParmResults,
         "nontypes");
@@ -57,9 +54,10 @@ void TemplateParameterAnalysis::extract(){
     ClassTemplateTemplateParameters = getASTNodes<Decl>(CTParmResults,
         "templates");
 
-    auto FTResults = Extr.extract2(functionTemplateDecl(isExpansionInMainFile())
+    auto FTResults = Extractor.extract2(*Context,
+        functionTemplateDecl(isExpansionInMainFile())
     .bind("ft"));
-    auto FTParmResults = Extr.extract2(FTParmMatcher);
+    auto FTParmResults = Extractor.extract2(*Context, FTParmMatcher);
     FunctionTemplates = getASTNodes<Decl>(FTResults, "ft");
     FunctionTemplateNonTypeParameters = getASTNodes<Decl>(FTParmResults,
         "nontypes");
@@ -68,9 +66,10 @@ void TemplateParameterAnalysis::extract(){
     FunctionTemplateTemplateParameters = getASTNodes<Decl>(FTParmResults,
         "templates");
 
-    auto VTResults = Extr.extract2(varTemplateDecl(isExpansionInMainFile())
+    auto VTResults = Extractor.extract2(*Context,
+        varTemplateDecl(isExpansionInMainFile())
     .bind("vt"));
-    auto VTParmResults = Extr.extract2(VTParmMatcher);
+    auto VTParmResults = Extractor.extract2(*Context, VTParmMatcher);
     VariableTemplates = getASTNodes<Decl>(VTResults, "vt");
     VariableTemplateNonTypeParameters = getASTNodes<Decl>(VTParmResults,
         "nontypes");
@@ -79,9 +78,10 @@ void TemplateParameterAnalysis::extract(){
     VariableTemplateTemplateParameters = getASTNodes<Decl>(VTParmResults,
         "templates");
 
-    auto ATResults = Extr.extract2(typeAliasTemplateDecl(isExpansionInMainFile())
+    auto ATResults = Extractor.extract2(*Context,
+        typeAliasTemplateDecl(isExpansionInMainFile())
     .bind("at"));
-    auto ATParmResults = Extr.extract2(ATParmMatcher);
+    auto ATParmResults = Extractor.extract2(*Context, ATParmMatcher);
     AliasTemplates = getASTNodes<Decl>(ATResults, "at");
     AliasTemplateNonTypeParameters = getASTNodes<Decl>(ATParmResults,
         "nontypes");
@@ -134,10 +134,12 @@ void TemplateParameterAnalysis::analyze(){
         AliasTemplateTemplateParameters);
 }
 
-void TemplateParameterAnalysis::run(){
-    std::cout << "\033[32mRunning template parameter analysis:\033[0m\n";
-    extract();
-    analyze();
+void TemplateParameterAnalysis::run(llvm::StringRef InFile,
+    clang::ASTContext& Context){
+        this->Context = &Context;
+        std::cout << "\033[32mRunning template parameter analysis:\033[0m\n";
+        extract();
+        analyze();
 }
 
 //-----------------------------------------------------------------------------

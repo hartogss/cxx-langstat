@@ -69,9 +69,6 @@ std::string getInnerType(const DeclaratorDecl* Node){
 // passed around? What sizes do they occur (#elements, constexpr)?
 // Usage in templates and TMP?
 
-StdlibAnalysis::StdlibAnalysis(llvm::StringRef InFile,
-    clang::ASTContext& Context) : Analysis(InFile, Context) {
-}
 void StdlibAnalysis::extract() {
     // All variable declarations
     DeclarationMatcher Variable = varDecl(
@@ -102,9 +99,11 @@ void StdlibAnalysis::extract() {
         fieldDecl(requirements))
     .bind("stdcfd");
 
-    VarDecls = Extr.extract("vd", Variable);
-    StdContainerVarDecls = Extr.extract("stdcvd", StdContainerVariable);
-    StdContainerFieldDecls = Extr.extract("stdcfd", StdContainerField);
+    VarDecls = Extractor.extract(*Context, "vd", Variable);
+    StdContainerVarDecls = Extractor.extract(*Context, "stdcvd",
+        StdContainerVariable);
+    StdContainerFieldDecls = Extractor.extract(*Context, "stdcfd",
+        StdContainerField);
     // printDecls("Contains following variable decls:", VarDecls);
     // printDecls("Variable decls of standard library type:", StdContainerVarDecls);
     // printDecls("Field decls of standard library type:", StdContainerFieldDecls);
@@ -148,8 +147,9 @@ void StdlibAnalysis::analyze(){
     printStats<FieldDecl>("Field decls of standard library type:",
         StdContainerFieldDecls);
 }
-void StdlibAnalysis::run(){
+void StdlibAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context){
     std::cout << "\033[32mRunning standard library analysis:\033[0m" << std::endl;
+    this->Context = &Context;
     extract();
     analyze();
 }

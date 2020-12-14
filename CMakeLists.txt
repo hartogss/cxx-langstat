@@ -69,17 +69,17 @@ target_link_libraries(${PROJECT_NAME}
     BaseExtractor MatchingExtractor Utils
     AnalysisRegistry AnalysisList
 
-    # CyclomaticComplexityAnalysis
+    CyclomaticComplexityAnalysis
     LoopDepthAnalysis
     LoopKindAnalysis
 
-    # StdlibAnalysis
-    # StdlibAnalysis2
+    StdlibAnalysis
+    StdlibAnalysis2
 
     TemplateInstantiationAnalysis
-    # TemplateParameterAnalysis
-    # UsingAnalysis
-    # VariableTemplateAnalysis
+    TemplateParameterAnalysis
+    UsingAnalysis
+    VariableTemplateAnalysis
     )
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
@@ -88,8 +88,8 @@ target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
 # Extra linking needed on ubuntu, not necessary on macOS(macOS doesn't dislike them either)
 target_link_libraries(BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(MatchingExtractor ${llvm_libs} ${clang_libs})
-# target_link_libraries(CyclomaticComplexityAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
-# target_link_libraries(LoopDepthAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+target_link_libraries(CyclomaticComplexityAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+target_link_libraries(LoopDepthAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 # target_link_libraries(TestAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 
 

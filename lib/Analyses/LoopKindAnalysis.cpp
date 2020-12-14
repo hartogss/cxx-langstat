@@ -5,7 +5,10 @@
 using namespace clang::ast_matchers;
 
 LoopKindAnalysis::LoopKindAnalysis(){
-
+    std::cout << "LKA ctor\n";
+}
+LoopKindAnalysis::~LoopKindAnalysis(){
+    std::cout << "LKA dtor\n";
 }
 void LoopKindAnalysis::extract(clang::ASTContext& Context){
 

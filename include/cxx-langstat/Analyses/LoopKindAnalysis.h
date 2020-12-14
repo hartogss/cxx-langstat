@@ -6,6 +6,7 @@
 class LoopKindAnalysis : public Analysis {
 public:
     LoopKindAnalysis();
+    ~LoopKindAnalysis();
     void extract(clang::ASTContext& Context);
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 };

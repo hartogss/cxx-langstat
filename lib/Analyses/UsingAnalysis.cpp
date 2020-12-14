@@ -14,10 +14,6 @@ using namespace clang::ast_matchers;
 // Could also be because "typedef templates" require typename or ::type to be
 // used.
 
-UsingAnalysis::UsingAnalysis(llvm::StringRef InFile,
-    clang::ASTContext& Context) : Analysis(InFile, Context){
-
-}
 void UsingAnalysis::extract() {
     // Count all typedefs that are explicitly written by programmer (high level)
     // Concretely, that means:
@@ -75,14 +71,16 @@ void UsingAnalysis::extract() {
 
     // auto m2 = decl(unless(typeAliasTemplateDecl())).bind("using"); //causes matches.size() to be 1, but for (auto) over that lists prints a lot more
 
-    TypedefDecls = Extr.extract("typedef", typedef_);
-    TypeAliasDecls = Extr.extract("alias", typeAlias);
-    TypedefTemplateDecls = Extr.extract("typedeftemplate", typedefTemplate);
-    TypeAliasTemplateDecls = Extr.extract("aliastemplate", typeAliasTemplate);
+    TypedefDecls = Extractor.extract(*Context, "typedef", typedef_);
+    TypeAliasDecls = Extractor.extract(*Context, "alias", typeAlias);
+    TypedefTemplateDecls = Extractor.extract(*Context, "typedeftemplate",
+        typedefTemplate);
+    TypeAliasTemplateDecls = Extractor.extract(*Context, "aliastemplate",
+        typeAliasTemplate);
 
     // need to do extra work to remove from typedefdecls those decls that occur
     // in typedeftemplatedecls (to get distinciton between typedef and typedef templates)
-    td = Extr.extract("td", typedefTemplate);
+    td = Extractor.extract(*Context, "td", typedefTemplate);
     for(auto decl : td){
         for(unsigned i=0; i<TypedefDecls.size(); i++){
             auto d = TypedefDecls[i];
@@ -100,8 +98,9 @@ void UsingAnalysis::analyze(){
     printMatches("Typedefs from \"Typedef templates\"", td);
     printMatches("Type alias templates found", TypeAliasTemplateDecls);
 }
-void UsingAnalysis::run(){
+void UsingAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context){
     std::cout << "\033[32mRunning UsingAnalysis:\033[0m" << std::endl;
+    this->Context = &Context;
     extract();
 }
 

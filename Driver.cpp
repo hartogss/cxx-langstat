@@ -8,19 +8,6 @@
 // standard includes
 #include <iostream>
 
-//
-// #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
-#include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
-// #include "cxx-langstat/Analyses/LoopKindAnalysis.h"
-
-// #include "cxx-langstat/Analyses/StdlibAnalysis.h"
-// #include "cxx-langstat/Analyses/StdlibAnalysis2.h"
-
-// #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
-// #include "cxx-langstat/Analyses/TemplateParameterAnalysis.h"
-// #include "cxx-langstat/Analyses/UsingAnalysis.h"
-// #include "cxx-langstat/Analyses/VariableTemplateAnalysis.h"
-
 #include "cxx-langstat/AnalysisRegistry.h"
 
 using namespace clang;

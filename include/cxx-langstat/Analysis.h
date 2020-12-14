@@ -15,12 +15,9 @@ public:
     }
     // should be made virtual in case concrete analyses need special destructors
     ~Analysis() = default;
-    // step 0: createMatcher(s) ?
-    // step 1: extraction
-
     // Run analysis
     virtual void run(llvm::StringRef InFile, clang::ASTContext& Context)=0;
-
+    // make private and use getters and setters
     llvm::StringRef InFile;
     BaseExtractor Extractor;
     clang::ASTContext* Context;
