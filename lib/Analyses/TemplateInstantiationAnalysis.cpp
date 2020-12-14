@@ -242,9 +242,10 @@ std::string TemplateInstantiationAnalysis::getInstantiationLocation(
 
 // Given a vector of matches, create a JSON object storing all instantiations.
 template<typename T>
-void TemplateInstantiationAnalysis::gatherStats(Matches<T>& Insts,
-    std::string InstKind, bool AreImplicit, std::ofstream&& file){
+void TemplateInstantiationAnalysis::gatherStatistics(Matches<T>& Insts,
+    std::string InstKind, bool AreImplicit){
     const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
+    ordered_json instances;
     for(auto match : Insts){
         std::multimap<std::string, std::string> TArgs;
         const TemplateArgumentList& TAList(getTemplateArgs(match));
@@ -253,7 +254,6 @@ void TemplateInstantiationAnalysis::gatherStats(Matches<T>& Insts,
             auto TArg = TAList.get(idx);
             updateArgsAndKinds(TArg, TArgs);
         }
-        ordered_json super;
         ordered_json instance;
         ordered_json arguments;
         instance["location"] = getInstantiationLocation(match, AreImplicit);
@@ -265,25 +265,24 @@ void TemplateInstantiationAnalysis::gatherStats(Matches<T>& Insts,
             arguments[key] = v;
         }
         instance["arguments"] = arguments;
-        super[getMatchDeclName(match)] = instance;
-        // file << j.dump(4) << '\n';
-        file << super.dump(4) << '\n';
+        // Use emplace instead of '=' because can be mult. insts for a template
+        instances[getMatchDeclName(match)].emplace_back(instance);
     }
+    Result[InstKind] = instances;
 }
 
-void TemplateInstantiationAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context){
-    std::cout << "\033[32mRunning template instantiation analysis:\033[0m\n";
-    this->Context = &Context;
-    extract();
-    llvm::raw_os_ostream stream2(std::cout);
-    std::ofstream o(getFileForStatDump(InFile));
-    std::cout << getFileForStatDump(InFile) << std::endl;
-    gatherStats(ClassExplicitInsts, "class", false, std::move(o));
-    gatherStats(ClassImplicitInsts, "class", true, std::move(o));
-    if(analyzeFuncInsts)
-        gatherStats(FuncInsts, "func", false, std::move(o));
-    if(analyzeVarInsts)
-        gatherStats(VarInsts, "var", false, std::move(o));
+void TemplateInstantiationAnalysis::run(llvm::StringRef InFile,
+        ASTContext& Context){
+        std::cout << "\033[32mRunning template instantiation analysis:\033[0m\n";
+        this->Context = &Context;
+        extract();
+        llvm::raw_os_ostream stream2(std::cout);
+        gatherStatistics(ClassExplicitInsts, "explicit class insts", false);
+        gatherStatistics(ClassImplicitInsts, "implicit class insts", true);
+        if(analyzeFuncInsts)
+            gatherStatistics(FuncInsts, "func insts", false);
+        if(analyzeVarInsts)
+            gatherStatistics(VarInsts, "var insts", false);
 }
 
 //-----------------------------------------------------------------------------

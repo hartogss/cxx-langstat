@@ -27,8 +27,8 @@ private:
         (const Match<clang::ClassTemplateSpecializationDecl>& Match,
             bool isImplicit);
     template<typename T>
-    void gatherStats(Matches<T>& Insts, std::string InstKind, bool AreImplicit,
-        std::ofstream&& file);
+    void gatherStatistics(Matches<T>& Insts, std::string InstKind,
+        bool AreImplicit);
 };
 
 //-----------------------------------------------------------------------------
