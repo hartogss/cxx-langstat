@@ -7,10 +7,12 @@
 
 // standard includes
 #include <iostream>
+#include <fstream>
 
 #include <nlohmann/json.hpp>
 
 #include "cxx-langstat/AnalysisRegistry.h"
+#include "cxx-langstat/Utils.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
@@ -39,7 +41,8 @@ public:
             }
             i++;
         }
-
+        // std::ofstream o(getFileForStatDump(InFile));
+        // o << AllAnalysesResult.dump(4) << std::endl;
         std::cout << AllAnalysesResult.dump(4) << std::endl;
     }
 public:
@@ -109,14 +112,12 @@ int main(int argc, const char** argv){
 
     // parses all options that command-line tools have in common
     CommonOptionsParser Parser(argc, argv, CXXLangstatCategory);
-
     Registry->setEnabledAnalyses(AnalysesOption);
-
     ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
     // Tool is run for every file specified in source path list
     Tool.run(std::make_unique<Factory>().get()); // input file, .cpp or .ast
     // Not really important here, but good practice
     delete Registry;
-    std::cout << "here" << std::endl;
+    std::cout << "Reached end of program" << std::endl;
     return 0;
 }

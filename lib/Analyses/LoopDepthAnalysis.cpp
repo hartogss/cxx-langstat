@@ -65,42 +65,40 @@ void LoopDepthAnalysis::extract() {
     // auto matches = this->Extr.extract("fs1", forStmt(unless(hasAncestor(forStmt()))).bind("fs1"));
     StatementMatcher IsOuterMostLoop =
         unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt(), cxxForRangeStmt()))));
-    auto matches = this->Extractor.extract(*Context, "fs1", stmt(
+    auto TopLevelLoops = this->Extractor.extract(*Context, "fs1", stmt(
         isExpansionInMainFile(),
         anyOf(
             forStmt(IsOuterMostLoop),
             whileStmt(IsOuterMostLoop),
-            doStmt(IsOuterMostLoop)))
+            doStmt(IsOuterMostLoop),
+            cxxForRangeStmt(IsOuterMostLoop)))
     .bind("fs1"));
 
-    unsigned TopLevelForLoops = matches.size();
-    std::cout << "#Top-level for loops:" << TopLevelForLoops << std::endl;
+    std::cout << "#Top-level loops: " << TopLevelLoops.size() << "\n";
     std::vector<Matches<clang::Stmt>> Data;
-    unsigned ForLoopsFound = 0;
+    unsigned NumLoopsFound = 0;
     for (int i=1; i<=this->MaxDepth; i++){
         StatementMatcher Matcher = constructMixedMatcher("fs", i);
         auto matches = this->Extractor.extract(*Context, "fs", Matcher);
-        ForLoopsFound += matches.size();
+        NumLoopsFound += matches.size();
         Data.emplace_back(matches);
-        if(ForLoopsFound == TopLevelForLoops) // stop searching if all possible loops have been found
+        // stop searching if all possible loops have been found
+        if(NumLoopsFound == TopLevelLoops.size())
             break;
     }
-    if(ForLoopsFound < TopLevelForLoops)
-        std::cout << "Some for loops deeper than max_depth have not been analyzed" << std::endl;
-    analyzeDepth(matches, Data);
+    if(NumLoopsFound < TopLevelLoops.size())
+        std::cout << "Some loops deeper than max_depth have not been"
+                     " analyzed\n";
+    analyzeDepth(TopLevelLoops, Data);
 }
 //step 2: compute stats
-void LoopDepthAnalysis::analyzeDepth(Matches<clang::Stmt> matches,
+void LoopDepthAnalysis::analyzeDepth(Matches<clang::Stmt> TopLevelLoops,
     std::vector<Matches<clang::Stmt>> Data){
-
         ordered_json loops;
-        unsigned TopLevelForLoops = matches.size();
         unsigned depth = 1;
         for (auto matches : Data){
             unsigned d = matches.size();
             if (d!=0){
-                std::cout << d << "/" << TopLevelForLoops << " of depth "
-                << depth << " @ lines: ";
                 std::vector<unsigned> locations;
                 for (auto m : matches){
                     locations.emplace_back(m.location);

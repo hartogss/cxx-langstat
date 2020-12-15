@@ -16,7 +16,7 @@ public:
     Analysis(){
     }
     // should be made virtual in case concrete analyses need special destructors
-    ~Analysis() = default;
+    virtual ~Analysis()=default;
     // Run analysis
     virtual void run(llvm::StringRef InFile, clang::ASTContext& Context)=0;
     // make private and use getters and setters
