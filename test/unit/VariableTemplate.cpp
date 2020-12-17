@@ -1,4 +1,8 @@
-// #include <iostream>
+// RUN: clang++ %s -emit-ast -o %t1.ast
+// RUN: %S/../../build/cxx-langstat --analyses=vta %t1.ast --
+// RUN: diff %t1.ast.json %s.json
+
+
 
 //-----------------------------------------------------------------------------
 
@@ -79,7 +83,7 @@ constexpr T f8(){
     T data;
     return f1<T>();
 }
-// Not CFT, contain declStmt that contains typedef
+// Not CFT, contains declStmt that contains typedef
 template<typename T>
 constexpr T f9(){
     T data;

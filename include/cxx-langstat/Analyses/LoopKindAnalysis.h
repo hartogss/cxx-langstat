@@ -5,8 +5,12 @@
 
 class LoopKindAnalysis : public Analysis {
 public:
-    LoopKindAnalysis();
-    ~LoopKindAnalysis();
+    LoopKindAnalysis(){
+        std::cout << "LKA ctor\n";
+    }
+    ~LoopKindAnalysis(){
+        std::cout << "LKA dtor\n";
+    }
     void extract(clang::ASTContext& Context);
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 };

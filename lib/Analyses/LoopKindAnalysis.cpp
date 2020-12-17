@@ -7,12 +7,6 @@ using namespace clang::ast_matchers;
 using ordered_json = nlohmann::ordered_json;
 
 
-LoopKindAnalysis::LoopKindAnalysis(){
-    std::cout << "LKA ctor\n";
-}
-LoopKindAnalysis::~LoopKindAnalysis(){
-    std::cout << "LKA dtor\n";
-}
 void LoopKindAnalysis::extract(clang::ASTContext& Context){
 
     // Analysis of prevalence of different loop statement, i.e. comparing for, while etc.

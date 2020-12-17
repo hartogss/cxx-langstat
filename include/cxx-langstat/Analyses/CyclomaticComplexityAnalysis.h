@@ -7,7 +7,12 @@
 
 class CyclomaticComplexityAnalysis : public Analysis {
 public:
-    CyclomaticComplexityAnalysis()=default;
+    CyclomaticComplexityAnalysis(){
+        std::cout << "CCA ctor\n";
+    }
+    ~CyclomaticComplexityAnalysis(){
+        std::cout << "CCA dtor\n";
+    }
     void extract();
     void analyze();
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;

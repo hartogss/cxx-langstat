@@ -50,12 +50,6 @@ StatementMatcher constructMixedMatcher(std::string Name, int d){
 
 //-----------------------------------------------------------------------------
 
-LoopDepthAnalysis::LoopDepthAnalysis() : Analysis(){
-            std::cout<<"LDA ctor\n";
-}
-LoopDepthAnalysis::~LoopDepthAnalysis(){
-    std::cout << "LDA dtor\n";
-}
 // step 1: extraction
 void LoopDepthAnalysis::extract() {
     // Bind is necessary to retrieve information about the match like location etc.

@@ -7,7 +7,12 @@
 
 class TemplateParameterAnalysis : public Analysis {
 public:
-    TemplateParameterAnalysis()=default;
+    TemplateParameterAnalysis(){
+        std::cout << "TPA ctor\n";
+    }
+    ~TemplateParameterAnalysis(){
+        std::cout << "TPA dtor\n";
+    }
     void extract();
     void gatherStatistics();
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;

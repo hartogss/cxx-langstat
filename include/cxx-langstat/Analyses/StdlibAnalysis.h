@@ -7,7 +7,12 @@
 
 class StdlibAnalysis : public Analysis {
 public:
-    StdlibAnalysis()=default;
+    StdlibAnalysis(){
+        std::cout << "SLA ctor\n";
+    }
+    ~StdlibAnalysis(){
+        std::cout << "SLA dtor\n";
+    }
     void extract();
     void analyze();
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;

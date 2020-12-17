@@ -8,7 +8,12 @@
 // need analysis object since we want other analysis to inherit interface
 class UsingAnalysis : public Analysis {
 public:
-    UsingAnalysis()=default;
+    UsingAnalysis(){
+        std::cout << "UA ctor\n";
+    }
+    ~UsingAnalysis(){
+        std::cout << "UA dtor\n";
+    }
     void extract();
     void gatherStatistics();
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;

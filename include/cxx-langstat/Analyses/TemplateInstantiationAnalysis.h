@@ -10,6 +10,9 @@ public:
     TemplateInstantiationAnalysis();
     TemplateInstantiationAnalysis(
         clang::ast_matchers::internal::Matcher<clang::NamedDecl> Names);
+    ~TemplateInstantiationAnalysis(){
+        std::cout << "TIA dtor\n";
+    }
     void extract();
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
     bool analyzeFuncInsts = true;

@@ -7,7 +7,12 @@
 
 class VariableTemplateAnalysis : public Analysis {
 public:
-    VariableTemplateAnalysis()=default;
+    VariableTemplateAnalysis(){
+        std::cout << "VTA ctor\n";
+    }
+    ~VariableTemplateAnalysis(){
+        std::cout << "VTA dtor\n";
+    }
     void extract();
     void gatherStatistics();
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;

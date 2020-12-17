@@ -98,7 +98,7 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
                 isTemplateInstantiation())
             .bind("ExplicitCTSD")))
     ) {
-        std::cout << "TIA: standard constructor\n";
+        std::cout << "TIA ctor\n";
 }
 
 void TemplateInstantiationAnalysis::extract() {

@@ -7,7 +7,12 @@
 
 class StdlibAnalysis2 : public Analysis {
 public:
-    StdlibAnalysis2()=default;
+    StdlibAnalysis2(){
+        std::cout << "SLA2 ctor\n";
+    }
+    ~StdlibAnalysis2(){
+        std::cout << "SLA2 dtor\n";
+    }
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 };
 

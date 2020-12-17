@@ -8,18 +8,21 @@
 
 //-----------------------------------------------------------------------------
 
-// need analysis object since we want other analysis to inherit interface
 class LoopDepthAnalysis : public Analysis {
 public:
-    LoopDepthAnalysis();
-    ~LoopDepthAnalysis();
+    LoopDepthAnalysis() : Analysis(){
+                std::cout<<"LDA ctor\n";
+    }
+    ~LoopDepthAnalysis(){
+        std::cout << "LDA dtor\n";
+    }
     void extract();
     void analyzeDepth(Matches<clang::Stmt> matches, std::vector<Matches<clang::Stmt>> Data);
     // combine
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 private:
     int MaxDepth;
-    
+
 };
 
 //-----------------------------------------------------------------------------
