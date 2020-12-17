@@ -8,7 +8,7 @@
 // For a match whose node is a decl that can be a nameddecl, return its
 // human-readable name.
 template<typename T>
-std::string getMatchDeclName(Match<T> Match){
+std::string getMatchDeclName(const Match<T>& Match){
     if(auto n = dyn_cast<clang::NamedDecl>(Match.node)){
         return n->getQualifiedNameAsString(); // includes namespace qualifiers
     } else {
@@ -18,7 +18,7 @@ std::string getMatchDeclName(Match<T> Match){
 }
 
 template<typename T>
-void printMatches(std::string text, Matches<T> Matches){
+void printMatches(std::string text, const Matches<T>& Matches){
     std::cout << "\033[33m" << text << ":\033[0m " << Matches.size() << "\n";
     for(auto match : Matches)
         std::cout << getMatchDeclName(match) << " @ " << match.location << "\n";
@@ -59,6 +59,8 @@ getASTNodes(std::vector<clang::ast_matchers::MatchFinder::MatchResult> Results,
 }
 
 std::string getFileForStatDump(llvm::StringRef InFile);
+std::string getFileForPrint(llvm::StringRef S);
+
 
 template<typename T>
 void removeDuplicateMatches(Matches<T>& Matches){
