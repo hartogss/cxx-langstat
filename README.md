@@ -3,8 +3,11 @@
 cxx-langstat is a clang-based tool to analyze the adoption and prevalence of language features in C/C++ codebases.
 It uses clang's ASTMatchers library in combination with LibTooling to analyze user code on the Abstract Syntax Tree (AST) level.
 
-## Building
-Requires at least LLVM 11 with clang, clang-tools-extra.  
+## Installation
+### Requirements
+- [LLVM](http://llvm.org) 11 including clang
+- [JSON for Modern C++](https://github.com/nlohmann/json)
+### Building
 To build, clone project into directory:  
 `mkdir build && cd build`  
 `cmake -DCMAKE_CXX_COMPILER=your/clang++/binary/here ../`  
@@ -12,7 +15,7 @@ Usually located in `/usr/local/bin/clang++`.
 
 ## Running
 To run:  ` ./cxx-langstat [options] <source0> [... <sourceN> ]`  
-Options:  Currently, there are not options. Might change in the future.
+Options:  `--analyses=<string>` Accepts a string of comma-separated abbreviations of the analyses, e.g. `--analyses=lda,cca` will run cyclomatic complexity and loop depth analyses on your file in alphabetical order of the analyses.
 
 
 ## Implemented Analyses
@@ -29,9 +32,12 @@ for(;;){
 ```
 Currently the matchers for this analysis grow exponentially with the maximum loop depth to look for, which is not (yet) a problem since depths >5 are rare. Still, switching to a dominator tree-based approach might be favorable.
 #### Loop Kind (LKA)
-Computes statistics on usage `for, while, do-while` and range-based `for` loops in C++. Especially interesting to use to see the adoption of range-based `for` since C++11.
-#### Standard Library Container Usage (SLA)
-Counts occurences of standard library containers `array`, `vector`, `forward_list`, `list`, `map`, `multimap`, `set`, `multiset`, `unordered_map`, `unordered_multimap`, `unordered_set`, `unordered_multiset`, `queue`, `prioity_queue`, `stack`, `deque`, `tuple` as variables or record member fields and for each type outputs what types they contain.
+Computes statistics on usage `for`, `while`, `do-while` and range-based `for` loops in C++. Especially interesting to use to see the adoption of range-based `for` since C++11.
+#### Standard Library Usage (SLA)
+Counts: 
+- occurences of standard library containers `array`, `vector`, `forward_list`, `list`, `map`, `multimap`, `set`, `multiset`, `unordered_map`, `unordered_multimap`, `unordered_set`, `unordered_multiset`, `queue`, `prioity_queue`, `stack`, `deque`, `tuple` occurring as variables or record member fields and for each outputs what types they contain
+- standard library utilities vocabulary types: `pair`, `tuple`
+- smart pointer usage: how often do `unique_ptr`,`shared_ptr` & `weak_ptr` occur, and what types to they point to? Possible addition: removed `auto_ptr`
 #### Template Parameters (TPA)
 Counts each kind of template (class, function, variable, alias), how many were variadic/use parameter packs and outputs counts on what kind of template parameters were used (non-tupe template parameters, type template parameters and template template parameters).
 #### WIP: Template instantiations (TIA)
@@ -69,7 +75,7 @@ C++11 introduced type aliases (`using` keyword) which are similar to typedefs, b
 </tr>
 </table>
 
-#### WIP: Variable Templates (VTA)
+#### Variable Templates (VTA)
 C++14 added variable templates. Previously, one used either class templates with a static data member or constexpr function templates returning the desired value. We here analyze whether programmers transitioned in favor of the new concept by reporting usage of the three constructs.
 <table>
 <tr>
