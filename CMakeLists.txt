@@ -72,6 +72,7 @@ target_link_libraries(${PROJECT_NAME}
     CyclomaticComplexityAnalysis
     LoopDepthAnalysis
     LoopKindAnalysis
+    MoveSemanticsAnalysis
 
     StdlibAnalysis
     StdlibAnalysis2

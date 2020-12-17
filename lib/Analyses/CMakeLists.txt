@@ -1,6 +1,7 @@
 add_library(CyclomaticComplexityAnalysis CyclomaticComplexityAnalysis.cpp)
 add_library(LoopDepthAnalysis LoopDepthAnalysis.cpp)
 add_library(LoopKindAnalysis LoopKindAnalysis.cpp)
+add_library(MoveSemanticsAnalysis MoveSemanticsAnalysis.cpp)
 
 add_library(StdlibAnalysis StdlibAnalysis.cpp)
 add_library(StdlibAnalysis2 StdlibAnalysis2.cpp)

@@ -5,8 +5,6 @@
 #include "cxx-langstat/Analysis.h"
 
 #include "cxx-langstat/AnalysisList.h"
-#include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
-
 
 class AnalysisRegistry {
 public:

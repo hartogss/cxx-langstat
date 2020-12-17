@@ -6,6 +6,7 @@
 #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 #include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
 #include "cxx-langstat/Analyses/LoopKindAnalysis.h"
+#include "cxx-langstat/Analyses/MoveSemanticsAnalysis.h"
 #include "cxx-langstat/Analyses/StdlibAnalysis.h"
 #include "cxx-langstat/Analyses/StdlibAnalysis2.h"
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
@@ -29,6 +30,7 @@ void AnalysisRegistry::createAllAnalyses(){
     Analyses.emplace_back(std::make_unique<CyclomaticComplexityAnalysis>());
     Analyses.emplace_back(std::make_unique<LoopDepthAnalysis>());
     Analyses.emplace_back(std::make_unique<LoopKindAnalysis>());
+    Analyses.emplace_back(std::make_unique<MoveSemanticsAnalysis>());
     Analyses.emplace_back(std::make_unique<StdlibAnalysis>());
     Analyses.emplace_back(std::make_unique<StdlibAnalysis2>());
     Analyses.emplace_back(std::make_unique<TemplateInstantiationAnalysis>());
@@ -39,6 +41,7 @@ void AnalysisRegistry::createAllAnalyses(){
     Abbrev.emplace_back("cca");
     Abbrev.emplace_back("lda");
     Abbrev.emplace_back("lka");
+    Abbrev.emplace_back("msa");
     Abbrev.emplace_back("sla");
     Abbrev.emplace_back("sla2");
     Abbrev.emplace_back("tia");
