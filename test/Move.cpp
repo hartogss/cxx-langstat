@@ -12,6 +12,7 @@
 class C{};
 
 void f1(C c); // a C
+void f1(C c1, C c2);
 void f2(C& c); // lvalue-ref to a C
 void f3(const C& c); // lvalue-ref to a const C
 void f4(C&& c); // rvalue-ref to a C

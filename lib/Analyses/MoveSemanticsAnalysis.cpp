@@ -28,28 +28,27 @@ void MoveSemanticsAnalysis::extract(){
 
     DeclarationMatcher parmMatcher = decl(anyOf(
         parmVarDecl(unless(hasType(referenceType())))
-        .bind("copy"),
+        .bind("copy2"),
         parmVarDecl(hasType(lValueReferenceType(
                 pointee(unless(isConstQualified())))))
-        .bind("lvalue"),
+        .bind("nonconstlvalue"),
         parmVarDecl(hasType(lValueReferenceType(
                 pointee(isConstQualified()))))
-        .bind("nonconstlvalue"),
+        .bind("constlvalue"),
         parmVarDecl(hasType(rValueReferenceType()))
         .bind("rvalue")
     ));
 
     auto functions = Extractor.extract2(*Context, functionMatcher);
-    auto parms = Extractor.extract2(*Context, parmMatcher);
     FunctionDeclsWithCopy = getASTNodes<FunctionDecl>(functions, "copy");
     FunctionDeclsWithlValueRef = getASTNodes<FunctionDecl>(functions, "nonconstlvalue");
     FunctionDeclsWithConstlValueRef = getASTNodes<FunctionDecl>(functions, "constlvalue");
     FunctionDeclsWithrValueRef = getASTNodes<FunctionDecl>(functions, "rvalue");
-    CopyParmDecls = getASTNodes<ParmVarDecl>(parms,  "copy");
+    auto parms = Extractor.extract2(*Context, parmMatcher);
+    CopyParmDecls = getASTNodes<ParmVarDecl>(parms,  "copy2");
     lValueRefParmDecls = getASTNodes<ParmVarDecl>(parms, "nonconstlvalue");
     ConstlValueRefParmDecls = getASTNodes<ParmVarDecl>(parms, "constlvalue");
     rValueRefParmDecls = getASTNodes<ParmVarDecl>(parms, "rvalue");
-
 }
 
 template<typename T>
@@ -59,7 +58,10 @@ void MoveSemanticsAnalysis::gatherStatistics(std::string text,
         for(auto match : Matches){
             ordered_json d;
             d["location"] = match.location;
-            Decls[getMatchDeclName(match)] = d;
+            // Has to be a vector, since there can be multiple function declarations
+            // or parameter variable declarations with the same name.
+            // Change when I switch to not idnexing JSON with decl name.
+            Decls[getMatchDeclName(match)].emplace_back(d);
         }
         Result[text] = Decls;
 }
