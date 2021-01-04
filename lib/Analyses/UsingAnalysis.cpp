@@ -80,7 +80,7 @@ void UsingAnalysis::extract() {
         typeAliasTemplate);
 
     // need to do extra work to remove from typedefdecls those decls that occur
-    // in typedeftemplatedecls (to get distinciton between typedef and typedef
+    // in typedeftemplatedecls (to get distinction between typedef and typedef
     // templates)
     for(auto decl : td){
         for(unsigned i=0; i<TypedefDecls.size(); i++){
@@ -104,7 +104,7 @@ void UsingAnalysis::gatherStatistics(){
         Alias["location"] = match.location;
         Aliases[getMatchDeclName(match)] = Alias;
     }
-    // possible improvement: state all typedef of a typdef template, since
+    // possible improvement: state all typedefs of a typedef template, since
     // it can contain multiple
     ordered_json TypedefTemplates;
     for(auto match : TypedefTemplateDecls){
