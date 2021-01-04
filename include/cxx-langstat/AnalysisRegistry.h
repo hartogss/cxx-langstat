@@ -15,6 +15,8 @@ public:
     void setEnabledAnalyses(std::string);
     AnalysisList EnabledAnalyses;
     std::vector<std::string> Abbrev;
+    // Store results to file?
+    bool Store = false;
 private:
     void createAllAnalyses();
 };

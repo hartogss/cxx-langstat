@@ -30,9 +30,7 @@ public:
     // Called when AST for TU is ready/has been parsed
     void HandleTranslationUnit(clang::ASTContext& Context){
         std::cout << "Handling the translation unit" << std::endl;
-
         ordered_json AllAnalysesResult;
-
         int i=0;
         for(auto ab : Registry->Abbrev) {
             if(Registry->EnabledAnalyses.contains(ab)){
@@ -41,9 +39,13 @@ public:
             }
             i++;
         }
-        // std::ofstream o(getFileForStatDump(InFile));
-        // o << AllAnalysesResult.dump(4) << std::endl;
+        // crucial for lit tests
+        if(Registry->Store){
+            std::ofstream o(getFileForStatDump(InFile));
+            o << AllAnalysesResult.dump(4) << std::endl;
+        }
         std::cout << AllAnalysesResult.dump(4) << std::endl;
+        // std::cout << getFileForPrint(InFile) << std::endl;
     }
 public:
     llvm::StringRef InFile;
@@ -105,14 +107,20 @@ llvm::cl::opt<std::string> AnalysesOption(
     llvm::cl::desc("Comma-separated list of analyses"),
     llvm::cl::cat(CXXLangstatCategory)
 );
+llvm::cl::opt<bool> StoreOption (
+    "store",
+    llvm::cl::desc("If enabled, will store results in filename.cpp.json"),
+    llvm::cl::cat(CXXLangstatCategory)
+);
 
 //-----------------------------------------------------------------------------
 
 int main(int argc, const char** argv){
-
     // parses all options that command-line tools have in common
     CommonOptionsParser Parser(argc, argv, CXXLangstatCategory);
     Registry->setEnabledAnalyses(AnalysesOption);
+    if(StoreOption)
+        Registry->Store = true;
     ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
     // Tool is run for every file specified in source path list
     Tool.run(std::make_unique<Factory>().get()); // input file, .cpp or .ast
