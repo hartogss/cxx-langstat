@@ -8,21 +8,6 @@ using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
 
-// Constructs matcher that exactly matches for-loops with depth d (nesting depth)
-StatementMatcher constructForMatcher(std::string Name, int d){
-    StatementMatcher AtLeastDepth = anything();
-    int i=1;
-    while(i<d){
-        AtLeastDepth = hasDescendant(forStmt(AtLeastDepth));
-        i++;
-    }
-    StatementMatcher EnsureIsOuterMostLoop = unless(hasAncestor(forStmt()));
-    StatementMatcher AtLeastDepthPlus1 =
-        forStmt(EnsureIsOuterMostLoop, hasDescendant(forStmt(AtLeastDepth)));
-    AtLeastDepth = forStmt(EnsureIsOuterMostLoop, AtLeastDepth);
-    return forStmt(AtLeastDepth, unless(AtLeastDepthPlus1)).bind(Name);
-}
-
 // Constructs matcher that exactly matches mixed loops with depth d (nesting depth)
 StatementMatcher constructMixedMatcher(std::string Name, int d){
     auto loopStmt = [](auto m){
@@ -53,12 +38,13 @@ StatementMatcher constructMixedMatcher(std::string Name, int d){
 // step 1: extraction
 void LoopDepthAnalysis::extract() {
     // Bind is necessary to retrieve information about the match like location etc.
-    // Without bind the match is still registered, thus we can still count #matches, but nothing else
+    // Without bind the match is still registered, thus we can still count #matches,
+    // but nothing else
 
     // Depth analysis
-    // auto matches = this->Extr.extract("fs1", forStmt(unless(hasAncestor(forStmt()))).bind("fs1"));
     StatementMatcher IsOuterMostLoop =
-        unless(hasAncestor(stmt(anyOf(forStmt(), whileStmt(), doStmt(), cxxForRangeStmt()))));
+        unless(hasAncestor(stmt(anyOf(
+            forStmt(), whileStmt(), doStmt(), cxxForRangeStmt()))));
     auto TopLevelLoops = this->Extractor.extract(*Context, "fs1", stmt(
         isExpansionInMainFile(),
         anyOf(

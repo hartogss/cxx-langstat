@@ -8,23 +8,29 @@ using ordered_json = nlohmann::ordered_json;
 
 
 void LoopKindAnalysis::extract(clang::ASTContext& Context){
-
     // Analysis of prevalence of different loop statement, i.e. comparing for, while etc.
-    auto ForMatches = Extractor.extract(Context, "fs1", forStmt(isExpansionInMainFile())
-    .bind("fs1"));
-    auto WhileMatches = Extractor.extract(Context, "ws1", whileStmt(isExpansionInMainFile())
-    .bind("ws1"));
-    auto DoWhileMatches = Extractor.extract(Context, "ds1", doStmt(isExpansionInMainFile())
-    .bind("ds1"));
-    auto RangeBasedForMatches = Extractor.extract(Context, "forrange",
+    auto ForMatches = Extractor.extract(Context, "for",
+    forStmt(isExpansionInMainFile())
+    .bind("for"));
+    auto WhileMatches = Extractor.extract(Context, "while",
+    whileStmt(isExpansionInMainFile())
+    .bind("while"));
+    auto DoWhileMatches = Extractor.extract(Context, "do-while",
+    doStmt(isExpansionInMainFile())
+    .bind("do-while"));
+    auto RangeBasedForMatches = Extractor.extract(Context, "range-for",
     cxxForRangeStmt(isExpansionInMainFile())
-    .bind("forrange"));
+    .bind("range-for"));
 
     ordered_json loops;
-    loops["for"] = ForMatches.size();
-    loops["while"] = WhileMatches.size();
-    loops["do-while"] = DoWhileMatches.size();
-    loops["for-range"] = RangeBasedForMatches.size();
+    for(auto match : ForMatches)
+        loops["for"].emplace_back(match.location);
+    for(auto match : WhileMatches)
+        loops["while"].emplace_back(match.location);
+    for(auto match : DoWhileMatches)
+        loops["do-while"].emplace_back(match.location);
+    for(auto match : RangeBasedForMatches)
+        loops["range-for"].emplace_back(match.location);
     Result = loops;
 }
 
