@@ -19,4 +19,4 @@ cmake-build-debug/
 *.ast
 
 # Ignore llvm-lit temporary output
-test/unit/Output
+test/unit/**/Output

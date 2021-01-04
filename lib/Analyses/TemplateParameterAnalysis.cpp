@@ -71,7 +71,7 @@ void TemplateParameterAnalysis::gatherStatistics(){
         ordered_json CT;
         CT["location"] = match.location;
         auto TParms = cast<TemplateDecl>(match.node)->getTemplateParameters();
-        CT["uses param. pack"] = TParms->hasParameterPack();
+        CT["uses param pack"] = TParms->hasParameterPack();
         std::map<std::string, unsigned> ParmKindCounts = {
             {"non-type",0},{"type",0},{"template",0},};
         for(unsigned idx=0; idx<TParms->size(); idx++)
@@ -86,7 +86,7 @@ void TemplateParameterAnalysis::gatherStatistics(){
         ordered_json FT;
         FT["location"] = match.location;
         auto TParms = cast<TemplateDecl>(match.node)->getTemplateParameters();
-        FT["uses param. pack"] = TParms->hasParameterPack();
+        FT["uses param pack"] = TParms->hasParameterPack();
         std::map<std::string, unsigned> ParmKindCounts = {
             {"non-type",0},{"type",0},{"template",0},};
         for(unsigned idx=0; idx<TParms->size(); idx++)
@@ -101,7 +101,7 @@ void TemplateParameterAnalysis::gatherStatistics(){
         ordered_json VT;
         VT["location"] = match.location;
         auto TParms = cast<TemplateDecl>(match.node)->getTemplateParameters();
-        VT["uses param. pack"] = TParms->hasParameterPack();
+        VT["uses param pack"] = TParms->hasParameterPack();
         std::map<std::string, unsigned> ParmKindCounts = {
             {"non-type",0},{"type",0},{"template",0},};
         for(unsigned idx=0; idx<TParms->size(); idx++)
@@ -116,7 +116,7 @@ void TemplateParameterAnalysis::gatherStatistics(){
         ordered_json AT;
         AT["location"] = match.location;
         auto TParms = cast<TemplateDecl>(match.node)->getTemplateParameters();
-        AT["uses param. pack"] = TParms->hasParameterPack();
+        AT["uses param pack"] = TParms->hasParameterPack();
         std::map<std::string, unsigned> ParmKindCounts = {
             {"non-type",0},{"type",0},{"template",0},};
         for(unsigned idx=0; idx<TParms->size(); idx++)
