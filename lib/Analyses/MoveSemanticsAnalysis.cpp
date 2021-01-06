@@ -98,6 +98,29 @@ void MoveSemanticsAnalysis::extract(){
     // hasAncestor(functionDecl().bind("func")));
     // auto isintemplate = hasAncestor(functionDecl().bind("func"));
 
+    DeclarationMatcher functionTemplateMatcher = decl(isExpansionInMainFile(), anyOf(
+        functionTemplateDecl(has(functionDecl(hasAnyParameter(unless(hasType(referenceType()))))))
+        .bind("value"),
+        functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(lValueReferenceType(
+                pointee(unless(isConstQualified()))))))))
+        .bind("nonconstlvalueref"),
+        functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(lValueReferenceType(
+                pointee(isConstQualified())))))))
+        .bind("constlvalueref"),
+        functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(rValueReferenceType())))))
+        .bind("rvalueref")
+    ));
+
+    auto functiontemplates = Extractor.extract2(*Context, functionTemplateMatcher);
+    FunctionTemplatesDeclsWithCopy = getASTNodes<FunctionTemplateDecl>(functiontemplates,
+        "value");
+    FunctionTemplatesDeclsWithlValueRef = getASTNodes<FunctionTemplateDecl>(functiontemplates,
+        "nonconstlvalueref");
+    FunctionTemplatesDeclsWithConstlValueRef = getASTNodes<FunctionTemplateDecl>(functiontemplates,
+        "constlvalueref");
+    auto templateswithroruniversal = getASTNodes<FunctionTemplateDecl>(functiontemplates,
+        "rvalueref");
+
     auto foft = [](std::string f, std::string ft){
         return anyOf(
             hasAncestor(functionDecl().bind(f)),
@@ -121,37 +144,17 @@ void MoveSemanticsAnalysis::extract(){
     lValueRefParmDecls = getASTNodes<ParmVarDecl>(results, "nonconstlvalueref");
     ConstlValueRefParmDecls = getASTNodes<ParmVarDecl>(results, "constlvalueref");
     auto rvalueoruniversalref = getASTNodes<ParmVarDecl>(results, "rvalueoruniversalref");
-    for(auto match : rvalueoruniversalref){
+    for(unsigned idx=0; idx<rvalueoruniversalref.size(); idx++){
+        auto match = rvalueoruniversalref[idx];
         auto t = match.node->getOriginalType();
         if(isForwardingReference(t, 0)){
             UniversalRefParmDecls.emplace_back(match);
+            FunctionTemplatesDeclsWithUniversalRef.emplace_back(templateswithroruniversal[idx]);
         } else {
             rValueRefParmDecls.emplace_back(match);
+            FunctionTemplatesDeclsWithrValueRef.emplace_back(templateswithroruniversal[idx]);
         }
     }
-
-    DeclarationMatcher functionTemplateMatcher = decl(isExpansionInMainFile(), anyOf(
-        functionTemplateDecl(has(functionDecl(hasAnyParameter(unless(hasType(referenceType()))))))
-        .bind("value"),
-        functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(lValueReferenceType(
-                pointee(unless(isConstQualified()))))))))
-        .bind("nonconstlvalueref"),
-        functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(lValueReferenceType(
-                pointee(isConstQualified())))))))
-        .bind("constlvalueref"),
-        functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(rValueReferenceType())))))
-        .bind("rvalueref")
-    ));
-
-    auto functiontemplates = Extractor.extract2(*Context, functionTemplateMatcher);
-    FunctionTemplatesDeclsWithCopy = getASTNodes<FunctionTemplateDecl>(functiontemplates,
-        "value");
-    FunctionTemplatesDeclsWithlValueRef = getASTNodes<FunctionTemplateDecl>(functiontemplates,
-        "nonconstlvalueref");
-    FunctionTemplatesDeclsWithConstlValueRef = getASTNodes<FunctionTemplateDecl>(functiontemplates,
-        "constlvalueref");
-    FunctionTemplatesDeclsWithrValueRef = getASTNodes<FunctionTemplateDecl>(functiontemplates,
-        "rvalueref");
 }
 
 // parmVarDecl(isExpansionInMainFile(), allOf(anyOf(unless(hasAncestor(functionDecl(hasParent(functionTemplateDecl())))), hasAncestor(functionDecl().bind("f"))), hasAncestor(functionDecl(hasParent(functionTemplateDecl().bind("ft"))))))
