@@ -16,21 +16,23 @@ public:
     void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 private:
     void extract();
-    void gatherStatistics(std::string text, const Matches<clang::ParmVarDecl>& Matches);
-    void gatherFunctionDeclData(std::string text,
-        const Matches<clang::FunctionDecl>& Matches);
+    template<typename T>
+    void gatherData(std::string DeclKind, std::string PassKind,
+        const Matches<T>& Matches);
     Matches<clang::FunctionDecl> FunctionDeclsWithCopy;
     Matches<clang::FunctionDecl> FunctionDeclsWithlValueRef;
     Matches<clang::FunctionDecl> FunctionDeclsWithConstlValueRef;
     Matches<clang::FunctionDecl> FunctionDeclsWithrValueRef;
+    Matches<clang::FunctionTemplateDecl> FunctionTemplatesDeclsWithCopy;
+    Matches<clang::FunctionTemplateDecl> FunctionTemplatesDeclsWithlValueRef;
+    Matches<clang::FunctionTemplateDecl> FunctionTemplatesDeclsWithConstlValueRef;
+    Matches<clang::FunctionTemplateDecl> FunctionTemplatesDeclsWithrValueRef;
+    Matches<clang::FunctionTemplateDecl> FunctionTemplatesDeclsWithUniversalRef;
     Matches<clang::ParmVarDecl> CopyParmDecls;
     Matches<clang::ParmVarDecl> lValueRefParmDecls;
     Matches<clang::ParmVarDecl> ConstlValueRefParmDecls;
     Matches<clang::ParmVarDecl> rValueRefParmDecls;
-    Matches<clang::FunctionDecl> FunctionTemplatesDeclsWithCopy;
-    Matches<clang::FunctionDecl> FunctionTemplatesDeclsWithlValueRef;
-    Matches<clang::FunctionDecl> FunctionTemplatesDeclsWithConstlValueRef;
-    Matches<clang::FunctionDecl> FunctionTemplatesDeclsWithrValueRef;
+    Matches<clang::ParmVarDecl> UniversalRefParmDecls;
 };
 
 #endif // MOVESEMANTICSANALYSIS_H
