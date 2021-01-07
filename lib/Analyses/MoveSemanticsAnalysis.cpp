@@ -9,6 +9,16 @@ using namespace clang::ast_matchers;
 using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
+/// Get the index of the first template parameter that was originally from the
+/// innermost template-parameter-list. This is 0 except when we concatenate
+/// the template parameter lists of a class template and a constructor template
+/// when forming an implicit deduction guide.
+static unsigned getFirstInnerIndex(FunctionTemplateDecl *FTD) {
+  auto *Guide = dyn_cast<CXXDeductionGuideDecl>(FTD->getTemplatedDecl());
+  if (!Guide || !Guide->isImplicit())
+ return 0;
+  return Guide->getDeducedTemplate()->getTemplateParameters()->size();
+}
 // Copied from clang/lib/Sema/SemaTemplateDeduction.cpp or
 // https://clang.llvm.org/doxygen/SemaTemplateDeduction_8cpp_source.html#l01190
 // For our purposes FirstInnerIndex = 0 is fine.
@@ -29,6 +39,9 @@ static bool isForwardingReference(QualType Param, unsigned FirstInnerIndex) {
 //-----------------------------------------------------------------------------
 
 void MoveSemanticsAnalysis::extract(){
+
+    internal::VariadicDynCastAllOfMatcher<Type, PackExpansionType> packExpansionType;
+
     // Writing the matcher like this means that a functionDecl can only bind to
     // one id - good, since it inhibits counting a decl twice under different ids
 
@@ -59,7 +72,9 @@ void MoveSemanticsAnalysis::extract(){
     // Same as above, but for function templates; additionally look at which
     // templates use universal/forwarding references
     DeclarationMatcher functionTemplateMatcher = decl(isExpansionInMainFile(), anyOf(
-        functionTemplateDecl(has(functionDecl(hasAnyParameter(unless(hasType(referenceType()))))))
+        functionTemplateDecl(has(functionDecl(hasAnyParameter(unless(anyOf(
+            hasType(referenceType()),
+            hasType(packExpansionType())))))))
         .bind("value"),
         functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(lValueReferenceType(
                 pointee(unless(isConstQualified()))))))))
@@ -68,7 +83,9 @@ void MoveSemanticsAnalysis::extract(){
                 pointee(isConstQualified())))))))
         .bind("constlvalueref"),
         functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(rValueReferenceType())))))
-        .bind("rvalueoruniversalref")
+        .bind("rvalueoruniversalref"),
+        functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(packExpansionType())))))
+        .bind("pack")
     ));
     auto functiontemplates = Extractor.extract2(*Context, functionTemplateMatcher);
     FuncTemplatesWithValueParm = getASTNodes<FunctionTemplateDecl>(functiontemplates,
@@ -79,6 +96,8 @@ void MoveSemanticsAnalysis::extract(){
         "constlvalueref");
     auto FTsWithRValueOrUniversalRefParm = getASTNodes<FunctionTemplateDecl>(functiontemplates,
         "rvalueoruniversalref");
+    auto FTsWithPackParm = getASTNodes<FunctionTemplateDecl>(functiontemplates,
+        "pack");
 
     // Extract the parameters itself from the function and function template decls
     // above.
@@ -94,7 +113,9 @@ void MoveSemanticsAnalysis::extract(){
     //         hasAncestor(functionDecl(hasParent(functionTemplateDecl().bind(ft)))));
     // };
     auto parmsintemplatesmatcher =  decl(isExpansionInMainFile(), anyOf(
-        parmVarDecl(unless(hasType(referenceType())))
+        parmVarDecl(unless(anyOf(
+            hasType(referenceType()),
+            hasType(packExpansionType()))))
         .bind("value"),
         parmVarDecl(hasType(lValueReferenceType(
                 pointee(unless(isConstQualified())))))
@@ -103,20 +124,64 @@ void MoveSemanticsAnalysis::extract(){
                 pointee(isConstQualified()))))
         .bind("constlvalueref"),
         parmVarDecl(hasType(rValueReferenceType()))
-        .bind("rvalueoruniversalref")
+        .bind("rvalueoruniversalref"),
+        parmVarDecl(hasType(packExpansionType()))
+        .bind("pack")
     ));
     auto parms = Extractor.extract2(*Context, parmsintemplatesmatcher);
     ValueParms = getASTNodes<ParmVarDecl>(parms, "value");
     NonConstLValueRefParms = getASTNodes<ParmVarDecl>(parms, "nonconstlvalueref");
     ConstLValueRefParms = getASTNodes<ParmVarDecl>(parms, "constlvalueref");
     auto RValueOrUniversalRefParms = getASTNodes<ParmVarDecl>(parms, "rvalueoruniversalref");
+    auto PackParms = getASTNodes<ParmVarDecl>(parms, "pack");
+    for(unsigned idx=0; idx<PackParms.size(); idx++){
+        auto match = PackParms[idx];
+        // Qualified type
+        auto ot = match.node->getOriginalType(); // should be pack
+        std::cout << ot.getTypePtr()->getTypeClassName() << std::endl;
+        std::cout << ot.getAsString() << std::endl;
+        // Can use 'cast' here, have good reason to believe that is PackExpType
+        // Gives us type that is being 'packed', which can be reference or
+        // something else
+        auto qualpatterntype = cast<PackExpansionType>(ot.getTypePtr())->getPattern();
+        std::cout << qualpatterntype.getTypePtr()->getTypeClassName() << std::endl;
+        std::cout << qualpatterntype.getAsString() << std::endl;
+        std::cout << "----" << std::endl;
+        // Gives us type that is being 'packed', but without qualifiers
+        auto type = qualpatterntype.getTypePtr();
+        if(type->isLValueReferenceType()){
+            if(type->getPointeeType().isConstQualified()) {
+                ConstLValueRefParms.emplace_back(match);
+                FuncTemplatesWithConstLValueRefParm.emplace_back(FTsWithPackParm[idx]);
+            } else {
+                NonConstLValueRefParms.emplace_back(match);
+                FuncTemplatesWithNonConstLValueRefParm.emplace_back(FTsWithPackParm[idx]);
+            }
+        } else if(type->isRValueReferenceType()){
+            RValueOrUniversalRefParms.emplace_back(match);
+            FTsWithRValueOrUniversalRefParm.emplace_back(FTsWithPackParm[idx]);
+        } else {
+            ValueParms.emplace_back(match);
+            FuncTemplatesWithValueParm.emplace_back(FTsWithPackParm[idx]);
+        }
+    }
+    std::cout << "#----" << std::endl;
+
+    printMatches("", FTsWithRValueOrUniversalRefParm);
+    printMatches(" ", RValueOrUniversalRefParms);
+
     // For function templates with rvalue or universal references, then split those
     // into two separate categories.
     if(FTsWithRValueOrUniversalRefParm.size() != 0){
         for(unsigned idx=0; idx<RValueOrUniversalRefParms.size(); idx++){
+            std::cout << "test" << std::endl;
             auto match = RValueOrUniversalRefParms[idx];
-            auto t = match.node->getOriginalType();
-            if(isForwardingReference(t, 0)){
+            auto t = match.node->getOriginalType(); // gives QualType
+            // If is Pack, strip away pack to get type that is being packed to
+            // inspect its kind of reference
+            if(isa<PackExpansionType>(t.getTypePtr()))
+                t = cast<PackExpansionType>(t.getTypePtr())->getPattern();
+            if(isForwardingReference(t, 0 )){
                 UniversalRefParms.emplace_back(match);
                 FuncTemplatesWithUniversalRefParm.emplace_back(FTsWithRValueOrUniversalRefParm[idx]);
             } else {
