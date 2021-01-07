@@ -1,194 +1,186 @@
 {
     "msa": {
-        "function decls": [
-            {
-                "pass by value": {
-                    "f1": [
-                        {
-                            "location": 13
-                        },
-                        {
-                            "location": 14
-                        }
-                    ],
-                    "frp1": [
-                        {
-                            "location": 23
-                        }
-                    ],
-                    "fp1": [
-                        {
-                            "location": 31
-                        }
-                    ],
-                    "fp2": [
-                        {
-                            "location": 32
-                        }
-                    ],
-                    "fp3": [
-                        {
-                            "location": 33
-                        }
-                    ],
-                    "fp4": [
-                        {
-                            "location": 34
-                        }
-                    ]
-                }
+        "function decls": {
+            "pass by value": {
+                "f1": [
+                    {
+                        "location": 13
+                    },
+                    {
+                        "location": 14
+                    }
+                ],
+                "frp1": [
+                    {
+                        "location": 23
+                    }
+                ],
+                "fp1": [
+                    {
+                        "location": 31
+                    }
+                ],
+                "fp2": [
+                    {
+                        "location": 32
+                    }
+                ],
+                "fp3": [
+                    {
+                        "location": 33
+                    }
+                ],
+                "fp4": [
+                    {
+                        "location": 34
+                    }
+                ]
             },
-            {
-                "pass by non-const lvalue ref": {
-                    "f2": [
-                        {
-                            "location": 15
-                        }
-                    ],
-                    "frp2": [
-                        {
-                            "location": 24
-                        }
-                    ],
-                    "frp3": [
-                        {
-                            "location": 25
-                        }
-                    ]
-                }
+            "pass by non-const lvalue ref": {
+                "f2": [
+                    {
+                        "location": 15
+                    }
+                ],
+                "frp2": [
+                    {
+                        "location": 24
+                    }
+                ],
+                "frp3": [
+                    {
+                        "location": 25
+                    }
+                ]
             },
-            {
-                "pass by const lvalue ref": {
-                    "f3": [
-                        {
-                            "location": 16
-                        }
-                    ],
-                    "frp3_1": [
-                        {
-                            "location": 26
-                        }
-                    ],
-                    "frp3_2": [
-                        {
-                            "location": 27
-                        }
-                    ]
-                }
+            "pass by const lvalue ref": {
+                "f3": [
+                    {
+                        "location": 16
+                    }
+                ],
+                "frp3_1": [
+                    {
+                        "location": 26
+                    }
+                ],
+                "frp3_2": [
+                    {
+                        "location": 27
+                    }
+                ]
             },
-            {
-                "pass by rvalue ref": {
-                    "f4": [
-                        {
-                            "location": 17
-                        }
-                    ],
-                    "f4_2": [
-                        {
-                            "location": 18
-                        }
-                    ],
-                    "f5": [
-                        {
-                            "location": 19
-                        }
-                    ],
-                    "frp4": [
-                        {
-                            "location": 28
-                        }
-                    ]
-                }
+            "pass by rvalue ref": {
+                "f4": [
+                    {
+                        "location": 17
+                    }
+                ],
+                "f4_2": [
+                    {
+                        "location": 18
+                    }
+                ],
+                "f5": [
+                    {
+                        "location": 19
+                    }
+                ],
+                "frp4": [
+                    {
+                        "location": 28
+                    }
+                ]
             }
-        ],
-        "parm decls": [
-            {
-                "value": {
-                    "c": [
-                        {
-                            "location": 13
-                        },
-                        {
-                            "location": 23
-                        },
-                        {
-                            "location": 31
-                        },
-                        {
-                            "location": 32
-                        },
-                        {
-                            "location": 33
-                        },
-                        {
-                            "location": 34
-                        }
-                    ],
-                    "c1": [
-                        {
-                            "location": 14
-                        }
-                    ],
-                    "c2": [
-                        {
-                            "location": 14
-                        }
-                    ]
-                }
+        },
+        "parm decls": {
+            "value": {
+                "c": [
+                    {
+                        "location": 13
+                    },
+                    {
+                        "location": 23
+                    },
+                    {
+                        "location": 31
+                    },
+                    {
+                        "location": 32
+                    },
+                    {
+                        "location": 33
+                    },
+                    {
+                        "location": 34
+                    }
+                ],
+                "c1": [
+                    {
+                        "location": 14
+                    }
+                ],
+                "c2": [
+                    {
+                        "location": 14
+                    }
+                ]
             },
-            {
-                "non-const lvalue ref": {
-                    "c": [
-                        {
-                            "location": 15
-                        },
-                        {
-                            "location": 24
-                        },
-                        {
-                            "location": 25
-                        }
-                    ]
-                }
+            "non-const lvalue ref": {
+                "c": [
+                    {
+                        "location": 15
+                    },
+                    {
+                        "location": 24
+                    },
+                    {
+                        "location": 25
+                    }
+                ]
             },
-            {
-                "const lvalue ref": {
-                    "c": [
-                        {
-                            "location": 16
-                        },
-                        {
-                            "location": 26
-                        },
-                        {
-                            "location": 27
-                        }
-                    ]
-                }
+            "const lvalue ref": {
+                "c": [
+                    {
+                        "location": 16
+                    },
+                    {
+                        "location": 26
+                    },
+                    {
+                        "location": 27
+                    }
+                ]
             },
-            {
-                "rvalue ref": {
-                    "c": [
-                        {
-                            "location": 17
-                        },
-                        {
-                            "location": 18
-                        },
-                        {
-                            "location": 19
-                        },
-                        {
-                            "location": 28
-                        }
-                    ],
-                    "c2": [
-                        {
-                            "location": 18
-                        }
-                    ]
-                }
-            }
-        ]
+            "rvalue ref": {
+                "c": [
+                    {
+                        "location": 17
+                    },
+                    {
+                        "location": 18
+                    },
+                    {
+                        "location": 19
+                    },
+                    {
+                        "location": 28
+                    }
+                ],
+                "c2": [
+                    {
+                        "location": 18
+                    }
+                ]
+            },
+            "universal ref": null
+        },
+        "function template decls": {
+            "pass by value": null,
+            "pass by non-const lvalue ref": null,
+            "pass by const lvalue ref": null,
+            "pass by rvalue ref": null,
+            "pass by universal ref": null
+        }
     }
 }

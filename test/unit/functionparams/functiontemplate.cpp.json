@@ -1,0 +1,100 @@
+{
+    "msa": {
+        "function decls": {
+            "pass by value": null,
+            "pass by non-const lvalue ref": null,
+            "pass by const lvalue ref": null,
+            "pass by rvalue ref": null
+        },
+        "parm decls": {
+            "value": {
+                "c": [
+                    {
+                        "location": 19
+                    }
+                ]
+            },
+            "non-const lvalue ref": {
+                "c": [
+                    {
+                        "location": 22
+                    }
+                ]
+            },
+            "const lvalue ref": {
+                "c": [
+                    {
+                        "location": 25
+                    }
+                ]
+            },
+            "rvalue ref": {
+                "c": [
+                    {
+                        "location": 28
+                    }
+                ],
+                "param": [
+                    {
+                        "location": 34
+                    },
+                    {
+                        "location": 37
+                    }
+                ]
+            },
+            "universal ref": {
+                "param": [
+                    {
+                        "location": 31
+                    }
+                ]
+            }
+        },
+        "function template decls": {
+            "pass by value": {
+                "f1": [
+                    {
+                        "location": 18
+                    }
+                ]
+            },
+            "pass by non-const lvalue ref": {
+                "f2": [
+                    {
+                        "location": 21
+                    }
+                ]
+            },
+            "pass by const lvalue ref": {
+                "f3": [
+                    {
+                        "location": 24
+                    }
+                ]
+            },
+            "pass by rvalue ref": {
+                "f4": [
+                    {
+                        "location": 27
+                    }
+                ],
+                "f5": [
+                    {
+                        "location": 33
+                    },
+                    {
+                        "location": 36
+                    }
+                ]
+            },
+            "pass by universal ref": {
+                "f5": [
+                    {
+                        "location": 30
+                    }
+                ]
+            }
+        }
+    }
+}

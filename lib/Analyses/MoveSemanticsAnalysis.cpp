@@ -31,6 +31,9 @@ static bool isForwardingReference(QualType Param, unsigned FirstInnerIndex) {
 void MoveSemanticsAnalysis::extract(){
     // Writing the matcher like this means that a functionDecl can only bind to
     // one id - good, since it inhibits counting a decl twice under different ids
+
+    // Extract functions that use each kind of parameter: by value, non-const
+    // lvalue ref, const lvalue ref and rvalue ref
     DeclarationMatcher functionMatcher = decl(isExpansionInMainFile(), unless(hasParent(functionTemplateDecl())), anyOf(
         functionDecl(hasAnyParameter(unless(hasType(referenceType()))))
         .bind("value"), // problem: will also bind to func thats don't have any parameters
@@ -53,6 +56,8 @@ void MoveSemanticsAnalysis::extract(){
     FuncsWithRValueRefParm = getASTNodes<FunctionDecl>(functions,
         "rvalueref");
 
+    // Same as above, but for function templates; additionally look at which
+    // templates use universal/forwarding references
     DeclarationMatcher functionTemplateMatcher = decl(isExpansionInMainFile(), anyOf(
         functionTemplateDecl(has(functionDecl(hasAnyParameter(unless(hasType(referenceType()))))))
         .bind("value"),
@@ -63,7 +68,7 @@ void MoveSemanticsAnalysis::extract(){
                 pointee(isConstQualified())))))))
         .bind("constlvalueref"),
         functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(rValueReferenceType())))))
-        .bind("rvalueref")
+        .bind("rvalueoruniversalref")
     ));
     auto functiontemplates = Extractor.extract2(*Context, functionTemplateMatcher);
     FuncTemplatesWithValueParm = getASTNodes<FunctionTemplateDecl>(functiontemplates,
@@ -73,14 +78,21 @@ void MoveSemanticsAnalysis::extract(){
     FuncTemplatesWithConstLValueRefParm = getASTNodes<FunctionTemplateDecl>(functiontemplates,
         "constlvalueref");
     auto FTsWithRValueOrUniversalRefParm = getASTNodes<FunctionTemplateDecl>(functiontemplates,
-        "rvalueref");
+        "rvalueoruniversalref");
 
-    auto foft = [](std::string f, std::string ft){
-        return anyOf(
-            hasAncestor(functionDecl().bind(f)),
-            hasAncestor(functionDecl(hasParent(functionTemplateDecl().bind(ft)))));
-    };
-
+    // Extract the parameters itself from the function and function template decls
+    // above.
+    // Room for improvement: when extracting parameters, also extract the function
+    // (template) they're contained in, s.t. the matchers above become unnecessary
+    // leading to smaller, hopefully more maintainable and intuitive code.
+    // This matcher would become more complicated tho.
+    // function or function template matcher to parallel to parameters extract
+    // function (templates).
+    // auto foft = [](std::string f, std::string ft){
+    //     return anyOf(
+    //         hasAncestor(functionDecl().bind(f)),
+    //         hasAncestor(functionDecl(hasParent(functionTemplateDecl().bind(ft)))));
+    // };
     auto parmsintemplatesmatcher =  decl(isExpansionInMainFile(), anyOf(
         parmVarDecl(unless(hasType(referenceType())))
         .bind("value"),
@@ -112,6 +124,8 @@ void MoveSemanticsAnalysis::extract(){
                 FuncTemplatesWithRValueRefParm.emplace_back(FTsWithRValueOrUniversalRefParm[idx]);
             }
         }
+    } else { // otherwise, every potential universal reference simply is rvalue ref
+        RValueRefParms = RValueOrUniversalRefParms;
     }
 }
 
@@ -132,6 +146,7 @@ void MoveSemanticsAnalysis::run(llvm::StringRef InFile,
         std::cout << "\033[32mRunning MSA:\033[0m" << std::endl;
         this->Context = &Context;
         extract();
+
         gatherData("function decls", "pass by value", FuncsWithValueParm);
         gatherData("function decls", "pass by non-const lvalue ref", FuncsWithNonConstLValueRefParm);
         gatherData("function decls", "pass by const lvalue ref", FuncsWithConstLValueRefParm);
@@ -151,11 +166,7 @@ void MoveSemanticsAnalysis::run(llvm::StringRef InFile,
 
 
 
-
-        // for(auto match : FunctionTemplatesDeclsWithrValueRef){
-        //     std::cout << match.node->getType().getAsString() << std::endl;
-        //     std::cout << match.node->getType().getTypePtr()->getTypeClassName() << std::endl;
-        // }
+        // Code to test printing JSON objects without knowing index ids
         // std::cout << Result["rvalue ref parms"]["c"][0].dump(4) << std::endl;
         // // how to avoid indexing using decl name?
         // std::cout << Result["rvalue ref parms"].dump(4) << std::endl;
@@ -167,7 +178,12 @@ void MoveSemanticsAnalysis::run(llvm::StringRef InFile,
         //     // }
         // }
 
+        // Old code for trying to figure out if universal reference or not
         /*
+        // for(auto match : FunctionTemplatesDeclsWithrValueRef){
+        //     std::cout << match.node->getType().getAsString() << std::endl;
+        //     std::cout << match.node->getType().getTypePtr()->getTypeClassName() << std::endl;
+        // }
         // DeclarationMatcher d = functionTemplateDecl(isExpansionInMainFile(),
         //     has(templateTypeParmDecl().bind("typename")),
         //     has(functionDecl(hasDescendant(
@@ -187,8 +203,6 @@ void MoveSemanticsAnalysis::run(llvm::StringRef InFile,
         //     std::cout << isForwardingReference(t, 0) << std::endl;
         //     std::cout << "----" << std::endl;
         // }*/
-
-
 }
 
 //-----------------------------------------------------------------------------
