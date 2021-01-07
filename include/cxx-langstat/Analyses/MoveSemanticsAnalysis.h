@@ -19,20 +19,20 @@ private:
     template<typename T>
     void gatherData(std::string DeclKind, std::string PassKind,
         const Matches<T>& Matches);
-    Matches<clang::FunctionDecl> FunctionDeclsWithCopy;
-    Matches<clang::FunctionDecl> FunctionDeclsWithlValueRef;
-    Matches<clang::FunctionDecl> FunctionDeclsWithConstlValueRef;
-    Matches<clang::FunctionDecl> FunctionDeclsWithrValueRef;
-    Matches<clang::FunctionTemplateDecl> FunctionTemplatesDeclsWithCopy;
-    Matches<clang::FunctionTemplateDecl> FunctionTemplatesDeclsWithlValueRef;
-    Matches<clang::FunctionTemplateDecl> FunctionTemplatesDeclsWithConstlValueRef;
-    Matches<clang::FunctionTemplateDecl> FunctionTemplatesDeclsWithrValueRef;
-    Matches<clang::FunctionTemplateDecl> FunctionTemplatesDeclsWithUniversalRef;
-    Matches<clang::ParmVarDecl> CopyParmDecls;
-    Matches<clang::ParmVarDecl> lValueRefParmDecls;
-    Matches<clang::ParmVarDecl> ConstlValueRefParmDecls;
-    Matches<clang::ParmVarDecl> rValueRefParmDecls;
-    Matches<clang::ParmVarDecl> UniversalRefParmDecls;
+    Matches<clang::FunctionDecl> FuncsWithValueParm;
+    Matches<clang::FunctionDecl> FuncsWithNonConstLValueRefParm;
+    Matches<clang::FunctionDecl> FuncsWithConstLValueRefParm;
+    Matches<clang::FunctionDecl> FuncsWithRValueRefParm;
+    Matches<clang::FunctionTemplateDecl> FuncTemplatesWithValueParm;
+    Matches<clang::FunctionTemplateDecl> FuncTemplatesWithNonConstLValueRefParm;
+    Matches<clang::FunctionTemplateDecl> FuncTemplatesWithConstLValueRefParm;
+    Matches<clang::FunctionTemplateDecl> FuncTemplatesWithRValueRefParm;
+    Matches<clang::FunctionTemplateDecl> FuncTemplatesWithUniversalRefParm;
+    Matches<clang::ParmVarDecl> ValueParms;
+    Matches<clang::ParmVarDecl> NonConstLValueRefParms;
+    Matches<clang::ParmVarDecl> ConstLValueRefParms;
+    Matches<clang::ParmVarDecl> RValueRefParms;
+    Matches<clang::ParmVarDecl> UniversalRefParms;
 };
 
 #endif // MOVESEMANTICSANALYSIS_H
