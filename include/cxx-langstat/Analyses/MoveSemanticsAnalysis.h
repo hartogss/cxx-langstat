@@ -23,6 +23,7 @@ private:
     Matches<clang::FunctionDecl> FuncsWithNonConstLValueRefParm;
     Matches<clang::FunctionDecl> FuncsWithConstLValueRefParm;
     Matches<clang::FunctionDecl> FuncsWithRValueRefParm;
+    Matches<clang::FunctionDecl> FuncsWithUniversalRefParm;
     Matches<clang::FunctionTemplateDecl> FuncTemplatesWithValueParm;
     Matches<clang::FunctionTemplateDecl> FuncTemplatesWithNonConstLValueRefParm;
     Matches<clang::FunctionTemplateDecl> FuncTemplatesWithConstLValueRefParm;

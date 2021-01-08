@@ -194,6 +194,11 @@ void MoveSemanticsAnalysis::extract(){
     }
 }
 
+// issues: 1. above code assumes functions cannot have universal references or be
+// variadic - wrong, since that can be the case when function is part of class/func template
+// 2. isForwardingReference may not always be called with 0 because of same reason
+// 3. what about constructor in class templates? analyze those too? or separately probably better, by looking at copy, move constructors separately.
+
 template<typename T>
 void MoveSemanticsAnalysis::gatherData(std::string DeclKind, std::string PassKind,
     const Matches<T>& Matches){
