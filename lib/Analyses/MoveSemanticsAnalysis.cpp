@@ -9,6 +9,9 @@ using namespace clang::ast_matchers;
 using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
+// Copied from clang/lib/Sema/SemaTemplateDeduction.cpp
+
+// https://clang.llvm.org/doxygen/SemaTemplateDeduction_8cpp_source.html#l01182
 /// Get the index of the first template parameter that was originally from the
 /// innermost template-parameter-list. This is 0 except when we concatenate
 /// the template parameter lists of a class template and a constructor template
@@ -19,7 +22,6 @@ static unsigned getFirstInnerIndex(FunctionTemplateDecl *FTD) {
  return 0;
   return Guide->getDeducedTemplate()->getTemplateParameters()->size();
 }
-// Copied from clang/lib/Sema/SemaTemplateDeduction.cpp or
 // https://clang.llvm.org/doxygen/SemaTemplateDeduction_8cpp_source.html#l01190
 // For our purposes FirstInnerIndex = 0 is fine.
 static bool isForwardingReference(QualType Param, unsigned FirstInnerIndex) {
@@ -31,171 +33,165 @@ static bool isForwardingReference(QualType Param, unsigned FirstInnerIndex) {
         if (ParamRef->getPointeeType().getQualifiers())
             return false;
         auto *TypeParm = ParamRef->getPointeeType()->getAs<TemplateTypeParmType>();
+        std::cout << "typeparm:  " << TypeParm->getIndex() << std::endl;
         return TypeParm && TypeParm->getIndex() >= FirstInnerIndex;
    }
    return false;
  }
 
-//-----------------------------------------------------------------------------
-
-void MoveSemanticsAnalysis::extract(){
-
-    internal::VariadicDynCastAllOfMatcher<Type, PackExpansionType> packExpansionType;
-
-    // Writing the matcher like this means that a functionDecl can only bind to
-    // one id - good, since it inhibits counting a decl twice under different ids
-
-    // Extract functions that use each kind of parameter: by value, non-const
-    // lvalue ref, const lvalue ref and rvalue ref
-    DeclarationMatcher functionMatcher = decl(isExpansionInMainFile(), unless(hasParent(functionTemplateDecl())), anyOf(
-        functionDecl(hasAnyParameter(unless(hasType(referenceType()))))
-        .bind("value"), // problem: will also bind to func thats don't have any parameters
-        functionDecl(hasAnyParameter(hasType(lValueReferenceType(
-                pointee(unless(isConstQualified()))))))
-        .bind("nonconstlvalueref"),
-        functionDecl(hasAnyParameter(hasType(lValueReferenceType(
-                pointee(isConstQualified())))))
-        .bind("constlvalueref"),
-        functionDecl(hasAnyParameter(hasType(rValueReferenceType())))
-        .bind("rvalueref")
-    ));
-    auto functions = Extractor.extract2(*Context, functionMatcher);
-    FuncsWithValueParm = getASTNodes<FunctionDecl>(functions,
-        "value");
-    FuncsWithNonConstLValueRefParm = getASTNodes<FunctionDecl>(functions,
-        "nonconstlvalueref");
-    FuncsWithConstLValueRefParm = getASTNodes<FunctionDecl>(functions,
-        "constlvalueref");
-    FuncsWithRValueRefParm = getASTNodes<FunctionDecl>(functions,
-        "rvalueref");
-
-    // Same as above, but for function templates; additionally look at which
-    // templates use universal/forwarding references
-    DeclarationMatcher functionTemplateMatcher = decl(isExpansionInMainFile(), anyOf(
-        functionTemplateDecl(has(functionDecl(hasAnyParameter(unless(anyOf(
-            hasType(referenceType()),
-            hasType(packExpansionType())))))))
-        .bind("value"),
-        functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(lValueReferenceType(
-                pointee(unless(isConstQualified()))))))))
-        .bind("nonconstlvalueref"),
-        functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(lValueReferenceType(
-                pointee(isConstQualified())))))))
-        .bind("constlvalueref"),
-        functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(rValueReferenceType())))))
-        .bind("rvalueoruniversalref"),
-        functionTemplateDecl(has(functionDecl(hasAnyParameter(hasType(packExpansionType())))))
-        .bind("pack")
-    ));
-    auto functiontemplates = Extractor.extract2(*Context, functionTemplateMatcher);
-    FuncTemplatesWithValueParm = getASTNodes<FunctionTemplateDecl>(functiontemplates,
-        "value");
-    FuncTemplatesWithNonConstLValueRefParm = getASTNodes<FunctionTemplateDecl>(functiontemplates,
-        "nonconstlvalueref");
-    FuncTemplatesWithConstLValueRefParm = getASTNodes<FunctionTemplateDecl>(functiontemplates,
-        "constlvalueref");
-    auto FTsWithRValueOrUniversalRefParm = getASTNodes<FunctionTemplateDecl>(functiontemplates,
-        "rvalueoruniversalref");
-    auto FTsWithPackParm = getASTNodes<FunctionTemplateDecl>(functiontemplates,
-        "pack");
-
-    // Extract the parameters itself from the function and function template decls
-    // above.
-    // Room for improvement: when extracting parameters, also extract the function
-    // (template) they're contained in, s.t. the matchers above become unnecessary
-    // leading to smaller, hopefully more maintainable and intuitive code.
-    // This matcher would become more complicated tho.
-    // function or function template matcher to parallel to parameters extract
-    // function (templates).
-    // auto foft = [](std::string f, std::string ft){
-    //     return anyOf(
-    //         hasAncestor(functionDecl().bind(f)),
-    //         hasAncestor(functionDecl(hasParent(functionTemplateDecl().bind(ft)))));
-    // };
-    auto parmsintemplatesmatcher =  decl(isExpansionInMainFile(), anyOf(
-        parmVarDecl(unless(anyOf(
-            hasType(referenceType()),
-            hasType(packExpansionType()))))
-        .bind("value"),
-        parmVarDecl(hasType(lValueReferenceType(
-                pointee(unless(isConstQualified())))))
-        .bind("nonconstlvalueref"),
-        parmVarDecl(hasType(lValueReferenceType(
-                pointee(isConstQualified()))))
-        .bind("constlvalueref"),
-        parmVarDecl(hasType(rValueReferenceType()))
-        .bind("rvalueoruniversalref"),
-        parmVarDecl(hasType(packExpansionType()))
-        .bind("pack")
-    ));
-    auto parms = Extractor.extract2(*Context, parmsintemplatesmatcher);
-    ValueParms = getASTNodes<ParmVarDecl>(parms, "value");
-    NonConstLValueRefParms = getASTNodes<ParmVarDecl>(parms, "nonconstlvalueref");
-    ConstLValueRefParms = getASTNodes<ParmVarDecl>(parms, "constlvalueref");
-    auto RValueOrUniversalRefParms = getASTNodes<ParmVarDecl>(parms, "rvalueoruniversalref");
-    auto PackParms = getASTNodes<ParmVarDecl>(parms, "pack");
-    for(unsigned idx=0; idx<PackParms.size(); idx++){
-        auto match = PackParms[idx];
-        // Qualified type
-        auto ot = match.node->getOriginalType(); // should be pack
-        std::cout << ot.getTypePtr()->getTypeClassName() << std::endl;
-        std::cout << ot.getAsString() << std::endl;
-        // Can use 'cast' here, have good reason to believe that is PackExpType
-        // Gives us type that is being 'packed', which can be reference or
-        // something else
-        auto qualpatterntype = cast<PackExpansionType>(ot.getTypePtr())->getPattern();
-        std::cout << qualpatterntype.getTypePtr()->getTypeClassName() << std::endl;
-        std::cout << qualpatterntype.getAsString() << std::endl;
-        std::cout << "----" << std::endl;
-        // Gives us type that is being 'packed', but without qualifiers
-        auto type = qualpatterntype.getTypePtr();
-        if(type->isLValueReferenceType()){
-            if(type->getPointeeType().isConstQualified()) {
-                ConstLValueRefParms.emplace_back(match);
-                FuncTemplatesWithConstLValueRefParm.emplace_back(FTsWithPackParm[idx]);
-            } else {
-                NonConstLValueRefParms.emplace_back(match);
-                FuncTemplatesWithNonConstLValueRefParm.emplace_back(FTsWithPackParm[idx]);
+// Should be the same as the function above, but above does not work the way I want
+bool isUniversalReference(FunctionTemplateDecl* FTD, QualType Param){
+    if(FTD){
+        // Given parm should be an rvalue reference
+        if(const Type* ParamRef = Param->getAs<RValueReferenceType>()) {
+            // Should not have qualifiers
+            if(ParamRef->getPointeeType().getQualifiers())
+                return false;
+            // pointee type of parm should be a type that is defined by a template type parameter
+            if(const Type* TypeParm = ParamRef->getPointeeType()->getAs<TemplateTypeParmType>()){ // has type Type*
+                auto this1 = TypeParm->getCanonicalTypeUnqualified();
+                std::cout << "1\n";
+                this1.dump();
+                TemplateParameterList* TPL = FTD->getTemplateParameters();
+                // for the given function template, check if any of the type
+                // parameters could be the type of our possible universal reference
+                // is this loop even necessary, shouldn't the above loop be sufficient?
+                // I came up with this after reading
+                // https://en.cppreference.com/w/cpp/language/reference
+                // LIke this, I restrict from which template the type can actually come from
+                for(unsigned idx=0; idx<TPL->size(); idx++){
+                    NamedDecl* CurParam = TPL->getParam(idx);
+                    if(auto TTPDecl = dyn_cast<TemplateTypeParmDecl>(CurParam)){
+                        auto this2 = TTPDecl->getTypeForDecl()->getCanonicalTypeUnqualified();
+                        this2.dump();
+                        if(this1==this2)
+                            return true;
+                    }
+                }
             }
-        } else if(type->isRValueReferenceType()){
-            RValueOrUniversalRefParms.emplace_back(match);
-            FTsWithRValueOrUniversalRefParm.emplace_back(FTsWithPackParm[idx]);
-        } else {
-            ValueParms.emplace_back(match);
-            FuncTemplatesWithValueParm.emplace_back(FTsWithPackParm[idx]);
         }
     }
-    std::cout << "#----" << std::endl;
+    return false;
+}
 
-    printMatches("", FTsWithRValueOrUniversalRefParm);
-    printMatches(" ", RValueOrUniversalRefParms);
+bool isParameterPackType(QualType Param){
+    return isa<PackExpansionType>(Param.getTypePtr());
+}
 
-    // For function templates with rvalue or universal references, then split those
-    // into two separate categories.
-    if(FTsWithRValueOrUniversalRefParm.size() != 0){
-        for(unsigned idx=0; idx<RValueOrUniversalRefParms.size(); idx++){
-            std::cout << "test" << std::endl;
-            auto match = RValueOrUniversalRefParms[idx];
-            auto t = match.node->getOriginalType(); // gives QualType
-            // If is Pack, strip away pack to get type that is being packed to
-            // inspect its kind of reference
-            if(isa<PackExpansionType>(t.getTypePtr()))
-                t = cast<PackExpansionType>(t.getTypePtr())->getPattern();
-            if(isForwardingReference(t, 0 )){
-                UniversalRefParms.emplace_back(match);
-                FuncTemplatesWithUniversalRefParm.emplace_back(FTsWithRValueOrUniversalRefParm[idx]);
-            } else {
-                RValueRefParms.emplace_back(match);
-                FuncTemplatesWithRValueRefParm.emplace_back(FTsWithRValueOrUniversalRefParm[idx]);
+//-----------------------------------------------------------------------------
+void MoveSemanticsAnalysis::addFunction(const Match<FunctionTemplateDecl>& match, std::map<std::string, bool> ParmMap){
+    if(ParmMap.at("value"))
+        FuncTemplatesWithValueParm.emplace_back(match);
+    if(ParmMap.at("nonconstlvalueref"))
+        FuncTemplatesWithNonConstLValueRefParm.emplace_back(match);
+    if(ParmMap.at("constlvalueref"))
+        FuncTemplatesWithConstLValueRefParm.emplace_back(match);
+    if(ParmMap.at("rvalueref"))
+        FuncTemplatesWithRValueRefParm.emplace_back(match);
+    if(ParmMap.at("universalref"))
+        FuncTemplatesWithUniversalRefParm.emplace_back(match);
+}
+void MoveSemanticsAnalysis::addFunction(const Match<FunctionDecl>& match, std::map<std::string, bool> ParmMap){
+    if(ParmMap.at("value"))
+        FuncsWithValueParm.emplace_back(match);
+    if(ParmMap.at("nonconstlvalueref"))
+        FuncsWithNonConstLValueRefParm.emplace_back(match);
+    if(ParmMap.at("constlvalueref"))
+        FuncsWithConstLValueRefParm.emplace_back(match);
+    if(ParmMap.at("rvalueref"))
+        FuncsWithRValueRefParm.emplace_back(match);
+}
+
+template<typename T>
+void MoveSemanticsAnalysis::associateParameters(const Matches<T>& Matches){
+    // For each function (template)
+    for(auto match : Matches){
+
+        // print func
+        if(auto n = dyn_cast<NamedDecl>(match.node)){
+            std::cout << n->getQualifiedNameAsString() << " @ " << match.location << std::endl;
+        }
+
+        auto Node = match.node;
+        FunctionDecl* Func;
+        auto WasTemplate = false;
+        FunctionTemplateDecl* FTD = nullptr;
+        std::map<std::string, bool> ParmMap = {
+            {"value", false}, {"nonconstlvalueref", false},
+            {"constlvalueref", false}, {"rvalueref", false},
+            {"universalref", false}};
+        // If given vector of function templates, look at contained function decls.
+        if(auto ft = dyn_cast<FunctionTemplateDecl>(Node)){
+            Func = ft->getTemplatedDecl();
+            WasTemplate = true;
+            FTD = const_cast<FunctionTemplateDecl*>(ft);
+        } else if(auto f = dyn_cast<FunctionDecl>(Node)){
+            Func = const_cast<FunctionDecl*>(f);
+        }
+        // For each parameter of the function
+        for(auto Param : Func->parameters()){
+            // print parm
+            if(auto n = dyn_cast<NamedDecl>(Param)){
+                std::cout << "param type: " << n->getQualifiedNameAsString() << std::endl;
+            }
+            // Create Match from parameter that bundles it with location&context
+            unsigned Location = Context->getFullLoc(
+                Param->getBeginLoc()).getLineNumber();
+            Match<ParmVarDecl> ParmMatch(Location, Param, Context);
+            // If parameter pack is used, strip it off.
+            QualType OriginalType = Param->getOriginalType();
+            QualType qt = OriginalType;
+            if(isParameterPackType(OriginalType)){
+                // Gives us the the type that is 'being packed'.
+                QualType PatternType = cast<PackExpansionType>
+                    (OriginalType.getTypePtr())->getPattern();
+                qt = PatternType;
+            }
+            const Type* type = qt.getTypePtr();
+            // Split into value, lvalue ref and rvalue ref groups.
+            if(type->isLValueReferenceType()){
+                if(type->getPointeeType().isConstQualified()){
+                    ConstLValueRefParms.emplace_back(ParmMatch);
+                    ParmMap.at("constlvalueref") = true;
+                }else{
+                    NonConstLValueRefParms.emplace_back(ParmMatch);
+                    ParmMap.at("nonconstlvalueref") = true;
+                }
+            }else if(type->isRValueReferenceType()){
+                if(isUniversalReference(FTD, qt) && WasTemplate){
+                    UniversalRefParms.emplace_back(ParmMatch);
+                    ParmMap.at("universalref") = true;
+                }else{
+                    RValueRefParms.emplace_back(ParmMatch);
+                    ParmMap.at("rvalueref") = true;
+                }
+            }else{
+                ValueParms.emplace_back(ParmMatch);
+                ParmMap.at("value") = true;
             }
         }
-    } else { // otherwise, every potential universal reference simply is rvalue ref
-        RValueRefParms = RValueOrUniversalRefParms;
+        addFunction(match, ParmMap);
+        std::cout << "--------" << std::endl;
     }
 }
 
-// issues: 1. above code assumes functions cannot have universal references or be
-// variadic - wrong, since that can be the case when function is part of class/func template
+void MoveSemanticsAnalysis::extract(){
+    internal::VariadicDynCastAllOfMatcher<Type, PackExpansionType> packExpansionType;
+
+    auto ftmatcher = functionTemplateDecl(isExpansionInMainFile()).bind("ft");
+    auto ftresult = Extractor.extract2(*Context, ftmatcher);
+    auto fts = getASTNodes<FunctionTemplateDecl>(ftresult, "ft");
+    associateParameters(fts);
+    // printMatches("fts", fts);
+
+    auto fmatcher = functionDecl(isExpansionInMainFile(), unless(hasParent(functionTemplateDecl()))).bind("f");
+    auto fresult = Extractor.extract2(*Context, fmatcher);
+    auto fs = getASTNodes<FunctionDecl>(fresult, "f");
+    associateParameters(fs);
+}
+// issues: 1. universal reference cannot be part of function (non-template) decl,
+// because the type deduction will not take place at its call site. however, a non-template
+// function can be variadic if it is contained e.g. in a class or function template
 // 2. isForwardingReference may not always be called with 0 because of same reason
 // 3. what about constructor in class templates? analyze those too? or separately probably better, by looking at copy, move constructors separately.
 
@@ -233,7 +229,6 @@ void MoveSemanticsAnalysis::run(llvm::StringRef InFile,
         gatherData("function template decls", "pass by const lvalue ref", FuncTemplatesWithConstLValueRefParm);
         gatherData("function template decls", "pass by rvalue ref", FuncTemplatesWithRValueRefParm);
         gatherData("function template decls", "pass by universal ref", FuncTemplatesWithUniversalRefParm);
-
 
 
         // Code to test printing JSON objects without knowing index ids

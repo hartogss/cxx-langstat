@@ -19,11 +19,16 @@ private:
     template<typename T>
     void gatherData(std::string DeclKind, std::string PassKind,
         const Matches<T>& Matches);
+    void addFunction(const Match<clang::FunctionDecl>& match,
+        std::map<std::string, bool> ParmMap);
+    void addFunction(const Match<clang::FunctionTemplateDecl>& match,
+        std::map<std::string, bool> ParmMap);
+    template<typename T>
+    void associateParameters(const Matches<T>& Matches);
     Matches<clang::FunctionDecl> FuncsWithValueParm;
     Matches<clang::FunctionDecl> FuncsWithNonConstLValueRefParm;
     Matches<clang::FunctionDecl> FuncsWithConstLValueRefParm;
     Matches<clang::FunctionDecl> FuncsWithRValueRefParm;
-    Matches<clang::FunctionDecl> FuncsWithUniversalRefParm;
     Matches<clang::FunctionTemplateDecl> FuncTemplatesWithValueParm;
     Matches<clang::FunctionTemplateDecl> FuncTemplatesWithNonConstLValueRefParm;
     Matches<clang::FunctionTemplateDecl> FuncTemplatesWithConstLValueRefParm;
