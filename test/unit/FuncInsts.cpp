@@ -34,5 +34,5 @@ template void f4<'c'>(); // #5
 template void f4<'p','p'>(); // #6
 
 // RUN: clang++ %s -emit-ast -o %t1.ast
-// RUN: %S/../../build/cxx-langstat --analyses=tia %t1.ast --
+// RUN: %S/../../build/cxx-langstat --analyses=tia --store %t1.ast --
 // RUN: diff %t1.ast.json %s.json

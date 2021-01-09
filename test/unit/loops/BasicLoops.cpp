@@ -1,5 +1,5 @@
 // RUN: clang++ %s -emit-ast -o %t1.ast
-// RUN: %S/../../../build/cxx-langstat --analyses=lda,lka %t1.ast --
+// RUN: %S/../../../build/cxx-langstat --analyses=lda,lka --store %t1.ast --
 // RUN: diff %t1.ast.json %s.json
 
 // Test to ensure LDA finds corrects loop depths and only recognizes top-level
