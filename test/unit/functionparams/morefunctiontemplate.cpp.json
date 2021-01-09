@@ -1,0 +1,174 @@
+{
+    "msa": {
+        "function decls": {
+            "pass by value": null,
+            "pass by non-const lvalue ref": null,
+            "pass by const lvalue ref": null,
+            "pass by rvalue ref": {
+                "MyVector::push_back": [
+                    {
+                        "location": 33
+                    }
+                ],
+                "funci1": [
+                    {
+                        "location": 55
+                    }
+                ],
+                "funci2": [
+                    {
+                        "location": 59
+                    }
+                ]
+            }
+        },
+        "parm decls": {
+            "value": {
+                "ts1": [
+                    {
+                        "location": 12
+                    }
+                ]
+            },
+            "non-const lvalue ref": {
+                "ts2": [
+                    {
+                        "location": 15
+                    }
+                ]
+            },
+            "const lvalue ref": {
+                "ts3": [
+                    {
+                        "location": 18
+                    }
+                ]
+            },
+            "rvalue ref": {
+                "arru": [
+                    {
+                        "location": 42
+                    }
+                ],
+                "t": [
+                    {
+                        "location": 48
+                    },
+                    {
+                        "location": 55
+                    },
+                    {
+                        "location": 59
+                    }
+                ],
+                "x": [
+                    {
+                        "location": 33
+                    }
+                ]
+            },
+            "universal ref": {
+                "ts5": [
+                    {
+                        "location": 21
+                    }
+                ],
+                "a": [
+                    {
+                        "location": 24
+                    }
+                ],
+                "b": [
+                    {
+                        "location": 24
+                    }
+                ],
+                "args": [
+                    {
+                        "location": 36
+                    }
+                ],
+                "u": [
+                    {
+                        "location": 39
+                    },
+                    {
+                        "location": 48
+                    }
+                ],
+                "t": [
+                    {
+                        "location": 58
+                    }
+                ]
+            }
+        },
+        "function template decls": {
+            "pass by value": {
+                "f1": [
+                    {
+                        "location": 11
+                    }
+                ]
+            },
+            "pass by non-const lvalue ref": {
+                "f2": [
+                    {
+                        "location": 14
+                    }
+                ]
+            },
+            "pass by const lvalue ref": {
+                "f3": [
+                    {
+                        "location": 17
+                    }
+                ]
+            },
+            "pass by rvalue ref": {
+                "MyVector::senseless2": [
+                    {
+                        "location": 41
+                    }
+                ],
+                "a::func": [
+                    {
+                        "location": 47
+                    }
+                ]
+            },
+            "pass by universal ref": {
+                "f5": [
+                    {
+                        "location": 20
+                    }
+                ],
+                "f51": [
+                    {
+                        "location": 23
+                    }
+                ],
+                "MyVector::emplace_back": [
+                    {
+                        "location": 35
+                    }
+                ],
+                "MyVector::senseless1": [
+                    {
+                        "location": 38
+                    }
+                ],
+                "a::func": [
+                    {
+                        "location": 47
+                    }
+                ],
+                "funco2": [
+                    {
+                        "location": 57
+                    }
+                ]
+            }
+        }
+    }
+}
