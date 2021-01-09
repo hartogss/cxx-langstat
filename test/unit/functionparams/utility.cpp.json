@@ -1,0 +1,84 @@
+{
+    "msa": {
+        "function decls": {
+            "pass by value": null,
+            "pass by non-const lvalue ref": null,
+            "pass by const lvalue ref": null,
+            "pass by rvalue ref": null
+        },
+        "parm decls": {
+            "value": null,
+            "non-const lvalue ref": {
+                "t": [
+                    {
+                        "location": 29
+                    },
+                    {
+                        "location": 32
+                    }
+                ]
+            },
+            "const lvalue ref": null,
+            "rvalue ref": {
+                "t": [
+                    {
+                        "location": 35
+                    },
+                    {
+                        "location": 38
+                    }
+                ]
+            },
+            "universal ref": {
+                "t": [
+                    {
+                        "location": 19
+                    },
+                    {
+                        "location": 23
+                    }
+                ]
+            }
+        },
+        "function template decls": {
+            "pass by value": null,
+            "pass by non-const lvalue ref": {
+                "forward_cpp11l": [
+                    {
+                        "location": 28
+                    }
+                ],
+                "forward_cpp14l": [
+                    {
+                        "location": 31
+                    }
+                ]
+            },
+            "pass by const lvalue ref": null,
+            "pass by rvalue ref": {
+                "forward_cpp11r": [
+                    {
+                        "location": 34
+                    }
+                ],
+                "forward_cpp14r": [
+                    {
+                        "location": 37
+                    }
+                ]
+            },
+            "pass by universal ref": {
+                "move_cpp11": [
+                    {
+                        "location": 17
+                    }
+                ],
+                "move_cpp14": [
+                    {
+                        "location": 21
+                    }
+                ]
+            }
+        }
+    }
+}
