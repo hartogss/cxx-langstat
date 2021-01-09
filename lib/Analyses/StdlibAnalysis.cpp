@@ -155,23 +155,3 @@ void StdlibAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context){
 }
 
 //-----------------------------------------------------------------------------
-
-// std::cout << Node->getType().getTypePtr()->isDependentType() << std::endl;
-// std::cout << Node->getType().getTypePtr()->hasIntegerRepresentation() << std::endl;
-// std::cout << Node->getType().getTypePtr()->isInstantiationDependentType() << std::endl;
-// std::cout << Node->getType().getCanonicalType().getAsString() << std::endl;
-// std::cout << Node->getType().getTypePtr()->getCanonicalTypeInternal().getAsString() << std::endl; // gives the same as line above, but without qualifiers since stripped away
-
-// std::array<std::string, 2> ContainerTypes = {"vector", "array"};
-// auto isAnyStdContainer = [](auto ContainerTypes){
-//     return hasAnyName()
-// };
-
-// const char* StmtKind = m.node->getDeclKindName();
-
-// TypeMatcher stdtypes = type().bind("t");
-// auto t = Extr.extract("t", stdtypes);
-// for(auto match : t){
-//     std::cout << match.node->getAsString()
-//         << " @ " << match.location << std::endl;
-// }
