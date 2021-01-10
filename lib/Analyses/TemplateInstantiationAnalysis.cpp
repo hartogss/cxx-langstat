@@ -164,15 +164,25 @@ getTemplateArgs(const Match<VarTemplateSpecializationDecl>& Match){
 // being freed only later by the clang library.
 const TemplateArgumentList&
 getTemplateArgs(const Match<FunctionDecl>& Match){
+    // If Match.node is a non-templated method of a class template
+    if(auto m = dyn_cast<CXXMethodDecl>(Match.node)){
+        std::cout << "found method" << std::endl;
+        std::cout << m->getDescribedFunctionTemplate() << std::endl;
+        std::cout << m->isInstance() << std::endl;
+        std::cout << m->getInstantiatedFromMemberFunction() << std::endl;
+
+    }
+
+
     auto TALPtr = Match.node->getTemplateSpecializationArgs();
-    if(TALPtr!=nullptr)
-        return *TALPtr;
-    else {
+    if(!TALPtr){
         std::cerr << "Template argument list ptr is nullptr,"
-            << " function declaration at line " << Match.location
-            << " was not a template specialization" << '\n';
+        << " function declaration at line " << Match.location
+        << " was not a template specialization" << '\n';
         exit(1);
     }
+    return *TALPtr;
+
 }
 
 // Given a mapping from template argumend kind to actual arguments and a given,
@@ -247,6 +257,8 @@ void TemplateInstantiationAnalysis::gatherStatistics(Matches<T>& Insts,
     const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
     ordered_json instances;
     for(auto match : Insts){
+        std::cout << getMatchDeclName(match) << std::endl;
+
         std::multimap<std::string, std::string> TArgs;
         const TemplateArgumentList& TAList(getTemplateArgs(match));
         auto numTArgs = TAList.size();
@@ -257,6 +269,7 @@ void TemplateInstantiationAnalysis::gatherStatistics(Matches<T>& Insts,
         ordered_json instance;
         ordered_json arguments;
         instance["location"] = getInstantiationLocation(match, AreImplicit);
+        // instance["location"] = match.location;
         for(auto key : ArgKinds){
             auto range = TArgs.equal_range(key);
             std::vector<std::string> v;
