@@ -145,13 +145,25 @@ void MoveSemanticsAnalysis::associateParameters(const Matches<T>& Matches){
 void MoveSemanticsAnalysis::extract(){
     internal::VariadicDynCastAllOfMatcher<Type, PackExpansionType> packExpansionType;
 
-    auto ftmatcher = functionTemplateDecl(isExpansionInMainFile()).bind("ft");
+    auto ftmatcher = functionTemplateDecl(
+        isExpansionInMainFile(),
+        // Function template should not templatize any of the following:
+        unless(has(decl(anyOf(
+            cxxConstructorDecl(), // ctors
+            functionDecl(hasName("operator="))))))) // assigment operators
+            // dtors not necessary, those cannot be templated
+    .bind("ft");
     auto ftresult = Extractor.extract2(*Context, ftmatcher);
     auto fts = getASTNodes<FunctionTemplateDecl>(ftresult, "ft");
     associateParameters(fts);
 
     auto fmatcher = functionDecl(
         isExpansionInMainFile(),
+        unless(anyOf(
+            cxxConstructorDecl(), // Don't bind to class ctors
+            hasName("operator="), // Ignore assignment operators
+            cxxDestructorDecl())), // Actually unnecessary, as our analysis
+            //  ignores functions (which dtors are) without parameters anyway
         unless(hasParent(functionTemplateDecl()))) // Don't bind to templates
     .bind("f");
     auto fresult = Extractor.extract2(*Context, fmatcher);
@@ -161,10 +173,10 @@ void MoveSemanticsAnalysis::extract(){
 // Issues:
 // 1. universal reference cannot be part of function (non-template) decl,
 // because the type deduction will not take place at its call site. however,
-// a non-templatefunction can be variadic if it is contained e.g. in a class or
+// a non-template function can be variadic if it is contained e.g. in a class or
 // function template
-// 2. what about constructor in class templates? analyze those too? or
-// separately probably better, by looking at copy, move constructors etc.
+// 2. What about constructors? analyze those too?
+// No, separately probably better.
 
 template<typename T>
 void MoveSemanticsAnalysis::gatherData(std::string DeclKind, std::string PassKind,
