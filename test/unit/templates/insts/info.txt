@@ -1,0 +1,8 @@
+Explanation:
+
+Files:
+XInst.cpp: file containing tests when instantiating declarations of kind X (X \in class, function, variable)
+YInstX.cpp: file containing tests about declarations of kind Y instantiating declarations of kind X (X,Y \in class, function, variable)
+
+Folders:
+a folder with name X contains tests where declarations of kind X are being instantiated.

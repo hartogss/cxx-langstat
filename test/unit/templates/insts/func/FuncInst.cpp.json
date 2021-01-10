@@ -1,0 +1,122 @@
+{
+    "tia": {
+        "explicit class insts": null,
+        "implicit class insts": null,
+        "func insts": {
+            "f1": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:19:15",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "bool"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:23:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
+            ],
+            "f11": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:34:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:31:15",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "bool"
+                        ],
+                        "template": []
+                    }
+                }
+            ],
+            "f2": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:42:15",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [],
+                        "template": [
+                            "Widget1"
+                        ]
+                    }
+                }
+            ],
+            "f3": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:47:15",
+                    "arguments": {
+                        "non-type": [
+                            "nullptr"
+                        ],
+                        "type": [],
+                        "template": []
+                    }
+                }
+            ],
+            "f4": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:52:15",
+                    "arguments": {
+                        "non-type": [
+                            "'c'"
+                        ],
+                        "type": [],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:53:15",
+                    "arguments": {
+                        "non-type": [
+                            "'p'",
+                            "'p'"
+                        ],
+                        "type": [],
+                        "template": []
+                    }
+                }
+            ],
+            "f5": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:60:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int &"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:61:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "var insts": null
+    }
+}

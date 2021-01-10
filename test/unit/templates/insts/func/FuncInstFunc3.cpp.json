@@ -1,0 +1,21 @@
+{
+    "tia": {
+        "explicit class insts": null,
+        "implicit class insts": null,
+        "func insts": {
+            "f1": [
+                {
+                    "location": "<invalid loc>",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "var insts": null
+    }
+}
