@@ -1,9 +1,9 @@
 // RUN: clang++ %s -emit-ast -o %t1.ast
-// RUN: %S/../../build/cxx-langstat --analyses=tia --store %t1.ast --
+// RUN: %S/../../../../../build/cxx-langstat --analyses=tia --store %t1.ast --
 // RUN: diff %t1.ast.json %s.json
 
-// Instantiations: C::fc<int>, f<bool>, D<bool>. Do we want to count the instantiation
-// D::fd<bool> ?
+// Instantiations: C::fc<int>, f<bool>, D<bool>.
+// Question: Do we want to report the instantiation D<bool>::fd ?
 //
 
 
@@ -12,8 +12,7 @@
 class C {
 public:
     template<typename T>
-    void fc(){
-    }
+    void fc(){}
 };
 void callerc(){
     C c;
@@ -22,36 +21,33 @@ void callerc(){
 template void C::fc<bool>();
 
 
-// Non-templated methods of class templates, however, seem to be "instantiated" when
-// the class template is explicity instantiated.
-// Do we want to report this member function instantiation? it really only
-// depends on class template args, not function templates'.
+// Non-templated methods of class templates, however, are "instantiated" when
+// the class template is instantiated.
+// I've decided not to report those, because they don't have any template
+// parameters themselves, and thus really nothing interesting to report.
 template<typename T>
 class D {
-    // D(){
-
-    // }
-    void fd(){
-    }
+    void fd(){}
 };
-// template class D<bool>;
-// template void D<int>::fd();
+template class D<bool>;
+
 
 // Same as ClassInstFunc: explicit instantiation of class does not instantiate
-// member function
+// member (in this case a member function)
 template<typename T>
 class E {
+public:
     template<typename U>
-    void fe(){
-    }
+    void fe(){}
     template<typename R>
-    void fe2(T t, R r){
-
-    }
+    void fe2(T t, R r){}
 };
 template class E<bool>;
 template void E<bool>::fe<bool>(); // here is an explicit one
-template void E<int>::fe<bool>(); // another one
 template void E<int>::fe2<short>(int, short); // om het af te leren
 // Note how the method instantiation does not cause an instantiation of the
 // encompassing class.
+void callere(){
+    E<int> e;
+    e.fe2(3,3); // causes ::fe2<int> to be deduced
+}

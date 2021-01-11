@@ -1,0 +1,103 @@
+{
+    "tia": {
+        "explicit class insts": {
+            "D": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstMethod.cpp:32:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "bool"
+                        ],
+                        "template": []
+                    }
+                }
+            ],
+            "E": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstMethod.cpp:45:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "bool"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "implicit class insts": {
+            "E": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstMethod.cpp:51:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "func insts": {
+            "C::fc": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstMethod.cpp:21:18",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "bool"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstMethod.cpp:19:7",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
+            ],
+            "E<int>::fe2": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstMethod.cpp:47:23",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "short"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstMethod.cpp:52:7",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
+            ],
+            "E<bool>::fe": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstMethod.cpp:46:24",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "bool"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "var insts": null
+    }
+}

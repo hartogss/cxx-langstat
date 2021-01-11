@@ -1,5 +1,5 @@
 // RUN: clang++ %s -emit-ast -o %t1.ast
-// RUN: %S/../../build/cxx-langstat --analyses=tia --store %t1.ast --
+// RUN: %S/../../../../../build/cxx-langstat --analyses=tia --store %t1.ast --
 // RUN: diff %t1.ast.json %s.json
 
 // Instantiations: f<int>, f<bool>, E<short>, F<unsigned>, fK<unsigned>.
@@ -7,24 +7,31 @@
 // instantiations.
 
 template<typename T>
-int f();
+T f();
 
 // Class implicitly instantiations function through call
 class C {
     void fc(){
-        f<int>();
+        f<void>();
     }
 };
 
 // Class implicitly insts through call to create var member
 class D {
-    int a = f<bool>();
+    bool a = f<bool>();
 };
 
-// Explicit class instantiation does not seem to instantiate members...no f<short>
+// f<long> instantiated regardless if Dt instantiated or not, same as above
+template<typename T>
+class Dt {
+    long a = f<long>();
+};
+
+// Explicit class instantiation does not seem to instantiate members...
+// no f<short>
 template<typename T>
 class E {
-    int a = f<T>();
+    T a = f<T>();
     static int a2;
 };
 template class E<short>;
@@ -32,9 +39,6 @@ template class E<short>;
 // a static data member of a class template should be explicitly instantiable,
 // how?
 
-// Implicit class inst does however
-template<typename T>
-class F {
-    int a = f<T>();
-};
-F<unsigned> f_;
+// Implicit class inst does however, which makes sense because we really need
+// an E object here
+E<unsigned> e;

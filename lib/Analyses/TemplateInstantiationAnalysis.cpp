@@ -110,6 +110,8 @@ void TemplateInstantiationAnalysis::extract() {
         "ExplicitCTSD");
     ClassImplicitInsts = getASTNodes<ClassTemplateSpecializationDecl>(ClassResults,
         "ImplicitCTSD");
+    // only really needed to find location of where class was implicitly instantiated
+    // using variable of member variable/field
     ImplicitInsts = getASTNodes<DeclaratorDecl>(ClassResults,
         "VarsFieldThatInstantiateImplicitly");
     // printMatches("exp", ClassExplicitInsts);
@@ -151,29 +153,28 @@ void TemplateInstantiationAnalysis::extract() {
 
 // Overloaded function to get template arguments depending whether it's a class
 // function, or variable.
-const TemplateArgumentList&
+const TemplateArgumentList*
 getTemplateArgs(const Match<ClassTemplateSpecializationDecl>& Match){
-    return Match.node->getTemplateInstantiationArgs();
+    return &(Match.node->getTemplateInstantiationArgs());
 }
-const TemplateArgumentList&
+const TemplateArgumentList*
 getTemplateArgs(const Match<VarTemplateSpecializationDecl>& Match){
-    return Match.node->getTemplateInstantiationArgs();
+    return &(Match.node->getTemplateInstantiationArgs());
 }
 // Is this memory-safe?
 // Probably yes, assuming the template arguments being stored on the heap,
 // being freed only later by the clang library.
-const TemplateArgumentList&
+const TemplateArgumentList*
 getTemplateArgs(const Match<FunctionDecl>& Match){
     // If Match.node is a non-templated method of a class template
+    // we don't care about its instantiation. Then only the class instantiation
+    // encompassing it is really interesting, which is output at a different
+    // points in code (and time).
     if(auto m = dyn_cast<CXXMethodDecl>(Match.node)){
-        std::cout << "found method" << std::endl;
-        std::cout << m->getDescribedFunctionTemplate() << std::endl;
-        std::cout << m->isInstance() << std::endl;
-        std::cout << m->getInstantiatedFromMemberFunction() << std::endl;
-
+        // std::cout << "found method" << std::endl;
+        if(m->getInstantiatedFromMemberFunction())
+            return nullptr;
     }
-
-
     auto TALPtr = Match.node->getTemplateSpecializationArgs();
     if(!TALPtr){
         std::cerr << "Template argument list ptr is nullptr,"
@@ -181,8 +182,7 @@ getTemplateArgs(const Match<FunctionDecl>& Match){
         << " was not a template specialization" << '\n';
         exit(1);
     }
-    return *TALPtr;
-
+    return TALPtr;
 }
 
 // Given a mapping from template argumend kind to actual arguments and a given,
@@ -257,29 +257,34 @@ void TemplateInstantiationAnalysis::gatherStatistics(Matches<T>& Insts,
     const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
     ordered_json instances;
     for(auto match : Insts){
-        std::cout << getMatchDeclName(match) << std::endl;
-
+        // std::cout << getMatchDeclName(match) << std::endl;
         std::multimap<std::string, std::string> TArgs;
-        const TemplateArgumentList& TAList(getTemplateArgs(match));
-        auto numTArgs = TAList.size();
-        for(unsigned idx=0; idx<numTArgs; idx++){
-            auto TArg = TAList.get(idx);
-            updateArgsAndKinds(TArg, TArgs);
+        const TemplateArgumentList* TALPtr(getTemplateArgs(match));
+        // Only report instantiation if it had any arguments it was instantiated
+        // with.
+        if(TALPtr){
+            auto numTArgs = TALPtr->size();
+            for(unsigned idx=0; idx<numTArgs; idx++){
+                auto TArg = TALPtr->get(idx);
+                updateArgsAndKinds(TArg, TArgs);
+            }
+            ordered_json instance;
+            ordered_json arguments;
+            instance["location"] = getInstantiationLocation(match, AreImplicit);
+            // instance["location"] = match.location;
+            for(auto key : ArgKinds){
+                auto range = TArgs.equal_range(key);
+                std::vector<std::string> v;
+                for (auto it = range.first; it != range.second; it++)
+                    v.emplace_back(it->second);
+                arguments[key] = v;
+            }
+            instance["arguments"] = arguments;
+            // Use emplace instead of '=' because can be mult. insts for a template
+            instances[getMatchDeclName(match)].emplace_back(instance);
+        } else {
+            std::cout << getMatchDeclName(match) << " had no inst args\n";
         }
-        ordered_json instance;
-        ordered_json arguments;
-        instance["location"] = getInstantiationLocation(match, AreImplicit);
-        // instance["location"] = match.location;
-        for(auto key : ArgKinds){
-            auto range = TArgs.equal_range(key);
-            std::vector<std::string> v;
-            for (auto it = range.first; it != range.second; it++)
-                v.emplace_back(it->second);
-            arguments[key] = v;
-        }
-        instance["arguments"] = arguments;
-        // Use emplace instead of '=' because can be mult. insts for a template
-        instances[getMatchDeclName(match)].emplace_back(instance);
     }
     Result[InstKind] = instances;
 }

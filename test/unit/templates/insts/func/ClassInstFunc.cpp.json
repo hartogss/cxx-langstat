@@ -1,0 +1,77 @@
+{
+    "tia": {
+        "explicit class insts": {
+            "E": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstFunc.cpp:37:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "short"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "implicit class insts": {
+            "E": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstFunc.cpp:44:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "unsigned int"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "func insts": {
+            "f": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstFunc.cpp:15:9",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "void"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstFunc.cpp:21:14",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "bool"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassInstFunc.cpp:34:11",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "unsigned int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "<invalid loc>",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "long"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "var insts": null
+    }
+}
