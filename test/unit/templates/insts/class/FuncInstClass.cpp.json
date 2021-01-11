@@ -2,19 +2,19 @@
     "tia": {
         "explicit class insts": null,
         "implicit class insts": {
-            "Widget1": [
+            "Widget": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass2.cpp:22:5",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass.cpp:15:9",
                     "arguments": {
                         "non-type": [],
                         "type": [
-                            "char"
+                            "bool"
                         ],
                         "template": []
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass2.cpp:23:5",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass.cpp:18:5",
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -24,7 +24,17 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass2.cpp:23:5",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass.cpp:24:9",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "bool"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass.cpp:28:5",
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -32,15 +42,13 @@
                         ],
                         "template": []
                     }
-                }
-            ],
-            "Widget2": [
+                },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass2.cpp:22:5",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass.cpp:38:5",
                     "arguments": {
                         "non-type": [],
                         "type": [
-                            "char"
+                            "short"
                         ],
                         "template": []
                     }
@@ -48,25 +56,15 @@
             ]
         },
         "func insts": {
-            "f3": [
+            "f7": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass2.cpp:26:5",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass.cpp:40:15",
                     "arguments": {
                         "non-type": [],
-                        "type": [],
-                        "template": [
-                            "Widget1"
-                        ]
-                    }
-                },
-                {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass2.cpp:28:5",
-                    "arguments": {
-                        "non-type": [],
-                        "type": [],
-                        "template": [
-                            "Widget2"
-                        ]
+                        "type": [
+                            "short"
+                        ],
+                        "template": []
                     }
                 }
             ]

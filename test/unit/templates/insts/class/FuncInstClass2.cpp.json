@@ -2,9 +2,9 @@
     "tia": {
         "explicit class insts": null,
         "implicit class insts": {
-            "Widget1": [
+            "Widget": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass.cpp:18:5",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass2.cpp:16:5",
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -14,31 +14,21 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass.cpp:18:5",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass2.cpp:27:5",
                     "arguments": {
                         "non-type": [],
                         "type": [
-                            "char"
+                            "short"
                         ],
                         "template": []
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass.cpp:30:5",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass2.cpp:36:5",
                     "arguments": {
                         "non-type": [],
                         "type": [
-                            "float"
-                        ],
-                        "template": []
-                    }
-                },
-                {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass.cpp:30:5",
-                    "arguments": {
-                        "non-type": [],
-                        "type": [
-                            "float"
+                            "short"
                         ],
                         "template": []
                     }
@@ -46,23 +36,13 @@
             ]
         },
         "func insts": {
-            "f1": [
+            "f": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass.cpp:20:15",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass2.cpp:19:5",
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int"
-                        ],
-                        "template": []
-                    }
-                },
-                {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass.cpp:24:5",
-                    "arguments": {
-                        "non-type": [],
-                        "type": [
-                            "char"
                         ],
                         "template": []
                     }
@@ -70,21 +50,23 @@
             ],
             "f2": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass.cpp:32:15",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass2.cpp:30:5",
                     "arguments": {
                         "non-type": [],
                         "type": [
-                            "int"
+                            "short"
                         ],
                         "template": []
                     }
-                },
+                }
+            ],
+            "f3": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/FuncInstClass.cpp:33:15",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass2.cpp:38:15",
                     "arguments": {
                         "non-type": [],
                         "type": [
-                            "char"
+                            "short"
                         ],
                         "template": []
                     }

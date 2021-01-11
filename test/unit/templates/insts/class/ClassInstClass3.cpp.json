@@ -1,0 +1,43 @@
+{
+    "tia": {
+        "explicit class insts": null,
+        "implicit class insts": {
+            "Sub": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInstClass3.cpp:14:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
+            ],
+            "Super": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInstClass3.cpp:17:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInstClass3.cpp:18:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "func insts": null,
+        "var insts": null
+    }
+}

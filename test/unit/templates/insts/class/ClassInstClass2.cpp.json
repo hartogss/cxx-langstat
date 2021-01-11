@@ -1,9 +1,10 @@
 {
     "tia": {
-        "explicit class insts": {
-            "Super": [
+        "explicit class insts": null,
+        "implicit class insts": {
+            "Sub": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass.cpp:19:1",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInstClass2.cpp:14:5",
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -13,31 +14,19 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass.cpp:20:1",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInstClass2.cpp:14:5",
                     "arguments": {
                         "non-type": [],
                         "type": [
-                            "float"
+                            "int"
                         ],
                         "template": []
                     }
                 }
-            ]
-        },
-        "implicit class insts": {
-            "Sub": [
+            ],
+            "Super": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass.cpp:17:5",
-                    "arguments": {
-                        "non-type": [],
-                        "type": [
-                            "int"
-                        ],
-                        "template": []
-                    }
-                },
-                {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/ClassInstClass.cpp:17:5",
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInstClass2.cpp:16:1",
                     "arguments": {
                         "non-type": [],
                         "type": [
