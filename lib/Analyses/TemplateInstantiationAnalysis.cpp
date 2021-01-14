@@ -62,7 +62,7 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
                 // unless(hasParent(varTemplateDecl())), // this seems superfluous
                 // If variable is inside of a template, then it has to be the
                 // case that the template is being instantiated
-                anyOf(unless(hasAncestor(functionTemplateDecl())), isInstantiated()),
+                // anyOf(unless(hasAncestor(functionTemplateDecl())), isInstantiated()),
                 // Want variable that has type of some class instantiation,
                 // class name is restricted to come from 'Names'
                 hasType(
@@ -79,7 +79,7 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
                 isExpansionInMainFile(),
                 // unless(hasParent(varTemplateDecl())), // this seems superfluous
                 // Count fielddecls only if inside template instantiation
-                anyOf(unless(hasAncestor(classTemplateDecl())), isInstantiated()),
+                // anyOf(unless(hasAncestor(classTemplateDecl())), isInstantiated()),
                 hasType(
                     classTemplateSpecializationDecl(
                         Names,
