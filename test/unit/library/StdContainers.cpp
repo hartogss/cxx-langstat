@@ -1,3 +1,11 @@
+// RUN: clang++ %s -emit-ast -o %t1.ast
+// RUN: %S/../../../build/cxx-langstat --analyses=sla2 --store %t1.ast --
+// RUN: diff %t1.ast.json %s.json
+
+// Some old test I still wanted to run to check for library container usage.
+//
+//
+
 #include <vector>
 #include <array>
 #include <map>
@@ -13,13 +21,17 @@ namespace n {
     struct derivedVector : vector {
 
     };
+    template<typename T, T x>
+    class test {
+        T n=x;
+    };
 } // namespace n
 // Test with std::vector parameter variable declaration
 int parmvarfunc(std::vector<int> vec){
     return 0;
 }
-// Returning directly does not match
-// Might change, because returning declared variable would match
+// Returning literals does not match
+// Feature one might add in the future
 std::vector<int> func2(){
     return std::vector<int>{1,2};
 }
@@ -37,17 +49,22 @@ void simplefunc(){
     using namespace std;
     array<float, 3> badarr;
     array<std::vector<int>, 3> badarr2;
-    vector<bool> badvec;
+    vector<bool> badvec; // Reported in a special way because of bool wrappers
 
-    // Anti-examples
+    // Anti-examples, because not templates
     n::vector pseudovec;
     n::derivedVector pseudovec2;
     int x;
+
+    n::test<int, 3> t1;
+    // n::test t2 = 4; //CTAD?
 }
-// Template variable, should match.
+template class n::test<char, 'a'>;
+
+// Template variable, doesn't match
 template<typename T>
 std::array<T, 2> Tarr;
-// Template function, local variable should match.
+// Template function, local variable shouldn't match.
 template<typename T>
 int func3(){
     std::vector<T> Tvec;
@@ -80,10 +97,9 @@ int main(int argc, char** argv){
 // - Declarations vs definitions, how do we count them? We count only decls,
 //   as those are given by decl().
 // - What about pointers to standard library types?
+//   Not counted for now.
 // - Qualifiers? access specifiers? static? extern? Don't care, all stripped
 //   away.
-// - Explicit use of 'struct' keyword, namespaces? ignored by converting
-//   ElaboratedType to TemplateSpecializationType first if necessary.
 // - What about templates? std::vector<T>? Ideally, returns that there is a
 //   vector and reports that one of them had template type. Still problem with
 //   returning base type.
@@ -92,6 +108,9 @@ int main(int argc, char** argv){
 //   because it is definition, not declaration?
 // - What about returning standard library type literals (e.g. return
 //   std:vector<int>{1,2}) ?
+//   Not done for now.
 
 // Fundamental question: do we match decls with certain types or do we match
 // types directly?
+// We match declarations that have certain standard library types to be able
+// to count those declarations s.t. we know how those library types are used.

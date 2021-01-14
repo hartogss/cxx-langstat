@@ -2,7 +2,8 @@ Explanation:
 
 Files:
 XInst.cpp: file containing basic tests when instantiating declarations of kind X (X \in class, function, variable)
-YInstX.cpp: file containing tests about declarations of kind Y causing instantiation of kind X (X,Y \in class, function, variable)
+YInstX.cpp: file containing tests about declarations of kind Y causing instantiation of kind X (X,Y \in class, function, variable), e.g. through function call or setting variable to be class type that comes from a class template
+YMemberX.cpp: file containing test about declarations of kind Y containing X kind of member template.
 
 Folders:
 a folder with name X contains tests where declarations of kind X are being instantiated.

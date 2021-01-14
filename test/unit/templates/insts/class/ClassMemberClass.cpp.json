@@ -1,0 +1,34 @@
+{
+    "tia": {
+        "explicit class insts": {
+            "C::D": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassMemberClass.cpp:18:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "implicit class insts": {
+            "C::D": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassMemberClass.cpp:15:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "float"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "func insts": null,
+        "var insts": null
+    }
+}
