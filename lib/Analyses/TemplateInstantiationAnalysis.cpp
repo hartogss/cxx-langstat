@@ -52,8 +52,7 @@ internal::VariadicDynCastAllOfMatcher<Decl, VarTemplateDecl> varTemplateDecl;
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
     internal::Matcher<clang::NamedDecl> Names) :
     ClassInstMatcher(
-        decl(
-            anyOf(
+        decl(anyOf(
             // Implicit uses:
             // Variable declarations (which include function parameter variables
             // & static fields)
@@ -86,6 +85,14 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
                         isTemplateInstantiation())
                     .bind("ImplicitCTSD")))
             .bind("VarsFieldThatInstantiateImplicitly"),
+
+            // Test code to see if able to find "subinstantiations"
+            // classTemplateSpecializationDecl(
+            //     Names,
+            //     isTemplateInstantiation(),
+            //     unless(has(cxxRecordDecl())))
+            // .bind("ImplicitCTSD"),
+
             // Explicit instantiations that are not explicit specializations,
             // which is ensured by isTemplateInstantiation() according to
             // matcher reference
@@ -114,9 +121,6 @@ void TemplateInstantiationAnalysis::extract() {
     // using variable of member variable/field
     ImplicitInsts = getASTNodes<DeclaratorDecl>(ClassResults,
         "VarsFieldThatInstantiateImplicitly");
-    // printMatches("exp", ClassExplicitInsts);
-    // printMatches("imp", ClassImplicitInsts);
-    // printMatches("decls", ImplicitInsts);
 
     // In contrast, this result gives a pointer to a functionDecl, which has
     // too has a function we can call to get the template arguments.
@@ -145,9 +149,19 @@ void TemplateInstantiationAnalysis::extract() {
         auto VarResults = Extractor.extract2(*Context, VarInstMatcher);
         VarInsts = getASTNodes<VarTemplateSpecializationDecl>(VarResults,
             "VarInsts");
+        // std::cout << "unsorted\n";
+        // for(auto match : VarInsts)
+        //     std::cout << getMatchDeclName(match) << ", " << match.location << ", "<< match.node << std::endl;
+        // std::sort(VarInsts.begin(), VarInsts.end());
+        // std::cout << "sorted\n";
+        // for(auto match : VarInsts)
+        //     std::cout << getMatchDeclName(match) << ", " << match.location << ", "<< match.node << std::endl;
+        // std::cout << "no dups\n";
+        // removeDuplicateMatches(VarInsts);
+        // for(auto match : VarInsts)
+        //     std::cout << getMatchDeclName(match) << ", " << match.location << ", "<< match.node << std::endl;
         if(VarInsts.size())
             removeDuplicateMatches(VarInsts);
-        // printMatches("var", VarInsts);
     }
 }
 
@@ -236,11 +250,17 @@ std::string TemplateInstantiationAnalysis::getInstantiationLocation(
     static int i = 0;
     if(isImplicit){
         i++;
+        // auto VarOrFieldDecl = ImplicitInsts[i-1];
+        // return VarOrFieldDecl.location;
         return (ImplicitInsts[i-1].node->getInnerLocStart()).
             printToString(Context->getSourceManager());
+            // can't I just do ImplicitInsts[i-1].location to get loc of var/field?
     } else{
+        // return Match.location;
         return Match.node->getTemplateKeywordLoc().
             printToString(Context->getSourceManager());
+            // when giving location of explicit inst, can just give match.location,
+            // since CTSD holds right location already since not subtree of CTD
     }
 }
 template<typename T>
@@ -257,7 +277,7 @@ void TemplateInstantiationAnalysis::gatherStatistics(Matches<T>& Insts,
     const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
     ordered_json instances;
     for(auto match : Insts){
-        // std::cout << getMatchDeclName(match) << std::endl;
+        // std::cout << getMatchDeclName(match) << ":" << match.node->getSpecializationKind() << std::endl;
         std::multimap<std::string, std::string> TArgs;
         const TemplateArgumentList* TALPtr(getTemplateArgs(match));
         // Only report instantiation if it had any arguments it was instantiated

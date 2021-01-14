@@ -19,8 +19,9 @@ struct Match {
         return (location == m.location && node == m.node && ctxt == m.ctxt);
     }
     // https://stackoverflow.com/questions/2758080/how-to-sort-an-stl-vector
-    bool operator<(const Match<T>& m) const{
-        return (node < m.node);
+    bool operator<(const Match<T>& other) const{
+        return (location < other.location ||
+            (location == other.location && node < other.node));
     }
 };
 
