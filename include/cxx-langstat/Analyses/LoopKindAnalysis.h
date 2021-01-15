@@ -11,8 +11,9 @@ public:
     ~LoopKindAnalysis(){
         std::cout << "LKA dtor\n";
     }
-    void extract(clang::ASTContext& Context);
-    void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
+private:
+    void analyzeFeatures() override;
+    void processJSON() override;
 };
 
 #endif /* LOOPKINDANALYSIS_H */

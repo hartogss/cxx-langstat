@@ -13,7 +13,7 @@ using ordered_json = nlohmann::ordered_json;
 // functions returning the value in favor of variable templates, which were
 // introduced in C++14?
 
-void VariableTemplateAnalysis::extract(){
+void VariableTemplateAnalysis::extractFeatures(){
     // First pre-C++14 idiom to get variable template functionality:
     // Class templates with static data.
     // Seems like static members of classes in AST are vars, not fields.
@@ -94,12 +94,13 @@ void VariableTemplateAnalysis::gatherStatistics(){
     Result["constexpr function templates"] = CTFs;
     Result["variable templates"] = VTs;
 }
-void VariableTemplateAnalysis::run(llvm::StringRef InFile,
-    clang::ASTContext& Context){
-        std::cout << "\033[32mRunning variable template analysis:\033[0m\n";
-        this->Context = &Context;
-        extract();
-        gatherStatistics();
+void VariableTemplateAnalysis::analyzeFeatures(){
+    extractFeatures();
+    gatherStatistics();
+}
+
+void VariableTemplateAnalysis::processJSON(){
+    
 }
 
 //-----------------------------------------------------------------------------

@@ -13,7 +13,8 @@ using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
 
-void CyclomaticComplexityAnalysis::extract(){
+void CyclomaticComplexityAnalysis::analyzeFeatures(){
+    // Extract function features
     auto id = "fd";
     auto fDecl = functionDecl(
         isExpansionInMainFile(),
@@ -22,6 +23,8 @@ void CyclomaticComplexityAnalysis::extract(){
     .bind(id);
     auto matches = Extractor.extract(*Context, id, fDecl);
 
+    // Directly create JSON objects that holds for each function the cyclomatic
+    // complexity.
     ordered_json fdecls;
     for(auto match : matches){
         // http://clang.llvm.org/doxygen/classclang_1_1CFG.html#details
@@ -41,16 +44,21 @@ void CyclomaticComplexityAnalysis::extract(){
         for(auto block = cfg->begin(); block != cfg->end(); block++)
             numEdges += (*block)->succ_size();
         unsigned CYC = numEdges - numNodes + 2; // 2 since #connected components P=1
+        // add to JSON
         fdecls[getMatchDeclName(match)] = CYC;
     }
     Result["fdecls"] = fdecls;
 }
 
-void CyclomaticComplexityAnalysis::run(llvm::StringRef InFile,
-    clang::ASTContext& Context) {
-        std::cout << "\033[32mMeasuring cyclomatic complexity:\033[0m" << std::endl;
-        this->Context = &Context;
-        extract();
+// void CyclomaticComplexityAnalysis::run(llvm::StringRef InFile,
+//     clang::ASTContext& Context) {
+//         std::cout << "\033[32mMeasuring cyclomatic complexity:\033[0m" << std::endl;
+//         setContext(Context);
+//         analyzeFeatures();
+// }
+
+void CyclomaticComplexityAnalysis::processJSON(){
+
 }
 
 //-----------------------------------------------------------------------------

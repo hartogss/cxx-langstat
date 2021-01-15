@@ -11,18 +11,19 @@
 class LoopDepthAnalysis : public Analysis {
 public:
     LoopDepthAnalysis() : Analysis(){
-                std::cout<<"LDA ctor\n";
+        MaxDepth=4;
+        std::cout<<"LDA ctor\n";
     }
     ~LoopDepthAnalysis(){
         std::cout << "LDA dtor\n";
     }
-    void extract();
-    void analyzeDepth(Matches<clang::Stmt> matches, std::vector<Matches<clang::Stmt>> Data);
-    // combine
-    void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 private:
     int MaxDepth;
-
+    Matches<clang::Stmt> TopLevelLoops;
+    std::vector<Matches<clang::Stmt>> LoopsOfDepth;
+    void extractFeatures();
+    void analyzeFeatures() override;
+    void processJSON() override;
 };
 
 //-----------------------------------------------------------------------------

@@ -142,7 +142,7 @@ void MoveSemanticsAnalysis::associateParameters(const Matches<T>& Matches){
     }
 }
 
-void MoveSemanticsAnalysis::extract(){
+void MoveSemanticsAnalysis::extractFeatures(){
     internal::VariadicDynCastAllOfMatcher<Type, PackExpansionType> packExpansionType;
 
     auto ftmatcher = functionTemplateDecl(
@@ -190,36 +190,37 @@ void MoveSemanticsAnalysis::gatherData(std::string DeclKind, std::string PassKin
         Result[DeclKind][PassKind] = Decls;
 }
 
-void MoveSemanticsAnalysis::run(llvm::StringRef InFile,
-    clang::ASTContext& Context) {
-        std::cout << "\033[32mRunning MSA:\033[0m" << std::endl;
-        this->Context = &Context;
-        extract();
+void MoveSemanticsAnalysis::analyzeFeatures() {
+    extractFeatures();
 
-        gatherData("function decls", "pass by value", FuncsWithValueParm);
-        gatherData("function decls", "pass by non-const lvalue ref",
-            FuncsWithNonConstLValueRefParm);
-        gatherData("function decls", "pass by const lvalue ref",
-            FuncsWithConstLValueRefParm);
-        gatherData("function decls", "pass by rvalue ref",
-            FuncsWithRValueRefParm);
+    gatherData("function decls", "pass by value", FuncsWithValueParm);
+    gatherData("function decls", "pass by non-const lvalue ref",
+        FuncsWithNonConstLValueRefParm);
+    gatherData("function decls", "pass by const lvalue ref",
+        FuncsWithConstLValueRefParm);
+    gatherData("function decls", "pass by rvalue ref",
+        FuncsWithRValueRefParm);
 
-        gatherData("parm decls", "value", ValueParms);
-        gatherData("parm decls", "non-const lvalue ref", NonConstLValueRefParms);
-        gatherData("parm decls", "const lvalue ref", ConstLValueRefParms);
-        gatherData("parm decls", "rvalue ref", RValueRefParms);
-        gatherData("parm decls", "universal ref", UniversalRefParms);
+    gatherData("parm decls", "value", ValueParms);
+    gatherData("parm decls", "non-const lvalue ref", NonConstLValueRefParms);
+    gatherData("parm decls", "const lvalue ref", ConstLValueRefParms);
+    gatherData("parm decls", "rvalue ref", RValueRefParms);
+    gatherData("parm decls", "universal ref", UniversalRefParms);
 
-        gatherData("function template decls", "pass by value",
-            FuncTemplatesWithValueParm);
-        gatherData("function template decls", "pass by non-const lvalue ref",
-            FuncTemplatesWithNonConstLValueRefParm);
-        gatherData("function template decls", "pass by const lvalue ref",
-            FuncTemplatesWithConstLValueRefParm);
-        gatherData("function template decls", "pass by rvalue ref",
-            FuncTemplatesWithRValueRefParm);
-        gatherData("function template decls", "pass by universal ref",
-            FuncTemplatesWithUniversalRefParm);
+    gatherData("function template decls", "pass by value",
+        FuncTemplatesWithValueParm);
+    gatherData("function template decls", "pass by non-const lvalue ref",
+        FuncTemplatesWithNonConstLValueRefParm);
+    gatherData("function template decls", "pass by const lvalue ref",
+        FuncTemplatesWithConstLValueRefParm);
+    gatherData("function template decls", "pass by rvalue ref",
+        FuncTemplatesWithRValueRefParm);
+    gatherData("function template decls", "pass by universal ref",
+        FuncTemplatesWithUniversalRefParm);
+}
+
+void MoveSemanticsAnalysis::processJSON(){
+
 }
 
 //-----------------------------------------------------------------------------

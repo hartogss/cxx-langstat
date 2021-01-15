@@ -13,10 +13,12 @@ public:
     ~VariableTemplateAnalysis(){
         std::cout << "VTA dtor\n";
     }
-    void extract();
-    void gatherStatistics();
-    void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
+
 private:
+    void extractFeatures();
+    void gatherStatistics();
+    void analyzeFeatures() override;
+    void processJSON() override;
     Matches<clang::Decl> ClassWithStaticMemberDecls;
     Matches<clang::Decl> ConstexprFunctionDecls;
     Matches<clang::Decl> VariableTemplateDecls;

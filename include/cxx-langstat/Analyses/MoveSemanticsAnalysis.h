@@ -13,9 +13,10 @@ public:
     ~MoveSemanticsAnalysis(){
         std::cout << "MSA dtor\n";
     }
-    void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 private:
-    void extract();
+    void extractFeatures();
+    void analyzeFeatures() override;
+    void processJSON() override;
     template<typename T>
     void gatherData(std::string DeclKind, std::string PassKind,
         const Matches<T>& Matches);

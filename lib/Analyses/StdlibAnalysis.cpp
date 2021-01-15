@@ -69,7 +69,7 @@ std::string getInnerType(const DeclaratorDecl* Node){
 // passed around? What sizes do they occur (#elements, constexpr)?
 // Usage in templates and TMP?
 
-void StdlibAnalysis::extract() {
+void StdlibAnalysis::extractFeatures() {
     // All variable declarations
     DeclarationMatcher Variable = varDecl(
         isExpansionInMainFile(),
@@ -141,17 +141,15 @@ void printStats(std::string text, Matches<Decl> Matches){
         std::cout << std::endl;
     }
 }
-void StdlibAnalysis::analyze(){
+void StdlibAnalysis::analyzeFeatures(){
+    extractFeatures();
     printStats<VarDecl>("Variable decls of standard library type:",
         StdContainerVarDecls);
     printStats<FieldDecl>("Field decls of standard library type:",
         StdContainerFieldDecls);
 }
-void StdlibAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context){
-    std::cout << "\033[32mRunning standard library analysis:\033[0m" << std::endl;
-    this->Context = &Context;
-    extract();
-    analyze();
+void StdlibAnalysis::processJSON(){
+    
 }
 
 //-----------------------------------------------------------------------------

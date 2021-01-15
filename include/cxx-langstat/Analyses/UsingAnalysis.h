@@ -14,10 +14,11 @@ public:
     ~UsingAnalysis(){
         std::cout << "UA dtor\n";
     }
-    void extract();
-    void gatherStatistics();
-    void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 private:
+    void extractFeatures();
+    void gatherStatistics();
+    void analyzeFeatures() override;
+    void processJSON() override;
     Matches<clang::Decl> TypedefDecls;
     Matches<clang::Decl> TypeAliasDecls;
     Matches<clang::Decl> TypeAliasTemplateDecls;

@@ -21,7 +21,7 @@ using ordered_json = nlohmann::ordered_json;
 // - Apply TPA to template template parameters.
 
 
-void TemplateParameterAnalysis::extract(){
+void TemplateParameterAnalysis::extractFeatures(){
 
     // Should be defined already according to matcher reference, but doesn't
     // compile nor work in clang-query. Should file bug report soon.
@@ -132,12 +132,12 @@ void TemplateParameterAnalysis::gatherStatistics(){
     Result["alias templates"] = ATs;
 }
 
-void TemplateParameterAnalysis::run(llvm::StringRef InFile,
-    clang::ASTContext& Context){
-        this->Context = &Context;
-        std::cout << "\033[32mRunning template parameter analysis:\033[0m\n";
-        extract();
+void TemplateParameterAnalysis::analyzeFeatures(){
+        extractFeatures();
         gatherStatistics();
+}
+void TemplateParameterAnalysis::processJSON(){
+
 }
 
 //-----------------------------------------------------------------------------

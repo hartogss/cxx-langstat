@@ -6,19 +6,18 @@ using namespace clang::ast_matchers;
 
 using ordered_json = nlohmann::ordered_json;
 
-
-void LoopKindAnalysis::extract(clang::ASTContext& Context){
+void LoopKindAnalysis::analyzeFeatures(){
     // Analysis of prevalence of different loop statement, i.e. comparing for, while etc.
-    auto ForMatches = Extractor.extract(Context, "for",
+    auto ForMatches = Extractor.extract(*Context, "for",
     forStmt(isExpansionInMainFile())
     .bind("for"));
-    auto WhileMatches = Extractor.extract(Context, "while",
+    auto WhileMatches = Extractor.extract(*Context, "while",
     whileStmt(isExpansionInMainFile())
     .bind("while"));
-    auto DoWhileMatches = Extractor.extract(Context, "do-while",
+    auto DoWhileMatches = Extractor.extract(*Context, "do-while",
     doStmt(isExpansionInMainFile())
     .bind("do-while"));
-    auto RangeBasedForMatches = Extractor.extract(Context, "range-for",
+    auto RangeBasedForMatches = Extractor.extract(*Context, "range-for",
     cxxForRangeStmt(isExpansionInMainFile())
     .bind("range-for"));
 
@@ -34,8 +33,5 @@ void LoopKindAnalysis::extract(clang::ASTContext& Context){
     Result = loops;
 }
 
-void LoopKindAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context){
-    std::cout << "\033[32mCounting the different kinds of loops:\033[0m"
-    << std::endl;
-    extract(Context);
+void LoopKindAnalysis::processJSON(){
 }

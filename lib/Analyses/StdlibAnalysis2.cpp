@@ -17,12 +17,10 @@ using namespace clang::ast_matchers;
 // passed around? What sizes do they occur (#elements, constexpr)?
 // Usage in templates and TMP?
 
-
-void StdlibAnalysis2::run(llvm::StringRef InFile, clang::ASTContext& Context){
-    std::cout << "\033[32mRunning standard library analysis:\033[0m" << std::endl;
-    this->Context = &Context;
-    auto isAnyStdContainer = hasAnyName( // Copied from UseAutoCheck.cpp
-        // Standard library containers
+// Construct a SLA by constructing a more constrained TIA.
+StdlibAnalysis2::StdlibAnalysis2() : TemplateInstantiationAnalysis(true,
+    hasAnyName(
+        // Standard library containers, Copied from UseAutoCheck.cpp
         "array", "vector",
         "forward_list", "list",
         "map", "multimap",
@@ -35,12 +33,9 @@ void StdlibAnalysis2::run(llvm::StringRef InFile, clang::ASTContext& Context){
         "pair", "tuple",
         // Dynamic memory
         "unique_ptr", "shared_ptr", "weak_ptr"
-        );
-    TemplateInstantiationAnalysis Helper(isAnyStdContainer);
-    Helper.analyzeFuncInsts=false;
-    Helper.analyzeVarInsts=false;
-    Helper.run(InFile, Context);
-    Result = Helper.getResult();
+        )
+){
+    std::cout << "SLA2 ctor\n";
 }
 
 //-----------------------------------------------------------------------------

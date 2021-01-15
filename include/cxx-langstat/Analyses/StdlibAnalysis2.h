@@ -2,18 +2,17 @@
 #define STDLIBANALYSIS2_H
 
 #include "cxx-langstat/Analysis.h"
+#include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 
 //-----------------------------------------------------------------------------
 
-class StdlibAnalysis2 : public Analysis {
+// A standard library analysis is a template instantiation analysis.
+class StdlibAnalysis2 : public TemplateInstantiationAnalysis {
 public:
-    StdlibAnalysis2(){
-        std::cout << "SLA2 ctor\n";
-    }
+    StdlibAnalysis2();
     ~StdlibAnalysis2(){
         std::cout << "SLA2 dtor\n";
     }
-    void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 };
 
 //-----------------------------------------------------------------------------

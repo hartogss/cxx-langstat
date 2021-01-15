@@ -16,7 +16,7 @@ using ordered_json = nlohmann::ordered_json;
 // Could also be because "typedef templates" require typename or ::type to be
 // used.
 
-void UsingAnalysis::extract() {
+void UsingAnalysis::extractFeatures() {
     // Count all typedefs that are explicitly written by programmer (high level)
     // Concretely, that means:
     // - in main file
@@ -123,11 +123,12 @@ void UsingAnalysis::gatherStatistics(){
     Result["typedef templates"] = TypedefTemplates;
     Result["alias templates"] = AliasTemplates;
 }
-void UsingAnalysis::run(llvm::StringRef InFile, ASTContext& Context){
-    std::cout << "\033[32mRunning UsingAnalysis:\033[0m" << std::endl;
-    this->Context = &Context;
-    extract();
+void UsingAnalysis::analyzeFeatures(){
+    extractFeatures();
     gatherStatistics();
+}
+void UsingAnalysis::processJSON(){
+    
 }
 
 //-----------------------------------------------------------------------------

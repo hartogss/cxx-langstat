@@ -13,10 +13,11 @@ public:
     ~TemplateParameterAnalysis(){
         std::cout << "TPA dtor\n";
     }
-    void extract();
-    void gatherStatistics();
-    void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 private:
+    void extractFeatures();
+    void gatherStatistics();
+    void analyzeFeatures() override;
+    void processJSON() override;
     Matches<clang::Decl> ClassTemplates;
     Matches<clang::Decl> ClassTemplateNonTypeParameters;
     Matches<clang::Decl> ClassTemplateTypeParameters;

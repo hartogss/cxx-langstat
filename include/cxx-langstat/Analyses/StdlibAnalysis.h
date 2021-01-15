@@ -13,10 +13,10 @@ public:
     ~StdlibAnalysis(){
         std::cout << "SLA dtor\n";
     }
-    void extract();
-    void analyze();
-    void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
 private:
+    void extractFeatures();
+    void analyzeFeatures() override;
+    void processJSON() override;
     Matches<clang::Decl> VarDecls;
     Matches<clang::Decl> StdContainerVarDecls;
     Matches<clang::Decl> StdContainerFieldDecls;

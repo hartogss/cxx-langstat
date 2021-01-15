@@ -9,17 +9,22 @@
 #include "BaseExtractor.h"
 
 //-----------------------------------------------------------------------------
-// Abstract Analysis class. Specific analyses should subclass this & implement its methods.
+// Abstract Analysis class. Specific analyses should subclass this &
+// implement its methods.
 
 class Analysis {
 public:
-    Analysis(){
-    }
-    // should be made virtual in case concrete analyses need special destructors
-    virtual ~Analysis()=default;
+    // ctor
+    Analysis(){}
+    // dtor, virtual to ensure derived concrete analyses' dtors is called
+    virtual ~Analysis() = default;
     // Run analysis
-    virtual void run(llvm::StringRef InFile, clang::ASTContext& Context)=0;
-    // make private and use getters and setters
+    void run(llvm::StringRef InFile, clang::ASTContext& Context){
+        setContext(Context);
+        analyzeFeatures();
+        // processJSON
+    }
+    //
     const nlohmann::ordered_json& getResult(){
         return Result;
     }
@@ -28,6 +33,14 @@ protected:
     BaseExtractor Extractor;
     clang::ASTContext* Context;
     nlohmann::ordered_json Result;
+    void setContext(clang::ASTContext& Ctxt){
+        Context = &Ctxt;
+    }
+    // Function that looks for features in code and creates a JSON object to
+    // hold all interesting features.
+    virtual void analyzeFeatures() = 0;
+    // Computes interesting statistics from features like prevalences or comparisons.
+    virtual void processJSON() = 0;
 };
 
 //-----------------------------------------------------------------------------

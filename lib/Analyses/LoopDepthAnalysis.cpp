@@ -36,7 +36,7 @@ StatementMatcher constructMixedMatcher(std::string Name, int d){
 //-----------------------------------------------------------------------------
 
 // step 1: extraction
-void LoopDepthAnalysis::extract() {
+void LoopDepthAnalysis::extractFeatures() {
     // Bind is necessary to retrieve information about the match like location etc.
     // Without bind the match is still registered, thus we can still count #matches,
     // but nothing else
@@ -45,7 +45,7 @@ void LoopDepthAnalysis::extract() {
     StatementMatcher IsOuterMostLoop =
         unless(hasAncestor(stmt(anyOf(
             forStmt(), whileStmt(), doStmt(), cxxForRangeStmt()))));
-    auto TopLevelLoops = this->Extractor.extract(*Context, "fs1", stmt(
+    TopLevelLoops = this->Extractor.extract(*Context, "fs1", stmt(
         isExpansionInMainFile(),
         anyOf(
             forStmt(IsOuterMostLoop),
@@ -55,13 +55,12 @@ void LoopDepthAnalysis::extract() {
     .bind("fs1"));
 
     std::cout << "#Top-level loops: " << TopLevelLoops.size() << "\n";
-    std::vector<Matches<clang::Stmt>> Data;
     unsigned NumLoopsFound = 0;
     for (int i=1; i<=this->MaxDepth; i++){
         StatementMatcher Matcher = constructMixedMatcher("fs", i);
         auto matches = this->Extractor.extract(*Context, "fs", Matcher);
         NumLoopsFound += matches.size();
-        Data.emplace_back(matches);
+        LoopsOfDepth.emplace_back(matches);
         // stop searching if all possible loops have been found
         if(NumLoopsFound == TopLevelLoops.size())
             break;
@@ -69,36 +68,28 @@ void LoopDepthAnalysis::extract() {
     if(NumLoopsFound < TopLevelLoops.size())
         std::cout << "Some loops deeper than max_depth have not been"
                      " analyzed\n";
-    analyzeDepth(TopLevelLoops, Data);
 }
 //step 2: compute stats
-void LoopDepthAnalysis::analyzeDepth(Matches<clang::Stmt> TopLevelLoops,
-    std::vector<Matches<clang::Stmt>> Data){
-        ordered_json loops;
-        unsigned depth = 1;
-        for (auto matches : Data){
-            unsigned d = matches.size();
-            if (d!=0){
-                std::vector<unsigned> locations;
-                for (auto m : matches){
-                    locations.emplace_back(m.location);
-                }
-                loops[std::to_string(depth)] = locations;
-                depth++;
+void LoopDepthAnalysis::analyzeFeatures(){
+    extractFeatures();
+    ordered_json loops;
+    unsigned depth = 1;
+    for (auto matches : LoopsOfDepth){
+        unsigned d = matches.size();
+        if (d!=0){
+            std::vector<unsigned> locations;
+            for (auto m : matches){
+                locations.emplace_back(m.location);
             }
+            loops[std::to_string(depth)] = locations;
+            depth++;
         }
-        Result = loops;
+    }
+    Result = loops;
 }
 
-//step 3: visualization (for later)
-// combine
-void LoopDepthAnalysis::run(llvm::StringRef InFile, clang::ASTContext& Context
-    ){
-        std::cout << "\033[32mRunning loop depth analysis:\033[0m" << std::endl;
-        this->Context = &Context;
-        MaxDepth=4;
-        this->InFile = InFile;
-        extract();
+void LoopDepthAnalysis::processJSON(){
+
 }
 
 //-----------------------------------------------------------------------------

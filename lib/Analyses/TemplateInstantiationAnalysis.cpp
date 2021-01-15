@@ -42,7 +42,7 @@ using ordered_json = nlohmann::ordered_json;
 
 // Regular TIA doesn't care what name the template had
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis() :
-    TemplateInstantiationAnalysis(anything()) {
+    TemplateInstantiationAnalysis(false, anything()) {
 }
 
 internal::VariadicDynCastAllOfMatcher<Decl, VarTemplateDecl> varTemplateDecl;
@@ -50,7 +50,8 @@ internal::VariadicDynCastAllOfMatcher<Decl, VarTemplateDecl> varTemplateDecl;
 // Can restrict TIA with hasName or hasAnyName matcher to only look for instant-
 // iations of certain class templates
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
-    internal::Matcher<clang::NamedDecl> Names) :
+    bool analyzeClassInstsOnly, internal::Matcher<clang::NamedDecl> Names) :
+    analyzeClassInstsOnly(analyzeClassInstsOnly),
     ClassInstMatcher(
         decl(anyOf(
             // Implicit uses:
@@ -108,7 +109,7 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
         std::cout << "TIA ctor\n";
 }
 
-void TemplateInstantiationAnalysis::extract() {
+void TemplateInstantiationAnalysis::extractFeatures() {
     // Result of the class insts matcher will give back a pointer to the
     // ClassTemplateSpecializationDecl (CTSD).
     // Matcher constructed by ctor
@@ -131,7 +132,7 @@ void TemplateInstantiationAnalysis::extract() {
         isExpansionInMainFile(),
         isTemplateInstantiation())
     .bind("FuncInsts");
-    if(analyzeFuncInsts){
+    if(!analyzeClassInstsOnly){
         auto FuncResults = Extractor.extract2(*Context, FuncInstMatcher);
         FuncInsts = getASTNodes<FunctionDecl>(FuncResults, "FuncInsts");
     }
@@ -145,7 +146,7 @@ void TemplateInstantiationAnalysis::extract() {
         isExpansionInMainFile(),
         isTemplateInstantiation())
     .bind("VarInsts");
-    if(analyzeVarInsts){
+    if(!analyzeClassInstsOnly){
         auto VarResults = Extractor.extract2(*Context, VarInstMatcher);
         VarInsts = getASTNodes<VarTemplateSpecializationDecl>(VarResults,
             "VarInsts");
@@ -272,7 +273,7 @@ std::string TemplateInstantiationAnalysis::getInstantiationLocation(
 
 // Given a vector of matches, create a JSON object storing all instantiations.
 template<typename T>
-void TemplateInstantiationAnalysis::gatherStatistics(Matches<T>& Insts,
+void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
     std::string InstKind, bool AreImplicit){
     const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
     ordered_json instances;
@@ -309,18 +310,18 @@ void TemplateInstantiationAnalysis::gatherStatistics(Matches<T>& Insts,
     Result[InstKind] = instances;
 }
 
-void TemplateInstantiationAnalysis::run(llvm::StringRef InFile,
-        ASTContext& Context){
-        std::cout << "\033[32mRunning template instantiation analysis:\033[0m\n";
-        this->Context = &Context;
-        extract();
-        llvm::raw_os_ostream stream2(std::cout);
-        gatherStatistics(ClassExplicitInsts, "explicit class insts", false);
-        gatherStatistics(ClassImplicitInsts, "implicit class insts", true);
-        if(analyzeFuncInsts)
-            gatherStatistics(FuncInsts, "func insts", false);
-        if(analyzeVarInsts)
-            gatherStatistics(VarInsts, "var insts", false);
+void TemplateInstantiationAnalysis::analyzeFeatures(){
+    extractFeatures();
+    llvm::raw_os_ostream stream2(std::cout);
+    gatherInstantiationData(ClassExplicitInsts, "explicit class insts", false);
+    gatherInstantiationData(ClassImplicitInsts, "implicit class insts", true);
+    if(!analyzeClassInstsOnly)
+        gatherInstantiationData(FuncInsts, "func insts", false);
+    if(!analyzeClassInstsOnly)
+        gatherInstantiationData(VarInsts, "var insts", false);
+}
+void TemplateInstantiationAnalysis::processJSON(){
+
 }
 
 //-----------------------------------------------------------------------------

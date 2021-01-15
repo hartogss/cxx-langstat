@@ -13,9 +13,12 @@ public:
     ~CyclomaticComplexityAnalysis(){
         std::cout << "CCA dtor\n";
     }
-    void extract();
-    void analyze();
-    void run(llvm::StringRef InFile, clang::ASTContext& Context) override;
+private:
+    // Extracts features, calculates cyclomatic complexity and creates JSON
+    // objects all in one go, since that is all pretty simple.
+    void analyzeFeatures() override;
+    void processJSON() override;
+
 };
 
 #endif // CYCLOMATICCOMPLEXITY_H
