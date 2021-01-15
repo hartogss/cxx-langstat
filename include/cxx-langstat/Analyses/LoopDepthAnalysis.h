@@ -10,7 +10,7 @@
 
 class LoopDepthAnalysis : public Analysis {
 public:
-    LoopDepthAnalysis() : Analysis(){
+    LoopDepthAnalysis(){
         MaxDepth=4;
         std::cout<<"LDA ctor\n";
     }
@@ -19,7 +19,9 @@ public:
     }
 private:
     int MaxDepth;
+    // All loop statements that are not contained in any other loops
     Matches<clang::Stmt> TopLevelLoops;
+    // For each depth from 1 to MaxDepth, contains all loops with that depth
     std::vector<Matches<clang::Stmt>> LoopsOfDepth;
     void extractFeatures();
     void analyzeFeatures() override;

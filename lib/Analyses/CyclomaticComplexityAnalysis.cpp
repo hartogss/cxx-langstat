@@ -50,13 +50,6 @@ void CyclomaticComplexityAnalysis::analyzeFeatures(){
     Result["fdecls"] = fdecls;
 }
 
-// void CyclomaticComplexityAnalysis::run(llvm::StringRef InFile,
-//     clang::ASTContext& Context) {
-//         std::cout << "\033[32mMeasuring cyclomatic complexity:\033[0m" << std::endl;
-//         setContext(Context);
-//         analyzeFeatures();
-// }
-
 void CyclomaticComplexityAnalysis::processJSON(){
 
 }

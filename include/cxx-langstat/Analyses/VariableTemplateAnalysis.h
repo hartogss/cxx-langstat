@@ -13,15 +13,15 @@ public:
     ~VariableTemplateAnalysis(){
         std::cout << "VTA dtor\n";
     }
-
 private:
-    void extractFeatures();
-    void gatherStatistics();
-    void analyzeFeatures() override;
-    void processJSON() override;
     Matches<clang::Decl> ClassWithStaticMemberDecls;
     Matches<clang::Decl> ConstexprFunctionDecls;
     Matches<clang::Decl> VariableTemplateDecls;
+    void extractFeatures();
+    template<typename T>
+    void gatherData(std::string VTKind, const Matches<T>& Matches);
+    void analyzeFeatures() override;
+    void processJSON() override;
 };
 
 //-----------------------------------------------------------------------------

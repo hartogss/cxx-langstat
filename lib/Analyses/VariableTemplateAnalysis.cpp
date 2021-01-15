@@ -69,38 +69,28 @@ void VariableTemplateAnalysis::extractFeatures(){
     VariableTemplateDecls = Extractor.extract(*Context, "variabletemplate",
         VariableTemplate);
 }
-void VariableTemplateAnalysis::gatherStatistics(){
-    // Possible improvment: report if class template contains multiple static
-    // member vars
-    ordered_json CTSMs;
-    for(auto match : ClassWithStaticMemberDecls){
-        ordered_json CTSM;
-        CTSM["location"] = match.location;
-        CTSMs[getMatchDeclName(match)] = CTSM;
-    }
-    ordered_json CTFs;
-    for(auto match : ConstexprFunctionDecls){
-        ordered_json CTF;
-        CTF["location"] = match.location;
-        CTFs[getMatchDeclName(match)] = CTF;
-    }
-    ordered_json VTs;
-    for(auto match : VariableTemplateDecls){
-        ordered_json VT;
-        VT["location"] = match.location;
-        VTs[getMatchDeclName(match)] = VT;
-    }
-    Result["class templates with static member"] = CTSMs;
-    Result["constexpr function templates"] = CTFs;
-    Result["variable templates"] = VTs;
+template<typename T>
+void VariableTemplateAnalysis::gatherData(std::string VTKind,
+    const Matches<T>& Matches){
+        // Possible improvement: report if class template contains multiple
+        // static member vars
+        ordered_json Vs;
+        for(auto match : Matches){
+            ordered_json V;
+            V["location"] = match.location;
+            Vs[getMatchDeclName(match)] = V;
+        }
+        Result[VTKind] = Vs;
 }
 void VariableTemplateAnalysis::analyzeFeatures(){
     extractFeatures();
-    gatherStatistics();
+    gatherData("class template with static member", ClassWithStaticMemberDecls);
+    gatherData("constexpr function template", ConstexprFunctionDecls);
+    gatherData("variable template", VariableTemplateDecls);
 }
 
 void VariableTemplateAnalysis::processJSON(){
-    
+
 }
 
 //-----------------------------------------------------------------------------

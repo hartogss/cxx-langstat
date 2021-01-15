@@ -15,15 +15,17 @@ public:
         std::cout << "UA dtor\n";
     }
 private:
-    void extractFeatures();
-    void gatherStatistics();
-    void analyzeFeatures() override;
-    void processJSON() override;
     Matches<clang::Decl> TypedefDecls;
     Matches<clang::Decl> TypeAliasDecls;
     Matches<clang::Decl> TypeAliasTemplateDecls;
     Matches<clang::Decl> TypedefTemplateDecls;
     Matches<clang::Decl> td;
+    void extractFeatures();
+    // Put data about some kind of raccourci (typedef/alias) into JSON
+    template<typename T>
+    void gatherData(std::string RaccourciKind, const Matches<T>& Matches);
+    void analyzeFeatures() override;
+    void processJSON() override;
 };
 
 //-----------------------------------------------------------------------------

@@ -90,45 +90,29 @@ void UsingAnalysis::extractFeatures() {
         }
     }
 }
-void UsingAnalysis::gatherStatistics(){
+template<typename T>
+void UsingAnalysis::gatherData(std::string RaccourciKind, const Matches<T>& Matches){
+    // Raccourci: either typedef or alias, possibly "templated"
     // Possible improvement: for each typedef/alias, state what type was aliased
-    ordered_json Typedefs;
-    for(auto match : TypedefDecls){
-        ordered_json Typedef;
-        Typedef["location"] = match.location;
-        Typedefs[getMatchDeclName(match)] = Typedef;
-    }
-    ordered_json Aliases;
-    for(auto match : TypeAliasDecls){
-        ordered_json Alias;
-        Alias["location"] = match.location;
-        Aliases[getMatchDeclName(match)] = Alias;
-    }
     // possible improvement: state all typedefs of a typedef template, since
     // it can contain multiple
-    ordered_json TypedefTemplates;
-    for(auto match : TypedefTemplateDecls){
-        ordered_json TypedefTemplate;
-        TypedefTemplate["location"] = match.location;
-        TypedefTemplates[getMatchDeclName(match)] = TypedefTemplate;
+    ordered_json Raccourcis;
+    for(auto match : Matches){
+        ordered_json Raccourci;
+        Raccourci["location"] = match.location;
+        Raccourcis[getMatchDeclName(match)] = Raccourci;
     }
-    ordered_json AliasTemplates;
-    for(auto match : TypeAliasTemplateDecls){
-        ordered_json AliasTemplate;
-        AliasTemplate["location"] = match.location;
-        AliasTemplates[getMatchDeclName(match)] = AliasTemplate;
-    }
-    Result["typedefs"] = Typedefs;
-    Result["aliases"] = Aliases;
-    Result["typedef templates"] = TypedefTemplates;
-    Result["alias templates"] = AliasTemplates;
+    Result[RaccourciKind] = Raccourcis;
 }
 void UsingAnalysis::analyzeFeatures(){
     extractFeatures();
-    gatherStatistics();
+    gatherData("typedefs", TypedefDecls);
+    gatherData("aliases", TypeAliasDecls);
+    gatherData("typedef templates", TypedefTemplateDecls);
+    gatherData("alias templates", TypeAliasTemplateDecls);
 }
 void UsingAnalysis::processJSON(){
-    
+
 }
 
 //-----------------------------------------------------------------------------

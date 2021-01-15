@@ -179,8 +179,8 @@ void MoveSemanticsAnalysis::extractFeatures(){
 // No, separately probably better.
 
 template<typename T>
-void MoveSemanticsAnalysis::gatherData(std::string DeclKind, std::string PassKind,
-    const Matches<T>& Matches){
+void MoveSemanticsAnalysis::gatherData(std::string DeclKind,
+    std::string PassKind, const Matches<T>& Matches){
         ordered_json Decls;
         for(auto match : Matches){
             ordered_json d;
@@ -192,7 +192,7 @@ void MoveSemanticsAnalysis::gatherData(std::string DeclKind, std::string PassKin
 
 void MoveSemanticsAnalysis::analyzeFeatures() {
     extractFeatures();
-
+    // Fill JSON with data about function (templates)
     gatherData("function decls", "pass by value", FuncsWithValueParm);
     gatherData("function decls", "pass by non-const lvalue ref",
         FuncsWithNonConstLValueRefParm);
@@ -200,13 +200,12 @@ void MoveSemanticsAnalysis::analyzeFeatures() {
         FuncsWithConstLValueRefParm);
     gatherData("function decls", "pass by rvalue ref",
         FuncsWithRValueRefParm);
-
     gatherData("parm decls", "value", ValueParms);
     gatherData("parm decls", "non-const lvalue ref", NonConstLValueRefParms);
     gatherData("parm decls", "const lvalue ref", ConstLValueRefParms);
     gatherData("parm decls", "rvalue ref", RValueRefParms);
     gatherData("parm decls", "universal ref", UniversalRefParms);
-
+    // Fill JSON with data about params
     gatherData("function template decls", "pass by value",
         FuncTemplatesWithValueParm);
     gatherData("function template decls", "pass by non-const lvalue ref",
