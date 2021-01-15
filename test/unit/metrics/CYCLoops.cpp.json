@@ -1,0 +1,19 @@
+{
+    "cca": {
+        "fdecls": {
+            "loop": 2,
+            "loop2": 3,
+            "loop21": 3,
+            "loop3": 4,
+            "loop4": 5,
+            "Myclass::method": 2,
+            "Myclass::method2": 2,
+            "Myclass::method3": 2,
+            "loop5": 3,
+            "loop6": 4,
+            "loop7": 5,
+            "loop8": 3,
+            "main": 1
+        }
+    }
+}
