@@ -1,5 +1,5 @@
 // RUN: clang++ %s -emit-ast -o %t1.ast
-// RUN: %S/../../../build/cxx-langstat --analyses=sla2 --store %t1.ast --
+// RUN: %S/../../../build/cxx-langstat --analyses=sla2 --out Output/ %t1.ast --
 // RUN: diff %t1.ast.json %s.json
 
 // Some old test I still wanted to run to check for library container usage.

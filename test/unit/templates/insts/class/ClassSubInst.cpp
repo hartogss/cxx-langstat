@@ -1,5 +1,5 @@
 // RUN: clang++ %s -emit-ast -o %t1.ast
-// RUN: %S/../../../../../build/cxx-langstat --analyses=tia --store %t1.ast --
+// RUN: %S/../../../../../build/cxx-langstat --analyses=tia --out Output/ %t1.ast --
 // RUN: diff %t1.ast.json %s.json
 
 //

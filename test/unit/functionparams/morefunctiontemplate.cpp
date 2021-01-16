@@ -1,5 +1,5 @@
 // RUN: clang++ %s -emit-ast -o %t1.ast
-// RUN: %S/../../../build/cxx-langstat --analyses=msa --store %t1.ast --
+// RUN: %S/../../../build/cxx-langstat --analyses=msa --out Output/ %t1.ast --
 // RUN: diff %t1.ast.json %s.json
 
 // Extra tests to see if function templates' parameters are correctly matched.
@@ -50,7 +50,7 @@ struct a {
 
 template<typename T>
 void funco1(){
-    // Rvalue ref since the type deduction happens at the funco1 call, 
+    // Rvalue ref since the type deduction happens at the funco1 call,
     // not the funci1 call.
     void funci1(T&& t); // √
 }

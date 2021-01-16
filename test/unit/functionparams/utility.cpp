@@ -1,5 +1,5 @@
 // RUN: clang++ %s -emit-ast -o %t1.ast
-// RUN: %S/../../../build/cxx-langstat --analyses=msa --store %t1.ast --
+// RUN: %S/../../../build/cxx-langstat --analyses=msa --out Output/ %t1.ast --
 // RUN: diff %t1.ast.json %s.json
 
 // Of all functions we should test with MSA, it should be std::move
