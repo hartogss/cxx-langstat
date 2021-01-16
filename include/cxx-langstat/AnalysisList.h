@@ -6,13 +6,16 @@
 // 'Copy' of clang-tidy's Globlist.h
 
 class AnalysisList {
+private:
+    struct AnalysisListItem {
+        llvm::StringRef Name;
+        bool operator<(const AnalysisListItem& other) const {
+            return Name < other.Name;
+        }
+    };
 public:
     AnalysisList();
     AnalysisList(llvm::StringRef s);
-// private:
-    struct AnalysisListItem {
-        llvm::StringRef Name;
-    };
     std::vector<AnalysisListItem> Items;
     bool contains(std::string s);
 };

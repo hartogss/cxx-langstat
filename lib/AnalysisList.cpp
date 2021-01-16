@@ -18,10 +18,10 @@ AnalysisList::AnalysisList() : Items(){
 
 }
 
-AnalysisList::AnalysisList(llvm::StringRef Ans){
-    while(!Ans.empty()){
+AnalysisList::AnalysisList(llvm::StringRef s){
+    while(!s.empty()){
         AnalysisListItem Item;
-        Item.Name = ConsumeAnalysis(Ans);
+        Item.Name = ConsumeAnalysis(s);
         std::cout << Item.Name.str();
         Items.emplace_back(Item);
     }

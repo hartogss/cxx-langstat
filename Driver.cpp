@@ -4,6 +4,9 @@
 #include "clang/Frontend/FrontendAction.h"
 #include "clang/Tooling/Tooling.h"
 #include "clang/Tooling/CommonOptionsParser.h"
+#include "llvm/Support/CommandLine.h"
+#include "clang/Basic/FileManager.h"
+#include "llvm/Support/Path.h"
 
 // standard includes
 #include <iostream>
@@ -18,8 +21,8 @@ using namespace clang;
 using namespace clang::ast_matchers;
 using ordered_json = nlohmann::ordered_json;
 
-//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 // Consumes the AST, i.e. does computations on it
 class Consumer : public ASTConsumer {
 public:
@@ -30,22 +33,23 @@ public:
     // Called when AST for TU is ready/has been parsed
     void HandleTranslationUnit(clang::ASTContext& Context){
         std::cout << "Handling the translation unit" << std::endl;
-        ordered_json AllAnalysesResult;
+        ordered_json AllAnalysesFeatures;
+        // Run enabled analyses and get features
         int i=0;
-        for(auto ab : Registry->Abbrev) {
-            if(Registry->EnabledAnalyses.contains(ab)){
-                Registry->Analyses[i]->run(InFile, Context);
-                AllAnalysesResult[ab]=Registry->Analyses[i]->getResult();
-            }
+        for(const auto& an : Registry->Analyses){
+            an->run(InFile, Context);
+            auto AnalysisAbbreviation = Registry
+                ->Options.EnabledAnalyses.Items[i].Name.str();
+            AllAnalysesFeatures[AnalysisAbbreviation]=an->getResult();
             i++;
         }
-        // crucial for lit tests
-        if(Registry->Store){
-            std::ofstream o(getFileForStatDump(InFile));
-            o << AllAnalysesResult.dump(4) << std::endl;
-        }
-        std::cout << AllAnalysesResult.dump(4) << std::endl;
-        // std::cout << getFileForPrint(InFile) << std::endl;
+        // Output to output dir/filename.cpp.json
+        auto OutputFile = Registry->Options.OutDirectory
+            + llvm::sys::path::filename(InFile).str() + ".json";
+        std::ofstream o(OutputFile);
+        o << AllAnalysesFeatures.dump(4) << '\n';
+
+        std::cout << AllAnalysesFeatures.dump(4) << std::endl;
     }
 public:
     llvm::StringRef InFile;
@@ -79,19 +83,17 @@ public:
     AnalysisRegistry* Registry;
 };
 
-//-----------------------------------------------------------------------------
-// Might be more elegant way, but currently only way I know to get Factory to
-// pass registry to Action
-AnalysisRegistry* Registry = new AnalysisRegistry();
-//-----------------------------------------------------------------------------
-
 // Responsible for building Actions
 class Factory : public clang::tooling::FrontendActionFactory {
 public:
-    // 'ctor'
+    // ctor
+    Factory(AnalysisRegistry* Reg) : Registry(Reg){
+    }
+    //
     std::unique_ptr<FrontendAction> create() override {
         return std::make_unique<Action>(Registry);
     }
+    AnalysisRegistry* Registry;
 };
 
 //-----------------------------------------------------------------------------
@@ -102,28 +104,38 @@ llvm::cl::OptionCategory CXXLangstatCategory("cxx-langstat options", "descriptio
 llvm::cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
 // llvm::cl::extrahelp MoreHelp("\nMore help text coming soon...\n");
 // CL options
+// Accepts comma-separated string of analyses
 llvm::cl::opt<std::string> AnalysesOption(
     "analyses",
     llvm::cl::desc("Comma-separated list of analyses"),
-    llvm::cl::cat(CXXLangstatCategory)
-);
-llvm::cl::opt<bool> StoreOption (
-    "store",
-    llvm::cl::desc("If enabled, will store results in filename.cpp.json"),
-    llvm::cl::cat(CXXLangstatCategory)
-);
+    llvm::cl::cat(CXXLangstatCategory));
+// Path of directory where to store JSON files containing features,
+// path can be relative or absolute
+llvm::cl::opt<std::string> OutDirectoryOption(
+    "out",
+    llvm::cl::desc("Directory where out"),
+    llvm::cl::Required,
+    llvm::cl::ValueRequired,
+    llvm::cl::cat(CXXLangstatCategory));
 
 //-----------------------------------------------------------------------------
 
 int main(int argc, const char** argv){
-    // parses all options that command-line tools have in common
+    // Parser for command line options, provided by llvm
     CommonOptionsParser Parser(argc, argv, CXXLangstatCategory);
-    Registry->setEnabledAnalyses(AnalysesOption);
-    if(StoreOption)
-        Registry->Store = true;
-    ClangTool Tool(Parser.getCompilations(), Parser.getSourcePathList());
+    CXXLangstatOptions Opts(AnalysesOption, OutDirectoryOption);
+    AnalysisRegistry* Registry = new AnalysisRegistry(Opts);
+    std::cout << "rel " << OutDirectoryOption << std::endl;
+    std::cout << "abs " << getAbsolutePath(llvm::StringRef(OutDirectoryOption)) << std::endl;
+
+    const std::vector<std::string>& spl = Parser.getSourcePathList();
+    CompilationDatabase& db = Parser.getCompilations();
+    ClangTool Tool(db, spl);
+    for (auto s : Parser.getSourcePathList()){
+        std::cout << s << '\n';
+    }
     // Tool is run for every file specified in source path list
-    Tool.run(std::make_unique<Factory>().get()); // input file, .cpp or .ast
+    Tool.run(std::make_unique<Factory>(Registry).get()); // input file, .cpp or .ast
     // Not really important here, but good practice
     delete Registry;
     std::cout << "Reached end of program" << std::endl;

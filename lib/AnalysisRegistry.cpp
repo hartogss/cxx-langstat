@@ -15,7 +15,7 @@
 #include "cxx-langstat/Analyses/VariableTemplateAnalysis.h"
 
 
-AnalysisRegistry::AnalysisRegistry() {
+AnalysisRegistry::AnalysisRegistry(CXXLangstatOptions Opts) : Options(Opts) {
     std::cout << "Registry ctor" << std::endl;
     createAllAnalyses();
 }
@@ -27,33 +27,24 @@ void AnalysisRegistry::createAllAnalyses(){
     // Example of where std::move could be used if std::make<"Analysis">
     // was defined explicitly as a variable
     // Create all analyses and give them to the registry
-    Analyses.emplace_back(std::make_unique<CyclomaticComplexityAnalysis>());
-    Analyses.emplace_back(std::make_unique<LoopDepthAnalysis>());
-    Analyses.emplace_back(std::make_unique<LoopKindAnalysis>());
-    Analyses.emplace_back(std::make_unique<MoveSemanticsAnalysis>());
-    Analyses.emplace_back(std::make_unique<StdlibAnalysis>());
-    Analyses.emplace_back(std::make_unique<StdlibAnalysis2>());
-    Analyses.emplace_back(std::make_unique<TemplateInstantiationAnalysis>());
-    Analyses.emplace_back(std::make_unique<TemplateParameterAnalysis>());
-    Analyses.emplace_back(std::make_unique<UsingAnalysis>());
-    Analyses.emplace_back(std::make_unique<VariableTemplateAnalysis>());
-
-    Abbrev.emplace_back("cca");
-    Abbrev.emplace_back("lda");
-    Abbrev.emplace_back("lka");
-    Abbrev.emplace_back("msa");
-    Abbrev.emplace_back("sla");
-    Abbrev.emplace_back("sla2");
-    Abbrev.emplace_back("tia");
-    Abbrev.emplace_back("tpa");
-    Abbrev.emplace_back("ua");
-    Abbrev.emplace_back("vta");
-
-}
-
-void AnalysisRegistry::setEnabledAnalyses(std::string EAS){
-    std::cout << "Enabling analyses: ";
-    AnalysisList List(EAS);
-    std::cout << "Number of analyses: " << List.Items.size() << std::endl;
-    EnabledAnalyses = List; //why not use copy constructor,move ctor
+    if(Options.EnabledAnalyses.contains("cca"))
+        Analyses.emplace_back(std::make_unique<CyclomaticComplexityAnalysis>());
+    if(Options.EnabledAnalyses.contains("lda"))
+        Analyses.emplace_back(std::make_unique<LoopDepthAnalysis>());
+    if(Options.EnabledAnalyses.contains("lka"))
+        Analyses.emplace_back(std::make_unique<LoopKindAnalysis>());
+    if(Options.EnabledAnalyses.contains("msa"))
+        Analyses.emplace_back(std::make_unique<MoveSemanticsAnalysis>());
+    if(Options.EnabledAnalyses.contains("sla"))
+        Analyses.emplace_back(std::make_unique<StdlibAnalysis>());
+    if(Options.EnabledAnalyses.contains("sla2"))
+        Analyses.emplace_back(std::make_unique<StdlibAnalysis2>());
+    if(Options.EnabledAnalyses.contains("tia"))
+        Analyses.emplace_back(std::make_unique<TemplateInstantiationAnalysis>());
+    if(Options.EnabledAnalyses.contains("tpa"))
+        Analyses.emplace_back(std::make_unique<TemplateParameterAnalysis>());
+    if(Options.EnabledAnalyses.contains("ua"))
+        Analyses.emplace_back(std::make_unique<UsingAnalysis>());
+    if(Options.EnabledAnalyses.contains("vta"))
+        Analyses.emplace_back(std::make_unique<VariableTemplateAnalysis>());
 }
