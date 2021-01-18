@@ -126,12 +126,21 @@ llvm::cl::opt<std::string> AnalysesOption(
 // 2 flags:
 // --emit-features: analysis stops after writing features to file after reading in .ast
 // --emit-statistics: read in JSON with features and compute statistics
-// no flag at all: emit JSON with both features and statistics
+// no flag at all: compute features but don't write them to disk, compute
+// statistics and emit them
 llvm::cl::opt<Stage> PipelineStage(
-    llvm::cl::desc("stages"),
+    llvm::cl::desc("Stage: "),
     llvm::cl::values(
-        clEnumValN(emit_features, "emit-features", "Stop after emitting features"),
-        clEnumValN(emit_statistics, "emit-statistics", "Read in JSON file of features and compute statistics")),
+        clEnumValN(emit_features, "emit-features",
+            "Stop after emitting features.\n"
+            "If output files are specified, \n "
+            "on output for every input file \n"
+            "has to be specified. If no output \n"
+            "is specified, output files will \n"
+            "will be put at the working directory"),
+        clEnumValN(emit_statistics, "emit-statistics", "Read in .json files "
+            "each containing features extracted from an AST and compute "
+            "statistics. Requires either no output files or only a single one")),
     llvm::cl::cat(CXXLangstatCategory));
 
 
@@ -150,7 +159,7 @@ llvm::cl::list<std::string> InputFilesOption(
     llvm::cl::Positional,
     // llvm::cl::Prefix,
     // llvm::cl::PositionalEatsArgs,
-    llvm::cl::desc("<source0> [... <sourceN>]"),
+    llvm::cl::desc("<ast0> [... <astN>]"),
     // llvm::cl::ValueOptional,
     llvm::cl::ZeroOrMore,
     llvm::cl::cat(CXXLangstatCategory));
@@ -166,7 +175,7 @@ llvm::cl::list<std::string> OutputFilesOption(
     llvm::cl::Positional,
     // llvm::cl::Prefix,
     // llvm::cl::PositionalEatsArgs,
-    llvm::cl::desc("<Output files>"),
+    llvm::cl::desc("[<json1> ... <jsonN>]"),
     // llvm::cl::ValueOptional,
     llvm::cl::ZeroOrMore,
     llvm::cl::cat(CXXLangstatCategory));
@@ -182,48 +191,62 @@ int main(int argc, const char** argv){
     // CommonOptionsParser Parser(argc, argv, CXXLangstatCategory);
     // const std::vector<std::string>& spl = Parser.getSourcePathList();
     // CompilationDatabase& db = Parser.getCompilations();
-    // I don't like the way input/source files are given by COP, so I roll
+    // I don't like the way input/source files are handled by COP, so I roll
     // my own stuff.
-    llvm::cl::ParseCommandLineOptions(argc, argv);
-    // Create custom options object for registry
-    CXXLangstatOptions Opts(PipelineStage, OutputFilesOption, AnalysesOption);
+    llvm::cl::ParseCommandLineOptions(argc, argv, "cxx-langstat is a clang-based"
+     "tool for computing statistics on C/C++ code on the clang AST level");
     const std::vector<std::string>& spl = InputFilesOption;
+    std::vector<std::string>& OutputFiles = OutputFilesOption;
     // std::cout << &spl << " " << &InputFilesOption << std::endl; // refer to same memory
 
     // llvm::StringMap<llvm::cl::Option*> &Map = llvm::cl::getRegisteredOptions();
 
-    std::cout << "stage " << Opts.Stage << std::endl;
-    std::cout << "input files: ";
-    for(const auto& InputFile : InputFilesOption){
+    std::cout << "stage " << PipelineStage << std::endl;
+    std::cout << "input files(" << spl.size() << "): ";
+    for(const auto& InputFile : spl){
         std::cout << InputFile << " ";
         if(StringRef(InputFile).consume_back("/")){
             std::cout << "Specified input dir, quitting.. \n";
             exit(1);
         }
-        std::cout << '\n';
     }
-    std::cout << "output files: ";
-    for(const auto& OutputFile : OutputFilesOption){
+    std::cout << '\n';
+    std::cout << "output files(" << OutputFiles.size() << "): ";
+    for(const auto& OutputFile : OutputFiles){
         std::cout << OutputFile << " ";
         if(StringRef(OutputFile).consume_back("/")){
             std::cout << "Specified output dir, quitting.. \n";
             exit(1);
         }
-        std::cout << '\n';
     }
-    // Ensure that for each input an output file is specified - or no output
-    // specified at all, then store results at working dir
-    if(OutputFilesOption.size()>0 && OutputFilesOption.size()!=spl.size()){
-        std::cout << "#Source files != #Output files, quitting..\n";
-        exit(1);
-    } else if(OutputFilesOption.size()==0){
-        for(const auto& InputFile : spl){
-            StringRef filename = llvm::sys::path::filename(InputFile);
-            filename.consume_back(llvm::sys::path::extension(filename)); // use replace_extension
-            Opts.OutputFiles.emplace_back("./" + filename.str() + ".features.json");
+    std::cout << '\n';
+    if(PipelineStage == emit_features){
+        // No output files specified -> store at working dir
+        // If specified, check that #input files = #output files
+        if(OutputFiles.size()==0){
+            for(const auto& InputFile : spl){
+                StringRef filename = llvm::sys::path::filename(InputFile);
+                filename.consume_back(llvm::sys::path::extension(filename)); // use replace_extension
+                OutputFiles.emplace_back("./" + filename.str() + ".features.json");
+            }
+        } else if(OutputFiles.size()>0 && OutputFiles.size()!=spl.size()){
+            std::cout << "#Source files != #Output files, quitting..\n";
+            exit(1);
+        }
+    // When -emit-features option is not used, zero or one output file is ok.
+    } else {
+        if(OutputFiles.size()==0){
+            std::cout << "test";
+            OutputFiles.emplace_back("./stats.json");
+        }
+        if(OutputFiles.size()>1){
+            std::cout << "Can only specify multiple output files with -emit-features, quitting..\n";
+            exit(1);
         }
     }
 
+    // Create custom options object for registry
+    CXXLangstatOptions Opts(PipelineStage, OutputFiles, AnalysesOption);
     AnalysisRegistry* Registry = new AnalysisRegistry(Opts);
     // std::cout << "rel " << OutDirectoryOption << std::endl;
     // std::cout << "abs " << getAbsolutePath(StringRef(OutDirectoryOption)) << std::endl;
@@ -243,7 +266,7 @@ int main(int argc, const char** argv){
         Tool.run(std::make_unique<Factory>(Registry).get());
     }
 
-    // process features to statistics from disk
+    // Process features stored on disk to statistics
     else if(PipelineStage == emit_statistics){
         std::cout << "do because stage 2" << std::endl;
         ordered_json AllFilesAllStatistics;
@@ -258,10 +281,11 @@ int main(int argc, const char** argv){
                     ->Options.EnabledAnalyses.Items[AnalysisIndex].Name.str();
                 an->processFeatures(j[AnalysisAbbreviation]);
                 OneFileAllStatistics.emplace_back(an->getStatistics());
+                AnalysisIndex++;
             }
             AllFilesAllStatistics[File] = OneFileAllStatistics;
         }
-        std::ofstream o(OutputFilesOption[0]);
+        std::ofstream o(Registry->Options.OutputFiles[0]);
         o << AllFilesAllStatistics.dump(4) << std::endl;
     }
 
