@@ -5,7 +5,6 @@
 #include "clang/Tooling/Tooling.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "llvm/Support/CommandLine.h"
-#include "clang/Basic/FileManager.h"
 #include "llvm/Support/Path.h"
 
 // standard includes
@@ -45,11 +44,8 @@ public:
                 AllAnalysesFeatures[AnalysisAbbreviation]=an->getResult();
                 i++;
             }
-            // Output to output dir/filename.cpp.json
-            llvm::StringRef filename = llvm::sys::path::filename(InFile);
-            filename.consume_back(llvm::sys::path::extension(filename));
-            auto OutputFile = Registry->Options.OutputFiles[FileIndex]
-                + filename.str() + ".features.json";
+            // Output
+            auto OutputFile = Registry->Options.OutputFiles[FileIndex];
             std::ofstream o(OutputFile);
             o << AllAnalysesFeatures.dump(4) << '\n';
             FileIndex++;
@@ -172,7 +168,7 @@ llvm::cl::list<std::string> InputFilesOption(
     llvm::cl::ZeroOrMore,
     llvm::cl::cat(CXXLangstatCategory));
 
-// https://clang.llvm.org/doxygen/CommonOptionsParser_8h_source.html @ line 91
+// https://clang.llvm.org/doxygen/CommonOptionsParser_8cpp_source.html @ 91
     // static cl::list<std::string> SourcePaths(
    // 92       cl::Positional, cl::desc("<source0> [... <sourceN>]"), OccurrencesFlag,
    // 93       cl::cat(Category), cl::sub(*cl::AllSubCommands));
@@ -188,40 +184,57 @@ llvm::cl::list<std::string> OutputFilesOption(
     llvm::cl::ZeroOrMore,
     llvm::cl::cat(CXXLangstatCategory));
 
+static llvm::cl::opt<std::string> BuildPath("p", llvm::cl::desc("Build path, but really"),
+   llvm::cl::Optional, llvm::cl::cat(CXXLangstatCategory));
+
 
 //-----------------------------------------------------------------------------
 
 int main(int argc, const char** argv){
     // Parser for command line options, provided by llvm
-    // I do not like the way input/source files are given by COP, so I roll
-    // my own stuff.
     // CommonOptionsParser Parser(argc, argv, CXXLangstatCategory);
+    // const std::vector<std::string>& spl = Parser.getSourcePathList();
+    // CompilationDatabase& db = Parser.getCompilations();
+    // I don't like the way input/source files are given by COP, so I roll
+    // my own stuff.
     llvm::cl::ParseCommandLineOptions(argc, argv);
-    // Create custom options object
+    // Create custom options object for registry
     CXXLangstatOptions Opts(PipelineStage, OutputFilesOption, AnalysesOption);
+    const std::vector<std::string>& spl = InputFilesOption;
+    // std::cout << &spl << " " << &InputFilesOption << std::endl; // refer to same memory
 
     // llvm::StringMap<llvm::cl::Option*> &Map = llvm::cl::getRegisteredOptions();
 
     std::cout << "stage " << Opts.Stage << std::endl;
-    std::cout << "output\n";
-    std::cout << "o size " << OutputFilesOption.size() << std::endl;
-    for (auto s : Opts.OutputFiles)
-        std::cout << s << std::endl;
-    std::cout << "intput\n";
-    // const std::vector<std::string>& spl = Parser.getSourcePathList();
-    const std::vector<std::string>& spl = InputFilesOption;
-    for (auto s : spl){
-        std::cout << s << '\n';
+    std::cout << "input files: ";
+    for(const auto& InputFile : InputFilesOption){
+        std::cout << InputFile << " ";
+        if(llvm::StringRef(InputFile).consume_back("/")){
+            std::cout << "Specified input dir, quitting.. \n";
+            exit(1);
+        }
+        std::cout << '\n';
     }
-
-    // Either no output files are specified -> store at working directory
-    // Or ensure that for each input and output file is specified.
+    std::cout << "output files: ";
+    for(const auto& OutputFile : OutputFilesOption){
+        std::cout << OutputFile << " ";
+        if(llvm::StringRef(OutputFile).consume_back("/")){
+            std::cout << "Specified output dir, quitting.. \n";
+            exit(1);
+        }
+        std::cout << '\n';
+    }
+    // Ensure that for each input an output file is specified - or no output
+    // specified at all, then store results at working dir
     if(OutputFilesOption.size()>0 && OutputFilesOption.size()!=spl.size()){
-        std::cout << "not the right amount of output files specified, quitting..\n";
+        std::cout << "#Source files != #Output files, quitting..\n";
         exit(1);
     } else if(OutputFilesOption.size()==0){
-        for(const auto& : spl)
-            Opts.OutputFiles.emplace_back()
+        for(const auto& InputFile : spl){
+            llvm::StringRef filename = llvm::sys::path::filename(InputFile);
+            filename.consume_back(llvm::sys::path::extension(filename)); // use replace_extension
+            Opts.OutputFiles.emplace_back("./" + filename.str() + ".features.json");
+        }
     }
 
     AnalysisRegistry* Registry = new AnalysisRegistry(Opts);
@@ -229,14 +242,18 @@ int main(int argc, const char** argv){
     // std::cout << "abs " << getAbsolutePath(llvm::StringRef(OutDirectoryOption)) << std::endl;
 
     if(Registry->Options.Stage != 2){
-        // CompilationDatabase& db = Parser.getCompilations();
-        // https://clang.llvm.org/doxygen/CommonOptionsParser_8h_source.html @ line 109
+        // https://clang.llvm.org/doxygen/CommonOptionsParser_8cpp_source.html @ 109
+        std::cout << "build path: " << BuildPath << std::endl;
         std::string ErrorMessage;
+        // Messing around with compilation databases, might be useful if
+        // we want to read in simple .cpp, not .ast files
+        // std::unique_ptr<CompilationDatabase> db =
+            // FixedCompilationDatabase::autoDetectFromDirectory(BuildPath, ErrorMessage);
         std::unique_ptr<CompilationDatabase> db =
             FixedCompilationDatabase::loadFromCommandLine(argc, argv, ErrorMessage);
         ClangTool Tool(*db, spl);
         // Tool is run for every file specified in source path list
-        Tool.run(std::make_unique<Factory>(Registry).get()); // input file, .cpp or .ast
+        Tool.run(std::make_unique<Factory>(Registry).get());
     }
 
     // process features to statistics from disk
