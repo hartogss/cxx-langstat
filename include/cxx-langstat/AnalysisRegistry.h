@@ -5,15 +5,25 @@
 #include "cxx-langstat/Analysis.h"
 #include "cxx-langstat/AnalysisList.h"
 
+enum Stage {
+    none, emit_features=1, emit_statistics=2
+};
+enum AnalysisType {
+    cca, lda, lka, msa, sla, sla2, tia, tpa, ua, vta
+};
+
 struct CXXLangstatOptions {
-    CXXLangstatOptions(std::string AnalysesString,
-        std::string OutDirectory) :
-        OutDirectory(OutDirectory),
-        EnabledAnalyses(AnalysisList(AnalysesString)){
+    CXXLangstatOptions(Stage s, std::vector<std::string> OutputFiles,
+    std::string AnalysesString) :
+        OutputFiles(OutputFiles),
+        Stage(s),
+        EnabledAnalyses(AnalysisList(AnalysesString))
+          {
             auto& Items = EnabledAnalyses.Items;
             std::sort(Items.begin(), Items.end());
-    }
-    std::string OutDirectory;
+        }
+    std::vector<std::string> OutputFiles;
+    Stage Stage;
     AnalysisList EnabledAnalyses;
 };
 

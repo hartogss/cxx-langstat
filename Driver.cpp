@@ -6,31 +6,32 @@
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Path.h"
-
 // standard includes
-#include <iostream>
-#include <fstream>
-
+#include <iostream> // should be removed
+#include <fstream> // file stream
+// JSON library
 #include <nlohmann/json.hpp>
-
+//
 #include "cxx-langstat/AnalysisRegistry.h"
 #include "cxx-langstat/Utils.h"
 
-
 using namespace clang;
 using namespace clang::ast_matchers;
+using namespace clang::tooling;
+using StringRef = llvm::StringRef;
+using ASTContext = clang::ASTContext;
 using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
 // Consumes the AST, i.e. does computations on it
 class Consumer : public ASTConsumer {
 public:
-    Consumer(llvm::StringRef InFile, AnalysisRegistry* Registry) :
+    Consumer(StringRef InFile, AnalysisRegistry* Registry) :
         InFile(InFile),
         Registry(Registry){
     }
     // Called when AST for TU is ready/has been parsed
-    void HandleTranslationUnit(clang::ASTContext& Context){
+    void HandleTranslationUnit(ASTContext& Context){
         std::cout << "Handling the translation unit" << std::endl;
         ordered_json AllAnalysesFeatures;
         Stage Stage = Registry->Options.Stage;
@@ -42,11 +43,12 @@ public:
             if(Stage != emit_statistics){
                 // Analyze clang AST and extract features
                 an->run(InFile, Context);
-                AllAnalysesFeatures[AnalysisAbbreviation]=an->getResult();
+                AllAnalysesFeatures[AnalysisAbbreviation]=an->getFeatures();
             }
             // process features from json (not from disk)
             if(Stage == none){
-                an->processJSON(AllAnalysesFeatures[AnalysisAbbreviation]);
+                an->processFeatures(AllAnalysesFeatures[AnalysisAbbreviation]);
+                /// FIXME: actually write statistics to disk
             }
             AnalysisIndex++;
         }
@@ -60,7 +62,7 @@ public:
         std::cout << "all features:" << AllAnalysesFeatures.dump(4) << std::endl;
     }
 public:
-    llvm::StringRef InFile;
+    StringRef InFile;
     AnalysisRegistry* Registry;
     static unsigned FileIndex;
 };
@@ -80,8 +82,8 @@ public:
         return true;
     }
     // Called after frontend is initialized, but before per-file processing
-    virtual std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(
-        CompilerInstance &CI, llvm::StringRef InFile){
+    virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(
+        CompilerInstance &CI, StringRef InFile){
             std::cout << "Creating AST Consumer" << std::endl;
             return std::make_unique<Consumer>(getCurrentFile(), Registry);
     }
@@ -108,7 +110,6 @@ public:
 
 //-----------------------------------------------------------------------------
 // Global variables
-using namespace clang::tooling;
 // Options in CLI specific to cxx-langstat
 llvm::cl::OptionCategory CXXLangstatCategory("cxx-langstat options", "");
 llvm::cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
@@ -121,20 +122,6 @@ llvm::cl::opt<std::string> AnalysesOption(
     "analyses",
     llvm::cl::desc("Comma-separated list of analyses"),
     llvm::cl::cat(CXXLangstatCategory));
-
-// #legacy
-// Path of directory where to store JSON files containing features,
-// path can be relative or absolute
-// llvm::cl::opt<std::string> OutDirectoryOption(
-//     "out_old",
-//     llvm::cl::desc("Directory where out"),
-//     llvm::cl::Required,
-//     llvm::cl::ValueRequired,
-//     llvm::cl::cat(CXXLangstatCategory));
-// llvm::cl::opt<bool> ProcessOption(
-//     "process_",
-//     llvm::cl::desc("Flag to process features into statistics"),
-//     llvm::cl::cat(CXXLangstatCategory));
 
 // 2 flags:
 // --emit-features: analysis stops after writing features to file after reading in .ast
@@ -169,9 +156,9 @@ llvm::cl::list<std::string> InputFilesOption(
     llvm::cl::cat(CXXLangstatCategory));
 
 // https://clang.llvm.org/doxygen/CommonOptionsParser_8cpp_source.html @ 91
-    // static cl::list<std::string> SourcePaths(
-   // 92       cl::Positional, cl::desc("<source0> [... <sourceN>]"), OccurrencesFlag,
-   // 93       cl::cat(Category), cl::sub(*cl::AllSubCommands));
+// static cl::list<std::string> SourcePaths(
+//     cl::Positional, cl::desc("<source0> [... <sourceN>]"), OccurrencesFlag,
+//       cl::cat(Category), cl::sub(*cl::AllSubCommands));
 
 // --out option, optional. when used, should give same #args as with --in.
 llvm::cl::list<std::string> OutputFilesOption(
@@ -184,9 +171,9 @@ llvm::cl::list<std::string> OutputFilesOption(
     llvm::cl::ZeroOrMore,
     llvm::cl::cat(CXXLangstatCategory));
 
+// what to do with this? some -p option already there by default, but parser fails on it
 static llvm::cl::opt<std::string> BuildPath("p", llvm::cl::desc("Build path, but really"),
    llvm::cl::Optional, llvm::cl::cat(CXXLangstatCategory));
-
 
 //-----------------------------------------------------------------------------
 
@@ -209,7 +196,7 @@ int main(int argc, const char** argv){
     std::cout << "input files: ";
     for(const auto& InputFile : InputFilesOption){
         std::cout << InputFile << " ";
-        if(llvm::StringRef(InputFile).consume_back("/")){
+        if(StringRef(InputFile).consume_back("/")){
             std::cout << "Specified input dir, quitting.. \n";
             exit(1);
         }
@@ -218,7 +205,7 @@ int main(int argc, const char** argv){
     std::cout << "output files: ";
     for(const auto& OutputFile : OutputFilesOption){
         std::cout << OutputFile << " ";
-        if(llvm::StringRef(OutputFile).consume_back("/")){
+        if(StringRef(OutputFile).consume_back("/")){
             std::cout << "Specified output dir, quitting.. \n";
             exit(1);
         }
@@ -231,7 +218,7 @@ int main(int argc, const char** argv){
         exit(1);
     } else if(OutputFilesOption.size()==0){
         for(const auto& InputFile : spl){
-            llvm::StringRef filename = llvm::sys::path::filename(InputFile);
+            StringRef filename = llvm::sys::path::filename(InputFile);
             filename.consume_back(llvm::sys::path::extension(filename)); // use replace_extension
             Opts.OutputFiles.emplace_back("./" + filename.str() + ".features.json");
         }
@@ -239,7 +226,7 @@ int main(int argc, const char** argv){
 
     AnalysisRegistry* Registry = new AnalysisRegistry(Opts);
     // std::cout << "rel " << OutDirectoryOption << std::endl;
-    // std::cout << "abs " << getAbsolutePath(llvm::StringRef(OutDirectoryOption)) << std::endl;
+    // std::cout << "abs " << getAbsolutePath(StringRef(OutDirectoryOption)) << std::endl;
 
     if(PipelineStage != emit_statistics){
         // https://clang.llvm.org/doxygen/CommonOptionsParser_8cpp_source.html @ 109
@@ -259,17 +246,23 @@ int main(int argc, const char** argv){
     // process features to statistics from disk
     else if(PipelineStage == emit_statistics){
         std::cout << "do because stage 2" << std::endl;
+        ordered_json AllFilesAllStatistics;
         for(auto File : spl){
             ordered_json j;
             std::ifstream i(File);
             i >> j;
             auto AnalysisIndex = 0;
+            ordered_json OneFileAllStatistics;
             for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
                 auto AnalysisAbbreviation = Registry
                     ->Options.EnabledAnalyses.Items[AnalysisIndex].Name.str();
-                an->processJSON(j[AnalysisAbbreviation]);
+                an->processFeatures(j[AnalysisAbbreviation]);
+                OneFileAllStatistics.emplace_back(an->getStatistics());
             }
+            AllFilesAllStatistics[File] = OneFileAllStatistics;
         }
+        std::ofstream o(OutputFilesOption[0]);
+        o << AllFilesAllStatistics.dump(4) << std::endl;
     }
 
     // Not really important here, but good practice
