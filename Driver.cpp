@@ -16,6 +16,7 @@
 #include "cxx-langstat/AnalysisRegistry.h"
 #include "cxx-langstat/Utils.h"
 
+
 using namespace clang;
 using namespace clang::ast_matchers;
 using ordered_json = nlohmann::ordered_json;
@@ -33,31 +34,30 @@ public:
         std::cout << "Handling the translation unit" << std::endl;
         ordered_json AllAnalysesFeatures;
         Stage Stage = Registry->Options.Stage;
-        // analyze code
-        if(Stage == 0 || Stage == 1){
-            // Run enabled analyses and get features
-            int i=0;
-            for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
+        int AnalysisIndex=0;
+        for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
+            auto AnalysisAbbreviation = Registry
+                ->Options.EnabledAnalyses.Items[AnalysisIndex].Name.str();
+            //
+            if(Stage != emit_statistics){
+                // Analyze clang AST and extract features
                 an->run(InFile, Context);
-                auto AnalysisAbbreviation = Registry
-                    ->Options.EnabledAnalyses.Items[i].Name.str();
                 AllAnalysesFeatures[AnalysisAbbreviation]=an->getResult();
-                i++;
             }
-            // Output
+            // process features from json (not from disk)
+            if(Stage == none){
+                an->processJSON(AllAnalysesFeatures[AnalysisAbbreviation]);
+            }
+            AnalysisIndex++;
+        }
+        // Write to file if -emit-features is active
+        if(Stage == emit_features){
             auto OutputFile = Registry->Options.OutputFiles[FileIndex];
             std::ofstream o(OutputFile);
             o << AllAnalysesFeatures.dump(4) << '\n';
             FileIndex++;
-            std::cout << AllAnalysesFeatures.dump(4) << std::endl;
         }
-
-        // process features from json (not from disk)
-        if(Stage == 0){
-            for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
-                an->processJSON(AllAnalysesFeatures);
-            }
-        }
+        std::cout << "all features:" << AllAnalysesFeatures.dump(4) << std::endl;
     }
 public:
     llvm::StringRef InFile;
@@ -241,7 +241,7 @@ int main(int argc, const char** argv){
     // std::cout << "rel " << OutDirectoryOption << std::endl;
     // std::cout << "abs " << getAbsolutePath(llvm::StringRef(OutDirectoryOption)) << std::endl;
 
-    if(Registry->Options.Stage != 2){
+    if(PipelineStage != emit_statistics){
         // https://clang.llvm.org/doxygen/CommonOptionsParser_8cpp_source.html @ 109
         std::cout << "build path: " << BuildPath << std::endl;
         std::string ErrorMessage;
@@ -257,13 +257,17 @@ int main(int argc, const char** argv){
     }
 
     // process features to statistics from disk
-    else if(Registry->Options.Stage == 2){
+    else if(PipelineStage == emit_statistics){
+        std::cout << "do because stage 2" << std::endl;
         for(auto File : spl){
-            ordered_json FromFile;
+            ordered_json j;
             std::ifstream i(File);
-            i >> FromFile;
+            i >> j;
+            auto AnalysisIndex = 0;
             for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
-                an->processJSON(FromFile);
+                auto AnalysisAbbreviation = Registry
+                    ->Options.EnabledAnalyses.Items[AnalysisIndex].Name.str();
+                an->processJSON(j[AnalysisAbbreviation]);
             }
         }
     }
