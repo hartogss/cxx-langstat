@@ -13,7 +13,7 @@ public:
     }
 private:
     void analyzeFeatures() override;
-    void processJSON() override;
+    void processFeatures(nlohmann::ordered_json j) override;
 };
 
 #endif /* LOOPKINDANALYSIS_H */

@@ -25,7 +25,7 @@ private:
     std::vector<Matches<clang::Stmt>> LoopsOfDepth;
     void extractFeatures();
     void analyzeFeatures() override;
-    void processJSON() override;
+    void processFeatures(nlohmann::ordered_json j) override;
 };
 
 //-----------------------------------------------------------------------------

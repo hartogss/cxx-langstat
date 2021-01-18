@@ -85,10 +85,17 @@ void LoopDepthAnalysis::analyzeFeatures(){
             depth++;
         }
     }
-    Result = loops;
+    Features = loops;
 }
 
-void LoopDepthAnalysis::processJSON(){
+void LoopDepthAnalysis::processFeatures(nlohmann::ordered_json j){
+    std::map<std::string, unsigned> m;
+    for(const auto& [depth, locations] : j.items()){
+        m.try_emplace(depth, locations.size());
+    }
+    std::string desc = "distribution of loop depths";
+    Statistics[desc] = m;
+    std::cout << Statistics.dump(4) << std::endl;
 
 }
 

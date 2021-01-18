@@ -17,7 +17,7 @@ private:
     // Extracts features, calculates cyclomatic complexity and creates JSON
     // objects all in one go, since that is all pretty simple.
     void analyzeFeatures() override;
-    void processJSON() override;
+    void processFeatures(nlohmann::ordered_json j) override;
 
 };
 

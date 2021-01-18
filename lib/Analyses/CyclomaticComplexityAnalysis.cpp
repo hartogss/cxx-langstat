@@ -5,6 +5,8 @@
 #include "clang/Analysis/CFG.h"
 
 #include <iostream>
+#include <map>
+#include <string>
 
 #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 
@@ -47,11 +49,20 @@ void CyclomaticComplexityAnalysis::analyzeFeatures(){
         // add to JSON
         fdecls[getMatchDeclName(match)] = CYC;
     }
-    Result["fdecls"] = fdecls;
+    Features["fdecls"] = fdecls;
 }
 
-void CyclomaticComplexityAnalysis::processJSON(){
-
+// Assumes JSON object where analysis abbreviation (i.e. cca in this case)
+// is already stripped off
+void CyclomaticComplexityAnalysis::processFeatures(nlohmann::ordered_json j){
+    std::map<std::string, unsigned> m;
+    for(const auto& [key, val] : j["fdecls"].items()){
+        m.try_emplace(to_string(val), 0);
+        m.at(to_string(val))++;
+    }
+    std::string desc = "distribution of cyclomatic complexity of functions";
+    Statistics[desc] = m;
+    std::cout << Statistics.dump(4) << std::endl;
 }
 
 //-----------------------------------------------------------------------------

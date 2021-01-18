@@ -30,8 +30,15 @@ void LoopKindAnalysis::analyzeFeatures(){
         loops["do-while"].emplace_back(match.location);
     for(auto match : RangeBasedForMatches)
         loops["range-for"].emplace_back(match.location);
-    Result = loops;
+    Features = loops;
 }
 
-void LoopKindAnalysis::processJSON(){
+void LoopKindAnalysis::processFeatures(nlohmann::ordered_json j){
+    std::map<std::string, unsigned> m;
+    for(const auto& [loopkind, locations] : j.items()){
+        m.try_emplace(loopkind, locations.size());
+    }
+    std::string desc = "loop kind prevalences";
+    Statistics[desc] = m;
+    std::cout << Statistics.dump(4) << std::endl;
 }
