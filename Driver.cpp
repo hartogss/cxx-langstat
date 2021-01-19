@@ -257,6 +257,7 @@ int main(int argc, const char** argv){
         std::string ErrorMessage;
         // Messing around with compilation databases, might be useful if
         // we want to read in simple .cpp, not .ast files
+        // This works using -p flag, but still can't analyze correctly
         // std::unique_ptr<CompilationDatabase> db =
             // FixedCompilationDatabase::autoDetectFromDirectory(BuildPath, ErrorMessage);
         std::unique_ptr<CompilationDatabase> db =
@@ -280,13 +281,16 @@ int main(int argc, const char** argv){
                 auto AnalysisAbbreviation = Registry
                     ->Options.EnabledAnalyses.Items[AnalysisIndex].Name.str();
                 an->processFeatures(j[AnalysisAbbreviation]);
-                OneFileAllStatistics.emplace_back(an->getStatistics());
+                for(const auto& [statdesc, stats] : an->getStatistics().items()){
+                    OneFileAllStatistics[statdesc] = stats;
+                }
                 AnalysisIndex++;
             }
             AllFilesAllStatistics[File] = OneFileAllStatistics;
         }
         std::ofstream o(Registry->Options.OutputFiles[0]);
         o << AllFilesAllStatistics.dump(4) << std::endl;
+        std::cout << "all stats\n" << AllFilesAllStatistics.dump(4) << std::endl;
     }
 
     // Not really important here, but good practice
