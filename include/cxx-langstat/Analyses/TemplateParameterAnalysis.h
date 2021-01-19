@@ -17,7 +17,7 @@ private:
     void extractFeatures();
     void gatherStatistics();
     void analyzeFeatures() override;
-    void processJSON() override;
+    void processFeatures(nlohmann::ordered_json j) override;
     Matches<clang::Decl> ClassTemplates;
     Matches<clang::Decl> ClassTemplateNonTypeParameters;
     Matches<clang::Decl> ClassTemplateTypeParameters;

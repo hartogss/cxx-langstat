@@ -27,7 +27,7 @@ private:
     // Responsible to fill vectors of matches defined above
     void extractFeatures();
     void analyzeFeatures() override;
-    void processJSON() override;
+    void processFeatures(nlohmann::ordered_json j) override;
     // Get location of instantiation
     template<typename T>
     std::string getInstantiationLocation(const Match<T>& Match, bool isImplicit);

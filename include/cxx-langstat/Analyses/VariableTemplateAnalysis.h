@@ -21,7 +21,7 @@ private:
     template<typename T>
     void gatherData(std::string VTKind, const Matches<T>& Matches);
     void analyzeFeatures() override;
-    void processJSON() override;
+    void processFeatures(nlohmann::ordered_json j) override;
 };
 
 //-----------------------------------------------------------------------------

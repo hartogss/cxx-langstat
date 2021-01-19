@@ -148,7 +148,7 @@ void StdlibAnalysis::analyzeFeatures(){
     printStats<FieldDecl>("Field decls of standard library type:",
         StdContainerFieldDecls);
 }
-void StdlibAnalysis::processJSON(){
+void StdlibAnalysis::processFeatures(nlohmann::ordered_json j){
     
 }
 

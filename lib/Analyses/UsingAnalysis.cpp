@@ -102,7 +102,7 @@ void UsingAnalysis::gatherData(std::string RaccourciKind, const Matches<T>& Matc
         Raccourci["location"] = match.location;
         Raccourcis[getMatchDeclName(match)] = Raccourci;
     }
-    Result[RaccourciKind] = Raccourcis;
+    Features[RaccourciKind] = Raccourcis;
 }
 void UsingAnalysis::analyzeFeatures(){
     extractFeatures();
@@ -111,7 +111,7 @@ void UsingAnalysis::analyzeFeatures(){
     gatherData("typedef templates", TypedefTemplateDecls);
     gatherData("alias templates", TypeAliasTemplateDecls);
 }
-void UsingAnalysis::processJSON(){
+void UsingAnalysis::processFeatures(nlohmann::ordered_json j){
 
 }
 

@@ -126,17 +126,17 @@ void TemplateParameterAnalysis::gatherStatistics(){
         AT["parameters"]["template"] = ParmKindCounts["template"];
         ATs[getMatchDeclName(match)] = AT;
     }
-    Result["class templates"] = CTs;
-    Result["function templates"] = FTs;
-    Result["variable templates"] = VTs;
-    Result["alias templates"] = ATs;
+    Features["class templates"] = CTs;
+    Features["function templates"] = FTs;
+    Features["variable templates"] = VTs;
+    Features["alias templates"] = ATs;
 }
 
 void TemplateParameterAnalysis::analyzeFeatures(){
         extractFeatures();
         gatherStatistics();
 }
-void TemplateParameterAnalysis::processJSON(){
+void TemplateParameterAnalysis::processFeatures(nlohmann::ordered_json j){
 
 }
 

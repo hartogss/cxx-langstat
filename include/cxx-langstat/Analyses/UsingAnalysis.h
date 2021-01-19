@@ -25,7 +25,7 @@ private:
     template<typename T>
     void gatherData(std::string RaccourciKind, const Matches<T>& Matches);
     void analyzeFeatures() override;
-    void processJSON() override;
+    void processFeatures(nlohmann::ordered_json j) override;
 };
 
 //-----------------------------------------------------------------------------

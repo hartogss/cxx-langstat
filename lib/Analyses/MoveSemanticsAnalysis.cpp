@@ -187,7 +187,7 @@ void MoveSemanticsAnalysis::gatherData(std::string DeclKind,
             d["location"] = match.location;
             Decls[getMatchDeclName(match)].emplace_back(d);
         }
-        Result[DeclKind][PassKind] = Decls;
+        Features[DeclKind][PassKind] = Decls;
 }
 
 void MoveSemanticsAnalysis::analyzeFeatures() {
@@ -218,7 +218,7 @@ void MoveSemanticsAnalysis::analyzeFeatures() {
         FuncTemplatesWithUniversalRefParm);
 }
 
-void MoveSemanticsAnalysis::processJSON(){
+void MoveSemanticsAnalysis::processFeatures(nlohmann::ordered_json j){
 
 }
 

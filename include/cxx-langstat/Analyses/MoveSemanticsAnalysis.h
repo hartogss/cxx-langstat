@@ -41,7 +41,7 @@ private:
     void associateParameters(const Matches<T>& Matches);
     void extractFeatures();
     void analyzeFeatures() override;
-    void processJSON() override;
+    void processFeatures(nlohmann::ordered_json j) override;
     // Helper function to gather data about functions or parameters into vector
     template<typename T>
     void gatherData(std::string DeclKind, std::string PassKind,

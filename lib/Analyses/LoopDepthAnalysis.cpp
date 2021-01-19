@@ -95,8 +95,6 @@ void LoopDepthAnalysis::processFeatures(nlohmann::ordered_json j){
     }
     std::string desc = "distribution of loop depths";
     Statistics[desc] = m;
-    std::cout << Statistics.dump(4) << std::endl;
-
 }
 
 //-----------------------------------------------------------------------------

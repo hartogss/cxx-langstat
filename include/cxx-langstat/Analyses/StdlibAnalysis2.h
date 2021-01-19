@@ -13,6 +13,8 @@ public:
     ~StdlibAnalysis2(){
         std::cout << "SLA2 dtor\n";
     }
+private:
+    void processFeatures(nlohmann::ordered_json j) override;
 };
 
 //-----------------------------------------------------------------------------

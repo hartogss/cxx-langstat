@@ -307,7 +307,7 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
             std::cout << getMatchDeclName(match) << " had no inst args\n";
         }
     }
-    Result[InstKind] = instances;
+    Features[InstKind] = instances;
 }
 
 void TemplateInstantiationAnalysis::analyzeFeatures(){
@@ -320,7 +320,7 @@ void TemplateInstantiationAnalysis::analyzeFeatures(){
     if(!analyzeClassInstsOnly)
         gatherInstantiationData(VarInsts, "var insts", false);
 }
-void TemplateInstantiationAnalysis::processJSON(){
+void TemplateInstantiationAnalysis::processFeatures(nlohmann::ordered_json j){
 
 }
 

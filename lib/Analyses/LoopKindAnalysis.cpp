@@ -40,5 +40,4 @@ void LoopKindAnalysis::processFeatures(nlohmann::ordered_json j){
     }
     std::string desc = "loop kind prevalences";
     Statistics[desc] = m;
-    std::cout << Statistics.dump(4) << std::endl;
 }

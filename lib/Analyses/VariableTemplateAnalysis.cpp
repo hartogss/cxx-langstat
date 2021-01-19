@@ -80,7 +80,7 @@ void VariableTemplateAnalysis::gatherData(std::string VTKind,
             V["location"] = match.location;
             Vs[getMatchDeclName(match)] = V;
         }
-        Result[VTKind] = Vs;
+        Features[VTKind] = Vs;
 }
 void VariableTemplateAnalysis::analyzeFeatures(){
     extractFeatures();
@@ -89,7 +89,7 @@ void VariableTemplateAnalysis::analyzeFeatures(){
     gatherData("variable template", VariableTemplateDecls);
 }
 
-void VariableTemplateAnalysis::processJSON(){
+void VariableTemplateAnalysis::processFeatures(nlohmann::ordered_json j){
 
 }
 

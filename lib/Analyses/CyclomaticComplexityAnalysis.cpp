@@ -62,7 +62,6 @@ void CyclomaticComplexityAnalysis::processFeatures(nlohmann::ordered_json j){
     }
     std::string desc = "distribution of cyclomatic complexity of functions";
     Statistics[desc] = m;
-    std::cout << Statistics.dump(4) << std::endl;
 }
 
 //-----------------------------------------------------------------------------

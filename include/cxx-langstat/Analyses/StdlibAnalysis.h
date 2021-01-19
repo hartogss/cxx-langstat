@@ -16,7 +16,7 @@ public:
 private:
     void extractFeatures();
     void analyzeFeatures() override;
-    void processJSON() override;
+    void processFeatures(nlohmann::ordered_json j) override;
     Matches<clang::Decl> VarDecls;
     Matches<clang::Decl> StdContainerVarDecls;
     Matches<clang::Decl> StdContainerFieldDecls;
