@@ -157,8 +157,6 @@ llvm::cl::alias CCAAlias("cyclo", llvm::cl::desc(" a"), llvm::cl::aliasopt(Analy
 llvm::cl::list<std::string> InputFilesOption(
     "in",
     llvm::cl::Positional,
-    // llvm::cl::Prefix,
-    // llvm::cl::PositionalEatsArgs,
     llvm::cl::desc("<ast0> [... <astN>]"),
     // llvm::cl::ValueOptional,
     llvm::cl::ZeroOrMore,
@@ -173,8 +171,6 @@ llvm::cl::list<std::string> InputFilesOption(
 llvm::cl::list<std::string> OutputFilesOption(
     "out",
     llvm::cl::Positional,
-    // llvm::cl::Prefix,
-    // llvm::cl::PositionalEatsArgs,
     llvm::cl::desc("[<json1> ... <jsonN>]"),
     // llvm::cl::ValueOptional,
     llvm::cl::ZeroOrMore,
@@ -187,19 +183,39 @@ static llvm::cl::opt<std::string> BuildPath("p", llvm::cl::desc("Build path, but
 //-----------------------------------------------------------------------------
 
 int main(int argc, const char** argv){
-    // Parser for command line options, provided by llvm
+    // Common parser for command line options, provided by llvm
     // CommonOptionsParser Parser(argc, argv, CXXLangstatCategory);
     // const std::vector<std::string>& spl = Parser.getSourcePathList();
     // CompilationDatabase& db = Parser.getCompilations();
     // I don't like the way input/source files are handled by COP, so I roll
     // my own stuff.
+    std::unique_ptr<CompilationDatabase> db = nullptr;
+    // First try to get string of cxxflags after '--', as loadFromCommandLine requires
+
+    std::string ErrorMessage;
+    db = FixedCompilationDatabase::loadFromCommandLine(argc, argv, ErrorMessage);
+    if(db) {
+        std::cout << "COMPILE COMMAND: ";
+        for(auto cc : db->getCompileCommands("")){
+            for(auto s : cc.CommandLine){
+                std::cout << s << " ";
+            }
+            std::cout << std::endl;
+        }
+    } else {
+        std::cout << "Could not load compile command from command line \n" +
+            ErrorMessage;
+    }
+
+    // Only now can call this method, otherwise compile command could be interpreted
+    // as input or output file since those are positional
+    // This usage is encouraged this way according to
+    // https://clang.llvm.org/doxygen/classclang_1_1tooling_1_1FixedCompilationDatabase.html#a1443b7812e6ffb5ea499c0e880de75fc
     llvm::cl::ParseCommandLineOptions(argc, argv, "cxx-langstat is a clang-based"
      "tool for computing statistics on C/C++ code on the clang AST level");
     const std::vector<std::string>& spl = InputFilesOption;
     std::vector<std::string>& OutputFiles = OutputFilesOption;
     // std::cout << &spl << " " << &InputFilesOption << std::endl; // refer to same memory
-
-    // llvm::StringMap<llvm::cl::Option*> &Map = llvm::cl::getRegisteredOptions();
 
     std::cout << "stage " << PipelineStage << std::endl;
     std::cout << "input files(" << spl.size() << "): ";
@@ -248,23 +264,37 @@ int main(int argc, const char** argv){
     // Create custom options object for registry
     CXXLangstatOptions Opts(PipelineStage, OutputFiles, AnalysesOption);
     AnalysisRegistry* Registry = new AnalysisRegistry(Opts);
-    // std::cout << "rel " << OutDirectoryOption << std::endl;
-    // std::cout << "abs " << getAbsolutePath(StringRef(OutDirectoryOption)) << std::endl;
 
     if(PipelineStage != emit_statistics){
         // https://clang.llvm.org/doxygen/CommonOptionsParser_8cpp_source.html @ 109
-        std::cout << "build path: " << BuildPath << std::endl;
+        // Read in database found in dir specified by -p or a parent path
         std::string ErrorMessage;
-        // Messing around with compilation databases, might be useful if
-        // we want to read in simple .cpp, not .ast files
-        // This works using -p flag, but still can't analyze correctly
-        // std::unique_ptr<CompilationDatabase> db =
-            // FixedCompilationDatabase::autoDetectFromDirectory(BuildPath, ErrorMessage);
-        std::unique_ptr<CompilationDatabase> db =
-            FixedCompilationDatabase::loadFromCommandLine(argc, argv, ErrorMessage);
-        ClangTool Tool(*db, spl);
-        // Tool is run for every file specified in source path list
-        Tool.run(std::make_unique<Factory>(Registry).get());
+        if(!BuildPath.empty()){
+            std::cout << "READING BUILD PATH\n";
+            std::cout << "BUILD PATH: " << BuildPath << std::endl;
+            db = CompilationDatabase::autoDetectFromDirectory(BuildPath, ErrorMessage);
+            if(!ErrorMessage.empty()){
+                std::cout << ErrorMessage << std::endl;
+                exit(1);
+            }
+            std::cout << "FOUND COMPILE COMMANDS:" << std::endl;
+            for(auto cc : db->getAllCompileCommands()){
+                for(auto s : cc.CommandLine){
+                    std::cout << s << " ";
+                }
+                std::cout << std::endl;
+            }
+        }
+        if(db){
+            ClangTool Tool(*db, spl);
+            // Tool is run for every file specified in source path list
+            Tool.run(std::make_unique<Factory>(Registry).get());
+        } else {
+            std::cout << "The tool couldn't run due to missing compilation database "
+                "Please try one of the following:\n"
+                " When analyzing .ast files, append \"--\", to indicate no CDB is necessary\n"
+                " When analyzing .cpp files, append \"-- <compile flags>\" or \"-p <build path>\"\n";
+        }
     }
 
     // Process features stored on disk to statistics
