@@ -9,20 +9,23 @@
 cmake_minimum_required(VERSION 3.18.3)
 # Sets ${PROJECT_NAME}
 project(cxx-langstat)
-# Define executable to be built
-add_executable(${PROJECT_NAME} Driver.cpp)
 
 # ---- Compiler ----
 # C++17
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED 17)
+# set(CMAKE_CXX_STANDARD 17) # I prefer to use -std=c++17
 # C++ Compiler
 message(STATUS "C++ Compiler:" ${CMAKE_CXX_COMPILER})
 set(CLANGXX ${CMAKE_CXX_COMPILER})
 # No run-time type indentification
 # -fvisibility=hidden to stop linker complaining about weak symbols when linking clang-tidy
 # -fcolor-diagnostics to enable clang colored output when using ninja
-set(CMAKE_CXX_FLAGS "-fno-rtti -O0 -Wall -Wextra -fcolor-diagnostics")
+set(CMAKE_CXX_FLAGS "-std=c++17 -fno-rtti -pedantic -O0 -Wall -Wextra -fcolor-diagnostics")
 message(STATUS "C++ flags: ${CMAKE_CXX_FLAGS}")
+
+# Define executable to be built
+# When you add_executable() before set(CMAKE_CXX_STANDARD)
+add_executable(${PROJECT_NAME} Driver.cpp)
 
 # ---- LLVM, Clang ----
 # Loads settings from external project LLVM
@@ -84,7 +87,6 @@ target_link_libraries(${PROJECT_NAME}
     )
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
-# target_link_libraries(${PROJECT_NAME} ${clang_tidy_libs})
 
 # Extra linking needed on ubuntu, not necessary on macOS(macOS doesn't dislike them either)
 target_link_libraries(BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
@@ -92,10 +94,6 @@ target_link_libraries(MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(CyclomaticComplexityAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(LoopDepthAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 # target_link_libraries(TestAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
-
-
-
-
 
 
 
@@ -112,8 +110,4 @@ clangTidyPerformanceModule;clangTidyPortabilityModule;clangTidyReadabilityModule
 clangTidyZirconModule;clangTidyPlugin;clangTidyMain;clangTidyUtils;
 )
 # message(STATUS "Clang-tidy libs: ${clang_tidy_libs}")
-
-# trying to add target to emit ast s.t. I can apply analyses to themselves
-# add_custom_target(TARGET cca POST_BUILD
-# COMMAND clang++ -emit-ast CyclomaticComplexityAnalysis.cpp -o CyclomaticComplexityAnalysis.ast)
-# add_dependencies(cca ${llvm_libs} ${clang_libs})
+# target_link_libraries(${PROJECT_NAME} ${clang_tidy_libs})
