@@ -9,6 +9,7 @@
 
 using namespace clang;
 using namespace clang::ast_matchers;
+using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
 // How often were constructs from standard library used (like vector, array,
@@ -21,21 +22,47 @@ using namespace clang::ast_matchers;
 StdlibAnalysis2::StdlibAnalysis2() : TemplateInstantiationAnalysis(true,
     hasAnyName(
         // Standard library containers, Copied from UseAutoCheck.cpp
-        "array", "vector",
-        "forward_list", "list",
-        "map", "multimap",
-        "set", "multiset",
-        "unordered_map", "unordered_multimap",
-        "unordered_set", "unordered_multiset",
-        "queue", "priority_queue", "stack", "deque",
+        "std::array", "std::vector",
+        "std::forward_list", "std::list",
+        "std::map", "std::multimap",
+        "std::set", "std::multiset",
+        "std::unordered_map", "std::unordered_multimap",
+        "std::unordered_set", "std::unordered_multiset",
+        "std::queue", "std::priority_queue", "std::stack", "std::deque",
         // Standard library utilities
         // vocabulary types
-        "pair", "tuple",
+        "std::pair", "std::tuple",
         // Dynamic memory
-        "unique_ptr", "shared_ptr", "weak_ptr"
+        "std::unique_ptr", "std::shared_ptr", "std::weak_ptr"
         )
 ){
     std::cout << "SLA2 ctor\n";
+}
+
+ordered_json containerPrevalence(ordered_json Statistics, ordered_json j){
+    std::map<std::string, unsigned> m;
+    for(const auto& [containertype, containeroccurrences] : j["implicit class insts"].items()){
+        m.try_emplace(containertype, containeroccurrences.size());
+    }
+    std::string desc = "container type prevalences";
+    Statistics[desc] = m;
+    return Statistics;
+}
+
+// WIP: find popular types for containers
+// ordered_json containedType(ordered_json Statistics, ordered_json j){
+//     std::map<std::string, std::map<std::string, unsigned>> m;
+//     for(const auto& [containertype, containeroccurrences] : j["implicit class insts"].items()){
+//         m.try_emplace(containertype, containeroccurrences.size());
+//     }
+//     std::string desc = "contained type prevalences";
+//     Statistics[desc] = m;
+//     return Statistics;
+// }
+
+void StdlibAnalysis2::processFeatures(nlohmann::ordered_json j){
+    Statistics = containerPrevalence(Statistics, j);
+
 }
 
 //-----------------------------------------------------------------------------
