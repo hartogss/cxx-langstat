@@ -61,11 +61,11 @@ for (auto match : params){
 
 //-----------------------------------------------------------------------------
 // Code to test printing JSON objects without knowing index ids
-std::cout << Result["rvalue ref parms"]["c"][0].dump(4) << std::endl;
+std::cout << Features["rvalue ref parms"]["c"][0].dump(4) << std::endl;
 // how to avoid indexing using decl name?
-std::cout << Result["rvalue ref parms"].dump(4) << std::endl;
+std::cout << Features["rvalue ref parms"].dump(4) << std::endl;
 // can also index using iterators:
-for(auto entriesForASingleVarName : Result["rvalue ref parms"]){
+for(auto entriesForASingleVarName : Features["rvalue ref parms"]){
     std::cout << varName << std::endl;
     // for(auto loc : varName){
         // std::cout << varName << "@ " << loc << std::endl;
@@ -94,3 +94,19 @@ for(auto match : t){
 }
 
 //-----------------------------------------------------------------------------
+// Basic CLI11 usage
+// CLI::App app{"App description"};
+// std::string filename = "default";
+// app.add_option("-f,--file", filename, "A help string");
+// CLI11_PARSE(app, argc, argv);
+
+//directory stuff
+// std::cout << "rel " << OutDirectoryOption << std::endl;
+// std::cout << "abs " << getAbsolutePath(StringRef(OutDirectoryOption)) << std::endl;
+
+// CommonOptionsParser source option
+
+// https://clang.llvm.org/doxygen/CommonOptionsParser_8cpp_source.html @ 91
+// static cl::list<std::string> SourcePaths(
+//     cl::Positional, cl::desc("<source0> [... <sourceN>]"), OccurrencesFlag,
+//       cl::cat(Category), cl::sub(*cl::AllSubCommands));

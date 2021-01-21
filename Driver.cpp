@@ -162,11 +162,6 @@ llvm::cl::list<std::string> InputFilesOption(
     llvm::cl::ZeroOrMore,
     llvm::cl::cat(CXXLangstatCategory));
 
-// https://clang.llvm.org/doxygen/CommonOptionsParser_8cpp_source.html @ 91
-// static cl::list<std::string> SourcePaths(
-//     cl::Positional, cl::desc("<source0> [... <sourceN>]"), OccurrencesFlag,
-//       cl::cat(Category), cl::sub(*cl::AllSubCommands));
-
 // --out option, optional. when used, should give same #args as with --in.
 llvm::cl::list<std::string> OutputFilesOption(
     "out",
@@ -215,9 +210,7 @@ int main(int argc, const char** argv){
      "tool for computing statistics on C/C++ code on the clang AST level");
     const std::vector<std::string>& spl = InputFilesOption;
     std::vector<std::string>& OutputFiles = OutputFilesOption;
-    // std::cout << &spl << " " << &InputFilesOption << std::endl; // refer to same memory
 
-    std::cout << "stage " << PipelineStage << std::endl;
     std::cout << "input files(" << spl.size() << "): ";
     for(const auto& InputFile : spl){
         std::cout << InputFile << " ";
@@ -252,7 +245,6 @@ int main(int argc, const char** argv){
     // When -emit-features option is not used, zero or one output file is ok.
     } else {
         if(OutputFiles.size()==0){
-            std::cout << "test";
             OutputFiles.emplace_back("./stats.json");
         }
         if(OutputFiles.size()>1){
