@@ -15,6 +15,7 @@
 #include "cxx-langstat/AnalysisRegistry.h"
 #include "cxx-langstat/Utils.h"
 #include "cxx-langstat/Options.h"
+#include "../Driver.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
@@ -110,126 +111,26 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// Global variables
-// Options in CLI specific to cxx-langstat
-llvm::cl::OptionCategory CXXLangstatCategory("cxx-langstat options", "");
-llvm::cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
-// llvm::cl::extrahelp MoreHelp("\nMore help text coming soon...\n");
-// CL options
 
-// # probably going to retire soon
-// Accepts comma-separated string of analyses
-llvm::cl::opt<std::string> AnalysesOption(
-    "analyses",
-    llvm::cl::desc("Comma-separated list of analyses"),
-    llvm::cl::cat(CXXLangstatCategory));
-
-// 2 flags:
-// --emit-features: analysis stops after writing features to file after reading in .ast
-// --emit-statistics: read in JSON with features and compute statistics
-// no flag at all: compute features but don't write them to disk, compute
-// statistics and emit them
-llvm::cl::opt<Stage> PipelineStage(
-    llvm::cl::desc("Stage: "),
-    llvm::cl::values(
-        clEnumValN(emit_features, "emit-features",
-            "Stop after emitting features.\n"
-            "If output files are specified, \n "
-            "on output for every input file \n"
-            "has to be specified. If no output \n"
-            "is specified, output files will \n"
-            "will be put at the working directory"),
-        clEnumValN(emit_statistics, "emit-statistics", "Read in .json files "
-            "each containing features extracted from an AST and compute "
-            "statistics. Requires either no output files or only a single one")),
-    llvm::cl::cat(CXXLangstatCategory));
-
-
-// new means to give analyses, still inactive
-llvm::cl::list<AnalysisType> AnalysesList (
-    llvm::cl::desc("available analyses"),
-    llvm::cl::values(
-        clEnumVal(cca, "cyclo")
-    ),
-    llvm::cl::cat(CXXLangstatCategory));
-llvm::cl::alias CCAAlias("cyclo", llvm::cl::desc(" a"), llvm::cl::aliasopt(AnalysesList));
-
-// --in option, all until --out is taken as input files
-llvm::cl::list<std::string> InputFilesOption(
-    "in",
-    llvm::cl::Positional,
-    llvm::cl::desc("<ast0> [... <astN>]"),
-    // llvm::cl::ValueOptional,
-    llvm::cl::ZeroOrMore,
-    llvm::cl::cat(CXXLangstatCategory));
-
-// --out option, optional. when used, should give same #args as with --in.
-llvm::cl::list<std::string> OutputFilesOption(
-    "out",
-    llvm::cl::Positional,
-    llvm::cl::desc("[<json1> ... <jsonN>]"),
-    // llvm::cl::ValueOptional,
-    llvm::cl::ZeroOrMore,
-    llvm::cl::cat(CXXLangstatCategory));
-
-// what to do with this? some -p option already there by default, but parser fails on it
-static llvm::cl::opt<std::string> BuildPath("p", llvm::cl::desc("Build path, but really"),
-   llvm::cl::Optional, llvm::cl::cat(CXXLangstatCategory));
+// // new means to give analyses, still inactive
+// llvm::cl::list<AnalysisType> AnalysesList (
+//     llvm::cl::desc("available analyses"),
+//     llvm::cl::values(
+//         clEnumVal(cca, "cyclo")
+//     ),
+//     llvm::cl::cat(CXXLangstatCategory));
+// llvm::cl::alias CCAAlias("cyclo", llvm::cl::desc(" a"), llvm::cl::aliasopt(AnalysesList));
 
 //-----------------------------------------------------------------------------
 
-int main(int argc, const char** argv){
-    // Common parser for command line options, provided by llvm
-    // CommonOptionsParser Parser(argc, argv, CXXLangstatCategory);
-    // const std::vector<std::string>& spl = Parser.getSourcePathList();
-    // CompilationDatabase& db = Parser.getCompilations();
-    // I don't like the way input/source files are handled by COP, so I roll
-    // my own stuff.
-    std::unique_ptr<CompilationDatabase> db = nullptr;
-    // First try to get string of cxxflags after '--', as loadFromCommandLine requires
+int CXXLangstatMain(std::vector<std::string> InputFilesOption, std::vector<std::string> OutputFilesOption,
+    Stage PipelineStage, std::string AnalysesOption, std::string BuildPath, std::unique_ptr<CompilationDatabase> db){
 
-    std::string ErrorMessage;
-    db = FixedCompilationDatabase::loadFromCommandLine(argc, argv, ErrorMessage);
-    if(db) {
-        std::cout << "COMPILE COMMAND: ";
-        for(auto cc : db->getCompileCommands("")){
-            for(auto s : cc.CommandLine){
-                std::cout << s << " ";
-            }
-            std::cout << std::endl;
-        }
-    } else {
-        std::cout << "Could not load compile command from command line \n" +
-            ErrorMessage;
-    }
+    // std::unique_ptr<CompilationDatabase> db = nullptr;
 
-    // Only now can call this method, otherwise compile command could be interpreted
-    // as input or output file since those are positional
-    // This usage is encouraged this way according to
-    // https://clang.llvm.org/doxygen/classclang_1_1tooling_1_1FixedCompilationDatabase.html#a1443b7812e6ffb5ea499c0e880de75fc
-    llvm::cl::ParseCommandLineOptions(argc, argv, "cxx-langstat is a clang-based"
-     "tool for computing statistics on C/C++ code on the clang AST level");
     const std::vector<std::string>& spl = InputFilesOption;
     std::vector<std::string>& OutputFiles = OutputFilesOption;
 
-    std::cout << "input files(" << spl.size() << "): ";
-    for(const auto& InputFile : spl){
-        std::cout << InputFile << " ";
-        if(StringRef(InputFile).consume_back("/")){
-            std::cout << "Specified input dir, quitting.. \n";
-            exit(1);
-        }
-    }
-    std::cout << '\n';
-    std::cout << "output files(" << OutputFiles.size() << "): ";
-    for(const auto& OutputFile : OutputFiles){
-        std::cout << OutputFile << " ";
-        if(StringRef(OutputFile).consume_back("/")){
-            std::cout << "Specified output dir, quitting.. \n";
-            exit(1);
-        }
-    }
-    std::cout << '\n';
     if(PipelineStage == emit_features){
         // No output files specified -> store at working dir
         // If specified, check that #input files = #output files

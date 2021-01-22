@@ -8,5 +8,9 @@ enum Stage {
 enum AnalysisType {
     cca, lda, lka, msa, sla, sla2, tia, tpa, ua, vta
 };
+enum InputType {
+    file, dir
+};
+
 
 #endif // OPTIONS_H
