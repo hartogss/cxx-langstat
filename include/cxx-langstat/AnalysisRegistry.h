@@ -4,13 +4,7 @@
 #include <memory>
 #include "cxx-langstat/Analysis.h"
 #include "cxx-langstat/AnalysisList.h"
-
-enum Stage {
-    none, emit_features=1, emit_statistics=2
-};
-enum AnalysisType {
-    cca, lda, lka, msa, sla, sla2, tia, tpa, ua, vta
-};
+#include "cxx-langstat/Options.h"
 
 struct CXXLangstatOptions {
     CXXLangstatOptions(Stage s, std::vector<std::string> OutputFiles,

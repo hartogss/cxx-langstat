@@ -14,6 +14,7 @@
 //
 #include "cxx-langstat/AnalysisRegistry.h"
 #include "cxx-langstat/Utils.h"
+#include "cxx-langstat/Options.h"
 
 using namespace clang;
 using namespace clang::ast_matchers;
