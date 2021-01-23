@@ -111,55 +111,18 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-
-// // new means to give analyses, still inactive
-// llvm::cl::list<AnalysisType> AnalysesList (
-//     llvm::cl::desc("available analyses"),
-//     llvm::cl::values(
-//         clEnumVal(cca, "cyclo")
-//     ),
-//     llvm::cl::cat(CXXLangstatCategory));
-// llvm::cl::alias CCAAlias("cyclo", llvm::cl::desc(" a"), llvm::cl::aliasopt(AnalysesList));
-
-//-----------------------------------------------------------------------------
-
-int CXXLangstatMain(std::vector<std::string> InputFilesOption, std::vector<std::string> OutputFilesOption,
-    Stage PipelineStage, std::string AnalysesOption, std::string BuildPath, std::unique_ptr<CompilationDatabase> db){
+//
+int CXXLangstatMain(std::vector<std::string> InputFiles,
+    std::vector<std::string> OutputFiles, Stage Stage, std::string Analyses,
+    std::string BuildPath, std::unique_ptr<CompilationDatabase> db){
 
     // std::unique_ptr<CompilationDatabase> db = nullptr;
 
-    const std::vector<std::string>& spl = InputFilesOption;
-    std::vector<std::string>& OutputFiles = OutputFilesOption;
-
-    if(PipelineStage == emit_features){
-        // No output files specified -> store at working dir
-        // If specified, check that #input files = #output files
-        if(OutputFiles.size()==0){
-            for(const auto& InputFile : spl){
-                StringRef filename = llvm::sys::path::filename(InputFile);
-                filename.consume_back(llvm::sys::path::extension(filename)); // use replace_extension
-                OutputFiles.emplace_back("./" + filename.str() + ".features.json");
-            }
-        } else if(OutputFiles.size()>0 && OutputFiles.size()!=spl.size()){
-            std::cout << "#Source files != #Output files, quitting..\n";
-            exit(1);
-        }
-    // When -emit-features option is not used, zero or one output file is ok.
-    } else {
-        if(OutputFiles.size()==0){
-            OutputFiles.emplace_back("./stats.json");
-        }
-        if(OutputFiles.size()>1){
-            std::cout << "Can only specify multiple output files with -emit-features, quitting..\n";
-            exit(1);
-        }
-    }
-
     // Create custom options object for registry
-    CXXLangstatOptions Opts(PipelineStage, OutputFiles, AnalysesOption);
+    CXXLangstatOptions Opts(Stage, OutputFiles, Analyses);
     AnalysisRegistry* Registry = new AnalysisRegistry(Opts);
 
-    if(PipelineStage != emit_statistics){
+    if(Stage != emit_statistics){
         // https://clang.llvm.org/doxygen/CommonOptionsParser_8cpp_source.html @ 109
         // Read in database found in dir specified by -p or a parent path
         std::string ErrorMessage;
@@ -180,7 +143,7 @@ int CXXLangstatMain(std::vector<std::string> InputFilesOption, std::vector<std::
             }
         }
         if(db){
-            ClangTool Tool(*db, spl);
+            ClangTool Tool(*db, InputFiles);
             // Tool is run for every file specified in source path list
             Tool.run(std::make_unique<Factory>(Registry).get());
         } else {
@@ -192,10 +155,10 @@ int CXXLangstatMain(std::vector<std::string> InputFilesOption, std::vector<std::
     }
 
     // Process features stored on disk to statistics
-    else if(PipelineStage == emit_statistics){
+    else if(Stage == emit_statistics){
         std::cout << "do because stage 2" << std::endl;
         ordered_json AllFilesAllStatistics;
-        for(auto File : spl){
+        for(auto File : InputFiles){
             ordered_json j;
             std::ifstream i(File);
             i >> j;
