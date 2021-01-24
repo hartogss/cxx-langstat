@@ -114,7 +114,26 @@ public:
 //
 int CXXLangstatMain(std::vector<std::string> InputFiles,
     std::vector<std::string> OutputFiles, Stage Stage, std::string Analyses,
-    std::string BuildPath, std::unique_ptr<CompilationDatabase> db){
+    std::string BuildPath, std::shared_ptr<CompilationDatabase> db){
+
+    std::cout << "input files(" << InputFiles.size() << "): ";
+    for(const auto& InputFile : InputFiles){
+        std::cout << InputFile << " ";
+        if(StringRef(InputFile).consume_back("/")){
+            std::cout << "Specified input dir, quitting.. \n";
+            exit(1);
+        }
+    }
+    std::cout << '\n';
+    std::cout << "output files(" << OutputFiles.size() << "): ";
+    for(const auto& OutputFile : OutputFiles){
+        std::cout << OutputFile << " ";
+        if(StringRef(OutputFile).consume_back("/")){
+            std::cout << "Specified output dir, quitting.. \n";
+            exit(1);
+        }
+    }
+    std::cout << '\n';
 
     // std::unique_ptr<CompilationDatabase> db = nullptr;
 
@@ -183,5 +202,7 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
     // Not really important here, but good practice
     delete Registry;
     std::cout << "Reached end of program" << std::endl;
+    // while(true){
+    // }
     return 0;
 }

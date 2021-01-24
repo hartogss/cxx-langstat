@@ -1,4 +1,5 @@
 #include <iostream>
+#include <future>
 
 #include "llvm/Support/Commandline.h"
 #include "clang/Tooling/CompilationDatabase.h"
@@ -91,8 +92,8 @@ static llvm::cl::opt<std::string> BuildPath(
     llvm::cl::Optional, llvm::cl::cat(CXXLangstatCategory));
 
 //-----------------------------------------------------------------------------
-bool hasSuitableExtension(llvm::StringRef s, Stage Stage){
-    if(Stage==emit_features) {
+bool isSuitableExtension(llvm::StringRef s, Stage Stage){
+    if(Stage == emit_features) {
         return s.equals(".cpp") || s.equals(".cc") || s.equals(".cxx") || s.equals(".C")
             || s.equals(".hpp") || s.equals(".hh") || s.equals(".hxx") || s.equals(".H")
             || s.equals(".c++") || s.equals(".h++")
@@ -122,7 +123,7 @@ std::vector<std::string> getFiles(const Twine& T, Stage Stage){
         std::vector<std::string> dirfiles;
         for(auto file : files){
             if(!llvm::StringRef(file).consume_front(".")){ //ignore hidden files & dirs
-                if(hasSuitableExtension(llvm::sys::path::extension(file), Stage)){
+                if(isSuitableExtension(llvm::sys::path::extension(file), Stage)){
                     res.emplace_back((T + "/" + file).str());
                 } else if(!llvm::sys::path::filename(file).equals(".")
                     && !llvm::sys::path::filename(file).equals("..")) {
@@ -140,6 +141,36 @@ std::vector<std::string> getFiles(const Twine& T, Stage Stage){
     return {};
 }
 
+int ParallelEmitFeatures(std::vector<std::string> InputFiles,
+    std::vector<std::string> OutputFiles, std::string Analyses,
+    std::string BuildPath,
+    std::shared_ptr<clang::tooling::CompilationDatabase> db,
+    unsigned Jobs){
+        // Function assumes InputFiles.size = OutputFiles.size
+        unsigned Files = InputFiles.size();
+        if(Jobs > Files)
+            Jobs = Files;
+        unsigned WorkPerJob = Files/Jobs;
+        unsigned JobsWith1Excess = Files%Jobs;
+        for(unsigned idx=0; idx<Jobs; idx++){
+            unsigned Work = WorkPerJob;
+            if(idx < JobsWith1Excess){
+                Work++;
+            }
+            unsigned b = WorkPerJob*idx;
+            unsigned e = WorkPerJob*(idx+1);
+            std::cout << b << ", " << e << std::endl;
+            std::vector<std::string> In(InputFiles.begin()+b, InputFiles.begin()+e);
+            std::vector<std::string> Out(OutputFiles.begin()+b, OutputFiles.begin()+e);
+
+            CXXLangstatMain(In, Out,
+                PipelineStage, Analyses, BuildPath, db);
+
+        }
+        return 0;
+    }
+
+
 //-----------------------------------------------------------------------------
 
 //
@@ -150,7 +181,8 @@ int main(int argc, char** argv){
     // CompilationDatabase& db = Parser.getCompilations();
     // I don't like the way input/source files are handled by COP, so I roll
     // my own stuff.
-    std::unique_ptr<CompilationDatabase> db = nullptr;
+    // Is this good use of shared_ptr?
+    std::shared_ptr<CompilationDatabase> db = nullptr;
     // First try to get string of cxxflags after '--', as loadFromCommandLine requires
     std::string ErrorMessage;
     db = FixedCompilationDatabase::loadFromCommandLine(argc, argv, ErrorMessage);
@@ -270,8 +302,12 @@ int main(int argc, char** argv){
             exit(1);
         }
     }
-
-    CXXLangstatMain(InputFiles, OutputFiles,
-        PipelineStage, AnalysesOption, BuildPath, std::move(db));
+    std::cout << '\n';
+    // CXXLangstatMain(InputFiles, OutputFiles,
+    //     PipelineStage, AnalysesOption, BuildPath, std::move(db));
+    if(PipelineStage == emit_features){
+        ParallelEmitFeatures(InputFiles, OutputFiles,
+            AnalysesOption, BuildPath, db, 1);
+    }
     return 0;
 }
