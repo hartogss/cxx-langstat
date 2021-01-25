@@ -57,7 +57,6 @@ llvm::cl::list<std::string> InputFilesOption(
     "in",
     llvm::cl::desc("<src0> [... <srcN>], where srcI can be either a C/C++ source "
         "or AST file"),
-    llvm::cl::Positional,
     llvm::cl::ValueRequired,
     llvm::cl::ZeroOrMore,
     llvm::cl::cat(IOCategory));
@@ -65,7 +64,7 @@ llvm::cl::list<std::string> InputFilesOption(
 // --out option, optional. when used, should give same #args as with --in.
 llvm::cl::opt<std::string> OutputFileOption(
     "out",
-    llvm::cl::desc("[<json1> ... <jsonN>]. Use this option if you expect there "
+    llvm::cl::desc("[<json>]. Use this option if you expect there "
         "to be only a single \noutput file. "
         "Notably, use this when -emit-statistics is enabled."),
     llvm::cl::ValueRequired,
@@ -192,7 +191,6 @@ int ParallelEmitFeatures(std::vector<std::string> InputFiles,
                 InputFiles.begin() + b + Work);
             std::vector<std::string> Out(OutputFiles.begin() + b,
                 OutputFiles.begin() + b + Work);
-            std::cout << &InputFiles << ", " << &In << std::endl;
             b+=Work;
             auto r = std::async(std::launch::async, CXXLangstatMain, In,
                 Out, s, Analyses, BuildPath, db); // pipeline stage was the problem for async, probably because still 'unparsed'
@@ -237,11 +235,8 @@ int main(int argc, char** argv){
     std::vector<std::string> InputFiles;
     std::vector<std::string> OutputFiles;
 
-    // Ensure dirs end with "/"
-    if(!StringRef(InputDirOption).consume_back("/"))
-        InputDirOption += "/";
-    if(!StringRef(OutputDirOption).consume_back("/"))
-        OutputDirOption += "/";
+    std::cout << ", " << InputDirOption << ", "
+        << OutputFileOption << ", " << OutputDirOption << std::endl;
 
     bool Files = !InputFilesOption.empty();
     bool Dir = !InputDirOption.empty();
@@ -250,6 +245,12 @@ int main(int argc, char** argv){
             "at the same time\n";
         exit(1);
     }
+
+    // Ensure dirs end with "/"
+    if(!InputDirOption.empty() && !StringRef(InputDirOption).consume_back("/"))
+        InputDirOption += "/";
+    if(!OutputDirOption.empty() && !StringRef(OutputDirOption).consume_back("/"))
+        OutputDirOption += "/";
 
     if(Files){
         InputFiles = InputFilesOption;
