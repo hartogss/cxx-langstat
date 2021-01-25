@@ -25,7 +25,7 @@ message(STATUS "C++ flags: ${CMAKE_CXX_FLAGS}")
 
 # Define executable to be built
 # When you add_executable() before set(CMAKE_CXX_STANDARD)
-add_executable(${PROJECT_NAME} Driver.cpp)
+add_executable(${PROJECT_NAME} Runner.cpp)
 
 # ---- LLVM, Clang ----
 # Loads settings from external project LLVM
@@ -87,6 +87,8 @@ target_link_libraries(${PROJECT_NAME}
     )
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
+add_library(Driver Driver.cpp)
+target_link_libraries(${PROJECT_NAME} Driver)
 
 # Extra linking needed on ubuntu, not necessary on macOS(macOS doesn't dislike them either)
 target_link_libraries(BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})

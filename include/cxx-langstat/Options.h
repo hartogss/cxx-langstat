@@ -1,11 +1,14 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-// CL options
+//-----------------------------------------------------------------------------
+enum Stage {
+    none, emit_features=1, emit_statistics=2
+};
+enum AnalysisType {
+    cca, lda, lka, msa, sla, sla2, tia, tpa, ua, vta
+};
 
-// Options in CLI specific/nongeneric to clang-stat
-llvm::cl::OptionCategory ClangStatCategory("clang-stat options");
-llvm::cl::extrahelp CommonHelp(clang::tooling::CommonOptionsParser::HelpMessage);
-llvm::cl::extrahelp MoreHelp("\nMore help text coming soon...\n");
+//-----------------------------------------------------------------------------
 
 #endif // OPTIONS_H
