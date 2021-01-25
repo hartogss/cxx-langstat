@@ -1,0 +1,31 @@
+{
+    "sla2": {
+        "explicit class insts": null,
+        "implicit class insts": {
+            "std::__1::vector": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/WrongContainers.cpp:21:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int",
+                            "std::__1::allocator<int>"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/WrongContainers.cpp:23:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "double",
+                            "std::__1::allocator<double>"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        }
+    }
+}
