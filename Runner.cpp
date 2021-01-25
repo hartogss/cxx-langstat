@@ -339,6 +339,9 @@ int main(int argc, char** argv){
     if(PipelineStage == emit_features){
         ParallelEmitFeatures(InputFiles, OutputFiles, PipelineStage,
             AnalysesOption, BuildPath, db, ParallelismOption);
+    } else if(PipelineStage == emit_statistics){
+        return CXXLangstatMain(InputFiles, OutputFiles, PipelineStage,
+            AnalysesOption, BuildPath, db);
     }
     return 0;
 }
