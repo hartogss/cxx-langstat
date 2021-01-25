@@ -33,8 +33,8 @@ void CyclomaticComplexityAnalysis::analyzeFeatures(){
         // CFG is intraprocedural flow of a statement.
         // Statement can be a function body or a single expression.
         const std::unique_ptr<clang::CFG> cfg =
-        clang::CFG::buildCFG(match.node, match.node->getBody(), // probably because body is compoundStmt
-            match.ctxt, clang::CFG::BuildOptions()
+        clang::CFG::buildCFG(match.Node, match.Node->getBody(), // probably because body is compoundStmt
+            Context, clang::CFG::BuildOptions()
         );
         // Wanna print the cfgs? Don't, they're ugly.
         // llvm::raw_os_ostream OS(std::cout);

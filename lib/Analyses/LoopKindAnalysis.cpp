@@ -23,13 +23,13 @@ void LoopKindAnalysis::analyzeFeatures(){
 
     ordered_json loops;
     for(auto match : ForMatches)
-        loops["for"].emplace_back(match.location);
+        loops["for"].emplace_back(match.Location);
     for(auto match : WhileMatches)
-        loops["while"].emplace_back(match.location);
+        loops["while"].emplace_back(match.Location);
     for(auto match : DoWhileMatches)
-        loops["do-while"].emplace_back(match.location);
+        loops["do-while"].emplace_back(match.Location);
     for(auto match : RangeBasedForMatches)
-        loops["range-for"].emplace_back(match.location);
+        loops["range-for"].emplace_back(match.Location);
     Features = loops;
 }
 

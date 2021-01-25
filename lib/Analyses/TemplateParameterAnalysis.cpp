@@ -69,8 +69,8 @@ void TemplateParameterAnalysis::gatherStatistics(){
     ordered_json CTs;
     for(auto match : ClassTemplates){
         ordered_json CT;
-        CT["location"] = match.location;
-        auto TParms = cast<TemplateDecl>(match.node)->getTemplateParameters();
+        CT["location"] = match.Location;
+        auto TParms = cast<TemplateDecl>(match.Node)->getTemplateParameters();
         CT["uses param pack"] = TParms->hasParameterPack();
         std::map<std::string, unsigned> ParmKindCounts = {
             {"non-type",0},{"type",0},{"template",0},};
@@ -84,8 +84,8 @@ void TemplateParameterAnalysis::gatherStatistics(){
     ordered_json FTs;
     for(auto match : FunctionTemplates){
         ordered_json FT;
-        FT["location"] = match.location;
-        auto TParms = cast<TemplateDecl>(match.node)->getTemplateParameters();
+        FT["location"] = match.Location;
+        auto TParms = cast<TemplateDecl>(match.Node)->getTemplateParameters();
         FT["uses param pack"] = TParms->hasParameterPack();
         std::map<std::string, unsigned> ParmKindCounts = {
             {"non-type",0},{"type",0},{"template",0},};
@@ -99,8 +99,8 @@ void TemplateParameterAnalysis::gatherStatistics(){
     ordered_json VTs;
     for(auto match : VariableTemplates){
         ordered_json VT;
-        VT["location"] = match.location;
-        auto TParms = cast<TemplateDecl>(match.node)->getTemplateParameters();
+        VT["location"] = match.Location;
+        auto TParms = cast<TemplateDecl>(match.Node)->getTemplateParameters();
         VT["uses param pack"] = TParms->hasParameterPack();
         std::map<std::string, unsigned> ParmKindCounts = {
             {"non-type",0},{"type",0},{"template",0},};
@@ -114,8 +114,8 @@ void TemplateParameterAnalysis::gatherStatistics(){
     ordered_json ATs;
     for(auto match : AliasTemplates){
         ordered_json AT;
-        AT["location"] = match.location;
-        auto TParms = cast<TemplateDecl>(match.node)->getTemplateParameters();
+        AT["location"] = match.Location;
+        auto TParms = cast<TemplateDecl>(match.Node)->getTemplateParameters();
         AT["uses param pack"] = TParms->hasParameterPack();
         std::map<std::string, unsigned> ParmKindCounts = {
             {"non-type",0},{"type",0},{"template",0},};

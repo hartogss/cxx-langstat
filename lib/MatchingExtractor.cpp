@@ -12,12 +12,12 @@ using namespace clang::ast_matchers; // StatementMatcher, actual AST matchers li
 MatchingExtractor::MatchingExtractor(){
     std::cout<<"MatchingExtractor ctor"<<std::endl;
 }
-
-void MatchingExtractor::run(const MatchFinder::MatchResult &Result) {
-    Results.emplace_back(Result);
+MatchingExtractor::~MatchingExtractor(){
+    std::cout<<"MatchingExtractor dtor"<<std::endl;
 }
-void MatchingExtractor::resetState(){
-    // matches.clear(); // does this ensure no memory leak?
+
+void MatchingExtractor::run(const MatchFinder::MatchResult& Result) {
+    Results.emplace_back(Result);
 }
 
 //-----------------------------------------------------------------------------

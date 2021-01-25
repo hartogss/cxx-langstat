@@ -114,7 +114,7 @@ void printStats(std::string text, Matches<Decl> Matches){
     std::unordered_map<std::string, unsigned> ContainerOccurrences;
     std::unordered_multimap<std::string, std::string> ContainerOfTypes;
     for(auto m : Matches) {
-        if(auto Node = dyn_cast<T>(m.node)){
+        if(auto Node = dyn_cast<T>(m.Node)){
             auto CompleteType = getCompleteType(Node);
             auto BaseType = getBaseType(Node);
             auto InnerType = getInnerType(Node);
@@ -123,7 +123,7 @@ void printStats(std::string text, Matches<Decl> Matches){
             else
                 ContainerOccurrences[BaseType]++;
             ContainerOfTypes.insert({BaseType, InnerType});
-            // std::cout << m.location << std::endl;
+            // std::cout << m.Location << std::endl;
             // std::cout << Node->getType().getTypePtr()->getTypeClassName() << std::endl;
             // std::cout << Node->getType().getTypePtr()->getLocallyUnqualifiedSingleStepDesugaredType().getAsString() << std::endl;
             // std::cout << CompleteType << " is " << BaseType << " of " << InnerType << std::endl;

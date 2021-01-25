@@ -84,7 +84,7 @@ template<typename T>
 void MoveSemanticsAnalysis::associateParameters(const Matches<T>& Matches){
     // For each function (template)
     for(auto match : Matches){
-        auto Node = match.node;
+        auto Node = match.Node;
         FunctionDecl* Func;
         auto WasTemplate = false;
         FunctionTemplateDecl* FTD = nullptr;
@@ -107,7 +107,7 @@ void MoveSemanticsAnalysis::associateParameters(const Matches<T>& Matches){
             // matches extra for this from the AST
             unsigned Location = Context->getFullLoc(
                 Param->getBeginLoc()).getLineNumber();
-            Match<ParmVarDecl> ParmMatch(Location, Param, Context);
+            Match<ParmVarDecl> ParmMatch(Location, Param);
             // If parameter pack is used, strip it off.
             QualType qt = Param->getOriginalType();
             if(isParameterPackType(qt))
@@ -184,7 +184,7 @@ void MoveSemanticsAnalysis::gatherData(std::string DeclKind,
         ordered_json Decls;
         for(auto match : Matches){
             ordered_json d;
-            d["location"] = match.location;
+            d["location"] = match.Location;
             Decls[getMatchDeclName(match)].emplace_back(d);
         }
         Features[DeclKind][PassKind] = Decls;

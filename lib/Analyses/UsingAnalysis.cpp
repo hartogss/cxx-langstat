@@ -99,7 +99,7 @@ void UsingAnalysis::gatherData(std::string RaccourciKind, const Matches<T>& Matc
     ordered_json Raccourcis;
     for(auto match : Matches){
         ordered_json Raccourci;
-        Raccourci["location"] = match.location;
+        Raccourci["location"] = match.Location;
         Raccourcis[getMatchDeclName(match)] = Raccourci;
     }
     Features[RaccourciKind] = Raccourcis;

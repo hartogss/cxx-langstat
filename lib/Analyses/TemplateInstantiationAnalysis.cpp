@@ -152,15 +152,15 @@ void TemplateInstantiationAnalysis::extractFeatures() {
             "VarInsts");
         // std::cout << "unsorted\n";
         // for(auto match : VarInsts)
-        //     std::cout << getMatchDeclName(match) << ", " << match.location << ", "<< match.node << std::endl;
+        //     std::cout << getMatchDeclName(match) << ", " << match.Location << ", "<< match.Node << std::endl;
         // std::sort(VarInsts.begin(), VarInsts.end());
         // std::cout << "sorted\n";
         // for(auto match : VarInsts)
-        //     std::cout << getMatchDeclName(match) << ", " << match.location << ", "<< match.node << std::endl;
+        //     std::cout << getMatchDeclName(match) << ", " << match.Location << ", "<< match.Node << std::endl;
         // std::cout << "no dups\n";
         // removeDuplicateMatches(VarInsts);
         // for(auto match : VarInsts)
-        //     std::cout << getMatchDeclName(match) << ", " << match.location << ", "<< match.node << std::endl;
+        //     std::cout << getMatchDeclName(match) << ", " << match.Location << ", "<< match.Node << std::endl;
         if(VarInsts.size())
             removeDuplicateMatches(VarInsts);
     }
@@ -170,30 +170,30 @@ void TemplateInstantiationAnalysis::extractFeatures() {
 // function, or variable.
 const TemplateArgumentList*
 getTemplateArgs(const Match<ClassTemplateSpecializationDecl>& Match){
-    return &(Match.node->getTemplateInstantiationArgs());
+    return &(Match.Node->getTemplateInstantiationArgs());
 }
 const TemplateArgumentList*
 getTemplateArgs(const Match<VarTemplateSpecializationDecl>& Match){
-    return &(Match.node->getTemplateInstantiationArgs());
+    return &(Match.Node->getTemplateInstantiationArgs());
 }
 // Is this memory-safe?
 // Probably yes, assuming the template arguments being stored on the heap,
 // being freed only later by the clang library.
 const TemplateArgumentList*
 getTemplateArgs(const Match<FunctionDecl>& Match){
-    // If Match.node is a non-templated method of a class template
+    // If Match.Node is a non-templated method of a class template
     // we don't care about its instantiation. Then only the class instantiation
     // encompassing it is really interesting, which is output at a different
     // points in code (and time).
-    if(auto m = dyn_cast<CXXMethodDecl>(Match.node)){
+    if(auto m = dyn_cast<CXXMethodDecl>(Match.Node)){
         // std::cout << "found method" << std::endl;
         if(m->getInstantiatedFromMemberFunction())
             return nullptr;
     }
-    auto TALPtr = Match.node->getTemplateSpecializationArgs();
+    auto TALPtr = Match.Node->getTemplateSpecializationArgs();
     if(!TALPtr){
         std::cerr << "Template argument list ptr is nullptr,"
-        << " function declaration at line " << Match.location
+        << " function declaration at line " << Match.Location
         << " was not a template specialization" << '\n';
         exit(1);
     }
@@ -252,22 +252,22 @@ std::string TemplateInstantiationAnalysis::getInstantiationLocation(
     if(isImplicit){
         i++;
         // auto VarOrFieldDecl = ImplicitInsts[i-1];
-        // return VarOrFieldDecl.location;
-        return (ImplicitInsts[i-1].node->getInnerLocStart()).
+        // return VarOrFieldDecl.Location;
+        return (ImplicitInsts[i-1].Node->getInnerLocStart()).
             printToString(Context->getSourceManager());
-            // can't I just do ImplicitInsts[i-1].location to get loc of var/field?
+            // can't I just do ImplicitInsts[i-1].Location to get loc of var/field?
     } else{
-        // return Match.location;
-        return Match.node->getTemplateKeywordLoc().
+        // return Match.Location;
+        return Match.Node->getTemplateKeywordLoc().
             printToString(Context->getSourceManager());
-            // when giving location of explicit inst, can just give match.location,
+            // when giving location of explicit inst, can just give match.Location,
             // since CTSD holds right location already since not subtree of CTD
     }
 }
 template<typename T>
 std::string TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<T>& Match, bool imp){
-        return Match.node->getPointOfInstantiation().
+        return Match.Node->getPointOfInstantiation().
             printToString(Context->getSourceManager());
 }
 
@@ -278,7 +278,7 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
     const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
     ordered_json instances;
     for(auto match : Insts){
-        // std::cout << getMatchDeclName(match) << ":" << match.node->getSpecializationKind() << std::endl;
+        // std::cout << getMatchDeclName(match) << ":" << match.Node->getSpecializationKind() << std::endl;
         std::multimap<std::string, std::string> TArgs;
         const TemplateArgumentList* TALPtr(getTemplateArgs(match));
         // Only report instantiation if it had any arguments it was instantiated
@@ -292,7 +292,7 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
             ordered_json instance;
             ordered_json arguments;
             instance["location"] = getInstantiationLocation(match, AreImplicit);
-            // instance["location"] = match.location;
+            // instance["location"] = match.Location;
             for(auto key : ArgKinds){
                 auto range = TArgs.equal_range(key);
                 std::vector<std::string> v;

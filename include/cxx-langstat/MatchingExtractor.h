@@ -7,21 +7,19 @@
 // and the ASTContext
 template<typename T>
 struct Match {
-    Match<T>(unsigned location, const T* node, clang::ASTContext* ctxt) :
-        location(location),
-        node(node),
-        ctxt(ctxt){
+    Match<T>(unsigned Location, const T* Node) :
+        Location(Location),
+        Node(Node){
     }
-    unsigned location;
-    const T* node;
-    clang::ASTContext* ctxt;
+    unsigned Location;
+    const T* Node;
     bool operator==(Match<T> m){
-        return (location == m.location && node == m.node && ctxt == m.ctxt);
+        return (Location == m.Location && Node == m.Node);
     }
     // https://stackoverflow.com/questions/2758080/how-to-sort-an-stl-vector
     bool operator<(const Match<T>& other) const{
-        return (location < other.location ||
-            (location == other.location && node < other.node));
+        return (Location < other.Location ||
+            (Location == other.Location && Node < other.Node));
     }
 };
 
@@ -33,11 +31,10 @@ using Matches = std::vector<Match<T>>; // allows to do Matches<T>
 class MatchingExtractor : public clang::ast_matchers::MatchFinder::MatchCallback {
 public:
     MatchingExtractor();
+    ~MatchingExtractor();
     // Run when match is found after extract call with Matcher
-    virtual void run(const clang::ast_matchers::MatchFinder::MatchResult &Result);
+    virtual void run(const clang::ast_matchers::MatchFinder::MatchResult& Result);
     std::vector<clang::ast_matchers::MatchFinder::MatchResult> Results;
-private:
-    void resetState();
 };
 
 //-----------------------------------------------------------------------------

@@ -77,7 +77,7 @@ void VariableTemplateAnalysis::gatherData(std::string VTKind,
         ordered_json Vs;
         for(auto match : Matches){
             ordered_json V;
-            V["location"] = match.location;
+            V["location"] = match.Location;
             Vs[getMatchDeclName(match)] = V;
         }
         Features[VTKind] = Vs;

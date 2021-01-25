@@ -36,8 +36,8 @@ static bool isForwardingReference(QualType Param, unsigned FirstInnerIndex) {
 //-----------------------------------------------------------------------------
 // Old code for trying to figure out if universal reference or not
 for(auto match : FunctionTemplatesDeclsWithrValueRef){
-    std::cout << match.node->getType().getAsString() << std::endl;
-    std::cout << match.node->getType().getTypePtr()->getTypeClassName() << std::endl;
+    std::cout << match.Node->getType().getAsString() << std::endl;
+    std::cout << match.Node->getType().getTypePtr()->getTypeClassName() << std::endl;
 }
 DeclarationMatcher d = functionTemplateDecl(isExpansionInMainFile(),
     has(templateTypeParmDecl().bind("typename")),
@@ -51,7 +51,7 @@ printMatches("", typeparms);
 printMatches("", params);
 for (auto match : params){
     // getOriginalType gives QualType, is a ParmVarDecl public method
-    auto t = match.node->getOriginalType();
+    auto t = match.Node->getOriginalType();
     std::cout << t.getAsString() << std::endl;
     std::cout << t.hasQualifiers() << std::endl;
     std::cout << t.getTypePtr()->isRValueReferenceType() << std::endl;
@@ -82,15 +82,15 @@ std::cout << Node->getType().getTypePtr()->getCanonicalTypeInternal().getAsStrin
 
 //-----------------------------------------------------------------------------
 //
-const char* StmtKind = m.node->getDeclKindName();
+const char* StmtKind = m.Node->getDeclKindName();
 
 // Type matcher, does not yet work with my extractor framework because Location
 // cannot be extracted
 TypeMatcher stdtypes = type().bind("t");
 auto t = Extr.extract("t", stdtypes);
 for(auto match : t){
-    std::cout << match.node->getAsString()
-        << " @ " << match.location << std::endl;
+    std::cout << match.Node->getAsString()
+        << " @ " << match.Location << std::endl;
 }
 
 //-----------------------------------------------------------------------------

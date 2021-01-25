@@ -79,7 +79,7 @@ void LoopDepthAnalysis::analyzeFeatures(){
         if (d!=0){
             std::vector<unsigned> locations;
             for (auto m : matches){
-                locations.emplace_back(m.location);
+                locations.emplace_back(m.Location);
             }
             loops[std::to_string(depth)] = locations;
             depth++;

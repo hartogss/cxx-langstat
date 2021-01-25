@@ -11,10 +11,10 @@
 // human-readable name.
 template<typename T>
 std::string getMatchDeclName(const Match<T>& Match){
-    if(auto n = dyn_cast<clang::NamedDecl>(Match.node)){
+    if(auto n = dyn_cast<clang::NamedDecl>(Match.Node)){
         return n->getQualifiedNameAsString(); // includes namespace qualifiers
     } else {
-        std::cout << "Decl @ " << Match.location << "cannot be resolved\n";
+        std::cout << "Decl @ " << Match.Location << "cannot be resolved\n";
         return "INVALID";
     }
 }
@@ -23,7 +23,7 @@ template<typename T>
 void printMatches(std::string text, const Matches<T>& Matches){
     std::cout << "\033[33m" << text << ":\033[0m " << Matches.size() << "\n";
     for(auto match : Matches)
-        std::cout << getMatchDeclName(match) << " @ " << match.location << "\n";
+        std::cout << getMatchDeclName(match) << " @ " << match.Location << "\n";
 }
 
 template<typename NodeType>
@@ -49,7 +49,7 @@ getASTNodes(std::vector<clang::ast_matchers::MatchFinder::MatchResult> Results,
             if(const NodeType* Node = Result.Nodes.getNodeAs<NodeType>(id)) {
                 unsigned Location = Result.Context->getFullLoc(
                     Node->getBeginLoc()).getLineNumber();
-                Match<NodeType> m(Location, Node, Result.Context);
+                Match<NodeType> m(Location, Node);
                 Matches.emplace_back(m);
             } else {
                 TimesTypeFailed++;
