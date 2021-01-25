@@ -44,43 +44,41 @@ public:
             //
             if(Stage != emit_statistics){
                 // Analyze clang AST and extract features
-                an->run(InFile, Context);
-                AllAnalysesFeatures[AnalysisAbbreviation]=an->getFeatures();
+                // an->run(InFile, Context);
+                // AllAnalysesFeatures[AnalysisAbbreviation]=an->getFeatures();
             }
             // process features from json (not from disk)
             if(Stage == none){
-                an->processFeatures(AllAnalysesFeatures[AnalysisAbbreviation]);
+                // an->processFeatures(AllAnalysesFeatures[AnalysisAbbreviation]);
                 /// FIXME: actually write statistics to disk
             }
             AnalysisIndex++;
         }
         // Write to file if -emit-features is active
         if(Stage == emit_features){
-            auto OutputFile = Registry->Options.OutputFiles[FileIndex];
+            auto OutputFile = Registry->getCurrentOutputFile();
+            std::cout << "Writing features to file: "<<OutputFile<<"\n";
             std::ofstream o(OutputFile);
             o << AllAnalysesFeatures.dump(4) << '\n';
-            FileIndex++;
         }
-        std::cout << "all features:" << AllAnalysesFeatures.dump(4) << std::endl;
+        // std::cout << "all features:" << AllAnalysesFeatures.dump(4) << std::endl;
     }
 public:
     StringRef InFile;
     AnalysisRegistry* Registry;
-    static unsigned FileIndex;
 };
-unsigned Consumer::FileIndex=0;
 
 // Responsible for steering when what is executed
 class Action : public ASTFrontendAction {
 public:
     Action(AnalysisRegistry* Registry) : Registry(Registry){
-        std::cout << "Creating AST Action" << std::endl;
+        // std::cout << "Creating AST Action" << std::endl;
     }
     // Called at start of processing a single input
     bool BeginSourceFileAction(CompilerInstance& CI) {
         std::cout
-        << "Starting to process " << getCurrentFile().str()
-        << ". AST=" << isCurrentFileAST() << ".\n";
+        << "Starting to process \033[32m" << getCurrentFile().str()
+        << "\033[0m. AST=" << isCurrentFileAST() << ".\n";
         return true;
     }
     // Called after frontend is initialized, but before per-file processing
@@ -91,8 +89,8 @@ public:
     }
     //
     void EndSourceFileAction(){
-        std::cout
-        << "Finished processing " << getCurrentFile().str() << ".\n";
+        // std::cout
+        // << "Finished processing " << getCurrentFile().str() << ".\n";
     }
     AnalysisRegistry* Registry;
 };
@@ -202,7 +200,6 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
     // Not really important here, but good practice
     delete Registry;
     std::cout << "Reached end of program" << std::endl;
-    // while(true){
-    // }
+
     return 0;
 }

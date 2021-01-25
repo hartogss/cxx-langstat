@@ -142,7 +142,7 @@ std::vector<std::string> getFiles(const Twine& T, Stage Stage){
 }
 
 int ParallelEmitFeatures(std::vector<std::string> InputFiles,
-    std::vector<std::string> OutputFiles, std::string Analyses,
+    std::vector<std::string> OutputFiles, Stage s, std::string Analyses,
     std::string BuildPath,
     std::shared_ptr<clang::tooling::CompilationDatabase> db,
     unsigned Jobs){
@@ -152,27 +152,27 @@ int ParallelEmitFeatures(std::vector<std::string> InputFiles,
             Jobs = Files;
         unsigned WorkPerJob = Files/Jobs;
         unsigned JobsWith1Excess = Files%Jobs;
+        unsigned b = 0;
         for(unsigned idx=0; idx<Jobs; idx++){
             unsigned Work = WorkPerJob;
             if(idx < JobsWith1Excess){
                 Work++;
             }
-            unsigned b = WorkPerJob*idx;
-            unsigned e = WorkPerJob*(idx+1);
-            std::cout << b << ", " << e << std::endl;
-            std::vector<std::string> In(InputFiles.begin()+b, InputFiles.begin()+e);
-            std::vector<std::string> Out(OutputFiles.begin()+b, OutputFiles.begin()+e);
-
-            CXXLangstatMain(In, Out,
-                PipelineStage, Analyses, BuildPath, db);
-
+            std::cout << b << ", " << b+Work << std::endl;
+            std::vector<std::string> In(InputFiles.begin() + b,
+                InputFiles.begin() + b + Work);
+            std::vector<std::string> Out(OutputFiles.begin() + b,
+                OutputFiles.begin() + b + Work);
+            std::cout << &InputFiles << ", " << &In << std::endl;
+            b+=Work;
+            CXXLangstatMain(In, Out, PipelineStage, Analyses, BuildPath, db);
+            // auto r = std::async(std::launch::async, CXXLangstatMain, In,
+                Out, s, Analyses, BuildPath, db); // pipeline stage was the problem for async, probably because still 'unparsed'
         }
         return 0;
     }
 
-
 //-----------------------------------------------------------------------------
-
 //
 int main(int argc, char** argv){
     // Common parser for command line options, provided by llvm
@@ -306,7 +306,7 @@ int main(int argc, char** argv){
     // CXXLangstatMain(InputFiles, OutputFiles,
     //     PipelineStage, AnalysesOption, BuildPath, std::move(db));
     if(PipelineStage == emit_features){
-        ParallelEmitFeatures(InputFiles, OutputFiles,
+        ParallelEmitFeatures(InputFiles, OutputFiles, PipelineStage,
             AnalysesOption, BuildPath, db, 1);
     }
     return 0;
