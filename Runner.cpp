@@ -105,10 +105,13 @@ bool isSuitableExtension(llvm::StringRef s, Stage Stage){
     return false;
 }
 
+// Returns vector of relative paths of interesting files (source & .ast files
+// or .json files) containing in dir with name T. function assumes that T
+// suffices with an "/", as it should specify a dir.
 std::vector<std::string> getFiles(const Twine& T, Stage Stage){
     // http://www.martinbroadhurst.com/list-the-files-in-a-directory-in-c.html
     // Trust me, would prefer to use <filesystem> too, but I'd have to upgrade
-    // to macOS 10.15. Might changed this to use conditional compilation
+    // to macOS 10.15. Might change this to use conditional compilation
     // to enable <filesystem> for OSes that can use it.
     DIR* dirp = opendir(T.str().c_str());
     if(dirp){
@@ -122,15 +125,19 @@ std::vector<std::string> getFiles(const Twine& T, Stage Stage){
         closedir(dirp);
         std::vector<std::string> dirfiles;
         for(auto file : files){
-            if(!llvm::StringRef(file).consume_front(".")){ //ignore hidden files & dirs
+            // Ignore hidden files & dirs
+            if(!llvm::StringRef(file).consume_front(".")){
+                // File is interesting to us
                 if(isSuitableExtension(llvm::sys::path::extension(file), Stage)){
-                    res.emplace_back((T + "/" + file).str());
+                    res.emplace_back((T + file).str());
+                // File might indicate a directory, store it to search thru it later
                 } else if(!llvm::sys::path::filename(file).equals(".")
                     && !llvm::sys::path::filename(file).equals("..")) {
-                        dirfiles.emplace_back((T + "/" + file).str());
+                        dirfiles.emplace_back((T + file).str() + "/");
                 }
             }
         }
+        // Search thru dirs stored before
         for(auto dirfile : dirfiles) {
             auto files = getFiles(dirfile, Stage);
             for(auto file : files)
@@ -167,7 +174,7 @@ int ParallelEmitFeatures(std::vector<std::string> InputFiles,
             b+=Work;
             CXXLangstatMain(In, Out, PipelineStage, Analyses, BuildPath, db);
             // auto r = std::async(std::launch::async, CXXLangstatMain, In,
-                Out, s, Analyses, BuildPath, db); // pipeline stage was the problem for async, probably because still 'unparsed'
+                // Out, s, Analyses, BuildPath, db); // pipeline stage was the problem for async, probably because still 'unparsed'
         }
         return 0;
     }
@@ -208,7 +215,11 @@ int main(int argc, char** argv){
     std::vector<std::string> InputFiles;
     std::vector<std::string> OutputFiles;
 
-    // const std::vector<int> a; // no init?
+    // Ensure dirs end with "/"
+    if(!StringRef(InputDirOption).consume_back("/"))
+        InputDirOption += "/";
+    if(!StringRef(OutputDirOption).consume_back("/"))
+        OutputDirOption += "/";
 
     bool Files = !InputFilesOption.empty();
     bool Dir = !InputDirOption.empty();
@@ -239,8 +250,7 @@ int main(int argc, char** argv){
                     OutputFiles.emplace_back("./" + OutputFileOption);
                 } else { // create output file if none specified
                     StringRef filename = llvm::sys::path::filename(InputFiles[0]);
-                    filename.consume_back(llvm::sys::path::extension(filename));
-                    OutputFiles.emplace_back("./" + filename.str() + ".features.json");
+                    OutputFiles.emplace_back("./" + filename.str() + ".json");
 
                 }
             } else { // multiple files
@@ -252,8 +262,7 @@ int main(int argc, char** argv){
                 } else {
                     for(auto File : InputFiles){ // place at output dir specified
                         StringRef filename = llvm::sys::path::filename(File);
-                        filename.consume_back(llvm::sys::path::extension(filename));
-                        OutputFiles.emplace_back(OutputDirOption + "/" + filename.str() + ".features.json");
+                        OutputFiles.emplace_back(OutputDirOption + filename.str() + ".json");
                     }
                 }
             }
@@ -266,8 +275,7 @@ int main(int argc, char** argv){
             } else { // place at output dir specified
                 for(const auto& InputFile : InputFiles){
                     StringRef filename = llvm::sys::path::filename(InputFile);
-                    filename.consume_back(llvm::sys::path::extension(filename));
-                    OutputFiles.emplace_back(OutputDirOption + "/" + filename.str() + ".features.json");
+                    OutputFiles.emplace_back(OutputDirOption + filename.str() + ".json");
                 }
             }
         }
@@ -307,7 +315,7 @@ int main(int argc, char** argv){
     //     PipelineStage, AnalysesOption, BuildPath, std::move(db));
     if(PipelineStage == emit_features){
         ParallelEmitFeatures(InputFiles, OutputFiles, PipelineStage,
-            AnalysesOption, BuildPath, db, 1);
+            AnalysesOption, BuildPath, db, 14);
     }
     return 0;
 }
