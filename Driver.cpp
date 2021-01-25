@@ -44,8 +44,8 @@ public:
             //
             if(Stage != emit_statistics){
                 // Analyze clang AST and extract features
-                // an->run(InFile, Context);
-                // AllAnalysesFeatures[AnalysisAbbreviation]=an->getFeatures();
+                an->run(InFile, Context);
+                AllAnalysesFeatures[AnalysisAbbreviation]=an->getFeatures();
             }
             // process features from json (not from disk)
             if(Stage == none){

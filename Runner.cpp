@@ -270,10 +270,10 @@ int main(int argc, char** argv){
                     exit(1);
                 }
                 if(!OutputFileOption.empty()){ // place at output file specified
-                    OutputFiles.emplace_back("./" + OutputFileOption);
+                    OutputFiles.emplace_back(OutputFileOption);
                 } else { // create output file if none specified
                     StringRef filename = llvm::sys::path::filename(InputFiles[0]);
-                    OutputFiles.emplace_back("./" + filename.str() + ".json");
+                    OutputFiles.emplace_back(filename.str() + ".json");
 
                 }
             } else { // multiple files
