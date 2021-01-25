@@ -91,6 +91,20 @@ static llvm::cl::opt<std::string> BuildPath(
     llvm::cl::desc("Build path to dir containing compilation database in JSON format."),
     llvm::cl::Optional, llvm::cl::cat(CXXLangstatCategory));
 
+static llvm::cl::opt<unsigned> ParallelismOption(
+    "parallel",
+    llvm::cl::desc("Number of threads to use for -emit-features."),
+    llvm::cl::init(1),
+    llvm::cl::Optional,
+    llvm::cl::ValueRequired,
+    llvm::cl::cat(CXXLangstatCategory));
+static llvm::cl::alias ParallelismOptionAlias(
+    "j",
+    llvm::cl::desc("Alias for -parallel"),
+    llvm::cl::aliasopt(ParallelismOption),
+    llvm::cl::NotHidden,
+    llvm::cl::cat(CXXLangstatCategory));
+
 //-----------------------------------------------------------------------------
 bool isSuitableExtension(llvm::StringRef s, Stage Stage){
     if(Stage == emit_features) {
@@ -153,6 +167,10 @@ int ParallelEmitFeatures(std::vector<std::string> InputFiles,
     std::string BuildPath,
     std::shared_ptr<clang::tooling::CompilationDatabase> db,
     unsigned Jobs){
+        if(Jobs == 1)
+            return CXXLangstatMain(InputFiles, OutputFiles, PipelineStage,
+                Analyses, BuildPath, db);
+
         // Function assumes InputFiles.size = OutputFiles.size
         unsigned Files = InputFiles.size();
         if(Jobs > Files)
@@ -160,6 +178,10 @@ int ParallelEmitFeatures(std::vector<std::string> InputFiles,
         unsigned WorkPerJob = Files/Jobs;
         unsigned JobsWith1Excess = Files%Jobs;
         unsigned b = 0;
+        // Need to store futures from std::async in vector, otherwise ~future
+        // blocks parallelism.
+        // https://stackoverflow.com/questions/36920579/how-to-use-stdasync-to-call-a-function-in-a-mutex-protected-loop
+        std::vector<std::future<int>> futures;
         for(unsigned idx=0; idx<Jobs; idx++){
             unsigned Work = WorkPerJob;
             if(idx < JobsWith1Excess){
@@ -172,9 +194,9 @@ int ParallelEmitFeatures(std::vector<std::string> InputFiles,
                 OutputFiles.begin() + b + Work);
             std::cout << &InputFiles << ", " << &In << std::endl;
             b+=Work;
-            CXXLangstatMain(In, Out, PipelineStage, Analyses, BuildPath, db);
-            // auto r = std::async(std::launch::async, CXXLangstatMain, In,
-                // Out, s, Analyses, BuildPath, db); // pipeline stage was the problem for async, probably because still 'unparsed'
+            auto r = std::async(std::launch::async, CXXLangstatMain, In,
+                Out, s, Analyses, BuildPath, db); // pipeline stage was the problem for async, probably because still 'unparsed'
+            futures.emplace_back(std::move(r));
         }
         return 0;
     }
@@ -315,7 +337,7 @@ int main(int argc, char** argv){
     //     PipelineStage, AnalysesOption, BuildPath, std::move(db));
     if(PipelineStage == emit_features){
         ParallelEmitFeatures(InputFiles, OutputFiles, PipelineStage,
-            AnalysesOption, BuildPath, db, 14);
+            AnalysesOption, BuildPath, db, ParallelismOption);
     }
     return 0;
 }
