@@ -40,7 +40,7 @@ public:
         int AnalysisIndex=0;
         for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
             auto AnalysisAbbreviation = Registry
-                ->Options.EnabledAnalyses.Items[AnalysisIndex].Name.str();
+                ->Options.EnabledAnalyses.Items[AnalysisIndex].Name;
             //
             if(Stage != emit_statistics){
                 // Analyze clang AST and extract features
@@ -183,7 +183,7 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
             ordered_json OneFileAllStatistics;
             for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
                 auto AnalysisAbbreviation = Registry
-                    ->Options.EnabledAnalyses.Items[AnalysisIndex].Name.str();
+                    ->Options.EnabledAnalyses.Items[AnalysisIndex].Name;
                 an->processFeatures(j[AnalysisAbbreviation]);
                 for(const auto& [statdesc, stats] : an->getStatistics().items()){
                     OneFileAllStatistics[statdesc] = stats;

@@ -37,12 +37,14 @@ public:
     std::string getCurrentOutputFile(){
         return Options.OutputFiles.at(FileIndex++);
     }
+    void printEnabledAnalyses(){
+        Options.EnabledAnalyses.dump();
+    }
 private:
     void createAllAnalyses();
     unsigned FileIndex = 0;
 };
 
 //-----------------------------------------------------------------------------
-
 
 #endif // ANALYSISREGISTRY_H
