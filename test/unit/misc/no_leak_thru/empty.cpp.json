@@ -1,0 +1,56 @@
+{
+    "cca": {
+        "fdecls": null
+    },
+    "lda": null,
+    "lka": null,
+    "msa": {
+        "function decls": {
+            "pass by value": null,
+            "pass by non-const lvalue ref": null,
+            "pass by const lvalue ref": null,
+            "pass by rvalue ref": null
+        },
+        "parm decls": {
+            "value": null,
+            "non-const lvalue ref": null,
+            "const lvalue ref": null,
+            "rvalue ref": null,
+            "universal ref": null
+        },
+        "function template decls": {
+            "pass by value": null,
+            "pass by non-const lvalue ref": null,
+            "pass by const lvalue ref": null,
+            "pass by rvalue ref": null,
+            "pass by universal ref": null
+        }
+    },
+    "sla2": {
+        "explicit class insts": null,
+        "implicit class insts": null
+    },
+    "tia": {
+        "explicit class insts": null,
+        "implicit class insts": null,
+        "func insts": null,
+        "var insts": null
+    },
+    "tpa": {
+        "class templates": null,
+        "function templates": null,
+        "variable templates": null,
+        "alias templates": null
+    },
+    "ua": {
+        "typedefs": null,
+        "aliases": null,
+        "typedef templates": null,
+        "alias templates": null
+    },
+    "vta": {
+        "class template with static member": null,
+        "constexpr function template": null,
+        "variable template": null
+    }
+}
