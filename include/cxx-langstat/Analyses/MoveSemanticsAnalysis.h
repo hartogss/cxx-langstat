@@ -46,6 +46,7 @@ private:
     template<typename T>
     void gatherData(std::string DeclKind, std::string PassKind,
         const Matches<T>& Matches);
+    void ResetAnalysis() override;
 };
 
 #endif // MOVESEMANTICSANALYSIS_H

@@ -20,11 +20,12 @@ public:
     virtual ~Analysis() = default;
     // Run analysis
     void run(llvm::StringRef InFile, clang::ASTContext& Ctxt){
+        ResetAnalysis();
         Context = &Ctxt;
         analyzeFeatures();
     }
     // Return by ref is OK, as Analysis goes out of scope at the very end of the
-    // program
+    // program. 
     const nlohmann::ordered_json& getFeatures(){
         return Features;
     }
@@ -42,6 +43,14 @@ protected:
     // Function that looks for features in code and creates a JSON object to
     // hold all interesting features.
     virtual void analyzeFeatures() = 0;
+    // As an analysis is reused for every file it is run on and analysis state
+    // is kept until it is destroyed, we sometimes need to reset the state of
+    // some member variables of the analysis. Often this is not necessary,
+    // because the assignment operator "=" will overwrite old state, but when
+    // it is not guaranteed that the old state will be overwritten (e.g. because)
+    // the variable are modified using push_back, emplace_back, then we first
+    // need to clean/reset those member variables.
+    virtual void ResetAnalysis(){}
 };
 
 //-----------------------------------------------------------------------------

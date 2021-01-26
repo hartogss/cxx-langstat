@@ -26,6 +26,7 @@ private:
     void extractFeatures();
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
+    void ResetAnalysis() override;
 };
 
 //-----------------------------------------------------------------------------

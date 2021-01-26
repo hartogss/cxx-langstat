@@ -191,6 +191,7 @@ void MoveSemanticsAnalysis::gatherData(std::string DeclKind,
 }
 
 void MoveSemanticsAnalysis::analyzeFeatures() {
+    ResetAnalysis();
     extractFeatures();
     // Fill JSON with data about function (templates)
     gatherData("function decls", "pass by value", FuncsWithValueParm);
@@ -220,6 +221,23 @@ void MoveSemanticsAnalysis::analyzeFeatures() {
 
 void MoveSemanticsAnalysis::processFeatures(nlohmann::ordered_json j){
 
+}
+
+void MoveSemanticsAnalysis::ResetAnalysis(){
+    FuncsWithValueParm.clear();
+    FuncsWithNonConstLValueRefParm.clear();
+    FuncsWithConstLValueRefParm.clear();
+    FuncsWithRValueRefParm.clear();
+    FuncTemplatesWithValueParm.clear();
+    FuncTemplatesWithNonConstLValueRefParm.clear();
+    FuncTemplatesWithConstLValueRefParm.clear();
+    FuncTemplatesWithRValueRefParm.clear();
+    FuncTemplatesWithUniversalRefParm.clear();
+    ValueParms.clear();
+    NonConstLValueRefParms.clear();
+    ConstLValueRefParms.clear();
+    RValueRefParms.clear();
+    UniversalRefParms.clear();
 }
 
 //-----------------------------------------------------------------------------
