@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <stdlib.h>
+#include <string>
 
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/raw_os_ostream.h"
@@ -121,6 +122,8 @@ void TemplateInstantiationAnalysis::extractFeatures() {
     // using variable of member variable/field
     ImplicitInsts = getASTNodes<DeclaratorDecl>(ClassResults,
         "VarsFieldThatInstantiateImplicitly");
+
+    printMatches("implciit", ImplicitInsts);
 
     // In contrast, this result gives a pointer to a functionDecl, which has
     // too has a function we can call to get the template arguments.
@@ -247,14 +250,15 @@ void updateArgsAndKinds(const TemplateArgument& TArg,
 // the variable or the field.
 std::string TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<ClassTemplateSpecializationDecl>& Match, bool isImplicit){
-    static int i = 0;
     if(isImplicit){
-        i++;
+        ImplicitInstCounter++;
         // auto VarOrFieldDecl = ImplicitInsts[i-1];
         // return VarOrFieldDecl.Location;
-        return (ImplicitInsts[i-1].Node->getInnerLocStart()).
+        return (ImplicitInsts[ImplicitInstCounter-1].Node->getInnerLocStart()).
             printToString(Context->getSourceManager());
             // can't I just do ImplicitInsts[i-1].Location to get loc of var/field?
+        // std::cout << ImplicitInsts[i-1].Location << std::endl;
+        // return std::to_string(static_cast<int>(ImplicitInsts[i-1].Location));
     } else{
         // return Match.Location;
         return Match.Node->getTemplateKeywordLoc().
@@ -316,11 +320,21 @@ void TemplateInstantiationAnalysis::analyzeFeatures(){
     gatherInstantiationData(ClassImplicitInsts, "implicit class insts", true);
     if(!analyzeClassInstsOnly)
         gatherInstantiationData(FuncInsts, "func insts", false);
+    std::cout << std::endl;
     if(!analyzeClassInstsOnly)
         gatherInstantiationData(VarInsts, "var insts", false);
 }
 void TemplateInstantiationAnalysis::processFeatures(nlohmann::ordered_json j){
 
+}
+
+void TemplateInstantiationAnalysis::ResetAnalysis(){
+    ClassImplicitInsts.clear();
+    ClassExplicitInsts.clear();
+    ImplicitInsts.clear();
+    FuncInsts.clear();
+    VarInsts.clear();
+    ImplicitInstCounter=0;
 }
 
 //-----------------------------------------------------------------------------

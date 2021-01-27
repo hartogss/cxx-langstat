@@ -40,6 +40,9 @@ private:
     template<typename T>
     void gatherInstantiationData(Matches<T>& Insts, std::string InstKind,
         bool AreImplicit);
+    void ResetAnalysis() override;
+    //
+    unsigned ImplicitInstCounter=0;
 };
 
 //-----------------------------------------------------------------------------
