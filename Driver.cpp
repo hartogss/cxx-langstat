@@ -16,6 +16,8 @@
 #include "cxx-langstat/Utils.h"
 #include "cxx-langstat/Options.h"
 #include "../Driver.h"
+#include "cxx-langstat/Stats.h"
+
 
 using namespace clang;
 using namespace clang::ast_matchers;
@@ -175,10 +177,13 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
     else if(Stage == emit_statistics){
         std::cout << "do because stage 2" << std::endl;
         ordered_json AllFilesAllStatistics;
+        ordered_json Summary;
         for(auto File : InputFiles){
+            std::cout << "Reading features from file: " << File;
             ordered_json j;
             std::ifstream i(File);
             i >> j;
+            std::cout << " Done\n";
             auto AnalysisIndex = 0;
             ordered_json OneFileAllStatistics;
             for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
@@ -190,11 +195,15 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
                 }
                 AnalysisIndex++;
             }
+            Summary = add(std::move(Summary), OneFileAllStatistics);
             AllFilesAllStatistics[File] = OneFileAllStatistics;
         }
         std::ofstream o(Registry->Options.OutputFiles[0]);
         o << AllFilesAllStatistics.dump(4) << std::endl;
-        std::cout << "all stats\n" << AllFilesAllStatistics.dump(4) << std::endl;
+        std::cout << Summary.dump(4) << std::endl;
+        o << Summary.dump(4) << std::endl;
+
+
     }
 
     // Not really important here, but good practice

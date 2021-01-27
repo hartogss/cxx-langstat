@@ -71,7 +71,7 @@ target_link_directories(${PROJECT_NAME} PUBLIC lib/)
 target_link_libraries(${PROJECT_NAME}
     BaseExtractor MatchingExtractor
     AnalysisRegistry AnalysisList
-    Utils
+    Utils Stats
     CyclomaticComplexityAnalysis
     LoopDepthAnalysis
     LoopKindAnalysis
