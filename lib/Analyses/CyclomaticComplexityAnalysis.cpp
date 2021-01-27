@@ -21,7 +21,7 @@ void CyclomaticComplexityAnalysis::analyzeFeatures(){
     auto fDecl = functionDecl(
         isExpansionInMainFile(),
         unless(isImplicit()), // Should not be compiler-generated
-        has(compoundStmt()))  // Should be defined, i.e have a body
+        hasBody(anything()))  // Should be defined, i.e have a body
     .bind(id);
     auto matches = Extractor.extract(*Context, id, fDecl);
 
@@ -36,18 +36,26 @@ void CyclomaticComplexityAnalysis::analyzeFeatures(){
         clang::CFG::buildCFG(match.Node, match.Node->getBody(), // probably because body is compoundStmt
             Context, clang::CFG::BuildOptions()
         );
-        // Wanna print the cfgs? Don't, they're ugly.
-        // llvm::raw_os_ostream OS(std::cout);
-        // cfg->print(OS, clang::LangOptions(), true);
-        // Strictly speaking, you'd have to subtract -2 each from numNodes & numEdges
-        // because of the LLVM entry & exit block. However, this has no effect on CYC.
-        unsigned numNodes = cfg->size();
-        unsigned numEdges = 0;
-        for(auto block = cfg->begin(); block != cfg->end(); block++)
-            numEdges += (*block)->succ_size();
-        unsigned CYC = numEdges - numNodes + 2; // 2 since #connected components P=1
-        // add to JSON
-        fdecls[getMatchDeclName(match)] = CYC;
+        // FIXME: remove this if we don't compute CYC of function templates in the future anyway.
+        if(cfg){
+            // Wanna print the cfgs? Don't, they're ugly.
+            // llvm::raw_os_ostream OS(std::cout);
+            // cfg->print(OS, clang::LangOptions(), true);
+            // Strictly speaking, you'd have to subtract -2 each from numNodes & numEdges
+            // because of the LLVM entry & exit block. However, this has no effect on CYC.
+            unsigned numNodes = cfg->size();
+            unsigned numEdges = 0;
+            for(auto block = cfg->begin(); block != cfg->end(); block++)
+                numEdges += (*block)->succ_size();
+            unsigned CYC = numEdges - numNodes + 2; // 2 since #connected components P=1
+            // Use emplace back because of overloading
+            fdecls[getMatchDeclName(match)].emplace_back(CYC);
+        } else {
+            std::cout << "\"" << getMatchDeclName(match) << "\" of type \""
+            << cast<clang::FunctionDecl>(match.Node)->getType().getAsString()
+            << "\" could not be analyzed. This is likely because this function "
+                "is part of a function template.\n";
+        }
     }
     Features["fdecls"] = fdecls;
 }
@@ -56,9 +64,11 @@ void CyclomaticComplexityAnalysis::analyzeFeatures(){
 // is already stripped off
 void CyclomaticComplexityAnalysis::processFeatures(nlohmann::ordered_json j){
     std::map<std::string, unsigned> m;
-    for(const auto& [key, val] : j["fdecls"].items()){
-        m.try_emplace(to_string(val), 0);
-        m.at(to_string(val))++;
+    for(const auto& [fdeclname, cycs] : j["fdecls"].items()){
+        for(auto cyc : cycs){
+            m.try_emplace(to_string(cyc), 0);
+            m.at(to_string(cyc))++;
+        }
     }
     std::string desc = "distribution of cyclomatic complexity of functions";
     Statistics[desc] = m;
