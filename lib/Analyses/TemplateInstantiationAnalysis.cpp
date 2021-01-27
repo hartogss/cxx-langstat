@@ -11,7 +11,6 @@
 #include <nlohmann/json.hpp>
 
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
-#include "cxx-langstat/Stats.h"
 #include "cxx-langstat/Utils.h"
 
 using namespace clang;

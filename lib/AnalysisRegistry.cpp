@@ -7,7 +7,6 @@
 #include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
 #include "cxx-langstat/Analyses/LoopKindAnalysis.h"
 #include "cxx-langstat/Analyses/MoveSemanticsAnalysis.h"
-#include "cxx-langstat/Analyses/StdlibAnalysis.h"
 #include "cxx-langstat/Analyses/StdlibAnalysis2.h"
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 #include "cxx-langstat/Analyses/TemplateParameterAnalysis.h"
@@ -35,8 +34,6 @@ void AnalysisRegistry::createAllAnalyses(){
         Analyses.emplace_back(std::make_unique<LoopKindAnalysis>());
     if(Options.EnabledAnalyses.contains("msa"))
         Analyses.emplace_back(std::make_unique<MoveSemanticsAnalysis>());
-    if(Options.EnabledAnalyses.contains("sla"))
-        Analyses.emplace_back(std::make_unique<StdlibAnalysis>());
     if(Options.EnabledAnalyses.contains("sla2"))
         Analyses.emplace_back(std::make_unique<StdlibAnalysis2>());
     if(Options.EnabledAnalyses.contains("tia"))
