@@ -82,8 +82,8 @@ void LoopDepthAnalysis::analyzeFeatures(){
                 locations.emplace_back(m.Location);
             }
             loops[std::to_string(depth)] = locations;
-            depth++;
         }
+        depth++;
     }
     Features = loops;
 }
