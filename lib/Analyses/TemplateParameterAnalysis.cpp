@@ -51,51 +51,105 @@ void TemplateParameterAnalysis::extractFeatures(){
     AliasTemplates = getASTNodes<Decl>(ATResults, "at");
 }
 
-std::string getTemplateParmKind(NamedDecl* D){
-    auto kind = cast<Decl>(D)->getDeclKindName();
-    if(strcmp(kind, "NonTypeTemplateParm") == 0)
-        return "non-type";
-    else if(strcmp(kind, "TemplateTypeParm") == 0)
-        return "type";
-    else if(strcmp(kind, "TemplateTemplateParm") == 0)
-        return "template";
-    else {
-        std::cout << "invalid template parameter kind!\n";
-        return "?";
-    }
+//-----------------------------------------------------------------------------
+// Functions to convert structs to/from JSON.
+void to_json(nlohmann::json& j, const TemplateParms& p){
+    j = nlohmann::json{
+        {"non-type", p.Nontype},
+        {"type", p.Type},
+        {"template", p.Template}
+    };
 }
+void from_json(const nlohmann::json& j, TemplateParms& p){
+    j.at("non-type").get_to(p.Nontype);
+    j.at("type").get_to(p.Type);
+    j.at("template").get_to(p.Template);
+}
+void to_json(nlohmann::json& j, const Template& t){
+    j = nlohmann::json{
+        {"location", t.Location},
+        {"uses param pack", t.UsesParamPack},
+        {"parameters", t.Parms}
+    };
+}
+void from_json(const nlohmann::json& j, Template& t){
+    j.at("location").get_to(t.Location);
+    j.at("uses param pack").get_to(t.UsesParamPack);
+    j.at("parameters").get_to(t.Parms);
+}
+//-----------------------------------------------------------------------------
 
-void TemplateParameterAnalysis::gatherStatistics(const Matches<Decl>& Matches,
+void TemplateParameterAnalysis::gatherData(const Matches<Decl>& Matches,
     std::string TemplateKind){
     ordered_json Templates;
     for(auto match : Matches){
-        ordered_json Template;
-        Template["location"] = match.Location;
+        Template Template;
+        TemplateParms Parms;
+        Template.Location = match.Location;
         auto TParms = cast<TemplateDecl>(match.Node)->getTemplateParameters();
-        Template["uses param pack"] = TParms->hasParameterPack();
-        std::map<std::string, unsigned> ParmKindCounts = {
-            {"non-type",0},{"type",0},{"template",0},};
-        for(unsigned idx=0; idx<TParms->size(); idx++)
-            ParmKindCounts[getTemplateParmKind(TParms->getParam(idx))]++;
-        Template["parameters"]["non-type"] = ParmKindCounts["non-type"];
-        Template["parameters"]["type"] = ParmKindCounts["type"];
-        Template["parameters"]["template"] = ParmKindCounts["template"];
-        Templates[getMatchDeclName(match)].emplace_back(Template);
+        // std::cout << TParms->size() << std::endl;
+        Template.UsesParamPack = TParms->hasParameterPack();
+        for(unsigned idx=0; idx<TParms->size(); idx++){
+            auto kind = cast<Decl>(TParms->getParam(idx))->getDeclKindName();
+            // std::cout << kind << std::endl;
+            if(strcmp(kind, "NonTypeTemplateParm") == 0)
+                Parms.Nontype++;
+            else if(strcmp(kind, "TemplateTypeParm") == 0)
+                Parms.Type++;
+            else if(strcmp(kind, "TemplateTemplateParm") == 0)
+                Parms.Template++;
+            else {
+                std::cout << "invalid template parameter kind!\n";
+                exit(1);
+            }
+        }
+        assert(Parms.NumParms() != 0);
+        Template.Parms = Parms;
+        nlohmann::json JSONTemplate = Template;
+        Templates[getMatchDeclName(match)].emplace_back(JSONTemplate);
     }
     Features[TemplateKind] = Templates;
 }
 
 void TemplateParameterAnalysis::analyzeFeatures(){
     extractFeatures();
-    gatherStatistics(ClassTemplates, "class templates");
-    gatherStatistics(FunctionTemplates, "function templates");
-    gatherStatistics(VariableTemplates, "variable templates");
-    gatherStatistics(AliasTemplates, "alias templates");
+    gatherData(ClassTemplates, "class templates");
+    gatherData(FunctionTemplates, "function templates");
+    gatherData(VariableTemplates, "variable templates");
+    gatherData(AliasTemplates, "alias templates");
 }
 
+void useParamPacks(ordered_json& Stats, ordered_json j){
+    for(const auto& [TemplateKind, TemplateNames] : j.items()){
+        unsigned usePP = 0;
+        unsigned dontUsePP = 0;
+        for(const auto& TemplateName : TemplateNames){
+            for(const auto& JSONTemplate : TemplateName){
+                // std::cout << JSONTemplate.dump(4) << std::endl;
+                // Template Template = JSONTemplate.get<Template>(); doesn't work?
+                Template Template;
+                from_json(JSONTemplate, Template);
+                if(Template.UsesParamPack)
+                    usePP++;
+                else
+                    dontUsePP++;
+            }
+        }
+        auto desc = "parameter pack usage";
+        // if(usePP + dontUsePP){
+            Stats[desc][TemplateKind]["yes"] = usePP;
+            Stats[desc][TemplateKind]["no"] = dontUsePP;
+        // }
+    }
+}
 
 void TemplateParameterAnalysis::processFeatures(nlohmann::ordered_json j){
+    useParamPacks(Statistics, j);
 
+}
+
+void TemplateParameterAnalysis::ResetAnalysis(){
+    Statistics.clear();
 }
 
 //-----------------------------------------------------------------------------

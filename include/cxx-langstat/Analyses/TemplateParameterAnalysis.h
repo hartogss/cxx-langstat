@@ -15,7 +15,7 @@ public:
     }
 private:
     void extractFeatures();
-    void gatherStatistics(const Matches<clang::Decl>& Matches,
+    void gatherData(const Matches<clang::Decl>& Matches,
         std::string TemplateKind);
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
@@ -23,6 +23,24 @@ private:
     Matches<clang::Decl> FunctionTemplates;
     Matches<clang::Decl> VariableTemplates;
     Matches<clang::Decl> AliasTemplates;
+    void ResetAnalysis() override;
+};
+
+// Helper structs we create to later write to JSON files using helper functions.
+// Advantage: can be more easily extended if we want to extract more rich features
+// and/or compute statistics of.
+struct TemplateParms {
+    int Nontype = 0;
+    int Type = 0;
+    int Template = 0;
+    int NumParms() {
+        return Nontype+Type+Template;
+    }
+};
+struct Template {
+    int Location;
+    bool UsesParamPack;
+    TemplateParms Parms;
 };
 
 //-----------------------------------------------------------------------------
