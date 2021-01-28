@@ -15,25 +15,14 @@ public:
     }
 private:
     void extractFeatures();
-    void gatherStatistics();
+    void gatherStatistics(const Matches<clang::Decl>& Matches,
+        std::string TemplateKind);
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
     Matches<clang::Decl> ClassTemplates;
-    Matches<clang::Decl> ClassTemplateNonTypeParameters;
-    Matches<clang::Decl> ClassTemplateTypeParameters;
-    Matches<clang::Decl> ClassTemplateTemplateParameters;
     Matches<clang::Decl> FunctionTemplates;
-    Matches<clang::Decl> FunctionTemplateNonTypeParameters;
-    Matches<clang::Decl> FunctionTemplateTypeParameters;
-    Matches<clang::Decl> FunctionTemplateTemplateParameters;
     Matches<clang::Decl> VariableTemplates;
-    Matches<clang::Decl> VariableTemplateNonTypeParameters;
-    Matches<clang::Decl> VariableTemplateTypeParameters;
-    Matches<clang::Decl> VariableTemplateTemplateParameters;
     Matches<clang::Decl> AliasTemplates;
-    Matches<clang::Decl> AliasTemplateNonTypeParameters;
-    Matches<clang::Decl> AliasTemplateTypeParameters;
-    Matches<clang::Decl> AliasTemplateTemplateParameters;
 };
 
 //-----------------------------------------------------------------------------

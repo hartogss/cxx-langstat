@@ -1,0 +1,29 @@
+{
+    "tpa": {
+        "class templates": null,
+        "function templates": {
+            "f": [
+                {
+                    "location": 11,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 1,
+                        "template": 0
+                    }
+                },
+                {
+                    "location": 14,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 1,
+                        "type": 0,
+                        "template": 0
+                    }
+                }
+            ]
+        },
+        "variable templates": null,
+        "alias templates": null
+    }
+}

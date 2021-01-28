@@ -65,77 +65,35 @@ std::string getTemplateParmKind(NamedDecl* D){
     }
 }
 
-void TemplateParameterAnalysis::gatherStatistics(){
-    ordered_json CTs;
-    for(auto match : ClassTemplates){
-        ordered_json CT;
-        CT["location"] = match.Location;
+void TemplateParameterAnalysis::gatherStatistics(const Matches<Decl>& Matches,
+    std::string TemplateKind){
+    ordered_json Templates;
+    for(auto match : Matches){
+        ordered_json Template;
+        Template["location"] = match.Location;
         auto TParms = cast<TemplateDecl>(match.Node)->getTemplateParameters();
-        CT["uses param pack"] = TParms->hasParameterPack();
+        Template["uses param pack"] = TParms->hasParameterPack();
         std::map<std::string, unsigned> ParmKindCounts = {
             {"non-type",0},{"type",0},{"template",0},};
         for(unsigned idx=0; idx<TParms->size(); idx++)
             ParmKindCounts[getTemplateParmKind(TParms->getParam(idx))]++;
-        CT["parameters"]["non-type"] = ParmKindCounts["non-type"];
-        CT["parameters"]["type"] = ParmKindCounts["type"];
-        CT["parameters"]["template"] = ParmKindCounts["template"];
-        CTs[getMatchDeclName(match)] = CT;
+        Template["parameters"]["non-type"] = ParmKindCounts["non-type"];
+        Template["parameters"]["type"] = ParmKindCounts["type"];
+        Template["parameters"]["template"] = ParmKindCounts["template"];
+        Templates[getMatchDeclName(match)].emplace_back(Template);
     }
-    ordered_json FTs;
-    for(auto match : FunctionTemplates){
-        ordered_json FT;
-        FT["location"] = match.Location;
-        auto TParms = cast<TemplateDecl>(match.Node)->getTemplateParameters();
-        FT["uses param pack"] = TParms->hasParameterPack();
-        std::map<std::string, unsigned> ParmKindCounts = {
-            {"non-type",0},{"type",0},{"template",0},};
-        for(unsigned idx=0; idx<TParms->size(); idx++)
-            ParmKindCounts[getTemplateParmKind(TParms->getParam(idx))]++;
-        FT["parameters"]["non-type"] = ParmKindCounts["non-type"];
-        FT["parameters"]["type"] = ParmKindCounts["type"];
-        FT["parameters"]["template"] = ParmKindCounts["template"];
-        FTs[getMatchDeclName(match)] = FT;
-    }
-    ordered_json VTs;
-    for(auto match : VariableTemplates){
-        ordered_json VT;
-        VT["location"] = match.Location;
-        auto TParms = cast<TemplateDecl>(match.Node)->getTemplateParameters();
-        VT["uses param pack"] = TParms->hasParameterPack();
-        std::map<std::string, unsigned> ParmKindCounts = {
-            {"non-type",0},{"type",0},{"template",0},};
-        for(unsigned idx=0; idx<TParms->size(); idx++)
-            ParmKindCounts[getTemplateParmKind(TParms->getParam(idx))]++;
-        VT["parameters"]["non-type"] = ParmKindCounts["non-type"];
-        VT["parameters"]["type"] = ParmKindCounts["type"];
-        VT["parameters"]["template"] = ParmKindCounts["template"];
-        VTs[getMatchDeclName(match)] = VT;
-    }
-    ordered_json ATs;
-    for(auto match : AliasTemplates){
-        ordered_json AT;
-        AT["location"] = match.Location;
-        auto TParms = cast<TemplateDecl>(match.Node)->getTemplateParameters();
-        AT["uses param pack"] = TParms->hasParameterPack();
-        std::map<std::string, unsigned> ParmKindCounts = {
-            {"non-type",0},{"type",0},{"template",0},};
-        for(unsigned idx=0; idx<TParms->size(); idx++)
-            ParmKindCounts[getTemplateParmKind(TParms->getParam(idx))]++;
-        AT["parameters"]["non-type"] = ParmKindCounts["non-type"];
-        AT["parameters"]["type"] = ParmKindCounts["type"];
-        AT["parameters"]["template"] = ParmKindCounts["template"];
-        ATs[getMatchDeclName(match)] = AT;
-    }
-    Features["class templates"] = CTs;
-    Features["function templates"] = FTs;
-    Features["variable templates"] = VTs;
-    Features["alias templates"] = ATs;
+    Features[TemplateKind] = Templates;
 }
 
 void TemplateParameterAnalysis::analyzeFeatures(){
-        extractFeatures();
-        gatherStatistics();
+    extractFeatures();
+    gatherStatistics(ClassTemplates, "class templates");
+    gatherStatistics(FunctionTemplates, "function templates");
+    gatherStatistics(VariableTemplates, "variable templates");
+    gatherStatistics(AliasTemplates, "alias templates");
 }
+
+
 void TemplateParameterAnalysis::processFeatures(nlohmann::ordered_json j){
 
 }
