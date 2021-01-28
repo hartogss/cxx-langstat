@@ -1,201 +1,243 @@
 {
     "tpa": {
         "class templates": {
-            "Widget1": {
-                "location": 10,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 1,
-                    "type": 0,
-                    "template": 0
+            "Widget1": [
+                {
+                    "location": 10,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 1,
+                        "type": 0,
+                        "template": 0
+                    }
                 }
-            },
-            "Widget1_1": {
-                "location": 13,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 2,
-                    "type": 0,
-                    "template": 0
+            ],
+            "Widget1_1": [
+                {
+                    "location": 13,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 2,
+                        "type": 0,
+                        "template": 0
+                    }
                 }
-            },
-            "Widget2": {
-                "location": 16,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 1,
-                    "template": 0
+            ],
+            "Widget2": [
+                {
+                    "location": 16,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 1,
+                        "template": 0
+                    }
                 }
-            },
-            "Widget3": {
-                "location": 19,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 0,
-                    "template": 1
+            ],
+            "Widget3": [
+                {
+                    "location": 19,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 0,
+                        "template": 1
+                    }
                 }
-            },
-            "Widget4": {
-                "location": 22,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 0,
-                    "template": 1
+            ],
+            "Widget4": [
+                {
+                    "location": 22,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 0,
+                        "template": 1
+                    }
                 }
-            },
-            "Widget1_p": {
-                "location": 25,
-                "uses param pack": true,
-                "parameters": {
-                    "non-type": 1,
-                    "type": 0,
-                    "template": 0
+            ],
+            "Widget1_p": [
+                {
+                    "location": 25,
+                    "uses param pack": true,
+                    "parameters": {
+                        "non-type": 1,
+                        "type": 0,
+                        "template": 0
+                    }
                 }
-            },
-            "Widget2_p": {
-                "location": 28,
-                "uses param pack": true,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 1,
-                    "template": 0
+            ],
+            "Widget2_p": [
+                {
+                    "location": 28,
+                    "uses param pack": true,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 1,
+                        "template": 0
+                    }
                 }
-            },
-            "Widget3_p": {
-                "location": 31,
-                "uses param pack": true,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 0,
-                    "template": 1
+            ],
+            "Widget3_p": [
+                {
+                    "location": 31,
+                    "uses param pack": true,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 0,
+                        "template": 1
+                    }
                 }
-            },
-            "Widget_m1": {
-                "location": 71,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 1,
-                    "template": 0
+            ],
+            "Widget_m1": [
+                {
+                    "location": 71,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 1,
+                        "template": 0
+                    }
                 }
-            },
-            "Widget_m2": {
-                "location": 77,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 1,
-                    "template": 0
+            ],
+            "Widget_m2": [
+                {
+                    "location": 77,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 1,
+                        "template": 0
+                    }
                 }
-            }
+            ]
         },
         "function templates": {
-            "func1": {
-                "location": 36,
-                "uses param pack": true,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 2,
-                    "template": 0
+            "func1": [
+                {
+                    "location": 36,
+                    "uses param pack": true,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 2,
+                        "template": 0
+                    }
                 }
-            },
-            "Widget_f1::method1": {
-                "location": 39,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 0,
-                    "template": 1
+            ],
+            "Widget_f1::method1": [
+                {
+                    "location": 39,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 0,
+                        "template": 1
+                    }
                 }
-            },
-            "Widget_m1::method1": {
-                "location": 73,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 0,
-                    "template": 1
+            ],
+            "Widget_m1::method1": [
+                {
+                    "location": 73,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 0,
+                        "template": 1
+                    }
                 }
-            }
+            ]
         },
         "variable templates": {
-            "num": {
-                "location": 45,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 1,
-                    "type": 1,
-                    "template": 0
+            "num": [
+                {
+                    "location": 45,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 1,
+                        "type": 1,
+                        "template": 0
+                    }
                 }
-            },
-            "Widget_m2::data": {
-                "location": 79,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 0,
-                    "template": 1
+            ],
+            "Widget_m2::data": [
+                {
+                    "location": 79,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 0,
+                        "template": 1
+                    }
                 }
-            }
+            ]
         },
         "alias templates": {
-            "Alias1": {
-                "location": 50,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 1,
-                    "type": 0,
-                    "template": 0
+            "Alias1": [
+                {
+                    "location": 50,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 1,
+                        "type": 0,
+                        "template": 0
+                    }
                 }
-            },
-            "Alias1_1": {
-                "location": 53,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 2,
-                    "type": 0,
-                    "template": 0
+            ],
+            "Alias1_1": [
+                {
+                    "location": 53,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 2,
+                        "type": 0,
+                        "template": 0
+                    }
                 }
-            },
-            "Alias2": {
-                "location": 56,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 1,
-                    "template": 0
+            ],
+            "Alias2": [
+                {
+                    "location": 56,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 1,
+                        "template": 0
+                    }
                 }
-            },
-            "cAlias1": {
-                "location": 59,
-                "uses param pack": true,
-                "parameters": {
-                    "non-type": 1,
-                    "type": 0,
-                    "template": 0
+            ],
+            "cAlias1": [
+                {
+                    "location": 59,
+                    "uses param pack": true,
+                    "parameters": {
+                        "non-type": 1,
+                        "type": 0,
+                        "template": 0
+                    }
                 }
-            },
-            "cAlias2": {
-                "location": 62,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 1,
-                    "template": 0
+            ],
+            "cAlias2": [
+                {
+                    "location": 62,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 1,
+                        "template": 0
+                    }
                 }
-            },
-            "cAlias3": {
-                "location": 65,
-                "uses param pack": false,
-                "parameters": {
-                    "non-type": 0,
-                    "type": 0,
-                    "template": 1
+            ],
+            "cAlias3": [
+                {
+                    "location": 65,
+                    "uses param pack": false,
+                    "parameters": {
+                        "non-type": 0,
+                        "type": 0,
+                        "template": 1
+                    }
                 }
-            }
+            ]
         }
     }
 }
