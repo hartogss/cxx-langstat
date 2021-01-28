@@ -103,19 +103,18 @@ std::string GetRelevantTypesAsString(llvm::StringRef ContainerType,
 }
 
 // Gathers data on how often standard library types were implicitly instantiated.
-ordered_json stdlibTypePrevalence(ordered_json Statistics, ordered_json j){
+void stdlibTypePrevalence(ordered_json& Statistics, ordered_json j){
     std::map<std::string, unsigned> m;
     for(const auto& [Type, Insts] : j["implicit class insts"].items()){
         m.try_emplace(Type, Insts.size());
     }
     std::string desc = "stdlib type prevalence";
     Statistics[desc] = m;
-    return Statistics;
 }
 
 // For standard library types, gathers data on what types
 // they were implicitly instantiated with.
-ordered_json stdlibInstantiationTypeArgs(ordered_json Statistics, ordered_json j){
+void stdlibInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
     StringMap<StringMap<unsigned>> m;
     for(const auto& [Type, Insts] : j["implicit class insts"].items()){
         for(const auto& Inst : Insts){
@@ -130,12 +129,11 @@ ordered_json stdlibInstantiationTypeArgs(ordered_json Statistics, ordered_json j
     }
     std::string desc = "stdlib instantiation type arguments";
     Statistics[desc] = m;
-    return Statistics;
 }
 
 void StdlibAnalysis2::processFeatures(nlohmann::ordered_json j){
-    Statistics = stdlibTypePrevalence(Statistics, j);
-    Statistics = stdlibInstantiationTypeArgs(Statistics, j);
+    stdlibTypePrevalence(Statistics, j);
+    stdlibInstantiationTypeArgs(Statistics, j);
 
 }
 
