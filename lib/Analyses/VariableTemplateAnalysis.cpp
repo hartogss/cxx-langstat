@@ -14,6 +14,7 @@ using ordered_json = nlohmann::ordered_json;
 // introduced in C++14?
 
 void VariableTemplateAnalysis::extractFeatures(){
+    VariableFamilies.clear();
     // First pre-C++14 idiom to get variable template functionality:
     // Class templates with static data.
     // Seems like static members of classes in AST are vars, not fields.
@@ -24,12 +25,15 @@ void VariableTemplateAnalysis::extractFeatures(){
         has(cxxRecordDecl(
             // Must have static member
             forEach(varDecl(isStaticStorageClass()).bind("staticmember")),
-            // Mustn't have decl that is not static member, access spec or cxxrecord
+            // Mustn't have decl that is not static member, access spec or
+            // implicit cxxrecord ()
+            // Why does cxxRecordDecl inside class template contain implicit
+            // implicit cxxRecordDecl?
             unless(has(decl(
                 unless(anyOf(
                     varDecl(isStaticStorageClass()),
                     accessSpecDecl(),
-                    cxxRecordDecl()))))))))
+                    cxxRecordDecl(isImplicit())))))))))
     .bind("classwithstaticmember");
 
     // Second pre-C++14 idiom:
@@ -62,35 +66,91 @@ void VariableTemplateAnalysis::extractFeatures(){
         isExpansionInMainFile())
     .bind("variabletemplate");
 
-    ClassWithStaticMemberDecls = Extractor.extract(*Context,
+    auto ClassWithStaticMemberDecls = Extractor.extract(*Context,
         "classwithstaticmember", ClassWithStaticMember);
-    ConstexprFunctionDecls = Extractor.extract(*Context, "constexprfunction",
+    auto ConstexprFunctionDecls = Extractor.extract(*Context, "constexprfunction",
         ConstexprFunction);
-    VariableTemplateDecls = Extractor.extract(*Context, "variabletemplate",
+    auto VariableTemplateDecls = Extractor.extract(*Context, "variabletemplate",
         VariableTemplate);
+    // Possible improvement: report identifier of class/function/template.
+    for(const auto& m : ClassWithStaticMemberDecls){
+        VariableFamilies.emplace_back(VariableFamily(m.Location,
+            ClassTemplateStaticMemberVar));
+    }
+    for(const auto& m : ConstexprFunctionDecls){
+        VariableFamilies.emplace_back(VariableFamily(m.Location,
+            ConstexprFunctionTemplate));
+    }
+    for(const auto& m : VariableTemplateDecls){
+        VariableFamilies.emplace_back(VariableFamily(m.Location,
+            VarTemplate));
+    }
 }
-template<typename T>
-void VariableTemplateAnalysis::gatherData(std::string VTKind,
-    const Matches<T>& Matches){
-        // Possible improvement: report if class template contains multiple
-        // static member vars
-        ordered_json Vs;
-        for(auto match : Matches){
-            ordered_json V;
-            V["location"] = match.Location;
-            Vs[getMatchDeclName(match)] = V;
-        }
-        Features[VTKind] = Vs;
+
+//-----------------------------------------------------------------------------
+// Helper functions to convert SynonymKind to string and back.
+std::string VFKToString(FamilyKind Kind){
+    switch (Kind) {
+        case ClassTemplateStaticMemberVar:
+            return "static data member in class template";
+        case ConstexprFunctionTemplate:
+            return "Constexpr function template";
+        case VarTemplate:
+            return "Variable template";
+        default:
+            return "invalid";
+    }
 }
+FamilyKind getVFKFromString(llvm::StringRef s){
+    if(s.equals("static data member in class template"))
+        return ClassTemplateStaticMemberVar;
+    else if(s.equals("Constexpr function template"))
+        return ConstexprFunctionTemplate;
+    else
+        return VarTemplate;
+}
+// Functions to convert structs to/from JSON.
+void to_json(nlohmann::json& j, const VariableFamily& vf){
+    j = nlohmann::json{{"location", vf.Location},{"kind", VFKToString(vf.Kind)}};
+}
+void from_json(const nlohmann::json& j, VariableFamily& vf){
+    j.at("location").get_to(vf.Location);
+    vf.Kind = getVFKFromString(j.at("kind").get<std::string>());
+}
+//-----------------------------------------------------------------------------
+//
 void VariableTemplateAnalysis::analyzeFeatures(){
     extractFeatures();
-    gatherData("class template with static member", ClassWithStaticMemberDecls);
-    gatherData("constexpr function template", ConstexprFunctionDecls);
-    gatherData("variable template", VariableTemplateDecls);
+    Features.clear();
+    for(auto vf : VariableFamilies){
+        nlohmann::json vf_j = vf;
+        Features.emplace_back(vf_j);
+    }
+}
+
+void VariableFamilyKindPrevalence(ordered_json& Stats, const ordered_json& j){
+    unsigned CTSDs=0, CFTs=0, VTs=0;
+    for(const auto& vf_j : j){
+        std::cout << vf_j.dump(4) << std::endl;
+        VariableFamily vf;
+        from_json(vf_j, vf);
+        switch(vf.Kind){
+            case ClassTemplateStaticMemberVar:
+                CTSDs++;
+            case ConstexprFunctionTemplate:
+                CFTs++;
+            case VarTemplate:
+                VTs++;
+        }
+    }
+    auto desc = "prevalence of variable templates and pre-C++14 idioms";
+    Stats[desc]["static data member in class template"] = CTSDs;
+    Stats[desc]["constexpr function template"] = CFTs;
+    Stats[desc]["variable template"] = VTs;
 }
 
 void VariableTemplateAnalysis::processFeatures(nlohmann::ordered_json j){
-
+    VariableFamilyKindPrevalence(Statistics, j);
 }
 
 //-----------------------------------------------------------------------------

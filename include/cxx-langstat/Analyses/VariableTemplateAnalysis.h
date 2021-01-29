@@ -4,6 +4,18 @@
 #include "cxx-langstat/Analysis.h"
 
 //-----------------------------------------------------------------------------
+// Enum to indicate what kind (idiom or language construct) is used to indicate
+// a variable family (a family is what a template defines).
+enum FamilyKind {
+    ClassTemplateStaticMemberVar, ConstexprFunctionTemplate, VarTemplate
+};
+struct VariableFamily {
+    VariableFamily() = default;
+    VariableFamily(int Location, FamilyKind Kind) : Location(Location),
+        Kind(Kind){}
+    int Location;
+    FamilyKind Kind;
+};
 
 class VariableTemplateAnalysis : public Analysis {
 public:
@@ -14,12 +26,8 @@ public:
         std::cout << "VTA dtor\n";
     }
 private:
-    Matches<clang::Decl> ClassWithStaticMemberDecls;
-    Matches<clang::Decl> ConstexprFunctionDecls;
-    Matches<clang::Decl> VariableTemplateDecls;
     void extractFeatures();
-    template<typename T>
-    void gatherData(std::string VTKind, const Matches<T>& Matches);
+    std::vector<VariableFamily> VariableFamilies;
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
 };
