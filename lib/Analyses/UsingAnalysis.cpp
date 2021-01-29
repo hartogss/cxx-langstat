@@ -59,8 +59,9 @@ void UsingAnalysis::extractFeatures() {
             unless(anyOf(
                 typedefDecl(),
                 accessSpecDecl(),
-                cxxRecordDecl())))))))) // Must be allowed to contain cxxrecord,
-                                        // instrinsic to clang AST
+                // Must be allowed to contain implicit cxxrecord,
+                // instrinsic to clang AST. Same as with VTA.
+                cxxRecordDecl(isImplicit())))))))))
     .bind("typedeftemplate");
 
     // Alias template
