@@ -42,12 +42,7 @@
         "variable templates": null,
         "alias templates": null
     },
-    "ua": {
-        "typedefs": null,
-        "aliases": null,
-        "typedef templates": null,
-        "alias templates": null
-    },
+    "ua": [],
     "vta": {
         "class template with static member": null,
         "constexpr function template": null,

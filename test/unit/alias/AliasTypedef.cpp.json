@@ -1,45 +1,69 @@
 {
-    "ua": {
-        "typedefs": {
-            "pair_typedef": {
-                "location": 16
-            },
-            "Tpair_typedef2::type": {
-                "location": 49
-            },
-            "Tpair_typedef3::type": {
-                "location": 56
-            }
+    "ua": [
+        {
+            "kind": "Typedef",
+            "location": 16,
+            "templated": false
         },
-        "aliases": {
-            "pair_alias": {
-                "location": 17
-            }
+        {
+            "kind": "Typedef",
+            "location": 49,
+            "templated": false
         },
-        "typedef templates": {
-            "Tpair_typedef": {
-                "location": 29
-            },
-            "Tpair_typedef1": {
-                "location": 35
-            },
-            "Tpair_typedef4": {
-                "location": 61
-            },
-            "Tpair_typedef5": {
-                "location": 72
-            },
-            "Tpair_typedef6": {
-                "location": 87
-            },
-            "Tpair_typedef7": {
-                "location": 100
-            }
+        {
+            "kind": "Typedef",
+            "location": 56,
+            "templated": false
         },
-        "alias templates": {
-            "Tpair_alias": {
-                "location": 107
-            }
+        {
+            "kind": "Alias",
+            "location": 17,
+            "templated": false
+        },
+        {
+            "kind": "Typedef",
+            "location": 29,
+            "templated": true
+        },
+        {
+            "kind": "Typedef",
+            "location": 35,
+            "templated": true
+        },
+        {
+            "kind": "Typedef",
+            "location": 35,
+            "templated": true
+        },
+        {
+            "kind": "Typedef",
+            "location": 61,
+            "templated": true
+        },
+        {
+            "kind": "Typedef",
+            "location": 72,
+            "templated": true
+        },
+        {
+            "kind": "Typedef",
+            "location": 87,
+            "templated": true
+        },
+        {
+            "kind": "Typedef",
+            "location": 87,
+            "templated": true
+        },
+        {
+            "kind": "Typedef",
+            "location": 100,
+            "templated": true
+        },
+        {
+            "kind": "Alias",
+            "location": 107,
+            "templated": true
         }
-    }
+    ]
 }
