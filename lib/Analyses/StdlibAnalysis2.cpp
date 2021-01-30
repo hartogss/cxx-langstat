@@ -32,6 +32,7 @@ StdlibAnalysis2::StdlibAnalysis2() : TemplateInstantiationAnalysis(true,
         // Standard library utilities
         // vocabulary types
         "std::pair", "std::tuple",
+        "std::bitset",
         // Dynamic memory
         "std::unique_ptr", "std::shared_ptr", "std::weak_ptr"
         )
@@ -75,6 +76,8 @@ const StringMap<int> NumRelTypes = { // no constexpr support for map
     // ** Utilities **
     // pairs and tuples
     {"std::pair", 2}, {"std::tuple", -1},
+    // bitset
+    {"std::bitset", 0},
     // smart pointers
     {"std::unique_ptr", 1}, {"std::shared_ptr", 1}, {"std::weak_ptr", 1}
 };
@@ -99,7 +102,10 @@ std::string GetRelevantTypesAsString(llvm::StringRef ContainerType,
         std::string t;
         for(nlohmann::json::iterator i=Types.begin(); i<Types.begin()+n; i++)
             t = t + (*i).get<std::string>() + ", ";
-        return llvm::StringRef(t).drop_back(2).str();
+        if(n)
+            return llvm::StringRef(t).drop_back(2).str();
+        else
+            return "";
 }
 
 // Gathers data on how often standard library types were implicitly instantiated.
@@ -123,8 +129,10 @@ void stdlibInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
             assert(ContainedTypes.is_array());
             auto TypeString = GetRelevantTypesAsString(Type, ContainedTypes);
             // std::cout << TypeString << std::endl;
-            m.at(Type).try_emplace(TypeString, 0);
-            m.at(Type).at(TypeString)++;
+            if(!TypeString.empty()){
+                m.at(Type).try_emplace(TypeString, 0);
+                m.at(Type).at(TypeString)++;
+            }
         }
     }
     std::string desc = "stdlib instantiation type arguments";

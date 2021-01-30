@@ -1,0 +1,19 @@
+{
+    "sla2": {
+        "explicit class insts": null,
+        "implicit class insts": {
+            "std::__1::bitset": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/bitset.cpp:13:5",
+                    "arguments": {
+                        "non-type": [
+                            "3"
+                        ],
+                        "type": [],
+                        "template": []
+                    }
+                }
+            ]
+        }
+    }
+}
