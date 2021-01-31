@@ -18,22 +18,20 @@ public:
     Analysis(){}
     // dtor, virtual to ensure derived concrete analyses' dtors is called
     virtual ~Analysis() = default;
+
     // Run analysis
-    void run(llvm::StringRef InFile, clang::ASTContext& Ctxt){
+    // Return by ref is OK, as Analysis goes out of scope at the very end of the
+    // program.
+    const nlohmann::ordered_json& getFeatures(llvm::StringRef InFile, clang::ASTContext& Ctxt){
         ResetAnalysis();
         Context = &Ctxt;
         analyzeFeatures();
-    }
-    // Return by ref is OK, as Analysis goes out of scope at the very end of the
-    // program. 
-    const nlohmann::ordered_json& getFeatures(){
         return Features;
     }
-    const nlohmann::ordered_json& getStatistics(){
+    const nlohmann::ordered_json& getStatistics(nlohmann::ordered_json j){
+        processFeatures(j);
         return Statistics;
     }
-    // Computes interesting statistics from features like prevalences or comparisons.
-    virtual void processFeatures(nlohmann::ordered_json j) = 0;
 protected:
     llvm::StringRef InFile;
     BaseExtractor Extractor;
@@ -43,6 +41,8 @@ protected:
     // Function that looks for features in code and creates a JSON object to
     // hold all interesting features.
     virtual void analyzeFeatures() = 0;
+    // Computes interesting statistics from features like prevalences or comparisons.
+    virtual void processFeatures(nlohmann::ordered_json j) = 0;
     // As an analysis is reused for every file it is run on and analysis state
     // is kept until it is destroyed, we sometimes need to reset the state of
     // some member variables of the analysis. Often this is not necessary,

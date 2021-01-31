@@ -45,9 +45,9 @@ public:
                 ->Options.EnabledAnalyses.Items[AnalysisIndex].Name;
             //
             if(Stage != emit_statistics){
-                // Analyze clang AST and extract features
-                an->run(InFile, Context);
-                AllAnalysesFeatures[AnalysisAbbreviation]=an->getFeatures();
+                // Analyze clang AST and get features
+                AllAnalysesFeatures[AnalysisAbbreviation]
+                    =an->getFeatures(InFile, Context);
             }
             // process features from json (not from disk)
             if(Stage == none){
@@ -63,7 +63,6 @@ public:
             std::ofstream o(OutputFile);
             o << AllAnalysesFeatures.dump(4) << '\n';
         }
-        // std::cout << "all features:" << AllAnalysesFeatures.dump(4) << std::endl;
     }
 public:
     StringRef InFile;
@@ -175,7 +174,6 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
 
     // Process features stored on disk to statistics
     else if(Stage == emit_statistics){
-        std::cout << "do because stage 2" << std::endl;
         ordered_json AllFilesAllStatistics;
         ordered_json Summary;
         for(auto File : InputFiles){
@@ -189,8 +187,7 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
             for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
                 auto AnalysisAbbreviation = Registry
                     ->Options.EnabledAnalyses.Items[AnalysisIndex].Name;
-                an->processFeatures(j[AnalysisAbbreviation]);
-                for(const auto& [statdesc, stats] : an->getStatistics().items()){
+                for(const auto& [statdesc, stats] : an->getStatistics(j).items()){
                     OneFileAllStatistics[statdesc] = stats;
                 }
                 AnalysisIndex++;
@@ -200,7 +197,6 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
         }
         std::ofstream o(Registry->Options.OutputFiles[0]);
         o << AllFilesAllStatistics.dump(4) << std::endl;
-        std::cout << Summary.dump(4) << std::endl;
         o << Summary.dump(4) << std::endl;
 
 
