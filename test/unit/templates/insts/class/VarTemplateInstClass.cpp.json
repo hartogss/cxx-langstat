@@ -1,0 +1,54 @@
+{
+    "tia": {
+        "explicit class insts": null,
+        "implicit class insts": {
+            "C": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/VarTemplateInstClass.cpp:16:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "float"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/VarTemplateInstClass.cpp:16:1",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "bool"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        },
+        "func insts": null,
+        "var insts": {
+            "c2": [
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/VarTemplateInstClass.cpp:17:18",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "bool"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/VarTemplateInstClass.cpp:19:5",
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "float"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        }
+    }
+}

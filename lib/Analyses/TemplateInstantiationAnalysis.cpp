@@ -54,32 +54,38 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
     analyzeClassInstsOnly(analyzeClassInstsOnly),
     ClassInstMatcher(
         decl(anyOf(
+            // -- Implicit --
             // Implicit uses:
             // Variable declarations (which include function parameter variables
-            // & static fields)
+            // & static member variables)
             varDecl(
                 isExpansionInMainFile(),
-                // unless(hasParent(varTemplateDecl())), // this seems superfluous
-                // If variable is inside of a template, then it has to be the
-                // case that the template is being instantiated
-                // anyOf(unless(hasAncestor(functionTemplateDecl())), isInstantiated()),
                 // Want variable that has type of some class instantiation,
                 // class name is restricted to come from 'Names'
                 hasType(
                     classTemplateSpecializationDecl(
                         Names,
                         isTemplateInstantiation())
-                    .bind("ImplicitCTSD")),
-                // We however don't want the variable to be an instantiation,
-                // thus filtering out variable templates
-                unless(isTemplateInstantiation()))
+                    .bind("ImplicitCTSD"))
+                // Old stuff
+                //
+                // unless(hasParent(varTemplateDecl()))
+                // If variable is inside of a template, then it has to be the
+                // case that the template is being instantiated
+                // This doesn't work transitively
+                // anyOf(unless(hasAncestor(functionTemplateDecl())), isInstantiated()),
+
+                // A variable of CTSD type can be matched by this matcher. For
+                // some reason if it is, it will match twice. Either you uncomment
+                // the line down below and disallow those variable instantiations
+                // to be matched here, or you filter out the duplicates below.
+                // See VarTemplateInstClass.cpp for insights.
+                // unless(isTemplateInstantiation())
+            )
             .bind("VarsFieldThatInstantiateImplicitly"),
             // Field declarations (non static variable member)
             fieldDecl(
                 isExpansionInMainFile(),
-                // unless(hasParent(varTemplateDecl())), // this seems superfluous
-                // Count fielddecls only if inside template instantiation
-                // anyOf(unless(hasAncestor(classTemplateDecl())), isInstantiated()),
                 hasType(
                     classTemplateSpecializationDecl(
                         Names,
@@ -94,6 +100,7 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
             //     unless(has(cxxRecordDecl())))
             // .bind("ImplicitCTSD"),
 
+            // -- Explicit --
             // Explicit instantiations that are not explicit specializations,
             // which is ensured by isTemplateInstantiation() according to
             // matcher reference
@@ -123,7 +130,26 @@ void TemplateInstantiationAnalysis::extractFeatures() {
     ImplicitInsts = getASTNodes<DeclaratorDecl>(ClassResults,
         "VarsFieldThatInstantiateImplicitly");
 
-    printMatches("implciit", ImplicitInsts);
+    // No doubt, this is a dirty fix. If some class type was instantiated through
+    // a variable templates instantiation, which will be matched twice, the loop
+    // below will filter out those variable declarations and the belonging
+    // implicit class inst with it in O(n^2). A better solution would be to
+    // bundle variables with the class template specialization that is their type
+    // and sort (O(nlogn)), but for sake of easyness this is (still) omitted.
+    std::cout << ImplicitInsts.size() << std::endl;
+    if(!ImplicitInsts.empty()){
+        for(int i=1; i<ImplicitInsts.size(); i++){
+            for(int j=0; j<i; j++){
+                std::cout << i << ", " << j << std::endl;
+                if(i!=j && ImplicitInsts.at(i) == ImplicitInsts.at(j)){
+                    std::cout << "erased" << std::endl;
+                    ImplicitInsts.erase(ImplicitInsts.begin()+i);
+                    ClassImplicitInsts.erase(ClassImplicitInsts.begin()+i);
+                    i--;
+                }
+            }
+        }
+    }
 
     // In contrast, this result gives a pointer to a functionDecl, which has
     // too has a function we can call to get the template arguments.
@@ -256,7 +282,8 @@ std::string TemplateInstantiationAnalysis::getInstantiationLocation(
         // return VarOrFieldDecl.Location;
         return (ImplicitInsts[ImplicitInstCounter-1].Node->getInnerLocStart()).
             printToString(Context->getSourceManager());
-            // can't I just do ImplicitInsts[i-1].Location to get loc of var/field?
+
+        // can't I just do ImplicitInsts[i-1].Location to get loc of var/field?
         // std::cout << ImplicitInsts[i-1].Location << std::endl;
         // return std::to_string(static_cast<int>(ImplicitInsts[i-1].Location));
     } else{
