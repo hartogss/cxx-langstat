@@ -4,7 +4,7 @@
         "implicit class insts": {
             "Widget": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass.cpp:15:9",
+                    "location": 15,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass.cpp:18:5",
+                    "location": 18,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -24,7 +24,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass.cpp:24:9",
+                    "location": 24,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -34,7 +34,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass.cpp:28:5",
+                    "location": 28,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -44,7 +44,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass.cpp:38:5",
+                    "location": 38,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -58,7 +58,7 @@
         "func insts": {
             "f7": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/FuncInstClass.cpp:40:15",
+                    "location": 40,
                     "arguments": {
                         "non-type": [],
                         "type": [

@@ -3,7 +3,7 @@
         "explicit class insts": {
             "Widget1": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:23:1",
+                    "location": 23,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -15,7 +15,7 @@
             ],
             "Widget1_p": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:43:1",
+                    "location": 43,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -25,7 +25,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:44:1",
+                    "location": 44,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -36,7 +36,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:45:1",
+                    "location": 45,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -51,7 +51,7 @@
             ],
             "Widget2_p": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:52:1",
+                    "location": 52,
                     "arguments": {
                         "non-type": [
                             "3",
@@ -63,7 +63,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:56:1",
+                    "location": 56,
                     "arguments": {
                         "non-type": [
                             "3"
@@ -75,7 +75,7 @@
             ],
             "Widget3": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:63:1",
+                    "location": 63,
                     "arguments": {
                         "non-type": [],
                         "type": [],
@@ -89,7 +89,7 @@
         "implicit class insts": {
             "Widget1": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:27:1",
+                    "location": 27,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -99,7 +99,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:28:1",
+                    "location": 28,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -109,7 +109,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:29:1",
+                    "location": 29,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -119,7 +119,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:31:8",
+                    "location": 31,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -129,7 +129,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:35:5",
+                    "location": 35,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -139,7 +139,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:36:5",
+                    "location": 36,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -151,7 +151,7 @@
             ],
             "Widget1_p": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:46:1",
+                    "location": 46,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -164,7 +164,7 @@
             ],
             "Widget3": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:62:1",
+                    "location": 62,
                     "arguments": {
                         "non-type": [],
                         "type": [],
@@ -174,7 +174,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInst.cpp:64:1",
+                    "location": 64,
                     "arguments": {
                         "non-type": [],
                         "type": [],

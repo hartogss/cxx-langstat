@@ -30,9 +30,9 @@ private:
     void processFeatures(nlohmann::ordered_json j) override;
     // Get location of instantiation
     template<typename T>
-    std::string getInstantiationLocation(const Match<T>& Match, bool isImplicit);
+    unsigned getInstantiationLocation(const Match<T>& Match, bool isImplicit);
     // Get location of class instantiation, we need to be a bit more careful
-    std::string getInstantiationLocation
+    unsigned getInstantiationLocation
         (const Match<clang::ClassTemplateSpecializationDecl>& Match,
             bool isImplicit);
     // Given matches representing the instantiations of some kind, gather

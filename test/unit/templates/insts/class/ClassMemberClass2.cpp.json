@@ -4,7 +4,7 @@
         "implicit class insts": {
             "C<int>::D": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassMemberClass2.cpp:16:5",
+                    "location": 16,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -16,7 +16,7 @@
             ],
             "C": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassMemberClass2.cpp:19:1",
+                    "location": 19,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -26,7 +26,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassMemberClass2.cpp:20:1",
+                    "location": 20,
                     "arguments": {
                         "non-type": [],
                         "type": [

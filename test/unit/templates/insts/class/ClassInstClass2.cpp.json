@@ -4,7 +4,7 @@
         "implicit class insts": {
             "Sub": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInstClass2.cpp:14:5",
+                    "location": 14,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInstClass2.cpp:14:5",
+                    "location": 14,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -26,7 +26,7 @@
             ],
             "Super": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInstClass2.cpp:16:1",
+                    "location": 16,
                     "arguments": {
                         "non-type": [],
                         "type": [

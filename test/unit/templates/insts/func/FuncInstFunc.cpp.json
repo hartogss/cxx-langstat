@@ -5,7 +5,7 @@
         "func insts": {
             "f1": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInstFunc.cpp:16:5",
+                    "location": 16,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -17,7 +17,7 @@
             ],
             "f2": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInstFunc.cpp:18:15",
+                    "location": 18,
                     "arguments": {
                         "non-type": [],
                         "type": [

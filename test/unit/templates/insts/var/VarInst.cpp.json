@@ -6,7 +6,7 @@
         "var insts": {
             "data": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/var/VarInst.cpp:14:14",
+                    "location": 14,
                     "arguments": {
                         "non-type": [
                             "0"
@@ -18,7 +18,7 @@
             ],
             "data2": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/var/VarInst.cpp:23:5",
+                    "location": 23,
                     "arguments": {
                         "non-type": [
                             "42"
@@ -30,7 +30,7 @@
             ],
             "data3": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/var/VarInst.cpp:32:5",
+                    "location": 32,
                     "arguments": {
                         "non-type": [
                             "0"
@@ -40,7 +40,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/var/VarInst.cpp:34:5",
+                    "location": 34,
                     "arguments": {
                         "non-type": [
                             "1"
@@ -52,7 +52,7 @@
             ],
             "pi": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/var/VarInst.cpp:46:5",
+                    "location": 46,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -62,7 +62,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/var/VarInst.cpp:47:5",
+                    "location": 47,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -72,7 +72,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/var/VarInst.cpp:49:16",
+                    "location": 49,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -84,7 +84,7 @@
             ],
             "data4": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/var/VarInst.cpp:56:14",
+                    "location": 56,
                     "arguments": {
                         "non-type": [
                             "3",
@@ -97,7 +97,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/var/VarInst.cpp:58:5",
+                    "location": 58,
                     "arguments": {
                         "non-type": [
                             "14",

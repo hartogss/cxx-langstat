@@ -24,7 +24,7 @@ class D {
 // f<long> instantiated regardless if Dt instantiated or not, same as above
 template<typename T>
 class Dt {
-    long a = f<long>();
+    long a = f<long>(); // no clue why this gives 1 as loc 
 };
 
 // Explicit class instantiation does not seem to instantiate members...
