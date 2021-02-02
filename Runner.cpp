@@ -225,6 +225,7 @@ int main(int argc, char** argv){
             ErrorMessage;
     }
 
+
     // Only now can call this method, otherwise compile command could be interpreted
     // as input or output file since those are positional
     // This usage is encouraged this way according to
@@ -235,8 +236,6 @@ int main(int argc, char** argv){
     std::vector<std::string> InputFiles;
     std::vector<std::string> OutputFiles;
 
-    std::cout << ", " << InputDirOption << ", "
-        << OutputFileOption << ", " << OutputDirOption << std::endl;
 
     bool Files = !InputFilesOption.empty();
     bool Dir = !InputDirOption.empty();
@@ -256,6 +255,7 @@ int main(int argc, char** argv){
         InputFiles = InputFilesOption;
     } else {
         InputFiles = getFiles(InputDirOption, PipelineStage);
+        std::sort(InputFiles.begin(), InputFiles.end());
     }
 
 
@@ -264,44 +264,29 @@ int main(int argc, char** argv){
     // OutputFiles can only be used when it is guaranteed to be only a single output file.
     // emit-features creates one output per input.
     if(PipelineStage == emit_features){
-        if(Files){
-            if(InputFiles.size() == 1){ // single file
-                if(!OutputDirOption.empty()){ // may not specify output dir
-                    exit(1);
-                }
-                if(!OutputFileOption.empty()){ // place at output file specified
-                    OutputFiles.emplace_back(OutputFileOption);
-                } else { // create output file if none specified
-                    StringRef filename = llvm::sys::path::filename(InputFiles[0]);
-                    OutputFiles.emplace_back(filename.str() + ".json");
-
-                }
-            } else { // multiple files
+        if(Files && InputFiles.size() == 1){  // single file
+            if(!OutputDirOption.empty()){ // may not specify output dir
+                exit(1);
+            }
+            if(!OutputFileOption.empty()){ // place at output file specified
+                OutputFiles.emplace_back(OutputFileOption);
+            } else { // create output file if none specified
+                StringRef filename = llvm::sys::path::filename(InputFiles[0]);
+                OutputFiles.emplace_back(filename.str() + ".json");
+            }
+        } else if((Files && InputFiles.size() > 1) || Dir) { // multiple files
                 if(!OutputFileOption.empty()){ // may not specify output file
                     exit(1);
                 }
                 if(OutputDirOption.empty()){ // obliged to specify output dir
                     exit(1);
                 } else {
-                    for(auto File : InputFiles){ // place at output dir specified
+                    for(const auto& File : InputFiles){ // place at output dir specified
                         StringRef filename = llvm::sys::path::filename(File);
                         OutputFiles.emplace_back(OutputDirOption + filename.str() + ".json");
                     }
                 }
             }
-        }
-        if(Dir){ // same behavior as with multiple files specified
-            if(!OutputFileOption.empty())
-                exit(1);
-            if(OutputDirOption.empty()){
-                exit(1);
-            } else { // place at output dir specified
-                for(const auto& InputFile : InputFiles){
-                    StringRef filename = llvm::sys::path::filename(InputFile);
-                    OutputFiles.emplace_back(OutputDirOption + filename.str() + ".json");
-                }
-            }
-        }
         assert(InputFiles.size() == OutputFiles.size());
     // When -emit-features option is not used, only zero or one output file is ok.
     // Output dir is not ok, since the output is guaranteed to be only a single file.
