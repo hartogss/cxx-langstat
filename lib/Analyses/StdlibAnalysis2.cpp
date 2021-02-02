@@ -9,6 +9,7 @@
 
 using namespace clang;
 using namespace clang::ast_matchers;
+using json = nlohmann::json;
 using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
@@ -86,34 +87,31 @@ const StringMap<int> NumRelTypes = { // no constexpr support for map
 // are interesting to us. Have to do some extra work in case it is std::__1-
 // qualified.
 int GetNumRelevantTypes(llvm::StringRef Type){
-    if(auto [l,r] = Type.split("::__1"); !r.empty()){
+    if(auto [l,r] = Type.split("::__1"); !r.empty())
         return NumRelTypes.at((l+r).str());
-    }
     return NumRelTypes.at(Type.str());
 }
 
 // Actually gets the type arguments and concatenates them into a string.
-std::string GetRelevantTypesAsString(llvm::StringRef ContainerType,
-    nlohmann::json Types){
-        // std::cout << ContainerType.str() << std::endl;
-        int n = GetNumRelevantTypes(ContainerType);
-        if(n == -1)
-            n = Types.end()-Types.begin();
-        std::string t;
-        for(nlohmann::json::iterator i=Types.begin(); i<Types.begin()+n; i++)
-            t = t + (*i).get<std::string>() + ", ";
-        if(n)
-            return llvm::StringRef(t).drop_back(2).str();
-        else
-            return "";
+std::string GetRelevantTypesAsString(llvm::StringRef ContainerType, json Types){
+    // std::cout << ContainerType.str() << std::endl;
+    int n = GetNumRelevantTypes(ContainerType);
+    if(n == -1)
+        n = Types.end()-Types.begin();
+    std::string t;
+    for(nlohmann::json::iterator i=Types.begin(); i<Types.begin()+n; i++)
+        t = t + (*i).get<std::string>() + ", ";
+    if(n)
+        return llvm::StringRef(t).drop_back(2).str();
+    else
+        return "";
 }
 
 // Gathers data on how often standard library types were implicitly instantiated.
 void stdlibTypePrevalence(ordered_json& Statistics, ordered_json j){
     std::map<std::string, unsigned> m;
-    for(const auto& [Type, Insts] : j["implicit class insts"].items()){
+    for(const auto& [Type, Insts] : j["implicit class insts"].items())
         m.try_emplace(Type, Insts.size());
-    }
     std::string desc = "stdlib type prevalence";
     Statistics[desc] = m;
 }
@@ -125,7 +123,7 @@ void stdlibInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
     for(const auto& [Type, Insts] : j["implicit class insts"].items()){
         for(const auto& Inst : Insts){
             m.try_emplace(Type, StringMap<unsigned>());
-            nlohmann::json ContainedTypes = Inst["arguments"]["type"];
+            json ContainedTypes = Inst["arguments"]["type"];
             assert(ContainedTypes.is_array());
             auto TypeString = GetRelevantTypesAsString(Type, ContainedTypes);
             // std::cout << TypeString << std::endl;
@@ -139,10 +137,9 @@ void stdlibInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
     Statistics[desc] = m;
 }
 
-void StdlibAnalysis2::processFeatures(nlohmann::ordered_json j){
+void StdlibAnalysis2::processFeatures(ordered_json j){
     stdlibTypePrevalence(Statistics, j);
     stdlibInstantiationTypeArgs(Statistics, j);
-
 }
 
 //-----------------------------------------------------------------------------

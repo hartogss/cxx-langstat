@@ -66,10 +66,13 @@ void CyclomaticComplexityAnalysis::processFeatures(nlohmann::ordered_json j){
     std::map<std::string, unsigned> m;
     for(const auto& [fdeclname, cycs] : j["fdecls"].items()){
         for(auto cyc : cycs){
+            // std::cout << cyc << std::endl;
             m.try_emplace(to_string(cyc), 0);
             m.at(to_string(cyc))++;
         }
     }
+    // for(auto [key, val]:m)
+        // std::cout << key << ", " << val << std::endl;
     std::string desc = "distribution of cyclomatic complexity of functions";
     Statistics[desc] = m;
 }
