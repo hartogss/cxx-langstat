@@ -67,20 +67,6 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
                         Names,
                         isTemplateInstantiation())
                     .bind("ImplicitCTSD"))
-                // Old stuff
-                //
-                // unless(hasParent(varTemplateDecl()))
-                // If variable is inside of a template, then it has to be the
-                // case that the template is being instantiated
-                // This doesn't work transitively
-                // anyOf(unless(hasAncestor(functionTemplateDecl())), isInstantiated()),
-
-                // A variable of CTSD type can be matched by this matcher. For
-                // some reason if it is, it will match twice. Either you uncomment
-                // the line down below and disallow those variable instantiations
-                // to be matched here, or you filter out the duplicates below.
-                // See VarTemplateInstClass.cpp for insights.
-                // unless(isTemplateInstantiation())
             )
             .bind("VarsFieldThatInstantiateImplicitly"),
             // Field declarations (non static variable member)
@@ -92,13 +78,6 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
                         isTemplateInstantiation())
                     .bind("ImplicitCTSD")))
             .bind("VarsFieldThatInstantiateImplicitly"),
-
-            // Test code to see if able to find "subinstantiations"
-            // classTemplateSpecializationDecl(
-            //     Names,
-            //     isTemplateInstantiation(),
-            //     unless(has(cxxRecordDecl())))
-            // .bind("ImplicitCTSD"),
 
             // -- Explicit --
             // Explicit instantiations that are not explicit specializations,
@@ -115,6 +94,24 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
     ) {
         std::cout << "TIA ctor\n";
 }
+
+// test code for instantiations:
+// - Test code to see if able to find "subinstantiations"
+// classTemplateSpecializationDecl(
+//     Names,
+//     isTemplateInstantiation(),
+//     unless(has(cxxRecordDecl())))
+// .bind("ImplicitCTSD"),
+// - If variable is inside of a template, then it has to be the
+// case that the template is being instantiated
+// This doesn't work transitively
+// anyOf(unless(hasAncestor(functionTemplateDecl())), isInstantiated()),
+// - A variable of CTSD type can be matched by this matcher. For
+// some reason if it is, it will match twice. Either you uncomment
+// the line down below and disallow those variable instantiations
+// to be matched here, or you filter out the duplicates below.
+// See VarTemplateInstClass.cpp for insights.
+// unless(isTemplateInstantiation())
 
 void TemplateInstantiationAnalysis::extractFeatures() {
     // Result of the class insts matcher will give back a pointer to the
@@ -136,7 +133,9 @@ void TemplateInstantiationAnalysis::extractFeatures() {
     // implicit class inst with it in O(n^2). A better solution would be to
     // bundle variables with the class template specialization that is their type
     // and sort (O(nlogn)), but for sake of easyness this is (still) omitted.
-    std::cout << ImplicitInsts.size() << std::endl;
+    // That they're matched twice is due to an bug in RecursiveASTVisitor:
+    // https://lists.llvm.org/pipermail/cfe-dev/2021-February/067595.html
+    // std::cout << ImplicitInsts.size() << std::endl;
     if(!ImplicitInsts.empty()){
         for(int i=1; i<ImplicitInsts.size(); i++){
             for(int j=0; j<i; j++){
@@ -178,17 +177,6 @@ void TemplateInstantiationAnalysis::extractFeatures() {
         auto VarResults = Extractor.extract2(*Context, VarInstMatcher);
         VarInsts = getASTNodes<VarTemplateSpecializationDecl>(VarResults,
             "VarInsts");
-        // std::cout << "unsorted\n";
-        // for(auto match : VarInsts)
-        //     std::cout << getMatchDeclName(match) << ", " << match.Location << ", "<< match.Node << std::endl;
-        // std::sort(VarInsts.begin(), VarInsts.end());
-        // std::cout << "sorted\n";
-        // for(auto match : VarInsts)
-        //     std::cout << getMatchDeclName(match) << ", " << match.Location << ", "<< match.Node << std::endl;
-        // std::cout << "no dups\n";
-        // removeDuplicateMatches(VarInsts);
-        // for(auto match : VarInsts)
-        //     std::cout << getMatchDeclName(match) << ", " << match.Location << ", "<< match.Node << std::endl;
         if(VarInsts.size())
             removeDuplicateMatches(VarInsts);
     }
