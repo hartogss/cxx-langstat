@@ -8,7 +8,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "f",
-                "Location": 14
+                "Location": 14,
+                "Type": "void (void)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -17,7 +18,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 1,
                 "Identifier": "f1",
-                "Location": 18
+                "Location": 18,
+                "Type": "void (class C)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -26,7 +28,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "f2",
-                "Location": 21
+                "Location": 21,
+                "Type": "void (class C &)"
             },
             {
                 "ByConstLvalueRef": 1,
@@ -35,7 +38,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "f3",
-                "Location": 24
+                "Location": 24,
+                "Type": "void (const class C &)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -44,7 +48,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "f4",
-                "Location": 27
+                "Location": 27,
+                "Type": "void (class C &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -53,7 +58,8 @@
                 "ByUniversalRef": 1,
                 "ByValue": 0,
                 "Identifier": "f5",
-                "Location": 30
+                "Location": 30,
+                "Type": "void (T &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -62,7 +68,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "f5",
-                "Location": 33
+                "Location": 33,
+                "Type": "void (const T &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -71,44 +78,59 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "f5",
-                "Location": 36
+                "Location": 36,
+                "Type": "void (std::vector<T> &&)"
             }
         ],
         "parameters": [
             {
                 "Identifier": "c",
                 "Kind": 0,
-                "Location": 19
+                "Location": 19,
+                "Type": "class C",
+                "isInstantiationDependent": false
             },
             {
                 "Identifier": "c",
                 "Kind": 1,
-                "Location": 22
+                "Location": 22,
+                "Type": "class C &",
+                "isInstantiationDependent": false
             },
             {
                 "Identifier": "c",
                 "Kind": 2,
-                "Location": 25
+                "Location": 25,
+                "Type": "const class C &",
+                "isInstantiationDependent": false
             },
             {
                 "Identifier": "c",
                 "Kind": 3,
-                "Location": 28
+                "Location": 28,
+                "Type": "class C &&",
+                "isInstantiationDependent": false
             },
             {
                 "Identifier": "param",
                 "Kind": 4,
-                "Location": 31
+                "Location": 31,
+                "Type": "T &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "param",
                 "Kind": 3,
-                "Location": 34
+                "Location": 34,
+                "Type": "const T &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "param",
                 "Kind": 3,
-                "Location": 37
+                "Location": 37,
+                "Type": "std::vector<T> &&",
+                "isInstantiationDependent": true
             }
         ]
     }

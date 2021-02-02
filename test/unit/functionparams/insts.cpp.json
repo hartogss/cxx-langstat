@@ -1,0 +1,109 @@
+{
+    "msa": {
+        "functions": [
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 1,
+                "Identifier": "func1",
+                "Location": 11,
+                "Type": "void (int)"
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 1,
+                "ByValue": 0,
+                "Identifier": "func2",
+                "Location": 15,
+                "Type": "void (int &&)"
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 1,
+                "ByRvalueRef": 0,
+                "ByValue": 0,
+                "Identifier": "func3",
+                "Location": 19,
+                "Type": "void (int &)"
+            }
+        ],
+        "function templates": [
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByUniversalRef": 0,
+                "ByValue": 1,
+                "Identifier": "func1",
+                "Location": 10,
+                "Type": "void (T)"
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 1,
+                "ByUniversalRef": 0,
+                "ByValue": 0,
+                "Identifier": "func2",
+                "Location": 14,
+                "Type": "void (int &&)"
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByUniversalRef": 1,
+                "ByValue": 0,
+                "Identifier": "func3",
+                "Location": 18,
+                "Type": "void (T &&)"
+            }
+        ],
+        "parameters": [
+            {
+                "Identifier": "t",
+                "Kind": 0,
+                "Location": 11,
+                "Type": "T",
+                "isInstantiationDependent": true
+            },
+            {
+                "Identifier": "n",
+                "Kind": 3,
+                "Location": 15,
+                "Type": "int &&",
+                "isInstantiationDependent": false
+            },
+            {
+                "Identifier": "t",
+                "Kind": 4,
+                "Location": 19,
+                "Type": "T &&",
+                "isInstantiationDependent": true
+            },
+            {
+                "Identifier": "t",
+                "Kind": 0,
+                "Location": 11,
+                "Type": "int",
+                "isInstantiationDependent": false
+            },
+            {
+                "Identifier": "n",
+                "Kind": 3,
+                "Location": 15,
+                "Type": "int &&",
+                "isInstantiationDependent": false
+            },
+            {
+                "Identifier": "t",
+                "Kind": 1,
+                "Location": 19,
+                "Type": "int &",
+                "isInstantiationDependent": false
+            }
+        ]
+    }
+}

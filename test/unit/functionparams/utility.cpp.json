@@ -8,7 +8,8 @@
                 "ByUniversalRef": 1,
                 "ByValue": 0,
                 "Identifier": "move_cpp11",
-                "Location": 17
+                "Location": 17,
+                "Type": "typename std::remove_reference<T>::type &&(T &&) noexcept"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -17,7 +18,8 @@
                 "ByUniversalRef": 1,
                 "ByValue": 0,
                 "Identifier": "move_cpp14",
-                "Location": 21
+                "Location": 21,
+                "Type": "std::remove_reference_t<T> &&(T &&) noexcept"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -26,7 +28,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "forward_cpp11l",
-                "Location": 28
+                "Location": 28,
+                "Type": "T &&(typename std::remove_reference<T>::type &) noexcept"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -35,7 +38,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "forward_cpp14l",
-                "Location": 31
+                "Location": 31,
+                "Type": "T &&(std::remove_reference_t<T> &) noexcept"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -44,7 +48,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "forward_cpp11r",
-                "Location": 34
+                "Location": 34,
+                "Type": "T &&(typename std::remove_reference<T>::type &&) noexcept"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -53,39 +58,52 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "forward_cpp14r",
-                "Location": 37
+                "Location": 37,
+                "Type": "T &&(std::remove_reference_t<T> &&) noexcept"
             }
         ],
         "parameters": [
             {
                 "Identifier": "t",
                 "Kind": 4,
-                "Location": 19
+                "Location": 19,
+                "Type": "T &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 4,
-                "Location": 23
+                "Location": 23,
+                "Type": "T &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 1,
-                "Location": 29
+                "Location": 29,
+                "Type": "typename std::remove_reference<T>::type &",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 1,
-                "Location": 32
+                "Location": 32,
+                "Type": "std::remove_reference_t<T> &",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 3,
-                "Location": 35
+                "Location": 35,
+                "Type": "typename std::remove_reference<T>::type &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 3,
-                "Location": 38
+                "Location": 38,
+                "Type": "std::remove_reference_t<T> &&",
+                "isInstantiationDependent": true
             }
         ]
     }

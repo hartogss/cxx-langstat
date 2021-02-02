@@ -7,7 +7,8 @@
                 "ByRvalueRef": 1,
                 "ByValue": 0,
                 "Identifier": "MyVector::push_back",
-                "Location": 33
+                "Location": 33,
+                "Type": "void (T &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -15,7 +16,8 @@
                 "ByRvalueRef": 1,
                 "ByValue": 0,
                 "Identifier": "funci1",
-                "Location": 55
+                "Location": 55,
+                "Type": "void (T &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -23,7 +25,8 @@
                 "ByRvalueRef": 1,
                 "ByValue": 0,
                 "Identifier": "funci2",
-                "Location": 59
+                "Location": 59,
+                "Type": "void (T &&)"
             }
         ],
         "function templates": [
@@ -34,7 +37,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 1,
                 "Identifier": "f1",
-                "Location": 11
+                "Location": 11,
+                "Type": "void (Ts...)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -43,7 +47,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "f2",
-                "Location": 14
+                "Location": 14,
+                "Type": "void (Ts &...)"
             },
             {
                 "ByConstLvalueRef": 1,
@@ -52,7 +57,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "f3",
-                "Location": 17
+                "Location": 17,
+                "Type": "void (const Ts &...)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -61,7 +67,8 @@
                 "ByUniversalRef": 1,
                 "ByValue": 0,
                 "Identifier": "f5",
-                "Location": 20
+                "Location": 20,
+                "Type": "void (Ts &&...)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -70,7 +77,8 @@
                 "ByUniversalRef": 2,
                 "ByValue": 0,
                 "Identifier": "f51",
-                "Location": 23
+                "Location": 23,
+                "Type": "void (T &&, U &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -79,7 +87,8 @@
                 "ByUniversalRef": 1,
                 "ByValue": 0,
                 "Identifier": "MyVector::emplace_back",
-                "Location": 35
+                "Location": 35,
+                "Type": "void (Args &&...)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -88,7 +97,8 @@
                 "ByUniversalRef": 1,
                 "ByValue": 0,
                 "Identifier": "MyVector::senseless1",
-                "Location": 38
+                "Location": 38,
+                "Type": "void (U &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -97,7 +107,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "MyVector::senseless2",
-                "Location": 41
+                "Location": 41,
+                "Type": "void (std::array<U, 0> &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -106,7 +117,8 @@
                 "ByUniversalRef": 1,
                 "ByValue": 0,
                 "Identifier": "a::func",
-                "Location": 47
+                "Location": 47,
+                "Type": "void (T &&, U &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -115,7 +127,8 @@
                 "ByUniversalRef": 0,
                 "ByValue": 0,
                 "Identifier": "funco1",
-                "Location": 51
+                "Location": 51,
+                "Type": "void (void)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -124,84 +137,115 @@
                 "ByUniversalRef": 1,
                 "ByValue": 0,
                 "Identifier": "funco2",
-                "Location": 57
+                "Location": 57,
+                "Type": "void (T &&)"
             }
         ],
         "parameters": [
             {
                 "Identifier": "ts1",
                 "Kind": 0,
-                "Location": 12
+                "Location": 12,
+                "Type": "Ts...",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "ts2",
                 "Kind": 1,
-                "Location": 15
+                "Location": 15,
+                "Type": "Ts &...",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "ts3",
                 "Kind": 2,
-                "Location": 18
+                "Location": 18,
+                "Type": "const Ts &...",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "ts5",
                 "Kind": 4,
-                "Location": 21
+                "Location": 21,
+                "Type": "Ts &&...",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "a",
                 "Kind": 4,
-                "Location": 24
+                "Location": 24,
+                "Type": "T &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "b",
                 "Kind": 4,
-                "Location": 24
+                "Location": 24,
+                "Type": "U &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "args",
                 "Kind": 4,
-                "Location": 36
+                "Location": 36,
+                "Type": "Args &&...",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "u",
                 "Kind": 4,
-                "Location": 39
+                "Location": 39,
+                "Type": "U &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "arru",
                 "Kind": 3,
-                "Location": 42
+                "Location": 42,
+                "Type": "std::array<U, 0> &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 3,
-                "Location": 48
+                "Location": 48,
+                "Type": "T &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "u",
                 "Kind": 4,
-                "Location": 48
+                "Location": 48,
+                "Type": "U &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 4,
-                "Location": 58
+                "Location": 58,
+                "Type": "T &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "x",
                 "Kind": 3,
-                "Location": 33
+                "Location": 33,
+                "Type": "T &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 3,
-                "Location": 55
+                "Location": 55,
+                "Type": "T &&",
+                "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 3,
-                "Location": 59
+                "Location": 59,
+                "Type": "T &&",
+                "isInstantiationDependent": true
             }
         ]
     }

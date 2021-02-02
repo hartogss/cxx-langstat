@@ -50,10 +50,6 @@ bool isUniversalReference(FunctionTemplateDecl* FTD, QualType Param){
     return false;
 }
 
-bool isParameterPackType(QualType Param){
-    return isa<PackExpansionType>(Param.getTypePtr());
-}
-
 //-----------------------------------------------------------------------------
 
 // For each match, figures out the type of the parameters.
@@ -79,16 +75,20 @@ void MoveSemanticsAnalysis::associateParameters(const Matches<T>& Matches){
         }
         Info.Location = match.Location;
         Info.Identifier = getMatchDeclName(match);
+        Info.Type = Func->getType().getAsString();
+
         // For each parameter of the function
         for(auto Param : Func->parameters()){
             ParmInfo PInfo(Context->getFullLoc(Param->getBeginLoc())
                 .getLineNumber(),
-                cast<NamedDecl>(Param)->getQualifiedNameAsString());
-            // If parameter pack is used, strip it off.
+                cast<NamedDecl>(Param)->getQualifiedNameAsString(),
+                Param->getType().getAsString());
+            PInfo.isInstantiationDependent = Param->getOriginalType()
+                .getTypePtr()->isInstantiationDependentType();
             QualType qt = Param->getOriginalType();
-            if(isParameterPackType(qt))
-                // getPattern gives us the the type that is 'being packed'.
-                qt = cast<PackExpansionType>(qt.getTypePtr())->getPattern();
+            // If parameter pack is used, strip it off.
+            // For pack expansion T..., below function gives use the pattern T.
+            qt = qt.getNonPackExpansionType();
             // Get the underlying unqualified type
             const Type* type = qt.getTypePtr();
             // Split into value, lvalue ref and rvalue ref groups.
@@ -126,11 +126,10 @@ void MoveSemanticsAnalysis::extractFeatures(){
 
     auto ftmatcher = functionTemplateDecl(
         isExpansionInMainFile(),
-        // Function template should not templatize any of the following:
         unless(has(decl(anyOf(
-            cxxConstructorDecl(), // ctors
-            functionDecl(hasName("operator="))))))) // assigment operators
-            // dtors not necessary, those cannot be templated
+            cxxConstructorDecl(), // Ignore ctors
+            functionDecl(hasName("operator="))))))) // Ignore assigment operators
+            // Don't have to ignore dtors, those cannot be templated
     .bind("ft");
     auto ftresult = Extractor.extract2(*Context, ftmatcher);
     auto fts = getASTNodes<FunctionTemplateDecl>(ftresult, "ft");
@@ -139,11 +138,13 @@ void MoveSemanticsAnalysis::extractFeatures(){
     auto fmatcher = functionDecl(
         isExpansionInMainFile(),
         unless(anyOf(
-            cxxConstructorDecl(), // Don't bind to class ctors
+            cxxConstructorDecl(), // Ignore ctors
             hasName("operator="), // Ignore assignment operators
-            cxxDestructorDecl())), // Actually unnecessary, as our analysis
-            //  ignores functions (which dtors are) without parameters anyway
-        unless(hasParent(functionTemplateDecl()))) // Don't bind to templates
+            cxxDestructorDecl())), // Ignore dtors
+        // Ignore functions from function templates, but don't ignore function
+        // template instantiations
+        anyOf(unless(hasParent(functionTemplateDecl())),
+            isTemplateInstantiation()))
     .bind("f");
     auto fresult = Extractor.extract2(*Context, fmatcher);
     auto fs = getASTNodes<FunctionDecl>(fresult, "f");
@@ -158,10 +159,12 @@ void MoveSemanticsAnalysis::extractFeatures(){
 // No, separately probably better.
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(FunctionInfo, Location, Identifier,
-    ByValue, ByNonConstLvalueRef, ByConstLvalueRef, ByRvalueRef);
+    ByValue, ByNonConstLvalueRef, ByConstLvalueRef, ByRvalueRef, Type);
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(FunctionTemplateInfo, Location, Identifier,
-    ByValue, ByNonConstLvalueRef, ByConstLvalueRef, ByRvalueRef, ByUniversalRef);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ParmInfo, Location, Identifier, Kind);
+    ByValue, ByNonConstLvalueRef, ByConstLvalueRef, ByRvalueRef, ByUniversalRef,
+    Type);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ParmInfo, Location, Identifier, Kind, Type,
+    isInstantiationDependent);
 
 template<typename T>
 void MoveSemanticsAnalysis::gatherData(std::string DeclKind, const std::vector<T>& fs){

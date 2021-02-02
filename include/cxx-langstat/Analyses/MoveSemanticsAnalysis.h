@@ -5,14 +5,19 @@
 
 //-----------------------------------------------------------------------------
 // https://stackoverflow.com/questions/7312745/static-cast-for-user-defined-types
-struct Base {
-    Base() = default;
-    Base(int Location, std::string Identifier) : Location(Location),
-        Identifier(Identifier){}
+// Basic information we want to capture both about functions and parameters
+struct BasicInfo {
+    BasicInfo() = default;
+    BasicInfo(int Location, std::string Identifier, std::string Type) :
+        Location(Location),
+        Identifier(Identifier),
+        Type(Type){}
     int Location;
     std::string Identifier;
+    std::string Type;
 };
-struct FunctionInfo : public Base {
+// Holds for each kind of parameter how often it occured in function decl.
+struct FunctionInfo : public BasicInfo {
     FunctionInfo() = default;
     int ByValue = 0;
     int ByNonConstLvalueRef = 0;
@@ -25,10 +30,13 @@ struct FunctionTemplateInfo : public FunctionInfo {
 enum class ParmKind {
     Value, NonConstLValueRef, ConstLValueRef, RValueRef, UniversalRef
 };
-struct ParmInfo : public Base {
+// Holds for what kind of passing is used for that parameter.
+struct ParmInfo : public BasicInfo {
     ParmInfo() = default;
-    ParmInfo(int Location, std::string Identifier) : Base(Location, Identifier){}
+    ParmInfo(int Location, std::string Identifier, std::string Type) :
+        BasicInfo(Location, Identifier, Type){}
     ParmKind Kind;
+    bool isInstantiationDependent;
 };
 
 class MoveSemanticsAnalysis : public Analysis {
