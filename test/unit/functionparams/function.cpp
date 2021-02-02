@@ -8,7 +8,7 @@
 
 class C{};
 
-void f0(); // shouldn't ever be matched, contains no parameters at all
+void f0(); //
 
 void f1(C c); // a C
 void f1(C c1, C c2);

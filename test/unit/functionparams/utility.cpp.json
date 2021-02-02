@@ -1,84 +1,92 @@
 {
     "msa": {
-        "function decls": {
-            "pass by value": null,
-            "pass by non-const lvalue ref": null,
-            "pass by const lvalue ref": null,
-            "pass by rvalue ref": null
-        },
-        "parm decls": {
-            "value": null,
-            "non-const lvalue ref": {
-                "t": [
-                    {
-                        "location": 29
-                    },
-                    {
-                        "location": 32
-                    }
-                ]
+        "function templates": [
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByUniversalRef": 1,
+                "ByValue": 0,
+                "Identifier": "move_cpp11",
+                "Location": 17
             },
-            "const lvalue ref": null,
-            "rvalue ref": {
-                "t": [
-                    {
-                        "location": 35
-                    },
-                    {
-                        "location": 38
-                    }
-                ]
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByUniversalRef": 1,
+                "ByValue": 0,
+                "Identifier": "move_cpp14",
+                "Location": 21
             },
-            "universal ref": {
-                "t": [
-                    {
-                        "location": 19
-                    },
-                    {
-                        "location": 23
-                    }
-                ]
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 1,
+                "ByRvalueRef": 0,
+                "ByUniversalRef": 0,
+                "ByValue": 0,
+                "Identifier": "forward_cpp11l",
+                "Location": 28
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 1,
+                "ByRvalueRef": 0,
+                "ByUniversalRef": 0,
+                "ByValue": 0,
+                "Identifier": "forward_cpp14l",
+                "Location": 31
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 1,
+                "ByUniversalRef": 0,
+                "ByValue": 0,
+                "Identifier": "forward_cpp11r",
+                "Location": 34
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 1,
+                "ByUniversalRef": 0,
+                "ByValue": 0,
+                "Identifier": "forward_cpp14r",
+                "Location": 37
             }
-        },
-        "function template decls": {
-            "pass by value": null,
-            "pass by non-const lvalue ref": {
-                "forward_cpp11l": [
-                    {
-                        "location": 28
-                    }
-                ],
-                "forward_cpp14l": [
-                    {
-                        "location": 31
-                    }
-                ]
+        ],
+        "parameters": [
+            {
+                "Identifier": "t",
+                "Kind": 4,
+                "Location": 19
             },
-            "pass by const lvalue ref": null,
-            "pass by rvalue ref": {
-                "forward_cpp11r": [
-                    {
-                        "location": 34
-                    }
-                ],
-                "forward_cpp14r": [
-                    {
-                        "location": 37
-                    }
-                ]
+            {
+                "Identifier": "t",
+                "Kind": 4,
+                "Location": 23
             },
-            "pass by universal ref": {
-                "move_cpp11": [
-                    {
-                        "location": 17
-                    }
-                ],
-                "move_cpp14": [
-                    {
-                        "location": 21
-                    }
-                ]
+            {
+                "Identifier": "t",
+                "Kind": 1,
+                "Location": 29
+            },
+            {
+                "Identifier": "t",
+                "Kind": 1,
+                "Location": 32
+            },
+            {
+                "Identifier": "t",
+                "Kind": 3,
+                "Location": 35
+            },
+            {
+                "Identifier": "t",
+                "Kind": 3,
+                "Location": 38
             }
-        }
+        ]
     }
 }

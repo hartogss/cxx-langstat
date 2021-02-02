@@ -1,100 +1,115 @@
 {
     "msa": {
-        "function decls": {
-            "pass by value": null,
-            "pass by non-const lvalue ref": null,
-            "pass by const lvalue ref": null,
-            "pass by rvalue ref": null
-        },
-        "parm decls": {
-            "value": {
-                "c": [
-                    {
-                        "location": 19
-                    }
-                ]
+        "function templates": [
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByUniversalRef": 0,
+                "ByValue": 0,
+                "Identifier": "f",
+                "Location": 14
             },
-            "non-const lvalue ref": {
-                "c": [
-                    {
-                        "location": 22
-                    }
-                ]
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByUniversalRef": 0,
+                "ByValue": 1,
+                "Identifier": "f1",
+                "Location": 18
             },
-            "const lvalue ref": {
-                "c": [
-                    {
-                        "location": 25
-                    }
-                ]
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 1,
+                "ByRvalueRef": 0,
+                "ByUniversalRef": 0,
+                "ByValue": 0,
+                "Identifier": "f2",
+                "Location": 21
             },
-            "rvalue ref": {
-                "c": [
-                    {
-                        "location": 28
-                    }
-                ],
-                "param": [
-                    {
-                        "location": 34
-                    },
-                    {
-                        "location": 37
-                    }
-                ]
+            {
+                "ByConstLvalueRef": 1,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByUniversalRef": 0,
+                "ByValue": 0,
+                "Identifier": "f3",
+                "Location": 24
             },
-            "universal ref": {
-                "param": [
-                    {
-                        "location": 31
-                    }
-                ]
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 1,
+                "ByUniversalRef": 0,
+                "ByValue": 0,
+                "Identifier": "f4",
+                "Location": 27
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByUniversalRef": 1,
+                "ByValue": 0,
+                "Identifier": "f5",
+                "Location": 30
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 1,
+                "ByUniversalRef": 0,
+                "ByValue": 0,
+                "Identifier": "f5",
+                "Location": 33
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 1,
+                "ByUniversalRef": 0,
+                "ByValue": 0,
+                "Identifier": "f5",
+                "Location": 36
             }
-        },
-        "function template decls": {
-            "pass by value": {
-                "f1": [
-                    {
-                        "location": 18
-                    }
-                ]
+        ],
+        "parameters": [
+            {
+                "Identifier": "c",
+                "Kind": 0,
+                "Location": 19
             },
-            "pass by non-const lvalue ref": {
-                "f2": [
-                    {
-                        "location": 21
-                    }
-                ]
+            {
+                "Identifier": "c",
+                "Kind": 1,
+                "Location": 22
             },
-            "pass by const lvalue ref": {
-                "f3": [
-                    {
-                        "location": 24
-                    }
-                ]
+            {
+                "Identifier": "c",
+                "Kind": 2,
+                "Location": 25
             },
-            "pass by rvalue ref": {
-                "f4": [
-                    {
-                        "location": 27
-                    }
-                ],
-                "f5": [
-                    {
-                        "location": 33
-                    },
-                    {
-                        "location": 36
-                    }
-                ]
+            {
+                "Identifier": "c",
+                "Kind": 3,
+                "Location": 28
             },
-            "pass by universal ref": {
-                "f5": [
-                    {
-                        "location": 30
-                    }
-                ]
+            {
+                "Identifier": "param",
+                "Kind": 4,
+                "Location": 31
+            },
+            {
+                "Identifier": "param",
+                "Kind": 3,
+                "Location": 34
+            },
+            {
+                "Identifier": "param",
+                "Kind": 3,
+                "Location": 37
             }
-        }
+        ]
     }
 }

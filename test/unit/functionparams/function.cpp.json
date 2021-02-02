@@ -1,186 +1,247 @@
 {
     "msa": {
-        "function decls": {
-            "pass by value": {
-                "f1": [
-                    {
-                        "location": 13
-                    },
-                    {
-                        "location": 14
-                    }
-                ],
-                "frp1": [
-                    {
-                        "location": 23
-                    }
-                ],
-                "fp1": [
-                    {
-                        "location": 31
-                    }
-                ],
-                "fp2": [
-                    {
-                        "location": 32
-                    }
-                ],
-                "fp3": [
-                    {
-                        "location": 33
-                    }
-                ],
-                "fp4": [
-                    {
-                        "location": 34
-                    }
-                ]
+        "functions": [
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 0,
+                "Identifier": "f0",
+                "Location": 11
             },
-            "pass by non-const lvalue ref": {
-                "f2": [
-                    {
-                        "location": 15
-                    }
-                ],
-                "frp2": [
-                    {
-                        "location": 24
-                    }
-                ],
-                "frp3": [
-                    {
-                        "location": 25
-                    }
-                ]
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 1,
+                "Identifier": "f1",
+                "Location": 13
             },
-            "pass by const lvalue ref": {
-                "f3": [
-                    {
-                        "location": 16
-                    }
-                ],
-                "frp3_1": [
-                    {
-                        "location": 26
-                    }
-                ],
-                "frp3_2": [
-                    {
-                        "location": 27
-                    }
-                ]
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 2,
+                "Identifier": "f1",
+                "Location": 14
             },
-            "pass by rvalue ref": {
-                "f4": [
-                    {
-                        "location": 17
-                    }
-                ],
-                "f4_2": [
-                    {
-                        "location": 18
-                    }
-                ],
-                "f5": [
-                    {
-                        "location": 19
-                    }
-                ],
-                "frp4": [
-                    {
-                        "location": 28
-                    }
-                ]
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 1,
+                "ByRvalueRef": 0,
+                "ByValue": 0,
+                "Identifier": "f2",
+                "Location": 15
+            },
+            {
+                "ByConstLvalueRef": 1,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 0,
+                "Identifier": "f3",
+                "Location": 16
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 1,
+                "ByValue": 0,
+                "Identifier": "f4",
+                "Location": 17
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 2,
+                "ByValue": 0,
+                "Identifier": "f4_2",
+                "Location": 18
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 1,
+                "ByValue": 0,
+                "Identifier": "f5",
+                "Location": 19
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 1,
+                "Identifier": "frp1",
+                "Location": 23
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 1,
+                "ByRvalueRef": 0,
+                "ByValue": 0,
+                "Identifier": "frp2",
+                "Location": 24
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 1,
+                "ByRvalueRef": 0,
+                "ByValue": 0,
+                "Identifier": "frp3",
+                "Location": 25
+            },
+            {
+                "ByConstLvalueRef": 1,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 0,
+                "Identifier": "frp3_1",
+                "Location": 26
+            },
+            {
+                "ByConstLvalueRef": 1,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 0,
+                "Identifier": "frp3_2",
+                "Location": 27
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 1,
+                "ByValue": 0,
+                "Identifier": "frp4",
+                "Location": 28
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 1,
+                "Identifier": "fp1",
+                "Location": 31
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 1,
+                "Identifier": "fp2",
+                "Location": 32
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 1,
+                "Identifier": "fp3",
+                "Location": 33
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 1,
+                "Identifier": "fp4",
+                "Location": 34
             }
-        },
-        "parm decls": {
-            "value": {
-                "c": [
-                    {
-                        "location": 13
-                    },
-                    {
-                        "location": 23
-                    },
-                    {
-                        "location": 31
-                    },
-                    {
-                        "location": 32
-                    },
-                    {
-                        "location": 33
-                    },
-                    {
-                        "location": 34
-                    }
-                ],
-                "c1": [
-                    {
-                        "location": 14
-                    }
-                ],
-                "c2": [
-                    {
-                        "location": 14
-                    }
-                ]
+        ],
+        "parameters": [
+            {
+                "Identifier": "c",
+                "Kind": 0,
+                "Location": 13
             },
-            "non-const lvalue ref": {
-                "c": [
-                    {
-                        "location": 15
-                    },
-                    {
-                        "location": 24
-                    },
-                    {
-                        "location": 25
-                    }
-                ]
+            {
+                "Identifier": "c1",
+                "Kind": 0,
+                "Location": 14
             },
-            "const lvalue ref": {
-                "c": [
-                    {
-                        "location": 16
-                    },
-                    {
-                        "location": 26
-                    },
-                    {
-                        "location": 27
-                    }
-                ]
+            {
+                "Identifier": "c2",
+                "Kind": 0,
+                "Location": 14
             },
-            "rvalue ref": {
-                "c": [
-                    {
-                        "location": 17
-                    },
-                    {
-                        "location": 18
-                    },
-                    {
-                        "location": 19
-                    },
-                    {
-                        "location": 28
-                    }
-                ],
-                "c2": [
-                    {
-                        "location": 18
-                    }
-                ]
+            {
+                "Identifier": "c",
+                "Kind": 1,
+                "Location": 15
             },
-            "universal ref": null
-        },
-        "function template decls": {
-            "pass by value": null,
-            "pass by non-const lvalue ref": null,
-            "pass by const lvalue ref": null,
-            "pass by rvalue ref": null,
-            "pass by universal ref": null
-        }
+            {
+                "Identifier": "c",
+                "Kind": 2,
+                "Location": 16
+            },
+            {
+                "Identifier": "c",
+                "Kind": 3,
+                "Location": 17
+            },
+            {
+                "Identifier": "c",
+                "Kind": 3,
+                "Location": 18
+            },
+            {
+                "Identifier": "c2",
+                "Kind": 3,
+                "Location": 18
+            },
+            {
+                "Identifier": "c",
+                "Kind": 3,
+                "Location": 19
+            },
+            {
+                "Identifier": "c",
+                "Kind": 0,
+                "Location": 23
+            },
+            {
+                "Identifier": "c",
+                "Kind": 1,
+                "Location": 24
+            },
+            {
+                "Identifier": "c",
+                "Kind": 1,
+                "Location": 25
+            },
+            {
+                "Identifier": "c",
+                "Kind": 2,
+                "Location": 26
+            },
+            {
+                "Identifier": "c",
+                "Kind": 2,
+                "Location": 27
+            },
+            {
+                "Identifier": "c",
+                "Kind": 3,
+                "Location": 28
+            },
+            {
+                "Identifier": "c",
+                "Kind": 0,
+                "Location": 31
+            },
+            {
+                "Identifier": "c",
+                "Kind": 0,
+                "Location": 32
+            },
+            {
+                "Identifier": "c",
+                "Kind": 0,
+                "Location": 33
+            },
+            {
+                "Identifier": "c",
+                "Kind": 0,
+                "Location": 34
+            }
+        ]
     }
 }
