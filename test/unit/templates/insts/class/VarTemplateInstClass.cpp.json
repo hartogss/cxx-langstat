@@ -4,7 +4,7 @@
         "implicit class insts": {
             "C": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/VarTemplateInstClass.cpp:16:1",
+                    "location": 16,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/VarTemplateInstClass.cpp:16:1",
+                    "location": 16,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -29,7 +29,7 @@
         "var insts": {
             "c2": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/VarTemplateInstClass.cpp:17:18",
+                    "location": 17,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -39,7 +39,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/VarTemplateInstClass.cpp:19:5",
+                    "location": 19,
                     "arguments": {
                         "non-type": [],
                         "type": [
