@@ -4,7 +4,7 @@
         "implicit class insts": {
             "std::__1::vector": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/StdContainers.cpp:30:17",
+                    "location": 30,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -15,7 +15,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/StdContainers.cpp:40:5",
+                    "location": 40,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -26,7 +26,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/StdContainers.cpp:43:5",
+                    "location": 43,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -37,7 +37,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/StdContainers.cpp:52:5",
+                    "location": 52,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -47,7 +47,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/StdContainers.cpp:78:5",
+                    "location": 78,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -58,7 +58,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/StdContainers.cpp:82:9",
+                    "location": 82,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -71,7 +71,7 @@
             ],
             "std::__1::array": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/StdContainers.cpp:41:5",
+                    "location": 41,
                     "arguments": {
                         "non-type": [
                             "2"
@@ -83,7 +83,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/StdContainers.cpp:42:5",
+                    "location": 42,
                     "arguments": {
                         "non-type": [
                             "1"
@@ -95,7 +95,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/StdContainers.cpp:45:5",
+                    "location": 45,
                     "arguments": {
                         "non-type": [
                             "4"
@@ -107,7 +107,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/StdContainers.cpp:50:5",
+                    "location": 50,
                     "arguments": {
                         "non-type": [
                             "3"
@@ -119,7 +119,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/StdContainers.cpp:51:5",
+                    "location": 51,
                     "arguments": {
                         "non-type": [
                             "3"
@@ -133,7 +133,7 @@
             ],
             "std::__1::map": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/StdContainers.cpp:47:5",
+                    "location": 47,
                     "arguments": {
                         "non-type": [],
                         "type": [

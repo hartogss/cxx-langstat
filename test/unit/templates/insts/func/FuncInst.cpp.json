@@ -5,7 +5,7 @@
         "func insts": {
             "f1": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:19:15",
+                    "location": 19,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -15,7 +15,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:23:5",
+                    "location": 23,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -27,7 +27,7 @@
             ],
             "f11": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:34:5",
+                    "location": 34,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -37,7 +37,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:31:15",
+                    "location": 31,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -49,7 +49,7 @@
             ],
             "f2": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:42:15",
+                    "location": 42,
                     "arguments": {
                         "non-type": [],
                         "type": [],
@@ -61,7 +61,7 @@
             ],
             "f3": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:47:15",
+                    "location": 47,
                     "arguments": {
                         "non-type": [
                             "nullptr"
@@ -73,7 +73,7 @@
             ],
             "f4": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:52:15",
+                    "location": 52,
                     "arguments": {
                         "non-type": [
                             "'c'"
@@ -83,7 +83,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:53:15",
+                    "location": 53,
                     "arguments": {
                         "non-type": [
                             "'p'",
@@ -96,7 +96,7 @@
             ],
             "f5": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:60:5",
+                    "location": 60,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -106,7 +106,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/FuncInst.cpp:61:5",
+                    "location": 61,
                     "arguments": {
                         "non-type": [],
                         "type": [

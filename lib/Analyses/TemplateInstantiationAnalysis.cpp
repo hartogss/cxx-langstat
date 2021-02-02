@@ -262,31 +262,30 @@ void updateArgsAndKinds(const TemplateArgument& TArg,
 // have to do some extra work to get the location of where the instantiation
 // in the code actually occurred, that is, the line where the programmer wrote
 // the variable or the field.
-std::string TemplateInstantiationAnalysis::getInstantiationLocation(
+unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<ClassTemplateSpecializationDecl>& Match, bool isImplicit){
+    SourceManager& SM = Context->getSourceManager();
     if(isImplicit){
         ImplicitInstCounter++;
-        // auto VarOrFieldDecl = ImplicitInsts[i-1];
-        // return VarOrFieldDecl.Location;
-        return (ImplicitInsts[ImplicitInstCounter-1].Node->getInnerLocStart()).
-            printToString(Context->getSourceManager());
-
+        auto FSL = FullSourceLoc(ImplicitInsts[ImplicitInstCounter-1].Node->getInnerLocStart(), SM);
+        return FSL.getLineNumber();
         // can't I just do ImplicitInsts[i-1].Location to get loc of var/field?
         // std::cout << ImplicitInsts[i-1].Location << std::endl;
         // return std::to_string(static_cast<int>(ImplicitInsts[i-1].Location));
     } else{
+        auto FSL = FullSourceLoc(Match.Node->getTemplateKeywordLoc(), SM);
+        return FSL.getLineNumber();
+        // when giving location of explicit inst, can just give match.Location,
+        // since CTSD holds right location already since not subtree of CTD
         // return Match.Location;
-        return Match.Node->getTemplateKeywordLoc().
-            printToString(Context->getSourceManager());
-            // when giving location of explicit inst, can just give match.Location,
-            // since CTSD holds right location already since not subtree of CTD
     }
 }
 template<typename T>
-std::string TemplateInstantiationAnalysis::getInstantiationLocation(
+unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<T>& Match, bool imp){
-        return Match.Node->getPointOfInstantiation().
-            printToString(Context->getSourceManager());
+        SourceManager& SM = Context->getSourceManager();
+        auto FSL = FullSourceLoc(Match.Node->getPointOfInstantiation(), SM);
+        return FSL.getLineNumber();
 }
 
 // Given a vector of matches, create a JSON object storing all instantiations.

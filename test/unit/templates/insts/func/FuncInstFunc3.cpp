@@ -13,5 +13,5 @@ void f1(){
 
 template<typename T>
 void f2(){
-    f1<int>();
+    f1<int>(); // for some reason as loc this return 1, maybe because in a template?
 }

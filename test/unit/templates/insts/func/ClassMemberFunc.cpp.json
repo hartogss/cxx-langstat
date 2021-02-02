@@ -3,7 +3,7 @@
         "explicit class insts": {
             "D": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassMemberFunc.cpp:32:1",
+                    "location": 32,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -15,7 +15,7 @@
             ],
             "E": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassMemberFunc.cpp:45:1",
+                    "location": 45,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -29,7 +29,7 @@
         "implicit class insts": {
             "E": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassMemberFunc.cpp:51:5",
+                    "location": 51,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -43,7 +43,7 @@
         "func insts": {
             "C::fc": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassMemberFunc.cpp:21:18",
+                    "location": 21,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -53,7 +53,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassMemberFunc.cpp:19:7",
+                    "location": 19,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -65,7 +65,7 @@
             ],
             "E<int>::fe2": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassMemberFunc.cpp:47:23",
+                    "location": 47,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -75,7 +75,7 @@
                     }
                 },
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassMemberFunc.cpp:52:7",
+                    "location": 52,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -87,7 +87,7 @@
             ],
             "E<bool>::fe": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/func/ClassMemberFunc.cpp:46:24",
+                    "location": 46,
                     "arguments": {
                         "non-type": [],
                         "type": [

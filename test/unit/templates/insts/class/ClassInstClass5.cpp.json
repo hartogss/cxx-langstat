@@ -4,7 +4,7 @@
         "implicit class insts": {
             "Sub": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/templates/insts/class/ClassInstClass5.cpp:14:5",
+                    "location": 14,
                     "arguments": {
                         "non-type": [],
                         "type": [

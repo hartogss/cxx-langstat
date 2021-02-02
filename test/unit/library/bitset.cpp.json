@@ -4,7 +4,7 @@
         "implicit class insts": {
             "std::__1::bitset": [
                 {
-                    "location": "/Users/sigi/Documents/cxx-langstat/test/unit/library/bitset.cpp:13:5",
+                    "location": 13,
                     "arguments": {
                         "non-type": [
                             "3"
