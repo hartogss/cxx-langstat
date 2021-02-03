@@ -7,7 +7,6 @@ using namespace clang::ast_matchers;
 using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
-
 // Constructs matcher that exactly matches mixed loops with depth d (nesting depth)
 StatementMatcher constructMixedMatcher(std::string Name, int d){
     auto loopStmt = [](auto m){
@@ -35,7 +34,6 @@ StatementMatcher constructMixedMatcher(std::string Name, int d){
 
 //-----------------------------------------------------------------------------
 
-// step 1: extraction
 void LoopDepthAnalysis::extractFeatures() {
     // Bind is necessary to retrieve information about the match like location etc.
     // Without bind the match is still registered, thus we can still count #matches,
@@ -69,7 +67,7 @@ void LoopDepthAnalysis::extractFeatures() {
         std::cout << "Some loops deeper than max_depth have not been"
                      " analyzed\n";
 }
-//step 2: compute stats
+
 void LoopDepthAnalysis::analyzeFeatures(){
     extractFeatures();
     ordered_json loops;

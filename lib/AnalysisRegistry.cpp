@@ -13,6 +13,7 @@
 #include "cxx-langstat/Analyses/UsingAnalysis.h"
 #include "cxx-langstat/Analyses/VariableTemplateAnalysis.h"
 
+//-----------------------------------------------------------------------------
 
 AnalysisRegistry::AnalysisRegistry(CXXLangstatOptions Opts) : Options(Opts) {
     std::cout << "Registry ctor" << std::endl;
@@ -29,7 +30,7 @@ void AnalysisRegistry::createAllAnalyses(){
     if(Options.EnabledAnalyses.contains("cca"))
         Analyses.emplace_back(std::make_unique<CyclomaticComplexityAnalysis>());
     if(Options.EnabledAnalyses.contains("lda"))
-        Analyses.emplace_back(std::make_unique<LoopDepthAnalysis>());
+        Analyses.emplace_back(std::make_unique<LoopDepthAnalysis>(5));
     if(Options.EnabledAnalyses.contains("lka"))
         Analyses.emplace_back(std::make_unique<LoopKindAnalysis>());
     if(Options.EnabledAnalyses.contains("msa"))
@@ -45,3 +46,5 @@ void AnalysisRegistry::createAllAnalyses(){
     if(Options.EnabledAnalyses.contains("vta"))
         Analyses.emplace_back(std::make_unique<VariableTemplateAnalysis>());
 }
+
+//-----------------------------------------------------------------------------

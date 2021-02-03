@@ -3,6 +3,8 @@
 
 #include "cxx-langstat/Analysis.h"
 
+//-----------------------------------------------------------------------------
+
 class LoopKindAnalysis : public Analysis {
 public:
     LoopKindAnalysis(){
@@ -15,5 +17,7 @@ private:
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
 };
+
+//-----------------------------------------------------------------------------
 
 #endif /* LOOPKINDANALYSIS_H */

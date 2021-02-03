@@ -6,7 +6,6 @@
 // #include "llvm/ADT/StringRef.h"
 
 //-----------------------------------------------------------------------------
-
 // For a match whose node is a decl that can be a nameddecl, return its
 // human-readable name.
 template<typename T>
@@ -25,6 +24,8 @@ void printMatches(std::string text, const Matches<T>& Matches){
     for(auto match : Matches)
         std::cout << getMatchDeclName(match) << " @ " << match.Location << "\n";
 }
+
+//-----------------------------------------------------------------------------
 
 template<typename NodeType>
 Matches<NodeType>
@@ -60,9 +61,7 @@ getASTNodes(std::vector<clang::ast_matchers::MatchFinder::MatchResult> Results,
         return Matches;
 }
 
-std::string getFileForStatDump(llvm::StringRef InFile);
-std::string getFileForPrint(llvm::StringRef S);
-
+//-----------------------------------------------------------------------------
 
 template<typename T>
 void removeDuplicateMatches(Matches<T>& Matches){

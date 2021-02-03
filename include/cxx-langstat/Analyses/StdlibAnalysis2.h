@@ -5,7 +5,6 @@
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 
 //-----------------------------------------------------------------------------
-
 // A standard library analysis is a template instantiation analysis.
 class StdlibAnalysis2 : public TemplateInstantiationAnalysis {
 public:

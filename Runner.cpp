@@ -15,7 +15,6 @@ using StringRef = llvm::StringRef;
 using namespace clang::tooling;
 
 //-----------------------------------------------------------------------------
-
 // Global variables
 // Options in CLI specific to cxx-langstat
 llvm::cl::OptionCategory CXXLangstatCategory("cxx-langstat options", "");
@@ -107,8 +106,10 @@ static llvm::cl::alias ParallelismOptionAlias(
 //-----------------------------------------------------------------------------
 bool isSuitableExtension(llvm::StringRef s, Stage Stage){
     if(Stage == emit_features) {
-        return s.equals(".cpp") || s.equals(".cc") || s.equals(".cxx") || s.equals(".C")
-            || s.equals(".hpp") || s.equals(".hh") || s.equals(".hxx") || s.equals(".H")
+        return s.equals(".cpp") || s.equals(".cc") || s.equals(".cxx")
+            || s.equals(".C")
+            || s.equals(".hpp") || s.equals(".hh") || s.equals(".hxx")
+            || s.equals(".H")
             || s.equals(".c++") || s.equals(".h++")
             || s.equals(".c") || s.equals(".h") // C file formats
             || s.equals(".ast"); // AST file
@@ -161,6 +162,8 @@ std::vector<std::string> getFiles(const Twine& T, Stage Stage){
     return {};
 }
 
+//-----------------------------------------------------------------------------
+// Runs 'Jobs' parallel instances of CXXLangstatMain when -emit-features is enabled
 int ParallelEmitFeatures(std::vector<std::string> InputFiles,
     std::vector<std::string> OutputFiles, Stage s, std::string Analyses,
     std::string BuildPath,
@@ -225,7 +228,6 @@ int main(int argc, char** argv){
             ErrorMessage;
     }
 
-
     // Only now can call this method, otherwise compile command could be interpreted
     // as input or output file since those are positional
     // This usage is encouraged this way according to
@@ -235,7 +237,6 @@ int main(int argc, char** argv){
 
     std::vector<std::string> InputFiles;
     std::vector<std::string> OutputFiles;
-
 
     bool Files = !InputFilesOption.empty();
     bool Dir = !InputDirOption.empty();

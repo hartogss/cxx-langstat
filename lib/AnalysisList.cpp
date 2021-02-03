@@ -6,6 +6,7 @@
 
 // 'Copy' of clang-tidy's Globlist.cpp
 
+//-----------------------------------------------------------------------------
 
 std::string ConsumeAnalysis(llvm::StringRef& AnalysisList){
     llvm::StringRef UntrimmedAnalysis = AnalysisList.substr(0, AnalysisList.find(','));
@@ -14,9 +15,7 @@ std::string ConsumeAnalysis(llvm::StringRef& AnalysisList){
     return Analysis.str();
 }
 
-AnalysisList::AnalysisList() : Items(){
-
-}
+AnalysisList::AnalysisList() : Items(){}
 
 AnalysisList::AnalysisList(llvm::StringRef s){
     while(!s.empty()){
@@ -39,3 +38,5 @@ void AnalysisList::dump(){
         std::cout << s.Name << ", ";
     std::cout << '\n';
 }
+
+//-----------------------------------------------------------------------------

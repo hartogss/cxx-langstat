@@ -10,8 +10,7 @@
 
 class LoopDepthAnalysis : public Analysis {
 public:
-    LoopDepthAnalysis(){
-        MaxDepth=4;
+    LoopDepthAnalysis(unsigned MaxDepth) : MaxDepth(MaxDepth){
         std::cout<<"LDA ctor\n";
     }
     ~LoopDepthAnalysis(){

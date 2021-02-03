@@ -3,8 +3,9 @@
 #include "cxx-langstat/Analyses/LoopKindAnalysis.h"
 
 using namespace clang::ast_matchers;
-
 using ordered_json = nlohmann::ordered_json;
+
+//-----------------------------------------------------------------------------
 
 void LoopKindAnalysis::analyzeFeatures(){
     // Analysis of prevalence of different loop statement, i.e. comparing for, while etc.
@@ -41,3 +42,5 @@ void LoopKindAnalysis::processFeatures(nlohmann::ordered_json j){
     std::string desc = "loop kind prevalences";
     Statistics[desc] = m;
 }
+
+//-----------------------------------------------------------------------------

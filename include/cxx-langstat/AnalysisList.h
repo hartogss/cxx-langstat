@@ -5,6 +5,8 @@
 
 // 'Copy' of clang-tidy's Globlist.h
 
+//-----------------------------------------------------------------------------
+
 class AnalysisList {
 private:
     struct AnalysisListItem {
@@ -20,5 +22,7 @@ public:
     bool contains(std::string s);
     void dump();
 };
+
+//-----------------------------------------------------------------------------
 
 #endif // ANALYSISLIST_H

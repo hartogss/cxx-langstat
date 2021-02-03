@@ -20,6 +20,8 @@ struct Synonym {
     bool Templated;
 };
 
+//-----------------------------------------------------------------------------
+
 class UsingAnalysis : public Analysis {
 public:
     UsingAnalysis(){

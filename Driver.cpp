@@ -35,6 +35,7 @@ public:
         Registry(Registry){
     }
     // Called when AST for TU is ready/has been parsed
+    // Asumes -emit-features in on
     void HandleTranslationUnit(ASTContext& Context){
         std::cout << "Handling the translation unit" << std::endl;
         ordered_json AllAnalysesFeatures;
@@ -43,26 +44,17 @@ public:
         for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
             auto AnalysisAbbreviation = Registry
                 ->Options.EnabledAnalyses.Items[AnalysisIndex].Name;
-            //
-            if(Stage != emit_statistics){
-                // Analyze clang AST and get features
-                AllAnalysesFeatures[AnalysisAbbreviation]
-                    =an->getFeatures(InFile, Context);
-            }
-            // process features from json (not from disk)
-            if(Stage == none){
-                // an->processFeatures(AllAnalysesFeatures[AnalysisAbbreviation]);
-                /// FIXME: actually write statistics to disk
-            }
+            // Analyze clang AST and get features
+            AllAnalysesFeatures[AnalysisAbbreviation]
+                =an->getFeatures(InFile, Context);
+
             AnalysisIndex++;
         }
         // Write to file if -emit-features is active
-        if(Stage == emit_features){
-            auto OutputFile = Registry->getCurrentOutputFile();
-            std::cout << "Writing features to file: "<<OutputFile<<"\n";
-            std::ofstream o(OutputFile);
-            o << AllAnalysesFeatures.dump(4) << '\n';
-        }
+        auto OutputFile = Registry->getCurrentOutputFile();
+        std::cout << "Writing features to file: "<<OutputFile<<"\n";
+        std::ofstream o(OutputFile);
+        o << AllAnalysesFeatures.dump(4) << '\n';
     }
 public:
     StringRef InFile;
@@ -99,9 +91,7 @@ public:
 // Responsible for building Actions
 class Factory : public clang::tooling::FrontendActionFactory {
 public:
-    // ctor
-    Factory(AnalysisRegistry* Reg) : Registry(Reg){
-    }
+    Factory(AnalysisRegistry* Reg) : Registry(Reg){}
     //
     std::unique_ptr<FrontendAction> create() override {
         return std::make_unique<Action>(Registry);
@@ -134,13 +124,11 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
     }
     std::cout << '\n';
 
-    // std::unique_ptr<CompilationDatabase> db = nullptr;
-
     // Create custom options object for registry
     CXXLangstatOptions Opts(Stage, OutputFiles, Analyses);
     AnalysisRegistry* Registry = new AnalysisRegistry(Opts);
 
-    if(Stage != emit_statistics){
+    if(Stage == emit_features){
         // https://clang.llvm.org/doxygen/CommonOptionsParser_8cpp_source.html @ 109
         // Read in database found in dir specified by -p or a parent path
         std::string ErrorMessage;
@@ -154,9 +142,8 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
             }
             std::cout << "FOUND COMPILE COMMANDS:" << std::endl;
             for(auto cc : db->getAllCompileCommands()){
-                for(auto s : cc.CommandLine){
+                for(auto s : cc.CommandLine)
                     std::cout << s << " ";
-                }
                 std::cout << std::endl;
             }
         }
@@ -198,8 +185,6 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
         std::ofstream o(Registry->Options.OutputFiles[0]);
         o << AllFilesAllStatistics.dump(4) << std::endl;
         o << Summary.dump(4) << std::endl;
-
-
     }
 
     // Not really important here, but good practice

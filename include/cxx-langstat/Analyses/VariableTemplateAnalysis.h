@@ -17,6 +17,8 @@ struct VariableFamily {
     FamilyKind Kind;
 };
 
+//-----------------------------------------------------------------------------
+
 class VariableTemplateAnalysis : public Analysis {
 public:
     VariableTemplateAnalysis(){

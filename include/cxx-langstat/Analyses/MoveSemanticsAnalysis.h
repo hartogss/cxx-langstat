@@ -39,6 +39,8 @@ struct ParmInfo : public BasicInfo {
     bool isInstantiationDependent;
 };
 
+//-----------------------------------------------------------------------------
+
 class MoveSemanticsAnalysis : public Analysis {
 public:
     MoveSemanticsAnalysis(){
