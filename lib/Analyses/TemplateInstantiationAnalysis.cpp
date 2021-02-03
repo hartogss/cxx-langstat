@@ -40,20 +40,39 @@ using ordered_json = nlohmann::ordered_json;
 //   report it once only. (boolean statistic only)
 // - variables: same as with functions
 
-// Regular TIA doesn't care what name the template had
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis() :
-    TemplateInstantiationAnalysis(false, anything()) {
+    TemplateInstantiationAnalysis(InstKind::Any, anything()) {
 }
 
-internal::VariadicDynCastAllOfMatcher<Decl, VarTemplateDecl> varTemplateDecl;
-
-// Can restrict TIA with hasName or hasAnyName matcher to only look for instant-
-// iations of certain class templates
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
-    bool analyzeClassInstsOnly, internal::Matcher<clang::NamedDecl> Names) :
-    analyzeClassInstsOnly(analyzeClassInstsOnly),
-    ClassInstMatcher(
-        decl(anyOf(
+    InstKind IK, internal::Matcher<clang::NamedDecl> Names) :
+    IK(IK), Names(Names) {
+        std::cout << "TIA ctor\n";
+}
+
+// test code for instantiations:
+// - Test code to see if able to find "subinstantiations"
+// classTemplateSpecializationDecl(
+//     Names,
+//     isTemplateInstantiation(),
+//     unless(has(cxxRecordDecl())))
+// .bind("ImplicitCTSD"),
+// - If variable is inside of a template, then it has to be the
+// case that the template is being instantiated
+// This doesn't work transitively
+// anyOf(unless(hasAncestor(functionTemplateDecl())), isInstantiated()),
+// - A variable of CTSD type can be matched by this matcher. For
+// some reason if it is, it will match twice. Either you uncomment
+// the line down below and disallow those variable instantiations
+// to be matched here, or you filter out the duplicates below.
+// See VarTemplateInstClass.cpp for insights.
+// unless(isTemplateInstantiation())
+
+void TemplateInstantiationAnalysis::extractFeatures() {
+    // Result of the class insts matcher will give back a pointer to the
+    // ClassTemplateSpecializationDecl (CTSD).
+    if(IK == InstKind::Class || IK == InstKind::Any){
+        auto ClassInstMatcher = decl(anyOf(
             // -- Implicit --
             // Implicit uses:
             // Variable declarations (which include function parameter variables
@@ -90,61 +109,36 @@ TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
                 // because there the implicit instantiations are usually put
                 unless(hasParent(classTemplateDecl())),
                 isTemplateInstantiation())
-            .bind("ExplicitCTSD")))
-    ) {
-        std::cout << "TIA ctor\n";
-}
+            .bind("ExplicitCTSD")));
+        auto ClassResults = Extractor.extract2(*Context, ClassInstMatcher);
+        ClassExplicitInsts = getASTNodes<ClassTemplateSpecializationDecl>(ClassResults,
+            "ExplicitCTSD");
+        ClassImplicitInsts = getASTNodes<ClassTemplateSpecializationDecl>(ClassResults,
+            "ImplicitCTSD");
+        // only really needed to find location of where class was implicitly instantiated
+        // using variable of member variable/field
+        ImplicitInsts = getASTNodes<DeclaratorDecl>(ClassResults,
+            "VarsFieldThatInstantiateImplicitly");
 
-// test code for instantiations:
-// - Test code to see if able to find "subinstantiations"
-// classTemplateSpecializationDecl(
-//     Names,
-//     isTemplateInstantiation(),
-//     unless(has(cxxRecordDecl())))
-// .bind("ImplicitCTSD"),
-// - If variable is inside of a template, then it has to be the
-// case that the template is being instantiated
-// This doesn't work transitively
-// anyOf(unless(hasAncestor(functionTemplateDecl())), isInstantiated()),
-// - A variable of CTSD type can be matched by this matcher. For
-// some reason if it is, it will match twice. Either you uncomment
-// the line down below and disallow those variable instantiations
-// to be matched here, or you filter out the duplicates below.
-// See VarTemplateInstClass.cpp for insights.
-// unless(isTemplateInstantiation())
-
-void TemplateInstantiationAnalysis::extractFeatures() {
-    // Result of the class insts matcher will give back a pointer to the
-    // ClassTemplateSpecializationDecl (CTSD).
-    // Matcher constructed by ctor
-    auto ClassResults = Extractor.extract2(*Context, ClassInstMatcher);
-    ClassExplicitInsts = getASTNodes<ClassTemplateSpecializationDecl>(ClassResults,
-        "ExplicitCTSD");
-    ClassImplicitInsts = getASTNodes<ClassTemplateSpecializationDecl>(ClassResults,
-        "ImplicitCTSD");
-    // only really needed to find location of where class was implicitly instantiated
-    // using variable of member variable/field
-    ImplicitInsts = getASTNodes<DeclaratorDecl>(ClassResults,
-        "VarsFieldThatInstantiateImplicitly");
-
-    // No doubt, this is a dirty fix. If some class type was instantiated through
-    // a variable templates instantiation, which will be matched twice, the loop
-    // below will filter out those variable declarations and the belonging
-    // implicit class inst with it in O(n^2). A better solution would be to
-    // bundle variables with the class template specialization that is their type
-    // and sort (O(nlogn)), but for sake of easyness this is (still) omitted.
-    // That they're matched twice is due to an bug in RecursiveASTVisitor:
-    // https://lists.llvm.org/pipermail/cfe-dev/2021-February/067595.html
-    // std::cout << ImplicitInsts.size() << std::endl;
-    if(!ImplicitInsts.empty()){
-        for(int i=1; i<ImplicitInsts.size(); i++){
-            for(int j=0; j<i; j++){
-                std::cout << i << ", " << j << std::endl;
-                if(i!=j && ImplicitInsts.at(i) == ImplicitInsts.at(j)){
-                    std::cout << "erased" << std::endl;
-                    ImplicitInsts.erase(ImplicitInsts.begin()+i);
-                    ClassImplicitInsts.erase(ClassImplicitInsts.begin()+i);
-                    i--;
+        // No doubt, this is a botch. If some class type was instantiated through
+        // a variable templates instantiation, which will be matched twice, the loop
+        // below will filter out those variable declarations and the belonging
+        // implicit class inst with it in O(n^2). A better solution would be to
+        // bundle variables with the class template specialization that is their type
+        // and sort (O(nlogn)), but for sake of easyness this is (still) omitted.
+        // That they're matched twice is due to an bug in RecursiveASTVisitor:
+        // https://lists.llvm.org/pipermail/cfe-dev/2021-February/067595.html
+        // std::cout << ImplicitInsts.size() << std::endl;
+        if(!ImplicitInsts.empty()){
+            for(int i=1; i<ImplicitInsts.size(); i++){
+                for(int j=0; j<i; j++){
+                    std::cout << i << ", " << j << std::endl;
+                    if(i!=j && ImplicitInsts.at(i) == ImplicitInsts.at(j)){
+                        std::cout << "erased" << std::endl;
+                        ImplicitInsts.erase(ImplicitInsts.begin()+i);
+                        ClassImplicitInsts.erase(ClassImplicitInsts.begin()+i);
+                        i--;
+                    }
                 }
             }
         }
@@ -155,11 +149,12 @@ void TemplateInstantiationAnalysis::extractFeatures() {
     // Here, the location reported is in both explicit and implicit cases
     // the location where the function template is defined
     // (to be precise, the line where the return value is specified).
-    auto FuncInstMatcher = functionDecl(
-        isExpansionInMainFile(),
-        isTemplateInstantiation())
-    .bind("FuncInsts");
-    if(!analyzeClassInstsOnly){
+    if(IK == InstKind::Function || IK == InstKind::Any){
+        auto FuncInstMatcher = functionDecl(
+            isExpansionInMainFile(),
+            Names,
+            isTemplateInstantiation())
+        .bind("FuncInsts");
         auto FuncResults = Extractor.extract2(*Context, FuncInstMatcher);
         FuncInsts = getASTNodes<FunctionDecl>(FuncResults, "FuncInsts");
     }
@@ -167,13 +162,13 @@ void TemplateInstantiationAnalysis::extractFeatures() {
     // Same behavior as with classTemplates: gives pointer to a
     // varSpecializationDecl. However, the location reported is that of the
     // varDecl itself... no matter if explicit or implicit instantiation.
-    internal::VariadicDynCastAllOfMatcher<Decl, VarTemplateSpecializationDecl>
-        varTemplateSpecializationDecl;
-    auto VarInstMatcher = varTemplateSpecializationDecl(
-        isExpansionInMainFile(),
-        isTemplateInstantiation())
-    .bind("VarInsts");
-    if(!analyzeClassInstsOnly){
+    if(IK == InstKind::Variable || IK == InstKind::Any){
+        internal::VariadicDynCastAllOfMatcher<Decl, VarTemplateSpecializationDecl>
+            varTemplateSpecializationDecl;
+        auto VarInstMatcher = varTemplateSpecializationDecl(
+            isExpansionInMainFile(),
+            isTemplateInstantiation())
+        .bind("VarInsts");
         auto VarResults = Extractor.extract2(*Context, VarInstMatcher);
         VarInsts = getASTNodes<VarTemplateSpecializationDecl>(VarResults,
             "VarInsts");
@@ -330,14 +325,16 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
 void TemplateInstantiationAnalysis::analyzeFeatures(){
     extractFeatures();
     llvm::raw_os_ostream stream2(std::cout);
-    gatherInstantiationData(ClassExplicitInsts, "explicit class insts", false);
-    gatherInstantiationData(ClassImplicitInsts, "implicit class insts", true);
-    if(!analyzeClassInstsOnly)
+    if(IK == InstKind::Class || IK == InstKind::Any){
+        gatherInstantiationData(ClassExplicitInsts, "explicit class insts", false);
+        gatherInstantiationData(ClassImplicitInsts, "implicit class insts", true);
+    }
+    if(IK == InstKind::Function || IK == InstKind::Any)
         gatherInstantiationData(FuncInsts, "func insts", false);
-    std::cout << std::endl;
-    if(!analyzeClassInstsOnly)
+    if(IK == InstKind::Variable || IK == InstKind::Any)
         gatherInstantiationData(VarInsts, "var insts", false);
 }
+
 void TemplateInstantiationAnalysis::processFeatures(nlohmann::ordered_json j){
 
 }

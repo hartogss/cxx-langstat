@@ -20,7 +20,8 @@ using ordered_json = nlohmann::ordered_json;
 // Usage in templates and TMP?
 
 // Construct a SLA by constructing a more constrained TIA.
-StdlibAnalysis2::StdlibAnalysis2() : TemplateInstantiationAnalysis(true,
+StdlibAnalysis2::StdlibAnalysis2() : TemplateInstantiationAnalysis(
+    InstKind::Class,
     hasAnyName(
         // Standard library containers, Copied from UseAutoCheck.cpp
         "std::array", "std::vector", "std::deque",
@@ -35,9 +36,8 @@ StdlibAnalysis2::StdlibAnalysis2() : TemplateInstantiationAnalysis(true,
         "std::pair", "std::tuple",
         "std::bitset",
         // Dynamic memory
-        "std::unique_ptr", "std::shared_ptr", "std::weak_ptr"
-        )
-){
+        "std::unique_ptr", "std::shared_ptr", "std::weak_ptr")
+    ){
     std::cout << "SLA2 ctor\n";
 }
 

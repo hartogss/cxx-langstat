@@ -5,20 +5,24 @@
 
 //-----------------------------------------------------------------------------
 
+enum class InstKind {
+    Class, Function, Variable, Any
+};
+
 class TemplateInstantiationAnalysis : public Analysis {
 public:
-    // ctor that just looks for any instantiations, no restrictions
+    // Ctor to let TIA look for any kind of instantiations
     TemplateInstantiationAnalysis();
-    // ctor that is restricted to look for class insts with certain names,
-    // and possibly doesn't look at func and var insts at all
-    TemplateInstantiationAnalysis(bool analyzeClassInstsOnly,
+    // Ctor to instrument TIA to look only for instantiations of kind IK
+    // named any of "Names".
+    TemplateInstantiationAnalysis(InstKind IK,
         clang::ast_matchers::internal::Matcher<clang::NamedDecl> Names);
     ~TemplateInstantiationAnalysis(){
         std::cout << "TIA dtor\n";
     }
 private:
-    bool analyzeClassInstsOnly;
-    clang::ast_matchers::DeclarationMatcher ClassInstMatcher;
+    InstKind IK;
+    clang::ast_matchers::internal::Matcher<clang::NamedDecl> Names;
     Matches<clang::ClassTemplateSpecializationDecl> ClassImplicitInsts;
     Matches<clang::ClassTemplateSpecializationDecl> ClassExplicitInsts;
     Matches<clang::DeclaratorDecl> ImplicitInsts;
