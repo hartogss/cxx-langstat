@@ -6,6 +6,7 @@
 
 using namespace clang;
 using namespace clang::ast_matchers;
+using json = nlohmann::json;
 using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
@@ -49,49 +50,21 @@ bool isUniversalReference(FunctionTemplateDecl* FTD, QualType Param){
     return false;
 }
 
-bool isParameterPackType(QualType Param){
-    return isa<PackExpansionType>(Param.getTypePtr());
-}
-
 //-----------------------------------------------------------------------------
-void MoveSemanticsAnalysis::addFunction(const Match<FunctionTemplateDecl>& match, std::map<std::string, bool> ParmMap){
-    if(ParmMap.at("value"))
-        FuncTemplatesWithValueParm.emplace_back(match);
-    if(ParmMap.at("nonconstlvalueref"))
-        FuncTemplatesWithNonConstLValueRefParm.emplace_back(match);
-    if(ParmMap.at("constlvalueref"))
-        FuncTemplatesWithConstLValueRefParm.emplace_back(match);
-    if(ParmMap.at("rvalueref"))
-        FuncTemplatesWithRValueRefParm.emplace_back(match);
-    if(ParmMap.at("universalref"))
-        FuncTemplatesWithUniversalRefParm.emplace_back(match);
-}
-void MoveSemanticsAnalysis::addFunction(const Match<FunctionDecl>& match, std::map<std::string, bool> ParmMap){
-    if(ParmMap.at("value"))
-        FuncsWithValueParm.emplace_back(match);
-    if(ParmMap.at("nonconstlvalueref"))
-        FuncsWithNonConstLValueRefParm.emplace_back(match);
-    if(ParmMap.at("constlvalueref"))
-        FuncsWithConstLValueRefParm.emplace_back(match);
-    if(ParmMap.at("rvalueref"))
-        FuncsWithRValueRefParm.emplace_back(match);
-}
 
-// For each match, figures out the type of the parameters and puts it in the
-// appropriate vector.
+// For each match, figures out the type of the parameters.
 // T should be clang::FunctionDecl or clang::FunctionTemplateDecl
 template<typename T>
 void MoveSemanticsAnalysis::associateParameters(const Matches<T>& Matches){
     // For each function (template)
     for(auto match : Matches){
         auto Node = match.Node;
-        FunctionDecl* Func;
+        clang::FunctionDecl* Func;
         auto WasTemplate = false;
-        FunctionTemplateDecl* FTD = nullptr;
-        std::map<std::string, bool> ParmMap = {
-            {"value", false}, {"nonconstlvalueref", false},
-            {"constlvalueref", false}, {"rvalueref", false},
-            {"universalref", false}};
+        clang::FunctionTemplateDecl* FTD = nullptr;
+        // Object to store relevant info about function (maybe template) that
+        // later goes into JSON containing features
+        FunctionTemplateInfo Info;
         // If function templates, look at contained function decl.
         if(auto ft = dyn_cast<FunctionTemplateDecl>(Node)){
             Func = ft->getTemplatedDecl();
@@ -100,45 +73,51 @@ void MoveSemanticsAnalysis::associateParameters(const Matches<T>& Matches){
         } else if(auto f = dyn_cast<FunctionDecl>(Node)){
             Func = const_cast<FunctionDecl*>(f);
         }
+        Info.Location = match.Location;
+        Info.Identifier = getMatchDeclName(match);
+        Info.Type = Func->getType().getAsString();
+
         // For each parameter of the function
         for(auto Param : Func->parameters()){
-            // Create Match from parameter that bundles it with location&context
-            // not clean to create matches like this, but better than extracting
-            // matches extra for this from the AST
-            unsigned Location = Context->getFullLoc(
-                Param->getBeginLoc()).getLineNumber();
-            Match<ParmVarDecl> ParmMatch(Location, Param);
-            // If parameter pack is used, strip it off.
+            ParmInfo PInfo(Context->getFullLoc(Param->getBeginLoc())
+                .getLineNumber(),
+                cast<NamedDecl>(Param)->getQualifiedNameAsString(),
+                Param->getType().getAsString());
+            PInfo.isInstantiationDependent = Param->getOriginalType()
+                .getTypePtr()->isInstantiationDependentType();
             QualType qt = Param->getOriginalType();
-            if(isParameterPackType(qt))
-                // getPattern gives us the the type that is 'being packed'.
-                qt = cast<PackExpansionType>(qt.getTypePtr())->getPattern();
+            // If parameter pack is used, strip it off.
+            // For pack expansion T..., below function gives use the pattern T.
+            qt = qt.getNonPackExpansionType();
             // Get the underlying unqualified type
             const Type* type = qt.getTypePtr();
             // Split into value, lvalue ref and rvalue ref groups.
             if(type->isLValueReferenceType()){
                 if(type->getPointeeType().isConstQualified()){
-                    ConstLValueRefParms.emplace_back(ParmMatch);
-                    ParmMap.at("constlvalueref") = true;
+                    Info.ByConstLvalueRef++;
+                    PInfo.Kind = ParmKind::ConstLValueRef;
                 }else{
-                    NonConstLValueRefParms.emplace_back(ParmMatch);
-                    ParmMap.at("nonconstlvalueref") = true;
+                    Info.ByNonConstLvalueRef++;
+                    PInfo.Kind = ParmKind::NonConstLValueRef;
                 }
             }else if(type->isRValueReferenceType()){
                 if(isUniversalReference(FTD, qt) && WasTemplate){
-                    UniversalRefParms.emplace_back(ParmMatch);
-                    ParmMap.at("universalref") = true;
+                    Info.ByUniversalRef++;
+                    PInfo.Kind = ParmKind::UniversalRef;
                 }else{
-                    RValueRefParms.emplace_back(ParmMatch);
-                    ParmMap.at("rvalueref") = true;
+                    Info.ByRvalueRef++;
+                    PInfo.Kind = ParmKind::RValueRef;
                 }
             }else{
-                ValueParms.emplace_back(ParmMatch);
-                ParmMap.at("value") = true;
+                Info.ByValue++;
+                PInfo.Kind = ParmKind::Value;
             }
+            Parms.emplace_back(PInfo);
         }
-        // Put current function in vector specifying what kind of parameter it has
-        addFunction(match, ParmMap);
+        if(WasTemplate)
+            FunctionTemplates.emplace_back(Info);
+        else
+            Functions.emplace_back(Info); // info specific to templates will be cast away automatically
     }
 }
 
@@ -147,11 +126,10 @@ void MoveSemanticsAnalysis::extractFeatures(){
 
     auto ftmatcher = functionTemplateDecl(
         isExpansionInMainFile(),
-        // Function template should not templatize any of the following:
         unless(has(decl(anyOf(
-            cxxConstructorDecl(), // ctors
-            functionDecl(hasName("operator="))))))) // assigment operators
-            // dtors not necessary, those cannot be templated
+            cxxConstructorDecl(), // Ignore ctors
+            functionDecl(hasName("operator="))))))) // Ignore assigment operators
+            // Don't have to ignore dtors, those cannot be templated
     .bind("ft");
     auto ftresult = Extractor.extract2(*Context, ftmatcher);
     auto fts = getASTNodes<FunctionTemplateDecl>(ftresult, "ft");
@@ -160,11 +138,13 @@ void MoveSemanticsAnalysis::extractFeatures(){
     auto fmatcher = functionDecl(
         isExpansionInMainFile(),
         unless(anyOf(
-            cxxConstructorDecl(), // Don't bind to class ctors
+            cxxConstructorDecl(), // Ignore ctors
             hasName("operator="), // Ignore assignment operators
-            cxxDestructorDecl())), // Actually unnecessary, as our analysis
-            //  ignores functions (which dtors are) without parameters anyway
-        unless(hasParent(functionTemplateDecl()))) // Don't bind to templates
+            cxxDestructorDecl())), // Ignore dtors
+        // Ignore functions from function templates, but don't ignore function
+        // template instantiations
+        anyOf(unless(hasParent(functionTemplateDecl())),
+            isTemplateInstantiation()))
     .bind("f");
     auto fresult = Extractor.extract2(*Context, fmatcher);
     auto fs = getASTNodes<FunctionDecl>(fresult, "f");
@@ -178,66 +158,119 @@ void MoveSemanticsAnalysis::extractFeatures(){
 // 2. What about constructors? analyze those too?
 // No, separately probably better.
 
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(FunctionInfo, Location, Identifier,
+    ByValue, ByNonConstLvalueRef, ByConstLvalueRef, ByRvalueRef, Type);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(FunctionTemplateInfo, Location, Identifier,
+    ByValue, ByNonConstLvalueRef, ByConstLvalueRef, ByRvalueRef, ByUniversalRef,
+    Type);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ParmInfo, Location, Identifier, Kind, Type,
+    isInstantiationDependent);
+
 template<typename T>
-void MoveSemanticsAnalysis::gatherData(std::string DeclKind,
-    std::string PassKind, const Matches<T>& Matches){
-        ordered_json Decls;
-        for(auto match : Matches){
-            ordered_json d;
-            d["location"] = match.Location;
-            Decls[getMatchDeclName(match)].emplace_back(d);
+void MoveSemanticsAnalysis::gatherData(std::string DeclKind, const std::vector<T>& fs){
+        for(auto f : fs){
+            json f_j = f;
+            Features[DeclKind].emplace_back(f_j);
         }
-        Features[DeclKind][PassKind] = Decls;
 }
 
 void MoveSemanticsAnalysis::analyzeFeatures() {
     ResetAnalysis();
     extractFeatures();
     // Fill JSON with data about function (templates)
-    gatherData("function decls", "pass by value", FuncsWithValueParm);
-    gatherData("function decls", "pass by non-const lvalue ref",
-        FuncsWithNonConstLValueRefParm);
-    gatherData("function decls", "pass by const lvalue ref",
-        FuncsWithConstLValueRefParm);
-    gatherData("function decls", "pass by rvalue ref",
-        FuncsWithRValueRefParm);
-    gatherData("parm decls", "value", ValueParms);
-    gatherData("parm decls", "non-const lvalue ref", NonConstLValueRefParms);
-    gatherData("parm decls", "const lvalue ref", ConstLValueRefParms);
-    gatherData("parm decls", "rvalue ref", RValueRefParms);
-    gatherData("parm decls", "universal ref", UniversalRefParms);
-    // Fill JSON with data about params
-    gatherData("function template decls", "pass by value",
-        FuncTemplatesWithValueParm);
-    gatherData("function template decls", "pass by non-const lvalue ref",
-        FuncTemplatesWithNonConstLValueRefParm);
-    gatherData("function template decls", "pass by const lvalue ref",
-        FuncTemplatesWithConstLValueRefParm);
-    gatherData("function template decls", "pass by rvalue ref",
-        FuncTemplatesWithRValueRefParm);
-    gatherData("function template decls", "pass by universal ref",
-        FuncTemplatesWithUniversalRefParm);
+    gatherData("functions", Functions);
+    gatherData("function templates", FunctionTemplates);
+    gatherData("parameters", Parms);
 }
 
-void MoveSemanticsAnalysis::processFeatures(nlohmann::ordered_json j){
+//
+void FunctionsCount(ordered_json& Stats, ordered_json j, bool templated){
+    unsigned Value=0, NCLValueRef=0, CLValueRef=0, RValueRef = 0, UniversalRef=0;
+    std::string addendum = "";
+    for(const auto& f_j : j){
+        // std::cout << f_j.dump(4) << std::endl;
+        if(templated) {
+            addendum = " template";
+            FunctionTemplateInfo ft;
+            from_json(f_j, ft);
+            if(ft.ByValue)
+                Value++;
+            if(ft.ByNonConstLvalueRef)
+                NCLValueRef++;
+            if(ft.ByConstLvalueRef)
+                CLValueRef++;
+            if(ft.ByRvalueRef)
+                RValueRef++;
+            if(ft.ByUniversalRef)
+                UniversalRef++;
+        } else {
+            FunctionInfo f;
+            from_json(f_j, f);
+            if(f.ByValue)
+                Value++;
+            if(f.ByNonConstLvalueRef)
+                NCLValueRef++;
+            if(f.ByConstLvalueRef)
+                CLValueRef++;
+            if(f.ByRvalueRef)
+                RValueRef++;
+        }
+    }
+    auto desc = "count for each kind of parameter how many function" + addendum + " use them";
+    Stats[desc]["value"] = Value;
+    Stats[desc]["non-const lvalue ref"] = NCLValueRef;
+    Stats[desc]["const lvalue ref"] = CLValueRef;
+    Stats[desc]["rvalue ref"] = RValueRef;
+    if(templated)
+        Stats[desc]["universal ref"] = UniversalRef;
+}
+void ParamsCount(ordered_json& Stats, ordered_json j){
+    unsigned Value=0, NCLValueRef=0, CLValueRef=0, RValueRef = 0, UniversalRef=0;
+    for(const auto& p_j : j){
+        // std::cout << p_j.dump(4) << std::endl;
+        ParmInfo p;
+        from_json(p_j, p);
+        switch (p.Kind) {
+            case ParmKind::Value:
+                Value++;
+                break;
+            case ParmKind::NonConstLValueRef:
+                NCLValueRef++;
+                break;
+            case ParmKind::ConstLValueRef:
+                CLValueRef++;
+                break;
+            case ParmKind::RValueRef:
+                RValueRef++;
+                break;
+            case ParmKind::UniversalRef:
+                UniversalRef++;
+                break;
+        }
+    }
+    auto desc = "parameter kind prevalence";
+    Stats[desc]["value"] = Value;
+    Stats[desc]["non-const lvalue ref"] = NCLValueRef;
+    Stats[desc]["const lvalue ref"] = CLValueRef;
+    Stats[desc]["rvalue ref"] = RValueRef;
+    Stats[desc]["universal ref"] = UniversalRef;
+}
 
+void MoveSemanticsAnalysis::processFeatures(ordered_json j){
+    if(j.contains("functions"))
+        FunctionsCount(Statistics, j.at("functions"), false);
+    if(j.contains("function templates"))
+        FunctionsCount(Statistics, j.at("function templates"), true);
+    if(j.contains("parameters"))
+        ParamsCount(Statistics, j.at("parameters"));
 }
 
 void MoveSemanticsAnalysis::ResetAnalysis(){
-    FuncsWithValueParm.clear();
-    FuncsWithNonConstLValueRefParm.clear();
-    FuncsWithConstLValueRefParm.clear();
-    FuncsWithRValueRefParm.clear();
-    FuncTemplatesWithValueParm.clear();
-    FuncTemplatesWithNonConstLValueRefParm.clear();
-    FuncTemplatesWithConstLValueRefParm.clear();
-    FuncTemplatesWithRValueRefParm.clear();
-    FuncTemplatesWithUniversalRefParm.clear();
-    ValueParms.clear();
-    NonConstLValueRefParms.clear();
-    ConstLValueRefParms.clear();
-    RValueRefParms.clear();
-    UniversalRefParms.clear();
+    Statistics.clear();
+    Features.clear();
+    Functions.clear();
+    FunctionTemplates.clear();
+    Parms.clear();
 }
 
 //-----------------------------------------------------------------------------

@@ -1,31 +1,36 @@
 {
-    "vta": {
-        "class template with static member": {
-            "s1": {
-                "location": 14
-            },
-            "s2": {
-                "location": 20
-            }
+    "vta": [
+        {
+            "kind": "static data member in class template",
+            "location": 14
         },
-        "constexpr function template": {
-            "f1": {
-                "location": 41
-            },
-            "f10": {
-                "location": 94
-            }
+        {
+            "kind": "static data member in class template",
+            "location": 20
         },
-        "variable template": {
-            "pi": {
-                "location": 104
-            },
-            "pi2": {
-                "location": 108
-            },
-            "vtc::pi3": {
-                "location": 112
-            }
+        {
+            "kind": "static data member in class template",
+            "location": 20
+        },
+        {
+            "kind": "Constexpr function template",
+            "location": 41
+        },
+        {
+            "kind": "Constexpr function template",
+            "location": 94
+        },
+        {
+            "kind": "Variable template",
+            "location": 104
+        },
+        {
+            "kind": "Variable template",
+            "location": 108
+        },
+        {
+            "kind": "Variable template",
+            "location": 112
         }
-    }
+    ]
 }

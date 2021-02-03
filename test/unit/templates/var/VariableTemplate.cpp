@@ -16,7 +16,7 @@ class s1 {
 public:
     static T data;
 };
-// Also CTSD.
+// Also CTSD. We report both static variables.
 template<typename T>
 class s2 {
     static T data;

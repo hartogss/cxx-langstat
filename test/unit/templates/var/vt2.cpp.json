@@ -1,0 +1,20 @@
+{
+    "vta": [
+        {
+            "kind": "static data member in class template",
+            "location": 11
+        },
+        {
+            "kind": "Variable template",
+            "location": 18
+        },
+        {
+            "kind": "Variable template",
+            "location": 26
+        },
+        {
+            "kind": "Variable template",
+            "location": 35
+        }
+    ]
+}

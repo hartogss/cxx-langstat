@@ -5,7 +5,21 @@
 
 //-----------------------------------------------------------------------------
 
-// need analysis object since we want other analysis to inherit interface
+enum SynonymKind {
+    Typedef, Alias
+};
+// Stores information about a single Synonym, i.e. a single typedef or type alias.
+struct Synonym {
+    Synonym(){}
+    Synonym(int Location, SynonymKind Kind, bool Templated) :
+        Location(Location),
+        Kind(Kind),
+        Templated(Templated){}
+    int Location;
+    SynonymKind Kind;
+    bool Templated;
+};
+
 class UsingAnalysis : public Analysis {
 public:
     UsingAnalysis(){
@@ -15,17 +29,12 @@ public:
         std::cout << "UA dtor\n";
     }
 private:
-    Matches<clang::Decl> TypedefDecls;
-    Matches<clang::Decl> TypeAliasDecls;
-    Matches<clang::Decl> TypeAliasTemplateDecls;
-    Matches<clang::Decl> TypedefTemplateDecls;
-    Matches<clang::Decl> td;
+    std::vector<Synonym> Synonyms;
+    // Get matches from AST and store relevant information in "Synonyms"
     void extractFeatures();
-    // Put data about some kind of raccourci (typedef/alias) into JSON
-    template<typename T>
-    void gatherData(std::string RaccourciKind, const Matches<T>& Matches);
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
+    void ResetAnalysis() override;
 };
 
 //-----------------------------------------------------------------------------

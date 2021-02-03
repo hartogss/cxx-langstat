@@ -17,6 +17,7 @@ using ordered_json = nlohmann::ordered_json;
 // used.
 
 void UsingAnalysis::extractFeatures() {
+    Synonyms.clear();
     // Count all typedefs that are explicitly written by programmer (high level)
     // Concretely, that means:
     // - in main file
@@ -58,8 +59,9 @@ void UsingAnalysis::extractFeatures() {
             unless(anyOf(
                 typedefDecl(),
                 accessSpecDecl(),
-                cxxRecordDecl())))))))) // Must be allowed to contain cxxrecord,
-                                        // instrinsic to clang AST
+                // Must be allowed to contain implicit cxxrecord,
+                // instrinsic to clang AST. Same as with VTA.
+                cxxRecordDecl(isImplicit())))))))))
     .bind("typedeftemplate");
 
     // Alias template
@@ -71,12 +73,12 @@ void UsingAnalysis::extractFeatures() {
     // has(anyOf(...)) -> has(decl(anyOf(...)))
     // has(unless(...)) -> has(decl(unless(...)))
 
-    TypedefDecls = Extractor.extract(*Context, "typedef", typedef_);
-    TypeAliasDecls = Extractor.extract(*Context, "alias", typeAlias);
+    Matches<clang::Decl> TypedefDecls = Extractor.extract(*Context, "typedef", typedef_);
+    Matches<clang::Decl> TypeAliasDecls = Extractor.extract(*Context, "alias", typeAlias);
     auto typedeftemplateresults = Extractor.extract2(*Context, typedefTemplate);
-    TypedefTemplateDecls = getASTNodes<Decl>(typedeftemplateresults, "typedeftemplate");
-    td = getASTNodes<Decl>(typedeftemplateresults, "td");
-    TypeAliasTemplateDecls = Extractor.extract(*Context, "aliastemplate",
+    Matches<clang::Decl> TypedefTemplateDecls = getASTNodes<Decl>(typedeftemplateresults, "typedeftemplate");
+    Matches<clang::Decl> td = getASTNodes<Decl>(typedeftemplateresults, "td");
+    Matches<clang::Decl> TypeAliasTemplateDecls = Extractor.extract(*Context, "aliastemplate",
         typeAliasTemplate);
 
     // need to do extra work to remove from typedefdecls those decls that occur
@@ -89,30 +91,95 @@ void UsingAnalysis::extractFeatures() {
                 TypedefDecls.erase(TypedefDecls.begin()+i);
         }
     }
-}
-template<typename T>
-void UsingAnalysis::gatherData(std::string RaccourciKind, const Matches<T>& Matches){
-    // Raccourci: either typedef or alias, possibly "templated"
     // Possible improvement: for each typedef/alias, state what type was aliased
-    // possible improvement: state all typedefs of a typedef template, since
-    // it can contain multiple
-    ordered_json Raccourcis;
-    for(auto match : Matches){
-        ordered_json Raccourci;
-        Raccourci["location"] = match.Location;
-        Raccourcis[getMatchDeclName(match)] = Raccourci;
-    }
-    Features[RaccourciKind] = Raccourcis;
+    for(auto m : TypedefDecls)
+        Synonyms.emplace_back(Synonym(m.Location, Typedef, false));
+    for(auto m : TypeAliasDecls)
+        Synonyms.emplace_back(Synonym(m.Location, Alias, false));
+    // possible improvement: instead of stating a "typedef template" multiple
+    // times when it contains multiple typdefs, state it a single time, but
+    // have it have a number showing #typedefs it contains
+    for(auto m : TypedefTemplateDecls)
+        Synonyms.emplace_back(Synonym(m.Location, Typedef, true));
+    for(auto m : TypeAliasTemplateDecls)
+        Synonyms.emplace_back(Synonym(m.Location, Alias, true));
 }
+
+//-----------------------------------------------------------------------------
+// Helper functions to convert SynonymKind to string and back.
+std::string SKToString(SynonymKind Kind){
+    switch (Kind) {
+        case Typedef:
+            return "Typedef";
+        case Alias:
+            return "Alias";
+        default:
+            return "invalid";
+    }
+}
+SynonymKind getSKFromString(llvm::StringRef s){
+    if(s.equals("Typedef"))
+        return Typedef;
+    else
+        return Alias;
+}
+// Functions to convert structs to/from JSON.
+void to_json(nlohmann::json& j, const Synonym& s){
+    j = nlohmann::json{
+        {"location", s.Location},
+        {"kind", SKToString(s.Kind)},
+        {"templated", s.Templated}
+    };
+}
+void from_json(const nlohmann::json& j, Synonym& s){
+    j.at("location").get_to(s.Location);
+    s.Kind = getSKFromString(j.at("kind").get<std::string>());
+    j.at("templated").get_to(s.Templated);
+}
+
+//-----------------------------------------------------------------------------
+//
 void UsingAnalysis::analyzeFeatures(){
     extractFeatures();
-    gatherData("typedefs", TypedefDecls);
-    gatherData("aliases", TypeAliasDecls);
-    gatherData("typedef templates", TypedefTemplateDecls);
-    gatherData("alias templates", TypeAliasTemplateDecls);
+    for(auto s : Synonyms){
+        nlohmann::json s_j = s;
+        Features.emplace_back(s_j);
+    }
 }
-void UsingAnalysis::processFeatures(nlohmann::ordered_json j){
 
+// Computes prevalences of typedefs and aliases (and templates thereof).
+void SynonymPrevalence(ordered_json& Stats, ordered_json j){
+    unsigned Typedefs=0, Aliases=0, TypedefTemplates=0, AliasTemplates = 0;
+    for(const auto& s_j : j){
+        std::cout << s_j.dump(4) << std::endl;
+        Synonym s;
+        from_json(s_j, s);
+        if(s.Kind == Typedef){
+            if(s.Templated)
+                TypedefTemplates++;
+            else
+                Typedefs++;
+        } else if(s.Kind == Alias){
+            if(s.Templated)
+                AliasTemplates++;
+            else
+                Aliases++;
+        }
+    }
+    auto desc = "prevalence of typedef/using";
+    Stats[desc]["typedef"] = Typedefs;
+    Stats[desc]["alias"] = Aliases;
+    Stats[desc]["typedef template"] = TypedefTemplates;
+    Stats[desc]["alias templates"] = AliasTemplates;
+}
+
+void UsingAnalysis::processFeatures(nlohmann::ordered_json j){
+    SynonymPrevalence(Statistics, j);
+}
+
+void UsingAnalysis::ResetAnalysis(){
+    Synonyms.clear();
+    Features.clear();
 }
 
 //-----------------------------------------------------------------------------

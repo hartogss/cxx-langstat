@@ -31,7 +31,7 @@ struct Tpair_typedef {
     typedef tuple<T> type;
 };
 
-// Sure, why won't you have 2 typedefs in there?
+// Sure, why won't you have 2 typedefs in there? Counted as 2 "typedef templates"
 template<typename T> // √
 struct Tpair_typedef1 {
     typedef tuple<T> type;
@@ -82,7 +82,7 @@ class der : public Tpair_typedef5<T> {
 
 // Considered a "typedef template", because can declare a second public typedef
 // inside of class which can then be seen a normal "template typedef" free
-// to be used by anyone.
+// to be used by anyone. Also counted as 2 "typedef templates"
 // Atypical example
 template<typename T> // √
 class Tpair_typedef6 {

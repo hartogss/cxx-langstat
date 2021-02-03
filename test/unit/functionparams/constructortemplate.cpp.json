@@ -1,24 +1,3 @@
 {
-    "msa": {
-        "function decls": {
-            "pass by value": null,
-            "pass by non-const lvalue ref": null,
-            "pass by const lvalue ref": null,
-            "pass by rvalue ref": null
-        },
-        "parm decls": {
-            "value": null,
-            "non-const lvalue ref": null,
-            "const lvalue ref": null,
-            "rvalue ref": null,
-            "universal ref": null
-        },
-        "function template decls": {
-            "pass by value": null,
-            "pass by non-const lvalue ref": null,
-            "pass by const lvalue ref": null,
-            "pass by rvalue ref": null,
-            "pass by universal ref": null
-        }
-    }
+    "msa": null
 }
