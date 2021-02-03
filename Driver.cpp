@@ -174,7 +174,7 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
             for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
                 auto AnalysisAbbreviation = Registry
                     ->Options.EnabledAnalyses.Items[AnalysisIndex].Name;
-                for(const auto& [statdesc, stats] : an->getStatistics(j).items()){
+                for(const auto& [statdesc, stats] : an->getStatistics(j[AnalysisAbbreviation]).items()){
                     OneFileAllStatistics[statdesc] = stats;
                 }
                 AnalysisIndex++;
