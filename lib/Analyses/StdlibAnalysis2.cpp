@@ -36,8 +36,10 @@ StdlibAnalysis2::StdlibAnalysis2() : TemplateInstantiationAnalysis(
         "std::pair", "std::tuple",
         "std::bitset",
         // Dynamic memory
-        "std::unique_ptr", "std::shared_ptr", "std::weak_ptr")
-    ){
+        "std::unique_ptr", "std::shared_ptr", "std::weak_ptr"
+    ),
+    "array|vector|deque|forward_list|list|set|map|unordered_set|unordered_map|"
+    "stack|queue|utility|tuple|bitset|memory"){
     std::cout << "SLA2 ctor\n";
 }
 
@@ -110,7 +112,7 @@ std::string GetRelevantTypesAsString(llvm::StringRef ContainerType, json Types){
 // Gathers data on how often standard library types were implicitly instantiated.
 void stdlibTypePrevalence(ordered_json& Statistics, ordered_json j){
     std::map<std::string, unsigned> m;
-    for(const auto& [Type, Insts] : j["implicit class insts"].items())
+    for(const auto& [Type, Insts] : j.at("implicit class insts").items())
         m.try_emplace(Type, Insts.size());
     std::string desc = "stdlib type prevalence";
     Statistics[desc] = m;
@@ -120,7 +122,7 @@ void stdlibTypePrevalence(ordered_json& Statistics, ordered_json j){
 // they were implicitly instantiated with.
 void stdlibInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
     StringMap<StringMap<unsigned>> m;
-    for(const auto& [Type, Insts] : j["implicit class insts"].items()){
+    for(const auto& [Type, Insts] : j.at("implicit class insts").items()){
         for(const auto& Inst : Insts){
             m.try_emplace(Type, StringMap<unsigned>());
             json ContainedTypes = Inst["arguments"]["type"];

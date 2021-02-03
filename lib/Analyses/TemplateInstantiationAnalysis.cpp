@@ -44,12 +44,12 @@ using ordered_json = nlohmann::ordered_json;
 //   that happened.
 
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis() :
-    TemplateInstantiationAnalysis(InstKind::Any, anything()) {
+    TemplateInstantiationAnalysis(InstKind::Any, anything(), ".*") {
 }
 
-TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(
-    InstKind IK, internal::Matcher<clang::NamedDecl> Names) :
-    IK(IK), Names(Names) {
+TemplateInstantiationAnalysis::TemplateInstantiationAnalysis(InstKind IK,
+    internal::Matcher<clang::NamedDecl> Names, std::string HeaderRegex) :
+    IK(IK), Names(Names), HeaderRegex(HeaderRegex) {
         std::cout << "TIA ctor\n";
 }
 
@@ -87,7 +87,8 @@ void TemplateInstantiationAnalysis::extractFeatures() {
                 hasType(
                     classTemplateSpecializationDecl(
                         Names,
-                        isTemplateInstantiation())
+                        isTemplateInstantiation(),
+                        isExpansionInFileMatching(HeaderRegex))
                     .bind("ImplicitCTSD")))
             .bind("VarsFieldThatInstantiateImplicitly"),
             // Field declarations (non static variable member)
@@ -96,7 +97,8 @@ void TemplateInstantiationAnalysis::extractFeatures() {
                 hasType(
                     classTemplateSpecializationDecl(
                         Names,
-                        isTemplateInstantiation())
+                        isTemplateInstantiation(),
+                        isExpansionInFileMatching(HeaderRegex))
                     .bind("ImplicitCTSD")))
             .bind("VarsFieldThatInstantiateImplicitly"),
 
@@ -106,7 +108,7 @@ void TemplateInstantiationAnalysis::extractFeatures() {
             // matcher reference
             classTemplateSpecializationDecl(
                 Names,
-                isExpansionInMainFile(),
+                isExpansionInMainFile(), // FIXME: either this or isExpansionInFileMatching with anyOf?
                 // should not be stored where classtemplate is stored,
                 // because there the implicit instantiations are usually put
                 unless(hasParent(classTemplateDecl())),
@@ -160,7 +162,8 @@ void TemplateInstantiationAnalysis::extractFeatures() {
         auto FuncInstMatcher = callExpr(callee(
             functionDecl(
                 Names,
-                isTemplateInstantiation()
+                isTemplateInstantiation(),
+                isExpansionInFileMatching(HeaderRegex)
             ).bind("FuncInsts")),
             isExpansionInMainFile()
         ).bind("callers");

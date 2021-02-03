@@ -20,7 +20,11 @@ AlgorithmLibraryAnalysis::AlgorithmLibraryAnalysis() : TemplateInstantiationAnal
         // https://en.cppreference.com/w/cpp/algorithm
         // Minimum/maximum operations
         "std::max", "std::max_element", "std::min", "std::min_element",
-        "std::minmax", "std::minmax_element", "std::clamp")
+        "std::minmax", "std::minmax_element", "std::clamp",
+        // Modifying sequence operations
+        "std::move"
+    ),
+    "algorithm"
     ){
     std::cout << "ALA ctor\n";
 }

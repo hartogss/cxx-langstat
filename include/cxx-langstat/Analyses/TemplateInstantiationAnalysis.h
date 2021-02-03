@@ -16,7 +16,8 @@ public:
     // Ctor to instrument TIA to look only for instantiations of kind IK
     // named any of "Names".
     TemplateInstantiationAnalysis(InstKind IK,
-        clang::ast_matchers::internal::Matcher<clang::NamedDecl> Names);
+        clang::ast_matchers::internal::Matcher<clang::NamedDecl> Names,
+        std::string HeaderRegex);
     ~TemplateInstantiationAnalysis(){
         std::cout << "TIA dtor\n";
     }
@@ -59,6 +60,12 @@ private:
     //
     unsigned VariablesCounter=0;
     unsigned CallersCounter=0;
+    // Regex specifying header names from which the template whose instantiations
+    // we're looking from has to come from.
+    // Don't go specify here two headers that specify something with the same
+    // name, like utility|algorithm and then expect your statistics for std::move
+    // to make sense.
+    std::string HeaderRegex;
 };
 
 //-----------------------------------------------------------------------------
