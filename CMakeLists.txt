@@ -20,7 +20,7 @@ set(CLANGXX ${CMAKE_CXX_COMPILER})
 # No run-time type indentification
 # -fvisibility=hidden to stop linker complaining about weak symbols when linking clang-tidy
 # -fcolor-diagnostics to enable clang colored output when using ninja
-set(CMAKE_CXX_FLAGS "-std=c++17 -fno-rtti -pedantic -O0 -Wall -Wextra -fcolor-diagnostics")
+set(CMAKE_CXX_FLAGS "-std=c++17 -fno-rtti -g -pedantic -O0 -Wall -Wextra -fcolor-diagnostics")
 message(STATUS "C++ flags: ${CMAKE_CXX_FLAGS}")
 
 # Define executable to be built
@@ -72,6 +72,7 @@ target_link_libraries(${PROJECT_NAME}
     BaseExtractor MatchingExtractor
     AnalysisRegistry AnalysisList
     Utils Stats
+    AlgorithmLibraryAnalysis
     CyclomaticComplexityAnalysis
     LoopDepthAnalysis
     LoopKindAnalysis

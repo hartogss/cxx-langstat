@@ -3,6 +3,7 @@
 #include "cxx-langstat/AnalysisRegistry.h"
 #include "cxx-langstat/AnalysisList.h"
 
+#include "cxx-langstat/Analyses/AlgorithmLibraryAnalysis.h"
 #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 #include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
 #include "cxx-langstat/Analyses/LoopKindAnalysis.h"
@@ -27,6 +28,8 @@ void AnalysisRegistry::createAllAnalyses(){
     // Example of where std::move could be used if std::make<"Analysis">
     // was defined explicitly as a variable
     // Create all analyses and give them to the registry
+    if(Options.EnabledAnalyses.contains("ala"))
+        Analyses.emplace_back(std::make_unique<AlgorithmLibraryAnalysis>());
     if(Options.EnabledAnalyses.contains("cca"))
         Analyses.emplace_back(std::make_unique<CyclomaticComplexityAnalysis>());
     if(Options.EnabledAnalyses.contains("lda"))
