@@ -13,6 +13,6 @@ void f1(){
 
 template<typename T>
 void f2(){
-    f1<T>();
+    f1<T>(); // reported
 }
-template void f2<int>();
+template void f2<int>(); // not reported, as it is explicit

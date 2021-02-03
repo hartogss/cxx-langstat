@@ -14,18 +14,6 @@
                         "template": []
                     }
                 }
-            ],
-            "f2": [
-                {
-                    "location": 18,
-                    "arguments": {
-                        "non-type": [],
-                        "type": [
-                            "int"
-                        ],
-                        "template": []
-                    }
-                }
             ]
         },
         "var insts": null

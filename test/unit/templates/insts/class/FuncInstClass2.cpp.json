@@ -46,6 +46,16 @@
                         ],
                         "template": []
                     }
+                },
+                {
+                    "location": 20,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
                 }
             ],
             "f2": [
@@ -62,7 +72,7 @@
             ],
             "f3": [
                 {
-                    "location": 38,
+                    "location": 40,
                     "arguments": {
                         "non-type": [],
                         "type": [

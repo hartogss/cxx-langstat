@@ -23,10 +23,18 @@ public:
 private:
     InstKind IK;
     clang::ast_matchers::internal::Matcher<clang::NamedDecl> Names;
+    // CTSDs that appeared in explicit instantiation.
     Matches<clang::ClassTemplateSpecializationDecl> ClassImplicitInsts;
+    // CTSDs that appeared in implicit instantiation or where used by a variable
+    // that has CTSD type.
     Matches<clang::ClassTemplateSpecializationDecl> ClassExplicitInsts;
-    Matches<clang::DeclaratorDecl> ImplicitInsts;
+    // Declarations that declare a variable of type CTSD from the list above.
+    Matches<clang::DeclaratorDecl> Variables;
+    // Function instantiations referenced by calls.
     Matches<clang::FunctionDecl> FuncInsts;
+    // Call exprs that cause an implicit function instantiation or refer to it.
+    Matches<clang::CallExpr> Callers;
+    //
     Matches<clang::VarTemplateSpecializationDecl> VarInsts;
     // Responsible to fill vectors of matches defined above
     void extractFeatures();
@@ -39,6 +47,9 @@ private:
     unsigned getInstantiationLocation
         (const Match<clang::ClassTemplateSpecializationDecl>& Match,
             bool isImplicit);
+
+    unsigned getInstantiationLocation(const Match<clang::FunctionDecl>& Match,
+            bool isImplicit);
     // Given matches representing the instantiations of some kind, gather
     // for each instantiation the instantiation arguments.
     template<typename T>
@@ -46,7 +57,8 @@ private:
         bool AreImplicit);
     void ResetAnalysis() override;
     //
-    unsigned ImplicitInstCounter=0;
+    unsigned VariablesCounter=0;
+    unsigned CallersCounter=0;
 };
 
 //-----------------------------------------------------------------------------

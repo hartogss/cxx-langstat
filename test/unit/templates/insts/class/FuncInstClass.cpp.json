@@ -55,20 +55,7 @@
                 }
             ]
         },
-        "func insts": {
-            "f7": [
-                {
-                    "location": 40,
-                    "arguments": {
-                        "non-type": [],
-                        "type": [
-                            "short"
-                        ],
-                        "template": []
-                    }
-                }
-            ]
-        },
+        "func insts": null,
         "var insts": null
     }
 }

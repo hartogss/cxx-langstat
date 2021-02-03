@@ -3,7 +3,7 @@
         "explicit class insts": {
             "D": [
                 {
-                    "location": 32,
+                    "location": 31,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -15,7 +15,7 @@
             ],
             "E": [
                 {
-                    "location": 45,
+                    "location": 44,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -29,47 +29,11 @@
         "implicit class insts": {
             "E": [
                 {
-                    "location": 51,
-                    "arguments": {
-                        "non-type": [],
-                        "type": [
-                            "int"
-                        ],
-                        "template": []
-                    }
-                }
-            ]
-        },
-        "func insts": {
-            "C::fc": [
-                {
-                    "location": 21,
+                    "location": 49,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "bool"
-                        ],
-                        "template": []
-                    }
-                },
-                {
-                    "location": 19,
-                    "arguments": {
-                        "non-type": [],
-                        "type": [
-                            "int"
-                        ],
-                        "template": []
-                    }
-                }
-            ],
-            "E<int>::fe2": [
-                {
-                    "location": 47,
-                    "arguments": {
-                        "non-type": [],
-                        "type": [
-                            "short"
                         ],
                         "template": []
                     }
@@ -84,14 +48,50 @@
                         "template": []
                     }
                 }
+            ]
+        },
+        "func insts": {
+            "C::fc": [
+                {
+                    "location": 19,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
             ],
             "E<bool>::fe": [
                 {
-                    "location": 46,
+                    "location": 50,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "bool"
+                        ],
+                        "template": []
+                    }
+                }
+            ],
+            "E<int>::fe2": [
+                {
+                    "location": 53,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": 54,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "short"
                         ],
                         "template": []
                     }

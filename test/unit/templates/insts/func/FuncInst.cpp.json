@@ -5,7 +5,7 @@
         "func insts": {
             "f1": [
                 {
-                    "location": 19,
+                    "location": 20,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -15,7 +15,17 @@
                     }
                 },
                 {
-                    "location": 23,
+                    "location": 21,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": 22,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -27,16 +37,6 @@
             ],
             "f11": [
                 {
-                    "location": 34,
-                    "arguments": {
-                        "non-type": [],
-                        "type": [
-                            "int"
-                        ],
-                        "template": []
-                    }
-                },
-                {
                     "location": 31,
                     "arguments": {
                         "non-type": [],
@@ -45,11 +45,21 @@
                         ],
                         "template": []
                     }
+                },
+                {
+                    "location": 32,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
                 }
             ],
             "f2": [
                 {
-                    "location": 42,
+                    "location": 55,
                     "arguments": {
                         "non-type": [],
                         "type": [],
@@ -61,7 +71,7 @@
             ],
             "f3": [
                 {
-                    "location": 47,
+                    "location": 56,
                     "arguments": {
                         "non-type": [
                             "nullptr"
@@ -73,7 +83,7 @@
             ],
             "f4": [
                 {
-                    "location": 52,
+                    "location": 57,
                     "arguments": {
                         "non-type": [
                             "'c'"
@@ -83,7 +93,7 @@
                     }
                 },
                 {
-                    "location": 53,
+                    "location": 58,
                     "arguments": {
                         "non-type": [
                             "'p'",
@@ -96,7 +106,7 @@
             ],
             "f5": [
                 {
-                    "location": 60,
+                    "location": 61,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -106,7 +116,7 @@
                     }
                 },
                 {
-                    "location": 61,
+                    "location": 62,
                     "arguments": {
                         "non-type": [],
                         "type": [

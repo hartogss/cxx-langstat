@@ -32,13 +32,16 @@ using ordered_json = nlohmann::ordered_json;
 //
 // Remember that template parameters can be non-types, types or templates.
 // Goal: for each instantiation report:
-// - classes: for each class report with which arguments it was reported
-//   with. if a class was instantiated with the same arguments multiple times,
-//   report it every time, s.t. we can count them.
-// - functions: for each function report with which arguments it was reported
-//   with. if a function was instantiated with the same arguments multiple times,
-//   report it once only. (boolean statistic only)
-// - variables: same as with functions
+// - classes:
+//   * report every explicit instantiation
+//   * report every "implicit instantiation", e.g. report ALL instances of
+//     std::vector<int>, notably when that occurs multiple times
+// - functions:
+//   * report every call of f<t> for some instantiating arguments.
+//   * explicit function templates are not reported for brevity and due to time,
+//     and ease of implementation
+// - variables: Report for each var<t> the instantiation, no matter how often
+//   that happened.
 
 TemplateInstantiationAnalysis::TemplateInstantiationAnalysis() :
     TemplateInstantiationAnalysis(InstKind::Any, anything()) {
@@ -85,8 +88,7 @@ void TemplateInstantiationAnalysis::extractFeatures() {
                     classTemplateSpecializationDecl(
                         Names,
                         isTemplateInstantiation())
-                    .bind("ImplicitCTSD"))
-            )
+                    .bind("ImplicitCTSD")))
             .bind("VarsFieldThatInstantiateImplicitly"),
             // Field declarations (non static variable member)
             fieldDecl(
@@ -117,7 +119,7 @@ void TemplateInstantiationAnalysis::extractFeatures() {
             "ImplicitCTSD");
         // only really needed to find location of where class was implicitly instantiated
         // using variable of member variable/field
-        ImplicitInsts = getASTNodes<DeclaratorDecl>(ClassResults,
+        Variables = getASTNodes<DeclaratorDecl>(ClassResults,
             "VarsFieldThatInstantiateImplicitly");
 
         // No doubt, this is a botch. If some class type was instantiated through
@@ -128,14 +130,14 @@ void TemplateInstantiationAnalysis::extractFeatures() {
         // and sort (O(nlogn)), but for sake of easyness this is (still) omitted.
         // That they're matched twice is due to an bug in RecursiveASTVisitor:
         // https://lists.llvm.org/pipermail/cfe-dev/2021-February/067595.html
-        // std::cout << ImplicitInsts.size() << std::endl;
-        if(!ImplicitInsts.empty()){
-            for(int i=1; i<ImplicitInsts.size(); i++){
+        // std::cout << Variables.size() << std::endl;
+        if(!Variables.empty()){
+            for(int i=1; i<Variables.size(); i++){
                 for(int j=0; j<i; j++){
                     std::cout << i << ", " << j << std::endl;
-                    if(i!=j && ImplicitInsts.at(i) == ImplicitInsts.at(j)){
+                    if(i!=j && Variables.at(i) == Variables.at(j)){
                         std::cout << "erased" << std::endl;
-                        ImplicitInsts.erase(ImplicitInsts.begin()+i);
+                        Variables.erase(Variables.begin()+i);
                         ClassImplicitInsts.erase(ClassImplicitInsts.begin()+i);
                         i--;
                     }
@@ -144,19 +146,27 @@ void TemplateInstantiationAnalysis::extractFeatures() {
         }
     }
 
-    // In contrast, this result gives a pointer to a functionDecl, which has
-    // too has a function we can call to get the template arguments.
-    // Here, the location reported is in both explicit and implicit cases
-    // the location where the function template is defined
-    // (to be precise, the line where the return value is specified).
+    //
     if(IK == InstKind::Function || IK == InstKind::Any){
-        auto FuncInstMatcher = functionDecl(
-            isExpansionInMainFile(),
-            Names,
-            isTemplateInstantiation())
-        .bind("FuncInsts");
+        // Old code that matched instantiations no matter explicit/implicit.
+        // auto FuncInstMatcher = functionDecl(
+        //     isExpansionInMainFile(),
+        //     Names,
+        //     isTemplateInstantiation())
+        // .bind("FuncInsts");
+        // Capture all calls that potentially cause an instantiation of a
+        // function template. Explicit function template instantation are ignored
+        // for easity.
+        auto FuncInstMatcher = callExpr(callee(
+            functionDecl(
+                Names,
+                isTemplateInstantiation()
+            ).bind("FuncInsts")),
+            isExpansionInMainFile()
+        ).bind("callers");
         auto FuncResults = Extractor.extract2(*Context, FuncInstMatcher);
         FuncInsts = getASTNodes<FunctionDecl>(FuncResults, "FuncInsts");
+        Callers = getASTNodes<CallExpr>(FuncResults, "callers");
     }
 
     // Same behavior as with classTemplates: gives pointer to a
@@ -261,12 +271,12 @@ unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<ClassTemplateSpecializationDecl>& Match, bool isImplicit){
     SourceManager& SM = Context->getSourceManager();
     if(isImplicit){
-        ImplicitInstCounter++;
-        auto FSL = FullSourceLoc(ImplicitInsts[ImplicitInstCounter-1].Node->getInnerLocStart(), SM);
+        VariablesCounter++;
+        auto FSL = FullSourceLoc(Variables[VariablesCounter-1].Node->getInnerLocStart(), SM);
         return FSL.getLineNumber();
-        // can't I just do ImplicitInsts[i-1].Location to get loc of var/field?
-        // std::cout << ImplicitInsts[i-1].Location << std::endl;
-        // return std::to_string(static_cast<int>(ImplicitInsts[i-1].Location));
+        // can't I just do Variables[i-1].Location to get loc of var/field?
+        // std::cout << Variables[i-1].Location << std::endl;
+        // return std::to_string(static_cast<int>(Variables[i-1].Location));
     } else{
         auto FSL = FullSourceLoc(Match.Node->getTemplateKeywordLoc(), SM);
         return FSL.getLineNumber();
@@ -275,6 +285,19 @@ unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
         // return Match.Location;
     }
 }
+
+unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
+    const Match<FunctionDecl>& Match, bool isImplicit){
+        if(isImplicit){
+            CallersCounter++;
+            return Callers[CallersCounter-1].Location;
+        } else {
+            SourceManager& SM = Context->getSourceManager();
+            auto FSL = FullSourceLoc(Match.Node->getPointOfInstantiation(), SM);
+            return FSL.getLineNumber();
+        }
+}
+
 template<typename T>
 unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<T>& Match, bool imp){
@@ -330,7 +353,7 @@ void TemplateInstantiationAnalysis::analyzeFeatures(){
         gatherInstantiationData(ClassImplicitInsts, "implicit class insts", true);
     }
     if(IK == InstKind::Function || IK == InstKind::Any)
-        gatherInstantiationData(FuncInsts, "func insts", false);
+        gatherInstantiationData(FuncInsts, "func insts", true);
     if(IK == InstKind::Variable || IK == InstKind::Any)
         gatherInstantiationData(VarInsts, "var insts", false);
 }
@@ -342,10 +365,12 @@ void TemplateInstantiationAnalysis::processFeatures(nlohmann::ordered_json j){
 void TemplateInstantiationAnalysis::ResetAnalysis(){
     ClassImplicitInsts.clear();
     ClassExplicitInsts.clear();
-    ImplicitInsts.clear();
+    Variables.clear();
     FuncInsts.clear();
     VarInsts.clear();
-    ImplicitInstCounter=0;
+    VariablesCounter=0;
+    CallersCounter=0;
+
 }
 
 //-----------------------------------------------------------------------------

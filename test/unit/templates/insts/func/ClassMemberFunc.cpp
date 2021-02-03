@@ -18,7 +18,6 @@ void callerc(){
     C c;
     c.fc<int>();
 }
-template void C::fc<bool>();
 
 
 // Non-templated methods of class templates, however, are "instantiated" when
@@ -40,14 +39,17 @@ public:
     template<typename U>
     void fe(){}
     template<typename R>
-    void fe2(T t, R r){}
+    static void fe2(T t, R r){}
 };
 template class E<bool>;
-template void E<bool>::fe<bool>(); // here is an explicit one
-template void E<int>::fe2<short>(int, short); // om het af te leren
+
 // Note how the method instantiation does not cause an instantiation of the
 // encompassing class.
-void callere(){
-    E<int> e;
-    e.fe2(3,3); // causes ::fe2<int> to be deduced
+void caller(){
+    E<bool> e;
+    e.fe<bool>();
+
+    E<int> e1;
+    e1.fe2(3,3); // causes ::fe2<int> to be deduced
+    E<int>::fe2<short>(3, 3); // om het af te leren
 }
