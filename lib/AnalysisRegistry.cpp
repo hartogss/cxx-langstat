@@ -5,13 +5,14 @@
 
 #include "cxx-langstat/Analyses/AlgorithmLibraryAnalysis.h"
 #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
+#include "cxx-langstat/Analyses/ContainerLibAnalysis.h"
 #include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
 #include "cxx-langstat/Analyses/LoopKindAnalysis.h"
 #include "cxx-langstat/Analyses/MoveSemanticsAnalysis.h"
-#include "cxx-langstat/Analyses/StdlibAnalysis2.h"
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 #include "cxx-langstat/Analyses/TemplateParameterAnalysis.h"
 #include "cxx-langstat/Analyses/UsingAnalysis.h"
+#include "cxx-langstat/Analyses/UtilityLibAnalysis.h"
 #include "cxx-langstat/Analyses/VariableTemplateAnalysis.h"
 
 //-----------------------------------------------------------------------------
@@ -32,20 +33,22 @@ void AnalysisRegistry::createAllAnalyses(){
         Analyses.emplace_back(std::make_unique<AlgorithmLibraryAnalysis>());
     if(Options.EnabledAnalyses.contains("cca"))
         Analyses.emplace_back(std::make_unique<CyclomaticComplexityAnalysis>());
+    if(Options.EnabledAnalyses.contains("cla"))
+        Analyses.emplace_back(std::make_unique<ContainerLibAnalysis>());
     if(Options.EnabledAnalyses.contains("lda"))
         Analyses.emplace_back(std::make_unique<LoopDepthAnalysis>(5));
     if(Options.EnabledAnalyses.contains("lka"))
         Analyses.emplace_back(std::make_unique<LoopKindAnalysis>());
     if(Options.EnabledAnalyses.contains("msa"))
         Analyses.emplace_back(std::make_unique<MoveSemanticsAnalysis>());
-    if(Options.EnabledAnalyses.contains("sla2"))
-        Analyses.emplace_back(std::make_unique<StdlibAnalysis2>());
     if(Options.EnabledAnalyses.contains("tia"))
         Analyses.emplace_back(std::make_unique<TemplateInstantiationAnalysis>());
     if(Options.EnabledAnalyses.contains("tpa"))
         Analyses.emplace_back(std::make_unique<TemplateParameterAnalysis>());
     if(Options.EnabledAnalyses.contains("ua"))
         Analyses.emplace_back(std::make_unique<UsingAnalysis>());
+    if(Options.EnabledAnalyses.contains("ula"))
+        Analyses.emplace_back(std::make_unique<UtilityLibAnalysis>());
     if(Options.EnabledAnalyses.contains("vta"))
         Analyses.emplace_back(std::make_unique<VariableTemplateAnalysis>());
 }

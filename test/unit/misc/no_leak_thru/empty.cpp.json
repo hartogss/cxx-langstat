@@ -1,14 +1,17 @@
 {
+    "ala": {
+        "func insts": null
+    },
     "cca": {
         "fdecls": null
+    },
+    "cla": {
+        "explicit class insts": null,
+        "implicit class insts": null
     },
     "lda": null,
     "lka": null,
     "msa": {},
-    "sla2": {
-        "explicit class insts": null,
-        "implicit class insts": null
-    },
     "tia": {
         "explicit class insts": null,
         "implicit class insts": null,
@@ -22,5 +25,9 @@
         "alias templates": null
     },
     "ua": [],
+    "ula": {
+        "explicit class insts": null,
+        "implicit class insts": null
+    },
     "vta": []
 }

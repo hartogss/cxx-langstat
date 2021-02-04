@@ -1,5 +1,5 @@
 {
-    "sla2": {
+    "cla": {
         "explicit class insts": null,
         "implicit class insts": {
             "std::__1::vector": [

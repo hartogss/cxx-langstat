@@ -1,9 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "llvm/Support/raw_ostream.h"
-
-#include "cxx-langstat/Analyses/StdlibAnalysis2.h"
+#include "cxx-langstat/Analyses/ContainerLibAnalysis.h"
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 #include "cxx-langstat/Utils.h"
 
@@ -20,7 +18,7 @@ using ordered_json = nlohmann::ordered_json;
 // Usage in templates and TMP?
 
 // Construct a SLA by constructing a more constrained TIA.
-StdlibAnalysis2::StdlibAnalysis2() : TemplateInstantiationAnalysis(
+ContainerLibAnalysis::ContainerLibAnalysis() : TemplateInstantiationAnalysis(
     InstKind::Class,
     hasAnyName(
         // Standard library containers, Copied from UseAutoCheck.cpp
@@ -30,18 +28,14 @@ StdlibAnalysis2::StdlibAnalysis2() : TemplateInstantiationAnalysis(
         "std::multiset", "std::multimap",
         "std::unordered_set", "std::unordered_map",
         "std::unordered_multiset", "std::unordered_multimap",
-        "std::stack", "std::queue", "std::priority_queue",
-        // Standard library utilities
-        // vocabulary types
-        "std::pair", "std::tuple",
-        "std::bitset",
-        // Dynamic memory
-        "std::unique_ptr", "std::shared_ptr", "std::weak_ptr"
+        "std::stack", "std::queue", "std::priority_queue"
     ),
     "array|vector|deque|forward_list|list|set|map|unordered_set|unordered_map|"
-    "stack|queue|utility|tuple|bitset|memory"){
-    std::cout << "SLA2 ctor\n";
+    "stack|queue"){
+    std::cout << "CLA ctor\n";
 }
+
+namespace {
 
 template<typename T>
 using StringMap = std::map<std::string, T>;
@@ -76,13 +70,6 @@ const StringMap<int> NumRelTypes = { // no constexpr support for map
     {"std::unordered_multiset", 1}, {"std::unordered_multimap", 2},
     // container adaptors
     {"std::stack", 1}, {"std::queue", 1}, {"std::priority_queue", 1},
-    // ** Utilities **
-    // pairs and tuples
-    {"std::pair", 2}, {"std::tuple", -1},
-    // bitset
-    {"std::bitset", 0},
-    // smart pointers
-    {"std::unique_ptr", 1}, {"std::shared_ptr", 1}, {"std::weak_ptr", 1}
 };
 
 // For some standard library type, get how many type arguments of instantiations
@@ -139,7 +126,9 @@ void stdlibInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
     Statistics[desc] = m;
 }
 
-void StdlibAnalysis2::processFeatures(ordered_json j){
+} // namespace
+
+void ContainerLibAnalysis::processFeatures(ordered_json j){
     stdlibTypePrevalence(Statistics, j);
     stdlibInstantiationTypeArgs(Statistics, j);
 }
