@@ -1,0 +1,63 @@
+{
+    "ala": {
+        "func insts": {
+            "std::__1::max": [
+                {
+                    "location": 19,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": 23,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "double"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": 24,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "double"
+                        ],
+                        "template": []
+                    }
+                }
+            ],
+            "std::__1::min": [
+                {
+                    "location": 22,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
+            ],
+            "std::__1::move": [
+                {
+                    "location": 29,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "std::__1::__wrap_iter<int *>",
+                            "std::__1::back_insert_iterator<std::__1::list<int, std::__1::allocator<int> > >"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        }
+    }
+}
