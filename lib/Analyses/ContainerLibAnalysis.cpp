@@ -37,9 +37,6 @@ ContainerLibAnalysis::ContainerLibAnalysis() : TemplateInstantiationAnalysis(
 
 namespace {
 
-template<typename T>
-using StringMap = std::map<std::string, T>;
-
 // Map that for a stdlib type contains how many instantiation type args are
 // intersting to us, e.g. for the instantiation stored in a .json below,
 // "std::__1::vector" : {
@@ -72,65 +69,26 @@ const StringMap<int> NumRelTypes = { // no constexpr support for map
     {"std::stack", 1}, {"std::queue", 1}, {"std::priority_queue", 1},
 };
 
-// For some standard library type, get how many type arguments of instantiations
-// are interesting to us. Have to do some extra work in case it is std::__1-
-// qualified.
-int GetNumRelevantTypes(llvm::StringRef Type){
-    if(auto [l,r] = Type.split("::__1"); !r.empty())
-        return NumRelTypes.at((l+r).str());
-    return NumRelTypes.at(Type.str());
-}
-
-// Actually gets the type arguments and concatenates them into a string.
-std::string GetRelevantTypesAsString(llvm::StringRef ContainerType, json Types){
-    // std::cout << ContainerType.str() << std::endl;
-    int n = GetNumRelevantTypes(ContainerType);
-    if(n == -1)
-        n = Types.end()-Types.begin();
-    std::string t;
-    for(nlohmann::json::iterator i=Types.begin(); i<Types.begin()+n; i++)
-        t = t + (*i).get<std::string>() + ", ";
-    if(n)
-        return llvm::StringRef(t).drop_back(2).str();
-    else
-        return "";
-}
-
-// Gathers data on how often standard library types were implicitly instantiated.
-void stdlibTypePrevalence(ordered_json& Statistics, ordered_json j){
-    std::map<std::string, unsigned> m;
-    for(const auto& [Type, Insts] : j.at("implicit class insts").items())
-        m.try_emplace(Type, Insts.size());
-    std::string desc = "stdlib type prevalence";
-    Statistics[desc] = m;
-}
-
-// For standard library types, gathers data on what types
-// they were implicitly instantiated with.
-void stdlibInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
-    StringMap<StringMap<unsigned>> m;
-    for(const auto& [Type, Insts] : j.at("implicit class insts").items()){
-        for(const auto& Inst : Insts){
-            m.try_emplace(Type, StringMap<unsigned>());
-            json ContainedTypes = Inst["arguments"]["type"];
-            assert(ContainedTypes.is_array());
-            auto TypeString = GetRelevantTypesAsString(Type, ContainedTypes);
-            // std::cout << TypeString << std::endl;
-            if(!TypeString.empty()){
-                m.at(Type).try_emplace(TypeString, 0);
-                m.at(Type).at(TypeString)++;
-            }
-        }
-    }
-    std::string desc = "stdlib instantiation type arguments";
-    Statistics[desc] = m;
-}
-
 } // namespace
 
+// Gathers data on how often each container template was used.
+void containerPrevalence(ordered_json& Statistics, ordered_json j){
+    ordered_json res;
+    typePrevalence(j, res);
+    Statistics["container type prevalence"] = res;
+}
+
+// For each container template, gives statistics on how often each instantiation
+// was used by a (member) variable. 
+void containerInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
+    ordered_json res;
+    instantiationTypeArgs(j, res, NumRelTypes);
+    Statistics["container instantiation type arguments"] = res;
+}
+
 void ContainerLibAnalysis::processFeatures(ordered_json j){
-    stdlibTypePrevalence(Statistics, j);
-    stdlibInstantiationTypeArgs(Statistics, j);
+    containerPrevalence(Statistics, j.at("implicit class insts"));
+    containerInstantiationTypeArgs(Statistics, j.at("implicit class isnts"));
 }
 
 //-----------------------------------------------------------------------------

@@ -29,24 +29,15 @@ AlgorithmLibraryAnalysis::AlgorithmLibraryAnalysis() : TemplateInstantiationAnal
     std::cout << "ALA ctor\n";
 }
 
-namespace {
-
-// Gathers data on how often standard library types were implicitly instantiated.
+// Gathers data on how often each algorithm template was used.
 void algorithmPrevalence(ordered_json& Statistics, ordered_json j){
-    std::map<std::string, unsigned> m;
-    std::cout << j.dump(4) << std::endl;
-    for(const auto& [Type, Insts] : j.at("func insts").items()){
-        m.try_emplace(Type, Insts.size());
-        std::cout << Type << ", " << Insts.size() << std::endl;
-    }
-    std::string desc = "algorithm prevalence";
-    Statistics[desc] = m;
+    ordered_json res;
+    typePrevalence(j, res);
+    Statistics["algorithm type prevalence"] = res;
 }
 
-} // namespace
-
 void AlgorithmLibraryAnalysis::processFeatures(ordered_json j){
-    algorithmPrevalence(Statistics, j);
+    algorithmPrevalence(Statistics, j.at("func insts"));
 }
 
 //-----------------------------------------------------------------------------

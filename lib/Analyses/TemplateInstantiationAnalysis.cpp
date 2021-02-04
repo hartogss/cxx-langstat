@@ -16,7 +16,9 @@
 
 using namespace clang;
 using namespace clang::ast_matchers;
+using json = nlohmann::json;
 using ordered_json = nlohmann::ordered_json;
+using StringRef = llvm::StringRef;
 
 //-----------------------------------------------------------------------------
 // Compute statistics on arguments used to instantiate templates,
@@ -374,6 +376,56 @@ void TemplateInstantiationAnalysis::ResetAnalysis(){
     VariablesCounter=0;
     CallersCounter=0;
 
+}
+
+int getNumRelevantTypes(StringRef Type, const StringMap<int>& SM){
+    if(auto [l,r] = Type.split("::__1"); !r.empty())
+        return SM.at((l+r).str());
+    return SM.at(Type.str());
+}
+
+std::string getRelevantTypesAsString(StringRef Type, json Types,
+    const StringMap<int>& SM){
+        // std::cout << ContainerType.str() << std::endl;
+        int n = getNumRelevantTypes(Type, SM);
+        if(n == -1)
+            n = Types.end()-Types.begin();
+        std::string t;
+        for(nlohmann::json::iterator i=Types.begin(); i<Types.begin()+n; i++)
+            t = t + (*i).get<std::string>() + ", ";
+        if(n)
+            return llvm::StringRef(t).drop_back(2).str();
+        else
+            return "";
+}
+
+void typePrevalence(const ordered_json& in, ordered_json& out){
+    std::map<std::string, unsigned> m;
+    for(const auto& [Type, Insts] : in.items()){
+        // std::cout << Type << std::endl;
+        m.try_emplace(Type, Insts.size());
+    }
+    out = m;
+
+}
+
+void instantiationTypeArgs(ordered_json& in, ordered_json& out,
+    const StringMap<int>& SM){
+        StringMap<StringMap<unsigned>> m;
+        for(const auto& [Type, Insts] : in.items()){
+            for(const auto& Inst : Insts){
+                m.try_emplace(Type, StringMap<unsigned>());
+                json ContainedTypes = Inst["arguments"]["type"];
+                assert(ContainedTypes.is_array());
+                auto TypeString = getRelevantTypesAsString(Type, ContainedTypes, SM);
+                // std::cout << TypeString << std::endl;
+                if(!TypeString.empty()){
+                    m.at(Type).try_emplace(TypeString, 0);
+                    m.at(Type).at(TypeString)++;
+                }
+            }
+        }
+        out = m;
 }
 
 //-----------------------------------------------------------------------------

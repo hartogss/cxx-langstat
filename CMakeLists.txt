@@ -73,14 +73,15 @@ target_link_libraries(${PROJECT_NAME}
     AnalysisRegistry AnalysisList
     Utils Stats
     AlgorithmLibraryAnalysis
+    ContainerLibAnalysis
     CyclomaticComplexityAnalysis
     LoopDepthAnalysis
     LoopKindAnalysis
     MoveSemanticsAnalysis
-    StdlibAnalysis2
     TemplateInstantiationAnalysis
     TemplateParameterAnalysis
     UsingAnalysis
+    UtilityLibAnalysis
     VariableTemplateAnalysis
     )
 # Link LLVM & Clang libs
