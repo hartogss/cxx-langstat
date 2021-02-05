@@ -29,6 +29,7 @@ public:
         return Features;
     }
     const nlohmann::ordered_json& getStatistics(nlohmann::ordered_json j){
+        ResetAnalysis();
         processFeatures(j);
         return Statistics;
     }
