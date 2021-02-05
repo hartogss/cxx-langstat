@@ -151,7 +151,7 @@ void UsingAnalysis::analyzeFeatures(){
 void SynonymPrevalence(ordered_json& Stats, ordered_json j){
     unsigned Typedefs=0, Aliases=0, TypedefTemplates=0, AliasTemplates = 0;
     for(const auto& s_j : j){
-        std::cout << s_j.dump(4) << std::endl;
+        // std::cout << s_j.dump(4) << std::endl;
         Synonym s;
         from_json(s_j, s);
         if(s.Kind == Typedef){

@@ -79,7 +79,7 @@ void containerPrevalence(ordered_json& Statistics, ordered_json j){
 }
 
 // For each container template, gives statistics on how often each instantiation
-// was used by a (member) variable. 
+// was used by a (member) variable.
 void containerInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
     ordered_json res;
     instantiationTypeArgs(j, res, NumRelTypes);
@@ -88,7 +88,7 @@ void containerInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
 
 void ContainerLibAnalysis::processFeatures(ordered_json j){
     containerPrevalence(Statistics, j.at("implicit class insts"));
-    containerInstantiationTypeArgs(Statistics, j.at("implicit class isnts"));
+    containerInstantiationTypeArgs(Statistics, j.at("implicit class insts"));
 }
 
 //-----------------------------------------------------------------------------

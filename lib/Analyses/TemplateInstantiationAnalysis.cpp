@@ -279,17 +279,15 @@ void updateArgsAndKinds(const TemplateArgument& TArg,
 // the variable or the field.
 unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<ClassTemplateSpecializationDecl>& Match, bool isImplicit){
-    SourceManager& SM = Context->getSourceManager();
     if(isImplicit){
-        VariablesCounter++;
-        auto FSL = FullSourceLoc(Variables[VariablesCounter-1].Node->getInnerLocStart(), SM);
-        return FSL.getLineNumber();
+        return Context->getFullLoc(Variables[VariablesCounter++].Node->getInnerLocStart())
+            .getLineNumber();
         // can't I just do Variables[i-1].Location to get loc of var/field?
         // std::cout << Variables[i-1].Location << std::endl;
         // return std::to_string(static_cast<int>(Variables[i-1].Location));
     } else{
-        auto FSL = FullSourceLoc(Match.Node->getTemplateKeywordLoc(), SM);
-        return FSL.getLineNumber();
+        return Context->getFullLoc(Match.Node->getTemplateKeywordLoc())
+            .getLineNumber();
         // when giving location of explicit inst, can just give match.Location,
         // since CTSD holds right location already since not subtree of CTD
         // return Match.Location;
@@ -299,22 +297,19 @@ unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
 unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<FunctionDecl>& Match, bool isImplicit){
         if(isImplicit){
-            CallersCounter++;
-            std::cout << CallersCounter-1 << ", " << Callers[CallersCounter-1].Location << std::endl;
-            return Callers[CallersCounter-1].Location;
+            // std::cout << CallersCounter << ", " << Callers[CallersCounter].Location << std::endl;
+            return Callers[CallersCounter++].Location;
         } else {
-            SourceManager& SM = Context->getSourceManager();
-            auto FSL = FullSourceLoc(Match.Node->getPointOfInstantiation(), SM);
-            return FSL.getLineNumber();
+            return Context->getFullLoc(Match.Node->getPointOfInstantiation())
+                .getLineNumber();
         }
 }
 
 template<typename T>
 unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<T>& Match, bool imp){
-        SourceManager& SM = Context->getSourceManager();
-        auto FSL = FullSourceLoc(Match.Node->getPointOfInstantiation(), SM);
-        return FSL.getLineNumber();
+        return Context->getFullLoc(Match.Node->getPointOfInstantiation())
+            .getLineNumber();
 }
 
 // Given a vector of matches, create a JSON object storing all instantiations.

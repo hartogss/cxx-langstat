@@ -1,0 +1,41 @@
+{
+    "tia": {
+        "explicit class insts": null,
+        "implicit class insts": null,
+        "func insts": null,
+        "var insts": {
+            "var": [
+                {
+                    "location": 13,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": 19,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "float"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": 16,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "bool"
+                        ],
+                        "template": []
+                    }
+                }
+            ]
+        }
+    }
+}
