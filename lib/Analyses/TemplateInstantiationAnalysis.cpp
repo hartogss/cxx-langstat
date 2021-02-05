@@ -77,6 +77,20 @@ void TemplateInstantiationAnalysis::extractFeatures() {
     // Result of the class insts matcher will give back a pointer to the
     // ClassTemplateSpecializationDecl (CTSD).
     if(IK == InstKind::Class || IK == InstKind::Any){
+
+        // Want variable that has type of some class instantiation,
+        // class name is restricted to come from 'Names'
+        // WIP: supporting references/pointer to CTSD too.
+        auto type = classTemplateSpecializationDecl(
+            Names,
+            isTemplateInstantiation(),
+            isExpansionInFileMatching(HeaderRegex))
+            .bind("ImplicitCTSD");
+        auto typematcher = //anyOf(
+            hasType(type)/*,
+            hasType(references(type)),
+            hasType(pointsTo(type)))*/;
+
         auto ClassInstMatcher = decl(anyOf(
             // -- Implicit --
             // Implicit uses:
@@ -84,24 +98,13 @@ void TemplateInstantiationAnalysis::extractFeatures() {
             // & static member variables)
             varDecl(
                 isExpansionInMainFile(),
-                // Want variable that has type of some class instantiation,
-                // class name is restricted to come from 'Names'
-                hasType(
-                    classTemplateSpecializationDecl(
-                        Names,
-                        isTemplateInstantiation(),
-                        isExpansionInFileMatching(HeaderRegex))
-                    .bind("ImplicitCTSD")))
+                typematcher
+                )
             .bind("VarsFieldThatInstantiateImplicitly"),
             // Field declarations (non static variable member)
             fieldDecl(
                 isExpansionInMainFile(),
-                hasType(
-                    classTemplateSpecializationDecl(
-                        Names,
-                        isTemplateInstantiation(),
-                        isExpansionInFileMatching(HeaderRegex))
-                    .bind("ImplicitCTSD")))
+                typematcher)
             .bind("VarsFieldThatInstantiateImplicitly"),
 
             // -- Explicit --
@@ -138,9 +141,7 @@ void TemplateInstantiationAnalysis::extractFeatures() {
         if(!Variables.empty()){
             for(int i=1; i<Variables.size(); i++){
                 for(int j=0; j<i; j++){
-                    std::cout << i << ", " << j << std::endl;
                     if(i!=j && Variables.at(i) == Variables.at(j)){
-                        std::cout << "erased" << std::endl;
                         Variables.erase(Variables.begin()+i);
                         ClassImplicitInsts.erase(ClassImplicitInsts.begin()+i);
                         i--;
@@ -172,6 +173,9 @@ void TemplateInstantiationAnalysis::extractFeatures() {
         auto FuncResults = Extractor.extract2(*Context, FuncInstMatcher);
         FuncInsts = getASTNodes<FunctionDecl>(FuncResults, "FuncInsts");
         Callers = getASTNodes<CallExpr>(FuncResults, "callers");
+        // for(int i=0; i<FuncInsts.size(); i++){
+        //     std::cout << getMatchDeclName(FuncInsts[i]) << " @ " << Callers[i].Location << std::endl;
+        // }
     }
 
     // Same behavior as with classTemplates: gives pointer to a
@@ -212,16 +216,17 @@ getTemplateArgs(const Match<FunctionDecl>& Match){
     // encompassing it is really interesting, which is output at a different
     // points in code (and time).
     if(auto m = dyn_cast<CXXMethodDecl>(Match.Node)){
-        // std::cout << "found method" << std::endl;
         if(m->getInstantiatedFromMemberFunction())
             return nullptr;
     }
     auto TALPtr = Match.Node->getTemplateSpecializationArgs();
     if(!TALPtr){
         std::cerr << "Template argument list ptr is nullptr,"
-        << " function declaration at line " << Match.Location
+        << " function declaration " << getMatchDeclName(Match) << " at line " << Match.Location
         << " was not a template specialization" << '\n';
-        exit(1);
+        // should we exit here, or just continue and ignore this failure?
+        // did not occur often in my testing so far.
+        // happened once when running TIA on Driver.cpp
     }
     return TALPtr;
 }
@@ -295,6 +300,7 @@ unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<FunctionDecl>& Match, bool isImplicit){
         if(isImplicit){
             CallersCounter++;
+            std::cout << CallersCounter-1 << ", " << Callers[CallersCounter-1].Location << std::endl;
             return Callers[CallersCounter-1].Location;
         } else {
             SourceManager& SM = Context->getSourceManager();
@@ -345,6 +351,11 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
             instances[getMatchDeclName(match)].emplace_back(instance);
         } else {
             std::cout << getMatchDeclName(match) << " had no inst args\n";
+            // FIXME: find more elegant solution
+            // No TAL -> skip a function call in reporting -> increase counter
+            // to get correct call for each object in FuncInst
+            if(InstKind == "func insts")
+                CallersCounter++;
         }
     }
     Features[InstKind] = instances;
@@ -352,7 +363,6 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
 
 void TemplateInstantiationAnalysis::analyzeFeatures(){
     extractFeatures();
-    llvm::raw_os_ostream stream2(std::cout);
     if(IK == InstKind::Class || IK == InstKind::Any){
         gatherInstantiationData(ClassExplicitInsts, "explicit class insts", false);
         gatherInstantiationData(ClassImplicitInsts, "implicit class insts", true);
@@ -372,10 +382,10 @@ void TemplateInstantiationAnalysis::ResetAnalysis(){
     ClassExplicitInsts.clear();
     Variables.clear();
     FuncInsts.clear();
+    Callers.clear();
     VarInsts.clear();
     VariablesCounter=0;
     CallersCounter=0;
-
 }
 
 int getNumRelevantTypes(StringRef Type, const StringMap<int>& SM){

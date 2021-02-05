@@ -22,14 +22,16 @@ void callerc(){
 
 // Non-templated methods of class templates, however, are "instantiated" when
 // the class template is instantiated.
-// I've decided not to report those, because they don't have any template
+// I've decided not to report function call, because they don't have any template
 // parameters themselves, and thus really nothing interesting to report.
 template<typename T>
-class D {
+struct D {
     void fd(){}
 };
-template class D<bool>;
-
+void callerd(){
+    D<int> d;
+    d.fd();
+}
 
 // Same as ClassInstFunc: explicit instantiation of class does not instantiate
 // member (in this case a member function)

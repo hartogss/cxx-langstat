@@ -1,21 +1,9 @@
 {
     "tia": {
         "explicit class insts": {
-            "D": [
-                {
-                    "location": 31,
-                    "arguments": {
-                        "non-type": [],
-                        "type": [
-                            "bool"
-                        ],
-                        "template": []
-                    }
-                }
-            ],
             "E": [
                 {
-                    "location": 44,
+                    "location": 46,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -27,9 +15,21 @@
             ]
         },
         "implicit class insts": {
+            "D": [
+                {
+                    "location": 32,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
+                        ],
+                        "template": []
+                    }
+                }
+            ],
             "E": [
                 {
-                    "location": 49,
+                    "location": 51,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -39,7 +39,7 @@
                     }
                 },
                 {
-                    "location": 52,
+                    "location": 54,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -65,7 +65,7 @@
             ],
             "E<bool>::fe": [
                 {
-                    "location": 50,
+                    "location": 52,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -77,7 +77,7 @@
             ],
             "E<int>::fe2": [
                 {
-                    "location": 53,
+                    "location": 55,
                     "arguments": {
                         "non-type": [],
                         "type": [
@@ -87,7 +87,7 @@
                     }
                 },
                 {
-                    "location": 54,
+                    "location": 56,
                     "arguments": {
                         "non-type": [],
                         "type": [
