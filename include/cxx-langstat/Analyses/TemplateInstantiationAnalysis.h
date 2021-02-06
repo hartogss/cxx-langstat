@@ -76,8 +76,8 @@ int getNumRelevantTypes(llvm::StringRef Type, const StringMap<int>& SM);
 
 // For "Type", gets from "Types" all relevant types of the
 // instantantiation.
-std::string getRelevantTypesAsString(llvm::StringRef Type, nlohmann::json Types,
-    const StringMap<int>& SM);
+std::string getRelevantTypesAsString(llvm::StringRef Type,
+    const nlohmann::json& Types, const StringMap<int>& SM);
 
 // For each template in "in", computes how often it was used by variables.
 void typePrevalence(const nlohmann::ordered_json& in,
@@ -85,7 +85,7 @@ void typePrevalence(const nlohmann::ordered_json& in,
 
 // For each template in "in", computes for each set of template type arguments
 // how often a particular instantiation was used by a (member) variable.
-void instantiationTypeArgs(nlohmann::ordered_json& in,
+void instantiationTypeArgs(const nlohmann::ordered_json& in,
     nlohmann::ordered_json& out, const StringMap<int>& SM);
 
 //-----------------------------------------------------------------------------

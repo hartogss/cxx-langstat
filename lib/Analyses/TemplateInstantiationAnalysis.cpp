@@ -369,6 +369,21 @@ void TemplateInstantiationAnalysis::analyzeFeatures(){
 }
 
 void TemplateInstantiationAnalysis::processFeatures(nlohmann::ordered_json j){
+    if(j.contains("explicit class insts")) {
+        ordered_json res;
+        typePrevalence(j.at("explicit class insts"), res);
+        Statistics["tia explicit class insts"] = res;
+    }
+    if(j.contains("implicit class insts")) {
+        ordered_json res;
+        typePrevalence(j.at("implicit class insts"), res);
+        Statistics["tia implicit class insts"] = res;
+    }
+    if(j.contains("func insts")) {
+        ordered_json res;
+        typePrevalence(j.at("func insts"), res);
+        Statistics["func insts"] = res;
+    }
 
 }
 
@@ -389,7 +404,7 @@ int getNumRelevantTypes(StringRef Type, const StringMap<int>& SM){
     return SM.at(Type.str());
 }
 
-std::string getRelevantTypesAsString(StringRef Type, json Types,
+std::string getRelevantTypesAsString(StringRef Type, const json& Types,
     const StringMap<int>& SM){
         // std::cout << ContainerType.str() << std::endl;
         int n = getNumRelevantTypes(Type, SM);
@@ -414,7 +429,7 @@ void typePrevalence(const ordered_json& in, ordered_json& out){
 
 }
 
-void instantiationTypeArgs(ordered_json& in, ordered_json& out,
+void instantiationTypeArgs(const ordered_json& in, ordered_json& out,
     const StringMap<int>& SM){
         StringMap<StringMap<unsigned>> m;
         for(const auto& [Type, Insts] : in.items()){
