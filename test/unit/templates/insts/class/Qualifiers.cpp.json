@@ -1,31 +1,41 @@
 {
-    "cla": {
+    "tia": {
         "explicit class insts": null,
         "implicit class insts": {
-            "std::__1::vector": [
+            "Widget1": [
                 {
-                    "location": 23,
+                    "location": 15,
                     "arguments": {
                         "non-type": [],
                         "type": [
-                            "long",
-                            "std::__1::allocator<long>"
+                            "int"
                         ],
                         "template": []
                     }
                 },
                 {
-                    "location": 24,
+                    "location": 16,
                     "arguments": {
                         "non-type": [],
                         "type": [
-                            "long",
-                            "std::__1::allocator<long>"
+                            "const int"
+                        ],
+                        "template": []
+                    }
+                },
+                {
+                    "location": 17,
+                    "arguments": {
+                        "non-type": [],
+                        "type": [
+                            "int"
                         ],
                         "template": []
                     }
                 }
             ]
-        }
+        },
+        "func insts": null,
+        "var insts": null
     }
 }

@@ -81,11 +81,14 @@ void TemplateInstantiationAnalysis::extractFeatures() {
         // Want variable that has type of some class instantiation,
         // class name is restricted to come from 'Names'
         // WIP: supporting references/pointer to CTSD too.
-        auto type = classTemplateSpecializationDecl(
+        auto CTSD = classTemplateSpecializationDecl(
             Names,
             isTemplateInstantiation(),
             isExpansionInFileMatching(HeaderRegex))
             .bind("ImplicitCTSD");
+        auto type = hasCanonicalType(hasDeclaration(CTSD));
+        // Alternative?
+        // hasUnqualifiedDesugaredType(recordType(hasDeclaration(CTSD))) 
         auto typematcher = //anyOf(
             hasType(type)/*,
             hasType(references(type)),
@@ -404,7 +407,7 @@ int getNumRelevantTypes(StringRef Type, const StringMap<int>& SM){
     return SM.at(Type.str());
 }
 
-std::string getRelevantTypesAsString(StringRef Type, const json& Types,
+std::string getRelevantTypesAsString(StringRef Type, json Types,
     const StringMap<int>& SM){
         // std::cout << ContainerType.str() << std::endl;
         int n = getNumRelevantTypes(Type, SM);

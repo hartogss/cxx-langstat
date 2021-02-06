@@ -3,8 +3,8 @@
 // RUN: %S/../../../build/cxx-langstat --analyses=cla -emit-features -in %t1.ast -out %t1.ast.json --
 // RUN: diff %t1.ast.json %s.json
 
-// Test whether alias/typedef are matched. They're not. This is not really
-// wrong, but something that could be improved for SLA/TIA.
+// Test whether instantiations of typedef/alias templates are reported.
+//
 //
 
 #include <vector>
@@ -21,5 +21,14 @@ struct vprime{
 
 void func(){
     v<long> lvec;
-    vprime<long> lvec2;
+    vprime<long>::type lvec2;
 }
+
+
+// Explicit isntantiations of alias templates does not seem to be possible with
+// clang
+// template class v<int>;
+// and doesn't have any effect with "typedef templates". Which makes sense,
+// since this instantiation doesn't cause any std::vector<int> to exist as a
+// variable.
+template class vprime<int>;
