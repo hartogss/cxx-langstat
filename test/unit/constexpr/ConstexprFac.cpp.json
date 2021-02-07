@@ -1,0 +1,76 @@
+{
+    "cea": {
+        "vars": [
+            {
+                "Identifier": "f",
+                "Location": 16,
+                "Type": "struct Fac",
+                "isConstexpr": false
+            },
+            {
+                "Identifier": "f",
+                "Location": 19,
+                "Type": "const struct Fac",
+                "isConstexpr": true
+            },
+            {
+                "Identifier": "f",
+                "Location": 30,
+                "Type": "const struct Fac",
+                "isConstexpr": true
+            },
+            {
+                "Identifier": "x",
+                "Location": 31,
+                "Type": "const int",
+                "isConstexpr": true
+            }
+        ],
+        "non-member functions": [
+            {
+                "Identifier": "main",
+                "Location": 29,
+                "Type": "int (int, char **)",
+                "isConstexpr": false
+            }
+        ],
+        "member functions": [
+            {
+                "Identifier": "Fac::Fac",
+                "Location": 13,
+                "Type": "void (void)",
+                "isConstexpr": true
+            },
+            {
+                "Identifier": "Fac::Fac",
+                "Location": 14,
+                "Type": "void (const int)",
+                "isConstexpr": true
+            },
+            {
+                "Identifier": "Fac::get",
+                "Location": 23,
+                "Type": "int (void) const",
+                "isConstexpr": true
+            },
+            {
+                "Identifier": "Fac::Fac",
+                "Location": 12,
+                "Type": "void (const struct Fac &)",
+                "isConstexpr": true
+            },
+            {
+                "Identifier": "Fac::Fac",
+                "Location": 12,
+                "Type": "void (struct Fac &&)",
+                "isConstexpr": true
+            }
+        ],
+        "if stmts": [
+            {
+                "Location": 15,
+                "isConstexpr": false
+            }
+        ]
+    }
+}

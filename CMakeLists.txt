@@ -73,6 +73,7 @@ target_link_libraries(${PROJECT_NAME}
     AnalysisRegistry AnalysisList
     Utils Stats
     AlgorithmLibraryAnalysis
+    ConstexprAnalysis
     ContainerLibAnalysis
     CyclomaticComplexityAnalysis
     LoopDepthAnalysis

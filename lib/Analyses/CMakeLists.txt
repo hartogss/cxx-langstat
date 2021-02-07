@@ -1,4 +1,5 @@
 add_library(AlgorithmLibraryAnalysis AlgorithmLibraryAnalysis.cpp)
+add_library(ConstexprAnalysis ConstexprAnalysis.cpp)
 add_library(ContainerLibAnalysis ContainerLibAnalysis.cpp)
 add_library(CyclomaticComplexityAnalysis CyclomaticComplexityAnalysis.cpp)
 add_library(LoopDepthAnalysis LoopDepthAnalysis.cpp)

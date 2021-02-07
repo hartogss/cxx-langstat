@@ -1,0 +1,92 @@
+{
+    "cea": {
+        "vars": [
+            {
+                "Identifier": "var",
+                "Location": 14,
+                "Type": "int",
+                "isConstexpr": false
+            },
+            {
+                "Identifier": "var",
+                "Location": 14,
+                "Type": "T",
+                "isConstexpr": false
+            },
+            {
+                "Identifier": "varc",
+                "Location": 17,
+                "Type": "const T",
+                "isConstexpr": true
+            },
+            {
+                "Identifier": "varc",
+                "Location": 17,
+                "Type": "const int",
+                "isConstexpr": true
+            },
+            {
+                "Identifier": "a",
+                "Location": 23,
+                "Type": "const int",
+                "isConstexpr": true
+            },
+            {
+                "Identifier": "b",
+                "Location": 24,
+                "Type": "int",
+                "isConstexpr": false
+            },
+            {
+                "Identifier": "x",
+                "Location": 27,
+                "Type": "int",
+                "isConstexpr": false
+            },
+            {
+                "Identifier": "y",
+                "Location": 29,
+                "Type": "int",
+                "isConstexpr": false
+            },
+            {
+                "Identifier": "yc",
+                "Location": 30,
+                "Type": "const int",
+                "isConstexpr": true
+            }
+        ],
+        "non-member functions": [
+            {
+                "Identifier": "main",
+                "Location": 21,
+                "Type": "int (int, char **)",
+                "isConstexpr": false
+            }
+        ],
+        "member functions": [
+            {
+                "Identifier": "C::C",
+                "Location": 41,
+                "Type": "void (void)",
+                "isConstexpr": true
+            },
+            {
+                "Identifier": "C::C",
+                "Location": 42,
+                "Type": "void (int)",
+                "isConstexpr": false
+            }
+        ],
+        "if stmts": [
+            {
+                "Location": 33,
+                "isConstexpr": true
+            },
+            {
+                "Location": 36,
+                "isConstexpr": false
+            }
+        ]
+    }
+}

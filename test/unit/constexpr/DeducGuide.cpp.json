@@ -1,0 +1,18 @@
+{
+    "cea": {
+        "member functions": [
+            {
+                "Identifier": "A::A<T>",
+                "Location": 14,
+                "Type": "void (void)",
+                "isConstexpr": false
+            },
+            {
+                "Identifier": "A::A<T>",
+                "Location": 15,
+                "Type": "void (T)",
+                "isConstexpr": false
+            }
+        ]
+    }
+}

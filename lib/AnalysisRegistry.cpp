@@ -4,6 +4,7 @@
 #include "cxx-langstat/AnalysisList.h"
 
 #include "cxx-langstat/Analyses/AlgorithmLibraryAnalysis.h"
+#include "cxx-langstat/Analyses/ConstexprAnalysis.h"
 #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 #include "cxx-langstat/Analyses/ContainerLibAnalysis.h"
 #include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
@@ -31,6 +32,8 @@ void AnalysisRegistry::createAllAnalyses(){
     // Create all analyses and give them to the registry
     if(Options.EnabledAnalyses.contains("ala"))
         Analyses.emplace_back(std::make_unique<AlgorithmLibraryAnalysis>());
+    if(Options.EnabledAnalyses.contains("cea"))
+        Analyses.emplace_back(std::make_unique<ConstexprAnalysis>());
     if(Options.EnabledAnalyses.contains("cca"))
         Analyses.emplace_back(std::make_unique<CyclomaticComplexityAnalysis>());
     if(Options.EnabledAnalyses.contains("cla"))
