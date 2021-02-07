@@ -18,6 +18,14 @@ AlgorithmLibraryAnalysis::AlgorithmLibraryAnalysis() : TemplateInstantiationAnal
     InstKind::Function,
     hasAnyName(
         // https://en.cppreference.com/w/cpp/algorithm
+        // Non-modifying sequence ooperations
+        "std::all_of", "std::any_of", "std::none_of",
+        "std::for_each", "std::for_each_n",
+        "std::count", "std::count_if",
+        "std::mismatch",
+        "std::find", "std::find_if", "std::find_if_not",
+        "std::find_end", "std::find_first_of", "std::adjacent_find",
+        "std::search", "std::search_n",
         // Minimum/maximum operations
         "std::max", "std::max_element", "std::min", "std::min_element",
         "std::minmax", "std::minmax_element", "std::clamp",
@@ -37,7 +45,8 @@ void algorithmPrevalence(ordered_json& Statistics, ordered_json j){
 }
 
 void AlgorithmLibraryAnalysis::processFeatures(ordered_json j){
-    algorithmPrevalence(Statistics, j.at("func insts"));
+    if(j.contains("func insts"))
+        algorithmPrevalence(Statistics, j.at("func insts"));
 }
 
 //-----------------------------------------------------------------------------

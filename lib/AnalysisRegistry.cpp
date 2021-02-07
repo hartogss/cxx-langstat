@@ -32,10 +32,10 @@ void AnalysisRegistry::createAllAnalyses(){
     // Create all analyses and give them to the registry
     if(Options.EnabledAnalyses.contains("ala"))
         Analyses.emplace_back(std::make_unique<AlgorithmLibraryAnalysis>());
-    if(Options.EnabledAnalyses.contains("cea"))
-        Analyses.emplace_back(std::make_unique<ConstexprAnalysis>());
     if(Options.EnabledAnalyses.contains("cca"))
         Analyses.emplace_back(std::make_unique<CyclomaticComplexityAnalysis>());
+    if(Options.EnabledAnalyses.contains("cea"))
+        Analyses.emplace_back(std::make_unique<ConstexprAnalysis>());
     if(Options.EnabledAnalyses.contains("cla"))
         Analyses.emplace_back(std::make_unique<ContainerLibAnalysis>());
     if(Options.EnabledAnalyses.contains("lda"))

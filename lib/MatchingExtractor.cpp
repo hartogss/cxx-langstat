@@ -10,10 +10,10 @@ using namespace clang::ast_matchers; // StatementMatcher, actual AST matchers li
 //-----------------------------------------------------------------------------
 
 MatchingExtractor::MatchingExtractor(){
-    std::cout<<"MatchingExtractor ctor"<<std::endl;
+    // std::cout<<"MatchingExtractor ctor"<<std::endl;
 }
 MatchingExtractor::~MatchingExtractor(){
-    std::cout<<"MatchingExtractor dtor"<<std::endl;
+    // std::cout<<"MatchingExtractor dtor"<<std::endl;
 }
 
 void MatchingExtractor::run(const MatchFinder::MatchResult& Result) {

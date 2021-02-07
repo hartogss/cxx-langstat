@@ -2,6 +2,8 @@
 #define ANALYSISLIST_H
 
 #include <vector>
+#include <string>
+#include "llvm/ADT/StringRef.h"
 
 // 'Copy' of clang-tidy's Globlist.h
 

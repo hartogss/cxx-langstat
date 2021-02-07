@@ -87,8 +87,10 @@ void containerInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
 }
 
 void ContainerLibAnalysis::processFeatures(ordered_json j){
-    containerPrevalence(Statistics, j.at("implicit class insts"));
-    containerInstantiationTypeArgs(Statistics, j.at("implicit class insts"));
+    if(j.contains("implicit class insts")){
+        containerPrevalence(Statistics, j.at("implicit class insts"));
+        containerInstantiationTypeArgs(Statistics, j.at("implicit class insts"));
+    }
 }
 
 //-----------------------------------------------------------------------------
