@@ -18,7 +18,11 @@ void ConstexprAnalysis::extractFeatures(){
     auto vr = Extractor.extract2(*Context,
         varDecl(isExpansionInMainFile(),
             // Inherit from VarDecl, but not constexpr-able, so don't count these
-            unless(anyOf(parmVarDecl(), decompositionDecl())))
+            unless(anyOf(parmVarDecl(), decompositionDecl())),
+            hasInitializer(anything()))
+            // Could add extra requirements here to get better relative usage
+            // of constexpr variables, i.e. better comparision of variables
+            // that are constexpr vs those that would be eligible to be constexpr
         .bind("v"));
     auto Var = getASTNodes<clang::VarDecl>(vr, "v");
     if(!Var.empty())
@@ -92,12 +96,19 @@ void constexprPopToJSON(ordered_json& Statistics, const ordered_json& j, llvm::S
     Statistics["constexpr usage"][t.str()]["no"] = j.size()-cco;
 }
 
-
 void ConstexprAnalysis::processFeatures(nlohmann::ordered_json j){
     for(auto t : {"vars", "non-member functions", "member functions", "if stmts"}){
         if(j.contains(t))
             constexprPopToJSON(Statistics, j.at(t), t);
     }
+}
+void ConstexprAnalysis::ResetAnalysis() {
+    Variables.clear();
+    NonMemberFunctions.clear();
+    MemberFunctions.clear();
+    IfStmts.clear();
+    Features.clear();
+    Statistics.clear();
 }
 
 //-----------------------------------------------------------------------------
