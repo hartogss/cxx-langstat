@@ -25,6 +25,7 @@ void ConstexprAnalysis::extractFeatures(){
             // that are constexpr vs those that would be eligible to be constexpr
         .bind("v"));
     auto Var = getASTNodes<clang::VarDecl>(vr, "v");
+    // This we need because of buggy VarTemplateSpecializationDecl
     if(!Var.empty())
         removeDuplicateMatches(Var);
     for(auto v : Var)
