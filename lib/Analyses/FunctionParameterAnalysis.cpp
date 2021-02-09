@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "cxx-langstat/Analyses/MoveSemanticsAnalysis.h"
+#include "cxx-langstat/Analyses/FunctionParameterAnalysis.h"
 
 #include "cxx-langstat/Utils.h"
 
@@ -55,7 +55,7 @@ bool isUniversalReference(FunctionTemplateDecl* FTD, QualType Param){
 // For each match, figures out the type of the parameters.
 // T should be clang::FunctionDecl or clang::FunctionTemplateDecl
 template<typename T>
-void MoveSemanticsAnalysis::associateParameters(const Matches<T>& Matches){
+void FunctionParameterAnalysis::associateParameters(const Matches<T>& Matches){
     // For each function (template)
     for(auto match : Matches){
         auto Node = match.Node;
@@ -121,7 +121,7 @@ void MoveSemanticsAnalysis::associateParameters(const Matches<T>& Matches){
     }
 }
 
-void MoveSemanticsAnalysis::extractFeatures(){
+void FunctionParameterAnalysis::extractFeatures(){
     internal::VariadicDynCastAllOfMatcher<Type, PackExpansionType> packExpansionType;
 
     auto ftmatcher = functionTemplateDecl(
@@ -167,14 +167,14 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ParmInfo, Location, Identifier, Kind, Type,
     isInstantiationDependent);
 
 template<typename T>
-void MoveSemanticsAnalysis::gatherData(std::string DeclKind, const std::vector<T>& fs){
+void FunctionParameterAnalysis::gatherData(std::string DeclKind, const std::vector<T>& fs){
         for(auto f : fs){
             json f_j = f;
             Features[DeclKind].emplace_back(f_j);
         }
 }
 
-void MoveSemanticsAnalysis::analyzeFeatures() {
+void FunctionParameterAnalysis::analyzeFeatures() {
     ResetAnalysis();
     extractFeatures();
     // Fill JSON with data about function (templates)
@@ -256,7 +256,7 @@ void ParamsCount(ordered_json& Stats, ordered_json j){
     Stats[desc]["universal ref"] = UniversalRef;
 }
 
-void MoveSemanticsAnalysis::processFeatures(ordered_json j){
+void FunctionParameterAnalysis::processFeatures(ordered_json j){
     if(j.contains("functions"))
         FunctionsCount(Statistics, j.at("functions"), false);
     if(j.contains("function templates"))
@@ -265,7 +265,7 @@ void MoveSemanticsAnalysis::processFeatures(ordered_json j){
         ParamsCount(Statistics, j.at("parameters"));
 }
 
-void MoveSemanticsAnalysis::ResetAnalysis(){
+void FunctionParameterAnalysis::ResetAnalysis(){
     Statistics.clear();
     Features.clear();
     Functions.clear();

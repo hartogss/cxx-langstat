@@ -24,10 +24,12 @@ Do people use function templates from the Standard Algorithms Library?
 #### Constexpr Analysis (CEA)
 Computes simple statistics on how often variables, function and if statements are constexpr or not constexpr.
 #### Container Library Analysis (CLA)
-Counts: 
+Counts:
 - occurences of standard library containers `array`, `vector`, `forward_list`, `list`, `map`, `multimap`, `set`, `multiset`, `unordered_map`, `unordered_multimap`, `unordered_set`, `unordered_multiset`, `queue`, `prioity_queue`, `stack`, `deque`, `tuple` occurring as variables or record member fields and for each outputs what types they contain
 #### Cyclomatic Complexity Analysis (CCA)
 For each explicit (not compiler-generated) function declaration that has a body (i.e. is defined), calculates the so-called cyclomatic complexity. This concept developed by Thomas J. McCabe, intuitively, computes for a "section of source code the number of independent paths within it, where linearly-independent means that each path has at least one edge that is not in the other paths." (https://en.wikipedia.org/wiki/Cyclomatic_complexity)
+#### Function Parameter Analysis (FPA)
+Computes how often the 4 main kinds of function parameters are used: pass-by value, non-const lvalue reference, const lvalue reference and rvalue reference.
 #### Loop Depth Analysis (LDA)
 LDA computes statistics about loop depths, i.e., computes how deeply nested loops are. Example of depth 2:
 ```c++
@@ -40,9 +42,6 @@ for(;;){
 Currently the matchers for this analysis grow exponentially with the maximum loop depth to look for, which is not (yet) a problem since depths >5 are rare. Still, switching to a dominator tree-based approach might be favorable.
 #### Loop Kind Analysis (LKA)
 Computes statistics on usage `for`, `while`, `do-while` and range-based `for` loops in C++. Especially interesting to use to see the adoption of range-based `for` since C++11.
-#### Move Semantics Analysis (MSA)
-Computes how often the 4 main kinds of function parameters are used: pass-by value, non-const lvalue reference, const lvalue reference and rvalue reference.
-Likely to be renamed later, because need MSA for an analysis that really analyzes the prevalence of move semantics.
 #### Template Parameter Analysis(TPA)
 Counts each kind of template (class, function, variable, alias), how many were variadic/use parameter packs and outputs counts on what kind of template parameters were used (non-tupe template parameters, type template parameters and template template parameters).
 #### Template instantiation Analysis (TIA)
@@ -68,7 +67,7 @@ C++11 introduced type aliases (`using` keyword) which are similar to typedefs, b
   ```
 </td>
 <td>
-  
+
   ```c++
  // alias
  using IntVector = std::vector<int>;
@@ -104,7 +103,7 @@ C++14 added variable templates. Previously, one used either class templates with
   ```
 </td>
 <td>
-  
+
   ```c++
   template<typename T>
   constexpr T f1(){
@@ -115,7 +114,7 @@ C++14 added variable templates. Previously, one used either class templates with
 </td>
 
 <td>
-  
+
   ```c++
   template<typename T>
   T data;
@@ -123,4 +122,3 @@ C++14 added variable templates. Previously, one used either class templates with
 </td>
 </tr>
 </table>
-

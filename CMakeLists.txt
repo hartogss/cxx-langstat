@@ -76,9 +76,9 @@ target_link_libraries(${PROJECT_NAME}
     ConstexprAnalysis
     ContainerLibAnalysis
     CyclomaticComplexityAnalysis
+    FunctionParameterAnalysis
     LoopDepthAnalysis
     LoopKindAnalysis
-    MoveSemanticsAnalysis
     TemplateInstantiationAnalysis
     TemplateParameterAnalysis
     UsingAnalysis

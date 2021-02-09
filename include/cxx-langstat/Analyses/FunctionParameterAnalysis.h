@@ -1,5 +1,5 @@
-#ifndef MOVESEMANTICSANALYSIS_H
-#define MOVESEMANTICSANALYSIS_H
+#ifndef FUNCTIONPARAMETERANALYSIS_H
+#define FUNCTIONPARAMETERANALYSIS_H
 
 #include "cxx-langstat/Analysis.h"
 
@@ -41,13 +41,13 @@ struct ParmInfo : public BasicInfo {
 
 //-----------------------------------------------------------------------------
 
-class MoveSemanticsAnalysis : public Analysis {
+class FunctionParameterAnalysis : public Analysis {
 public:
-    MoveSemanticsAnalysis(){
-        std::cout << "MSA ctor\n";
+    FunctionParameterAnalysis(){
+        std::cout << "FPA ctor\n";
     }
-    ~MoveSemanticsAnalysis(){
-        std::cout << "MSA dtor\n";
+    ~FunctionParameterAnalysis(){
+        std::cout << "FPA dtor\n";
     }
 private:
     std::vector<FunctionInfo> Functions;
@@ -72,6 +72,6 @@ private:
     void ResetAnalysis() override;
 };
 
-#endif // MOVESEMANTICSANALYSIS_H
+#endif // FUNCTIONPARAMETERANALYSIS_H
 
 //-----------------------------------------------------------------------------

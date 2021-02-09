@@ -6,8 +6,9 @@
 enum Stage {
     none, emit_features=1, emit_statistics=2
 };
+// Not used currently
 enum AnalysisType {
-    cca, lda, lka, msa, sla, sla2, tia, tpa, ua, vta
+    ala, cca, cea, cla, fpa, lda, lka, tia, tpa, ua, ula, vta
 };
 
 //-----------------------------------------------------------------------------
