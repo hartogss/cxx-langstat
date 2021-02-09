@@ -79,6 +79,7 @@ target_link_libraries(${PROJECT_NAME}
     FunctionParameterAnalysis
     LoopDepthAnalysis
     LoopKindAnalysis
+    MoveSemanticsAnalysis
     TemplateInstantiationAnalysis
     TemplateParameterAnalysis
     UsingAnalysis
