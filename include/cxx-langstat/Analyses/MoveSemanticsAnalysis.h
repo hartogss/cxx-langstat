@@ -11,18 +11,17 @@
 enum class ConstructKind {
     Copy, Move, Unknown
 };
-const std::map<ConstructKind, std::string> toString = {{ConstructKind::Copy, "Copy"},
-    {ConstructKind::Move, "Move"}, {ConstructKind::Unknown, "Unknown"}};
+const std::map<ConstructKind, std::string> toString = {{ConstructKind::Copy, "copy"},
+    {ConstructKind::Move, "move"}, {ConstructKind::Unknown, "unknown"}};
 
-const std::map<std::string, ConstructKind> fromString = {{"Copy", ConstructKind::Copy},
-    {"Move", ConstructKind::Move}, {"Unknown", ConstructKind::Unknown}};
+const std::map<std::string, ConstructKind> fromString = {{"copy", ConstructKind::Copy},
+    {"move", ConstructKind::Move}, {"unknown", ConstructKind::Unknown}};
 //
 struct ConstructInfo {
     std::string Func;
     std::string FuncType;
     unsigned FuncLocation;
     std::string ParamId;
-    std::string ArgExpr;
     ConstructKind CK;
     bool CompilerGenerated;
     unsigned CallLocation;

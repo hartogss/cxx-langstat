@@ -9,10 +9,9 @@ void to_json(nlohmann::json& j, const ConstructInfo& ci){
         {"function", ci.Func},
         {"function type", ci.FuncType},
         {"param", ci.ParamId},
-        // {"argument", ci.ArgExpr},
-        {"copy/move is compiler-generated", ci.CompilerGenerated},
+        {"copy/move ctor is compiler-generated", ci.CompilerGenerated},
         {"construction kind", toString.at(ci.CK)},
-        {"call location"}, ci.CallLocation};
+        {"call location", ci.CallLocation}};
 }
 void from_json(const nlohmann::json& j, ConstructInfo& ci){
     ci.CK = fromString.at(j.at("CK").get<std::string>());
@@ -40,6 +39,8 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
     auto Parms = getASTNodes<clang::ParmVarDecl>(Res, "parm");
     auto Calls = getASTNodes<clang::CallExpr>(Res, "callexpr");
 
+    assert(Args.size() == Calls.size() && Parms.size() == Calls.size());
+
     int n = Args.size();
     for(int idx=0; idx<n; idx++) {
         auto p = Parms.at(idx);
@@ -64,17 +65,11 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
         CI.ParamId = p.Node->getQualifiedNameAsString();
         // CI.ArgLocation = a.Location;
         if(Ctor->isCopyOrMoveConstructor())
-            CI.CK = static_cast<ConstructKind>(Ctor->isMoveConstructor()); // FIXME
+            CI.CK = static_cast<ConstructKind>(Ctor->isMoveConstructor());
         else
             CI.CK = ConstructKind::Unknown;
         CI.CompilerGenerated = Ctor->isImplicit();
         CI.CallLocation = c.Location;
-
-        std::string Result;
-        llvm::raw_string_ostream stream(Result);
-        // a.Node->dump(stream, *Context); // why with context
-        CI.ArgExpr = Result;
-
 
         nlohmann::json c_j = CI;
         Features.emplace_back(c_j);
