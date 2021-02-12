@@ -7,6 +7,28 @@
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 
 
+//
+enum class ConstructKind {
+    Copy, Move, Unknown
+};
+const std::map<ConstructKind, std::string> toString = {{ConstructKind::Copy, "Copy"},
+    {ConstructKind::Move, "Move"}, {ConstructKind::Unknown, "Unknown"}};
+
+const std::map<std::string, ConstructKind> fromString = {{"Copy", ConstructKind::Copy},
+    {"Move", ConstructKind::Move}, {"Unknown", ConstructKind::Unknown}};
+//
+struct ConstructInfo {
+    std::string Func;
+    std::string FuncType;
+    unsigned FuncLocation;
+    std::string ParamId;
+    std::string ArgExpr;
+    ConstructKind CK;
+    bool CompilerGenerated;
+    unsigned CallLocation;
+};
+
+
 // Need to make MSA that adheres to Analysis interface, but that can call two
 // independent other analyses.
 // MSA is guaranteed to be called thru analyzeFeatures and processFeatures.
@@ -21,11 +43,13 @@ public:
     }
 private:
     void analyzeFeatures() override {
-        Features = p1.getFeatures(InFile, *Context);
+        // Features = p1.getFeatures(InFile, *Context);
+        Features = p2.getFeatures(InFile, *Context);
     }
     void processFeatures(nlohmann::ordered_json j) override {
 
     }
+
     // Find how often std::move, std::forward from <utility> are used.
     class MoveAndForwardUsageAnalyzer : public TemplateInstantiationAnalysis {
     public:
@@ -45,6 +69,7 @@ private:
     // Examine when calling functions that pass by value, how often copy and
     // move constructors are used to construct the value of the callee.
     class CopyOrMoveAnalyzer : public Analysis {
+    private:
         void analyzeFeatures() override;
         void processFeatures(nlohmann::ordered_json j) override;
     };
