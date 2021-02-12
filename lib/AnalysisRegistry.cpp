@@ -46,7 +46,7 @@ void AnalysisRegistry::createAllAnalyses(){
     if(Options.EnabledAnalyses.contains("lka"))
         Analyses.emplace_back(std::make_unique<LoopKindAnalysis>());
     if(Options.EnabledAnalyses.contains("msa"))
-        Analyses.emplace_back(std::make_unique<MoveSemanticsAnalysis>());
+        Analyses.emplace_back(std::make_unique<msa::MoveSemanticsAnalysis>());
     if(Options.EnabledAnalyses.contains("tia"))
         Analyses.emplace_back(std::make_unique<TemplateInstantiationAnalysis>());
     if(Options.EnabledAnalyses.contains("tpa"))

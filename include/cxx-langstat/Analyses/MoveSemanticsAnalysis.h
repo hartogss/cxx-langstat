@@ -6,32 +6,38 @@
 
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 
+namespace msa {
 
-//
-enum class ConstructKind {
-    Copy, Move, Unknown
-};
-const std::map<ConstructKind, std::string> toString = {{ConstructKind::Copy, "copy"},
-    {ConstructKind::Move, "move"}, {ConstructKind::Unknown, "unknown"}};
-
-const std::map<std::string, ConstructKind> fromString = {{"copy", ConstructKind::Copy},
-    {"move", ConstructKind::Move}, {"unknown", ConstructKind::Unknown}};
-//
-struct ConstructInfo {
-    std::string Func;
+// Enum of the parmVarDecl of a functionDecl was constructed from the argument
+// of a callExpr. Also, maps for prettier printing.
+enum class ConstructKind { Copy, Move, Unknown };
+const std::array<std::string, 3> S = {"copy", "move", "unknown"};
+const std::map<ConstructKind, std::string> toString = {{ConstructKind::Copy, S[0]},
+    {ConstructKind::Move, S[1]}, {ConstructKind::Unknown, S[2]}};
+const std::map<std::string, ConstructKind> fromString = {{S[0], ConstructKind::Copy},
+    {S[1], ConstructKind::Move}, {S[2], ConstructKind::Unknown}};
+// Holds relevant information about a parmVarDecl.
+struct FunctionParamInfo {
+    std::string FuncId;
     std::string FuncType;
     unsigned FuncLocation;
-    std::string ParamId;
+    std::string Id;
     ConstructKind CK;
     bool CompilerGenerated;
-    unsigned CallLocation;
 };
-
+struct CallExprInfo {
+    unsigned Location;
+};
+// Holds info about parmVarDecl and the corresponding callExpr that causes it
+// to be copied or moved to.
+struct ConstructInfo {
+    CallExprInfo CallExpr;
+    FunctionParamInfo Parameter;
+};
 
 // Need to make MSA that adheres to Analysis interface, but that can call two
 // independent other analyses.
 // MSA is guaranteed to be called thru analyzeFeatures and processFeatures.
-
 class MoveSemanticsAnalysis : public Analysis {
 public:
     MoveSemanticsAnalysis() : p1(MoveAndForwardUsageAnalyzer()){
@@ -42,11 +48,11 @@ public:
     }
 private:
     void analyzeFeatures() override {
-        // Features = p1.getFeatures(InFile, *Context);
-        Features = p2.getFeatures(InFile, *Context);
+        Features[p1desc] = p1.getFeatures(InFile, *Context);
+        Features[p2desc] = p2.getFeatures(InFile, *Context);
     }
     void processFeatures(nlohmann::ordered_json j) override {
-
+        // Should just call processFeatures from subanalyzers
     }
 
     // Find how often std::move, std::forward from <utility> are used.
@@ -72,8 +78,13 @@ private:
         void analyzeFeatures() override;
         void processFeatures(nlohmann::ordered_json j) override;
     };
+    // Analyzers run by MSA
     MoveAndForwardUsageAnalyzer p1;
     CopyOrMoveAnalyzer p2;
+    constexpr static auto p1desc = "std::move, std::forward usage";
+    constexpr static auto p2desc = "copy or move construction";
 };
+
+} // namespace msa
 
 #endif // MOVESEMANTICSANALYSIS_H

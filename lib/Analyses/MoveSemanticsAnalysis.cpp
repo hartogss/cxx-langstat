@@ -3,42 +3,45 @@
 using namespace clang::ast_matchers;
 using ojson = nlohmann::ordered_json;
 
-// Functions to convert structs to/from JSON.
-void to_json(nlohmann::json& j, const ConstructInfo& ci){
-    j = nlohmann::json{
-        {"function", ci.Func},
-        {"function type", ci.FuncType},
-        {"param", ci.ParamId},
-        {"copy/move ctor is compiler-generated", ci.CompilerGenerated},
-        {"construction kind", toString.at(ci.CK)},
-        {"call location", ci.CallLocation}};
-}
-void from_json(const nlohmann::json& j, ConstructInfo& ci){
-    ci.CK = fromString.at(j.at("CK").get<std::string>());
+//-----------------------------------------------------------------------------
 
+namespace msa {
+
+// Functions to convert structs to/from JSON.
+void to_json(nlohmann::json& j, const FunctionParamInfo& o){
+    j = nlohmann::json{
+        {"Func Identifier", o.FuncId},
+        {"Func Type", o.FuncType},
+        {"Func Location", o.FuncLocation},
+        {"Identifier", o.Id},
+        {"construction kind", toString.at(o.CK)},
+        {"copy/move ctor is compiler-generated", o.CompilerGenerated}
+        };
 }
+void from_json(const nlohmann::json& j, FunctionParamInfo& o){
+    j.at("Func Identifier").get_to(o.FuncId);
+    j.at("Func Type").get_to(o.FuncType);
+    j.at("Func Location").get_to(o.FuncLocation);
+    j.at("Identifier").get_to(o.Id);
+    o.CK = fromString.at(j.at("CK").get<std::string>());
+    j.at("copy/move ctor is compiler-generated").get_to(o.CompilerGenerated);
+}
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CallExprInfo, Location);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConstructInfo, CallExpr, Parameter);
+
 
 void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
-    // auto m = callExpr(isExpansionInMainFile(),
-        // hasAnyArgument(expr(hasType(recordType())).bind("expr")));
-
-    // auto m = callExpr(isExpansionInMainFile(),
-    //     forEachArgumentWithParam(
-    //         expr(hasType(type())).bind("expr"),
-    //         parmVarDecl(hasType(recordType()), isExpansionInMainFile()).bind("parm")));
-
+    // Gives us a triad of callexpr, a pass-by-value record type function
+    // parameter and the expr that is the argument to that parameter.
     auto m = callExpr(isExpansionInMainFile(),
         forEachArgumentWithParam(
             cxxConstructExpr().bind("arg"),
             parmVarDecl(hasType(recordType()), isExpansionInMainFile()).bind("parm")))
             .bind("callexpr");
-
-
     auto Res = Extractor.extract2(*Context, m);
     auto Args = getASTNodes<clang::CXXConstructExpr>(Res, "arg");
     auto Parms = getASTNodes<clang::ParmVarDecl>(Res, "parm");
     auto Calls = getASTNodes<clang::CallExpr>(Res, "callexpr");
-
     assert(Args.size() == Calls.size() && Parms.size() == Calls.size());
 
     int n = Args.size();
@@ -46,6 +49,9 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
         auto p = Parms.at(idx);
         auto a = Args.at(idx);
         auto c = Calls.at(idx);
+        auto f = c.Node->getDirectCallee();
+        FunctionParamInfo FPI;
+        CallExprInfo CEI;
         ConstructInfo CI;
         auto Ctor = a.Node->getConstructor();
         std::cout << a.Location << ", " <<
@@ -57,20 +63,22 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
         } else if(Ctor->isDefaultConstructor()){
             std::cout << " def, ";
         }
-        std::cout  << a.Node->isElidable() << "\n";
+        std::cout << a.Node->isElidable() << "\n";
 
         // what callee should we do here?
-        CI.Func = c.Node->getDirectCallee()->getQualifiedNameAsString();
-        CI.FuncType = c.Node->getDirectCallee()->getType().getAsString();
-        CI.ParamId = p.Node->getQualifiedNameAsString();
-        // CI.ArgLocation = a.Location;
+        FPI.FuncId = f->getQualifiedNameAsString();
+        FPI.FuncType = f->getType().getAsString();
+        FPI.Id = p.Node->getQualifiedNameAsString();
+        FPI.FuncLocation = Context->getFullLoc(f->getInnerLocStart())
+            .getLineNumber();
         if(Ctor->isCopyOrMoveConstructor())
-            CI.CK = static_cast<ConstructKind>(Ctor->isMoveConstructor());
+            FPI.CK = static_cast<ConstructKind>(Ctor->isMoveConstructor());
         else
-            CI.CK = ConstructKind::Unknown;
-        CI.CompilerGenerated = Ctor->isImplicit();
-        CI.CallLocation = c.Location;
-
+            FPI.CK = ConstructKind::Unknown;
+        FPI.CompilerGenerated = Ctor->isImplicit();
+        CEI.Location = c.Location;
+        CI.Parameter = FPI;
+        CI.CallExpr = CEI;
         nlohmann::json c_j = CI;
         Features.emplace_back(c_j);
     }
@@ -78,3 +86,7 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
 void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::processFeatures(ojson j) {
 
 }
+
+} // namespace msa
+
+//-----------------------------------------------------------------------------
