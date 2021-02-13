@@ -23,7 +23,7 @@ void from_json(const nlohmann::json& j, FunctionParamInfo& o){
     j.at("Func Type").get_to(o.FuncType);
     j.at("Func Location").get_to(o.FuncLocation);
     j.at("Identifier").get_to(o.Id);
-    o.CK = fromString.at(j.at("CK").get<std::string>());
+    o.CK = fromString.at(j.at("construction kind").get<std::string>());
     j.at("copy/move ctor is compiler-generated").get_to(o.CompilerGenerated);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CallExprInfo, Location);
@@ -64,6 +64,8 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
             std::cout << " def, ";
         }
         std::cout << a.Node->isElidable() << "\n";
+        if(auto r = clang::dyn_cast<clang::CXXTemporaryObjectExpr>(a.Node))
+            std::cout << r->isElidable() << "\n";
 
         // what callee should we do here?
         FPI.FuncId = f->getQualifiedNameAsString();
@@ -83,7 +85,36 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
         Features.emplace_back(c_j);
     }
 }
-void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::processFeatures(ojson j) {
+
+std::pair<unsigned, unsigned> NumCopiesAndMoves(const ojson& j){
+    auto Copies = 0;
+    auto Moves = 0;
+    for(const auto& ci_j : j){
+        // std::cout << ci_j.dump(4) << std::endl;
+        ConstructInfo ci;
+        from_json(ci_j, ci);
+        auto s = ci.Parameter.CK;
+        if(s == ConstructKind::Copy)
+            Copies++;
+        if(s == ConstructKind::Move)
+            Moves++;
+    }
+    return std::make_pair(Copies, Moves);
+}
+
+void CopyAndMoveCounts(const ojson& j, ojson& res){
+    auto [Copy, Move] = NumCopiesAndMoves(j);
+    res["copy"] = Copy;
+    res["move"] = Move;
+}
+
+
+void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::processFeatures(ojson j){
+    // std::cout << j.dump(4) << std::endl;
+    if(j.contains(p2desc)){
+        CopyAndMoveCounts(j.at(p2desc), Statistics);
+    }
+    std::cout << Statistics.dump(4) << std::endl;
 
 }
 

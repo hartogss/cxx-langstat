@@ -52,7 +52,8 @@ private:
         Features[p2desc] = p2.getFeatures(InFile, *Context);
     }
     void processFeatures(nlohmann::ordered_json j) override {
-        // Should just call processFeatures from subanalyzers
+        Statistics[p1desc] = p1.getStatistics(j);
+        Statistics[p2desc] = p2.getStatistics(j);
     }
 
     // Find how often std::move, std::forward from <utility> are used.
@@ -66,9 +67,9 @@ private:
                 std::cout << "msap1\n";
         }
         void processFeatures(nlohmann::ordered_json j) override{
-            nlohmann::ordered_json res;
-            typePrevalence(j, res);
-            Statistics["algorithm type prevalence"] = res;
+            if(j.contains(p1desc) && j.at(p1desc).contains("func insts")){
+                typePrevalence(j.at(p1desc).at("func insts"), Statistics);
+            }
         }
     };
     // Examine when calling functions that pass by value, how often copy and
