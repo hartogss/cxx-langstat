@@ -280,6 +280,7 @@ void updateArgsAndKinds(const TemplateArgument& TArg,
 // have to do some extra work to get the location of where the instantiation
 // in the code actually occurred, that is, the line where the programmer wrote
 // the variable or the field.
+template<>
 unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<ClassTemplateSpecializationDecl>& Match, bool isImplicit){
     if(isImplicit){
@@ -297,6 +298,7 @@ unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
     }
 }
 
+template<>
 unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<FunctionDecl>& Match, bool isImplicit){
         if(isImplicit){
@@ -387,7 +389,6 @@ void TemplateInstantiationAnalysis::processFeatures(nlohmann::ordered_json j){
         typePrevalence(j.at("func insts"), res);
         Statistics["func insts"] = res;
     }
-
 }
 
 int getNumRelevantTypes(StringRef Type, const StringMap<int>& SM){

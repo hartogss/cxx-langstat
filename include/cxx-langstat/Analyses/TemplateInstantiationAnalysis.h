@@ -44,11 +44,12 @@ private:
     // Get location of instantiation
     template<typename T>
     unsigned getInstantiationLocation(const Match<T>& Match, bool isImplicit);
-    // Get location of class instantiation, we need to be a bit more careful
+    // Specializations to get locations of class and func template uses.
+    template<>
     unsigned getInstantiationLocation
         (const Match<clang::ClassTemplateSpecializationDecl>& Match,
             bool isImplicit);
-
+    template<>
     unsigned getInstantiationLocation(const Match<clang::FunctionDecl>& Match,
             bool isImplicit);
     // Given matches representing the instantiations of some kind, gather
