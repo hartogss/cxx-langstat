@@ -1,0 +1,48 @@
+{
+    "msa": {
+        "std::move, std::forward usage": {
+            "func insts": {
+                "std::__1::move": [
+                    {
+                        "location": 29,
+                        "arguments": {
+                            "non-type": [],
+                            "type": [
+                                "C<int> &"
+                            ],
+                            "template": []
+                        }
+                    }
+                ]
+            }
+        },
+        "copy or move construction": [
+            {
+                "CallExpr": {
+                    "Location": 28
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 22,
+                    "Func Type": "void (class C<int>)",
+                    "Identifier": "c",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": false
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 29
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 22,
+                    "Func Type": "void (class C<int>)",
+                    "Identifier": "c",
+                    "construction kind": "move",
+                    "copy/move ctor is compiler-generated": false
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,133 @@
+{
+    "msa": {
+        "std::move, std::forward usage": {
+            "func insts": {
+                "std::__1::move": [
+                    {
+                        "location": 31,
+                        "arguments": {
+                            "non-type": [],
+                            "type": [
+                                "C &"
+                            ],
+                            "template": []
+                        }
+                    },
+                    {
+                        "location": 37,
+                        "arguments": {
+                            "non-type": [],
+                            "type": [
+                                "C &"
+                            ],
+                            "template": []
+                        }
+                    },
+                    {
+                        "location": 47,
+                        "arguments": {
+                            "non-type": [],
+                            "type": [
+                                "C &"
+                            ],
+                            "template": []
+                        }
+                    }
+                ]
+            }
+        },
+        "copy or move construction": [
+            {
+                "CallExpr": {
+                    "Location": 27
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 20,
+                    "Func Type": "void (class C)",
+                    "Identifier": "c",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": false
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 28
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 20,
+                    "Func Type": "void (class C)",
+                    "Identifier": "c",
+                    "construction kind": "unknown",
+                    "copy/move ctor is compiler-generated": false
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 31
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 20,
+                    "Func Type": "void (class C)",
+                    "Identifier": "c",
+                    "construction kind": "move",
+                    "copy/move ctor is compiler-generated": false
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 36
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 20,
+                    "Func Type": "void (class C)",
+                    "Identifier": "c",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": false
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 37
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 20,
+                    "Func Type": "void (class C)",
+                    "Identifier": "c",
+                    "construction kind": "move",
+                    "copy/move ctor is compiler-generated": false
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 46
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 20,
+                    "Func Type": "void (class C)",
+                    "Identifier": "c",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": false
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 47
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 20,
+                    "Func Type": "void (class C)",
+                    "Identifier": "c",
+                    "construction kind": "move",
+                    "copy/move ctor is compiler-generated": false
+                }
+            }
+        ]
+    }
+}
