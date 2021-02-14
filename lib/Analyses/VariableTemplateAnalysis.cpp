@@ -121,7 +121,6 @@ void from_json(const nlohmann::json& j, VariableFamily& vf){
 //
 void VariableTemplateAnalysis::analyzeFeatures(){
     extractFeatures();
-    Features.clear();
     for(auto vf : VariableFamilies){
         nlohmann::json vf_j = vf;
         Features.emplace_back(vf_j);

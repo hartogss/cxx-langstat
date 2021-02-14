@@ -148,8 +148,4 @@ void TemplateParameterAnalysis::processFeatures(nlohmann::ordered_json j){
 
 }
 
-void TemplateParameterAnalysis::ResetAnalysis(){
-    Statistics.clear();
-}
-
 //-----------------------------------------------------------------------------

@@ -10,7 +10,7 @@
 
 class LoopDepthAnalysis : public Analysis {
 public:
-    LoopDepthAnalysis(unsigned MaxDepth) : MaxDepth(MaxDepth){
+    LoopDepthAnalysis(unsigned MaxDepth = 5) : MaxDepth(MaxDepth){
         std::cout<<"LDA ctor\n";
     }
     ~LoopDepthAnalysis(){
@@ -25,7 +25,6 @@ private:
     void extractFeatures();
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
-    void ResetAnalysis() override;
 };
 
 //-----------------------------------------------------------------------------

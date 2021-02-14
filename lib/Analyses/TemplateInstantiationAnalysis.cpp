@@ -88,7 +88,7 @@ void TemplateInstantiationAnalysis::extractFeatures() {
             .bind("ImplicitCTSD");
         auto type = hasCanonicalType(hasDeclaration(CTSD));
         // Alternative?
-        // hasUnqualifiedDesugaredType(recordType(hasDeclaration(CTSD))) 
+        // hasUnqualifiedDesugaredType(recordType(hasDeclaration(CTSD)))
         auto typematcher = //anyOf(
             hasType(type)/*,
             hasType(references(type)),
@@ -388,17 +388,6 @@ void TemplateInstantiationAnalysis::processFeatures(nlohmann::ordered_json j){
         Statistics["func insts"] = res;
     }
 
-}
-
-void TemplateInstantiationAnalysis::ResetAnalysis(){
-    ClassImplicitInsts.clear();
-    ClassExplicitInsts.clear();
-    Variables.clear();
-    FuncInsts.clear();
-    Callers.clear();
-    VarInsts.clear();
-    VariablesCounter=0;
-    CallersCounter=0;
 }
 
 int getNumRelevantTypes(StringRef Type, const StringMap<int>& SM){

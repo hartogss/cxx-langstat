@@ -43,7 +43,6 @@ private:
     void processFeatures(nlohmann::ordered_json j) override;
     template<typename T>
     void featuresToJSON(std::string Kind, const std::vector<T>& fs);
-    void ResetAnalysis() override;
 };
 
 //-----------------------------------------------------------------------------

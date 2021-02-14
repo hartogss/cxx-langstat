@@ -56,10 +56,9 @@ private:
     template<typename T>
     void gatherInstantiationData(Matches<T>& Insts, std::string InstKind,
         bool AreImplicit);
-    void ResetAnalysis() override;
     //
-    unsigned VariablesCounter=0;
-    unsigned CallersCounter=0;
+    unsigned VariablesCounter = 0;
+    unsigned CallersCounter = 0;
     // Regex specifying header names from which the template whose instantiations
     // we're looking from has to come from.
     // Don't go specify here two headers that specify something with the same

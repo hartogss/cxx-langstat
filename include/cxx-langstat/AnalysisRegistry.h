@@ -40,8 +40,11 @@ public:
     void printEnabledAnalyses(){
         Options.EnabledAnalyses.dump();
     }
+    void createFreshAnalyses();
+    void destroyAnalyses(){
+        Analyses.clear();
+    }
 private:
-    void createAllAnalyses();
     unsigned FileIndex = 0;
 };
 

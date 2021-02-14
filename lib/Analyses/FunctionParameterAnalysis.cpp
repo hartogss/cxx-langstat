@@ -175,7 +175,6 @@ void FunctionParameterAnalysis::gatherData(std::string DeclKind, const std::vect
 }
 
 void FunctionParameterAnalysis::analyzeFeatures() {
-    ResetAnalysis();
     extractFeatures();
     // Fill JSON with data about function (templates)
     gatherData("functions", Functions);
@@ -263,14 +262,6 @@ void FunctionParameterAnalysis::processFeatures(ordered_json j){
         FunctionsCount(Statistics, j.at("function templates"), true);
     if(j.contains("parameters"))
         ParamsCount(Statistics, j.at("parameters"));
-}
-
-void FunctionParameterAnalysis::ResetAnalysis(){
-    Statistics.clear();
-    Features.clear();
-    Functions.clear();
-    FunctionTemplates.clear();
-    Parms.clear();
 }
 
 //-----------------------------------------------------------------------------

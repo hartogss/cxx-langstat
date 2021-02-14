@@ -21,12 +21,11 @@
 
 AnalysisRegistry::AnalysisRegistry(CXXLangstatOptions Opts) : Options(Opts) {
     std::cout << "Registry ctor" << std::endl;
-    createAllAnalyses();
 }
 AnalysisRegistry::~AnalysisRegistry(){
     std::cout << "Registry dtor" << std::endl;
 }
-void AnalysisRegistry::createAllAnalyses(){
+void AnalysisRegistry::createFreshAnalyses(){
     std::cout << "Creating analyses" << std::endl;
     // Example of where std::move could be used if std::make<"Analysis">
     // was defined explicitly as a variable

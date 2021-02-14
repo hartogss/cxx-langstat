@@ -78,10 +78,6 @@ private:
     private:
         void analyzeFeatures() override;
         void processFeatures(nlohmann::ordered_json j) override;
-        void ResetAnalysis() override {
-            Features.clear();
-            Statistics.clear();
-        }
     };
     // Analyzers run by MSA
     MoveAndForwardUsageAnalyzer p1;

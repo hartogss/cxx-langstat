@@ -177,9 +177,4 @@ void UsingAnalysis::processFeatures(nlohmann::ordered_json j){
     SynonymPrevalence(Statistics, j);
 }
 
-void UsingAnalysis::ResetAnalysis(){
-    Synonyms.clear();
-    Features.clear();
-}
-
 //-----------------------------------------------------------------------------

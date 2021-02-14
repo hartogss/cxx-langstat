@@ -69,7 +69,6 @@ private:
     template<typename T>
     void gatherData(std::string DeclKind,
         const std::vector<T>& fs);
-    void ResetAnalysis() override;
 };
 
 #endif // FUNCTIONPARAMETERANALYSIS_H

@@ -5,19 +5,19 @@
     "cca": {
         "fdecls": null
     },
-    "cea": {},
+    "cea": null,
     "cla": {
         "explicit class insts": null,
         "implicit class insts": null
     },
-    "fpa": {},
+    "fpa": null,
     "lda": null,
     "lka": null,
     "msa": {
         "std::move, std::forward usage": {
             "func insts": null
         },
-        "copy or move construction": []
+        "copy or move construction": null
     },
     "tia": {
         "explicit class insts": null,
@@ -31,10 +31,10 @@
         "variable templates": null,
         "alias templates": null
     },
-    "ua": [],
+    "ua": null,
     "ula": {
         "explicit class insts": null,
         "implicit class insts": null
     },
-    "vta": []
+    "vta": null
 }

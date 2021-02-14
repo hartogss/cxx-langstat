@@ -57,9 +57,6 @@ void ConstexprAnalysis::extractFeatures(){
     auto If = getASTNodes<clang::IfStmt>(ir, "i");
     for(auto v : If)
         IfStmts.emplace_back(CEIfStmt(v.Location, v.Node->isConstexpr()));
-
-
-
 }
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CEIfStmt, Location, isConstexpr);
@@ -75,7 +72,6 @@ void ConstexprAnalysis::featuresToJSON(std::string Kind, const std::vector<T>& f
 }
 
 void ConstexprAnalysis::analyzeFeatures(){
-    ResetAnalysis();
     extractFeatures();
     // Fill JSON with data about function (templates)
     featuresToJSON("vars", Variables);
@@ -102,14 +98,6 @@ void ConstexprAnalysis::processFeatures(nlohmann::ordered_json j){
         if(j.contains(t))
             constexprPopToJSON(Statistics, j.at(t), t);
     }
-}
-void ConstexprAnalysis::ResetAnalysis() {
-    Variables.clear();
-    NonMemberFunctions.clear();
-    MemberFunctions.clear();
-    IfStmts.clear();
-    Features.clear();
-    Statistics.clear();
 }
 
 //-----------------------------------------------------------------------------

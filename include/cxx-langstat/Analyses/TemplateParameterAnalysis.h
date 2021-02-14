@@ -23,7 +23,6 @@ private:
     Matches<clang::Decl> FunctionTemplates;
     Matches<clang::Decl> VariableTemplates;
     Matches<clang::Decl> AliasTemplates;
-    void ResetAnalysis() override;
 };
 
 // Helper structs we create to later write to JSON files using helper functions.

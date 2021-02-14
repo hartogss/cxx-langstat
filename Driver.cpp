@@ -39,6 +39,7 @@ public:
     void HandleTranslationUnit(ASTContext& Context){
         std::cout << "Handling the translation unit" << std::endl;
         ordered_json AllAnalysesFeatures;
+        Registry->createFreshAnalyses();
         Stage Stage = Registry->Options.Stage;
         int AnalysisIndex=0;
         for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
@@ -55,6 +56,7 @@ public:
         std::cout << "Writing features to file: "<<OutputFile<<"\n";
         std::ofstream o(OutputFile);
         o << AllAnalysesFeatures.dump(4) << '\n';
+        Registry->destroyAnalyses();
     }
 public:
     StringRef InFile;
@@ -171,6 +173,7 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
             std::cout << " Done\n";
             auto AnalysisIndex = 0;
             ordered_json OneFileAllStatistics;
+            Registry->createFreshAnalyses();
             for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
                 auto AnalysisAbbreviation = Registry
                     ->Options.EnabledAnalyses.Items[AnalysisIndex].Name;
@@ -181,6 +184,7 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
             }
             Summary = add(std::move(Summary), OneFileAllStatistics);
             AllFilesAllStatistics[File] = OneFileAllStatistics;
+            Registry->destroyAnalyses();
         }
         std::ofstream o(Registry->Options.OutputFiles[0]);
         o << AllFilesAllStatistics.dump(4) << std::endl;
