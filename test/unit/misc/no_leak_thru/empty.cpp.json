@@ -13,6 +13,12 @@
     "fpa": {},
     "lda": null,
     "lka": null,
+    "msa": {
+        "std::move, std::forward usage": {
+            "func insts": null
+        },
+        "copy or move construction": []
+    },
     "tia": {
         "explicit class insts": null,
         "implicit class insts": null,

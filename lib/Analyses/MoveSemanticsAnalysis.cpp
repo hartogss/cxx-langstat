@@ -36,7 +36,15 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
     auto m = callExpr(isExpansionInMainFile(),
         forEachArgumentWithParam(
             cxxConstructExpr().bind("arg"),
-            parmVarDecl(hasType(recordType()), isExpansionInMainFile()).bind("parm")))
+            // We want the type of the parameter variable to look like either
+            // of the three below:
+            // 1) func(C c){} for some class type C.
+            // 2) func(C<T> c){} for some instantiation of class template T.
+            // 3) template<typename T>
+            //   func(T t){} for some type T that will be substituted.
+            parmVarDecl(hasType(type(anyOf(
+                recordType(), templateSpecializationType(), substTemplateTypeParmType())
+                )), isExpansionInMainFile()).bind("parm")))
             .bind("callexpr");
     auto Res = Extractor.extract2(*Context, m);
     auto Args = getASTNodes<clang::CXXConstructExpr>(Res, "arg");

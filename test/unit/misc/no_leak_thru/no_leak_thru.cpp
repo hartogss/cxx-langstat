@@ -2,7 +2,7 @@
 // rm Output/empty.ast.json || true
 // RUN: clang++ %s -emit-ast -o Output/nlt.ast
 // RUN: clang++ empty.cpp -emit-ast -o Output/empty.ast
-// RUN: %S/../../../../build/cxx-langstat --analyses=ala,cca,cea,cla,fpa,lda,lka,tia,tpa,ua,ula,vta -emit-features -in Output/nlt.ast -in Output/empty.ast -outdir Output/ --
+// RUN: %S/../../../../build/cxx-langstat --analyses=ala,cca,cea,cla,fpa,lda,lka,msa,tia,tpa,ua,ula,vta -emit-features -in Output/nlt.ast -in Output/empty.ast -outdir Output/ --
 // RUN: diff Output/empty.ast.json empty.cpp.json
 
 // Test to test that when input are multiple files, that features from first
@@ -19,6 +19,8 @@ template<int N> // tpa
 class C {};
 template class C<0>; // tia
 
+void func(C<1> c){}
+
 int main(int argc, char** argv){ // cca, fpa
     for(;;){ // lda, lka
 
@@ -27,7 +29,8 @@ int main(int argc, char** argv){ // cca, fpa
     std::vector<int> v; // cla
     std::pair<int, int> twoints; // ula
     int a = std::max(twoints.first, twoints.second); // ala
-
+    C<1> c;
+    func(c); //msa
 }
 
 template<int N> // vta
