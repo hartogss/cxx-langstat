@@ -23,6 +23,10 @@ private:
     Matches<clang::Decl> FunctionTemplates;
     Matches<clang::Decl> VariableTemplates;
     Matches<clang::Decl> AliasTemplates;
+    static std::unique_ptr<Analysis> Create(){
+        return std::make_unique<TemplateParameterAnalysis>();
+    }
+    static bool s_registered;
 };
 
 // Helper structs we create to later write to JSON files using helper functions.

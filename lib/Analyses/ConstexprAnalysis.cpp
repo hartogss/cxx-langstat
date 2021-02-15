@@ -100,4 +100,7 @@ void ConstexprAnalysis::processFeatures(nlohmann::ordered_json j){
     }
 }
 
+bool ConstexprAnalysis::s_registered =
+    AnalysisFactory::RegisterFactoryFunction("cea", ConstexprAnalysis::Create);
+
 //-----------------------------------------------------------------------------

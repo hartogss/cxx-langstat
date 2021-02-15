@@ -66,6 +66,10 @@ private:
     // name, like utility|algorithm and then expect your statistics for std::move
     // to make sense.
     std::string HeaderRegex;
+    static std::unique_ptr<Analysis> Create(){
+        return std::make_unique<TemplateInstantiationAnalysis>();
+    }
+    static bool s_registered;
 };
 
 template<typename T>

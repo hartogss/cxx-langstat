@@ -5,6 +5,7 @@
 #include "cxx-langstat/Analysis.h"
 #include "cxx-langstat/AnalysisList.h"
 #include "cxx-langstat/Options.h"
+#include "cxx-langstat/Factory.h"
 
 //-----------------------------------------------------------------------------
 // Options for a single invocation of CXXLangstatMain

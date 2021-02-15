@@ -1,13 +1,15 @@
-add_library(AlgorithmLibraryAnalysis AlgorithmLibraryAnalysis.cpp)
-add_library(ConstexprAnalysis ConstexprAnalysis.cpp)
-add_library(ContainerLibAnalysis ContainerLibAnalysis.cpp)
-add_library(CyclomaticComplexityAnalysis CyclomaticComplexityAnalysis.cpp)
-add_library(FunctionParameterAnalysis FunctionParameterAnalysis.cpp)
-add_library(LoopDepthAnalysis LoopDepthAnalysis.cpp)
-add_library(LoopKindAnalysis LoopKindAnalysis.cpp)
-add_library(MoveSemanticsAnalysis MoveSemanticsAnalysis.cpp)
-add_library(TemplateInstantiationAnalysis TemplateInstantiationAnalysis.cpp)
-add_library(TemplateParameterAnalysis TemplateParameterAnalysis)
-add_library(UsingAnalysis UsingAnalysis.cpp)
-add_library(UtilityLibAnalysis UtilityLibAnalysis.cpp)
-add_library(VariableTemplateAnalysis VariableTemplateAnalysis.cpp)
+add_library(Analyses
+    AlgorithmLibraryAnalysis
+    ConstexprAnalysis.cpp
+    ContainerLibAnalysis
+    CyclomaticComplexityAnalysis
+    FunctionParameterAnalysis
+    LoopDepthAnalysis
+    LoopKindAnalysis
+    MoveSemanticsAnalysis
+    TemplateInstantiationAnalysis
+    TemplateParameterAnalysis
+    UsingAnalysis
+    UtilityLibAnalysis
+    VariableTemplateAnalysis
+)

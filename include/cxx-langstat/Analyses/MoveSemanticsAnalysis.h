@@ -84,6 +84,10 @@ private:
     CopyOrMoveAnalyzer p2;
     constexpr static auto p1desc = "std::move, std::forward usage";
     constexpr static auto p2desc = "copy or move construction";
+    static std::unique_ptr<Analysis> Create(){
+        return std::make_unique<MoveSemanticsAnalysis>();
+    }
+    static bool s_registered;
 };
 
 } // namespace msa

@@ -441,4 +441,7 @@ void instantiationTypeArgs(const ordered_json& in, ordered_json& out,
         out = m;
 }
 
+bool TemplateInstantiationAnalysis::s_registered =
+    AnalysisFactory::RegisterFactoryFunction("tia", TemplateInstantiationAnalysis::Create);
+
 //-----------------------------------------------------------------------------

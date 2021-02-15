@@ -47,3 +47,5 @@ protected:
 //-----------------------------------------------------------------------------
 
 #endif // ANALYSIS_H
+
+#include "cxx-langstat/Factory.h"

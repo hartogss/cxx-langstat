@@ -148,4 +148,7 @@ void TemplateParameterAnalysis::processFeatures(nlohmann::ordered_json j){
 
 }
 
+bool TemplateParameterAnalysis::s_registered =
+    AnalysisFactory::RegisterFactoryFunction("tpa", TemplateParameterAnalysis::Create);
+
 //-----------------------------------------------------------------------------

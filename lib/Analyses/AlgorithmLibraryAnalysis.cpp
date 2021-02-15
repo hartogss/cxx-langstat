@@ -49,4 +49,8 @@ void AlgorithmLibraryAnalysis::processFeatures(ordered_json j){
         algorithmPrevalence(Statistics, j.at("func insts"));
 }
 
+bool AlgorithmLibraryAnalysis::s_registered =
+    AnalysisFactory::RegisterFactoryFunction("ala", AlgorithmLibraryAnalysis::Create);
+
+
 //-----------------------------------------------------------------------------

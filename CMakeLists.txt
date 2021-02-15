@@ -66,26 +66,21 @@ add_subdirectory(lib)
 # Specify directory to look for libraries
 target_link_directories(${PROJECT_NAME} PUBLIC lib/)
 
+
+add_library(Factory Factory.cpp)
+
+
+
 # ---- Link everything together ----
+
 # Link custom libraries
 target_link_libraries(${PROJECT_NAME}
     BaseExtractor MatchingExtractor
     AnalysisRegistry AnalysisList
-    Utils Stats
-    AlgorithmLibraryAnalysis
-    ConstexprAnalysis
-    ContainerLibAnalysis
-    CyclomaticComplexityAnalysis
-    FunctionParameterAnalysis
-    LoopDepthAnalysis
-    LoopKindAnalysis
-    MoveSemanticsAnalysis
-    TemplateInstantiationAnalysis
-    TemplateParameterAnalysis
-    UsingAnalysis
-    UtilityLibAnalysis
-    VariableTemplateAnalysis
+    Utils Stats Factory
+    -Wl,-force_load Analyses
     )
+
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
 add_library(Driver Driver.cpp)
@@ -94,8 +89,8 @@ target_link_libraries(${PROJECT_NAME} Driver)
 # Extra linking needed on ubuntu, not necessary on macOS(macOS doesn't dislike them either)
 target_link_libraries(BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(MatchingExtractor ${llvm_libs} ${clang_libs})
-target_link_libraries(CyclomaticComplexityAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
-target_link_libraries(LoopDepthAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+# target_link_libraries(CyclomaticComplexityAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+# target_link_libraries(LoopDepthAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 
 
 

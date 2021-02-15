@@ -33,6 +33,11 @@ public:
     ~ConstexprAnalysis(){
         std::cout << "CEA dtor\n";
     }
+    static std::unique_ptr<Analysis> Create(){
+        return std::make_unique<ConstexprAnalysis>();
+    }
+    static bool s_registered;
+
 private:
     std::vector<CEDecl> Variables;
     std::vector<CEDecl> NonMemberFunctions;

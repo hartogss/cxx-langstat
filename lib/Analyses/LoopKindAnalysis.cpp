@@ -43,4 +43,7 @@ void LoopKindAnalysis::processFeatures(nlohmann::ordered_json j){
     Statistics[desc] = m;
 }
 
+bool LoopKindAnalysis::s_registered =
+    AnalysisFactory::RegisterFactoryFunction("lka", LoopKindAnalysis::Create);
+
 //-----------------------------------------------------------------------------

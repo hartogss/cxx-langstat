@@ -93,4 +93,7 @@ void ContainerLibAnalysis::processFeatures(ordered_json j){
     }
 }
 
+bool ContainerLibAnalysis::s_registered =
+    AnalysisFactory::RegisterFactoryFunction("cla", ContainerLibAnalysis::Create);
+
 //-----------------------------------------------------------------------------
