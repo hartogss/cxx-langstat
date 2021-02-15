@@ -21,6 +21,9 @@ public:
     ~TemplateInstantiationAnalysis(){
         std::cout << "TIA dtor\n";
     }
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
 private:
     InstKind IK;
     clang::ast_matchers::internal::Matcher<clang::NamedDecl> Names;
@@ -70,6 +73,7 @@ private:
         return std::make_unique<TemplateInstantiationAnalysis>();
     }
     static bool s_registered;
+    static constexpr auto ShorthandName = "tia";
 };
 
 template<typename T>

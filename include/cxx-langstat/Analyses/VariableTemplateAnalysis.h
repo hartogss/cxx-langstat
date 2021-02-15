@@ -27,6 +27,9 @@ public:
     ~VariableTemplateAnalysis(){
         std::cout << "VTA dtor\n";
     }
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
 private:
     void extractFeatures();
     std::vector<VariableFamily> VariableFamilies;
@@ -36,6 +39,7 @@ private:
         return std::make_unique<VariableTemplateAnalysis>();
     }
     static bool s_registered;
+    static constexpr auto ShorthandName = "vta";
 };
 
 //-----------------------------------------------------------------------------

@@ -13,6 +13,9 @@ public:
     ~LoopKindAnalysis(){
         std::cout << "LKA dtor\n";
     }
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
 private:
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
@@ -20,6 +23,7 @@ private:
         return std::make_unique<LoopKindAnalysis>();
     }
     static bool s_registered;
+    static constexpr auto ShorthandName = "lka";
 };
 
 //-----------------------------------------------------------------------------

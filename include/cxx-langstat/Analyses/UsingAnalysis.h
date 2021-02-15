@@ -30,6 +30,9 @@ public:
     ~UsingAnalysis(){
         std::cout << "UA dtor\n";
     }
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
 private:
     std::vector<Synonym> Synonyms;
     // Get matches from AST and store relevant information in "Synonyms"
@@ -40,6 +43,7 @@ private:
         return std::make_unique<UsingAnalysis>();
     }
     static bool s_registered;
+    static constexpr auto ShorthandName = "ua";
 };
 
 //-----------------------------------------------------------------------------

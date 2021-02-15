@@ -31,6 +31,11 @@ public:
         processFeatures(j);
         return Statistics;
     }
+    // implement this as by returning private static constexpr member of
+    // analysis.
+    // Not very nice solution, but ensure that all analyses have name they return
+    // and shorthand name can be used to register analysis with factory.
+    virtual std::string getShorthand() = 0;
 protected:
     llvm::StringRef InFile;
     BaseExtractor Extractor;

@@ -78,6 +78,7 @@ void CyclomaticComplexityAnalysis::processFeatures(nlohmann::ordered_json j){
 }
 
 bool CyclomaticComplexityAnalysis::s_registered =
-    AnalysisFactory::RegisterFactoryFunction("cca", CyclomaticComplexityAnalysis::Create);
+    AnalysisFactory::RegisterAnalysis(CyclomaticComplexityAnalysis::ShorthandName,
+         CyclomaticComplexityAnalysis::Create);
 
 //-----------------------------------------------------------------------------

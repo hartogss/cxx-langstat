@@ -127,7 +127,8 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::processFeatures(ojson j){
 }
 
 bool MoveSemanticsAnalysis::s_registered =
-    AnalysisFactory::RegisterFactoryFunction("msa", MoveSemanticsAnalysis::Create);
+    AnalysisFactory::RegisterAnalysis(MoveSemanticsAnalysis::ShorthandName,
+        MoveSemanticsAnalysis::Create);
 
 } // namespace msa
 

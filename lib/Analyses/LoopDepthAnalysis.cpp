@@ -96,6 +96,7 @@ void LoopDepthAnalysis::processFeatures(nlohmann::ordered_json j){
 }
 
 bool LoopDepthAnalysis::s_registered =
-    AnalysisFactory::RegisterFactoryFunction("lda", LoopDepthAnalysis::Create);
+    AnalysisFactory::RegisterAnalysis(LoopDepthAnalysis::ShorthandName,
+        LoopDepthAnalysis::Create);
 
 //-----------------------------------------------------------------------------

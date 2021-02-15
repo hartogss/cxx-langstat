@@ -16,6 +16,9 @@ public:
     ~LoopDepthAnalysis(){
         std::cout << "LDA dtor\n";
     }
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
 private:
     int MaxDepth;
     // All loop statements that are not contained in any other loops
@@ -29,6 +32,7 @@ private:
         return std::make_unique<LoopDepthAnalysis>();
     }
     static bool s_registered;
+    static constexpr auto ShorthandName = "lda";
 };
 
 //-----------------------------------------------------------------------------

@@ -419,7 +419,6 @@ void typePrevalence(const ordered_json& in, ordered_json& out){
         m.try_emplace(Type, Insts.size());
     }
     out = m;
-
 }
 
 void instantiationTypeArgs(const ordered_json& in, ordered_json& out,
@@ -442,6 +441,8 @@ void instantiationTypeArgs(const ordered_json& in, ordered_json& out,
 }
 
 bool TemplateInstantiationAnalysis::s_registered =
-    AnalysisFactory::RegisterFactoryFunction("tia", TemplateInstantiationAnalysis::Create);
+    AnalysisFactory::RegisterAnalysis(
+        TemplateInstantiationAnalysis::ShorthandName,
+        TemplateInstantiationAnalysis::Create);
 
 //-----------------------------------------------------------------------------

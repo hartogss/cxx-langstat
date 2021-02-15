@@ -153,6 +153,7 @@ void VariableTemplateAnalysis::processFeatures(nlohmann::ordered_json j){
 }
 
 bool VariableTemplateAnalysis::s_registered =
-    AnalysisFactory::RegisterFactoryFunction("vta", VariableTemplateAnalysis::Create);
+    AnalysisFactory::RegisterAnalysis(VariableTemplateAnalysis::ShorthandName,
+        VariableTemplateAnalysis::Create);
 
 //-----------------------------------------------------------------------------

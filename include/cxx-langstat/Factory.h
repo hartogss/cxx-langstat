@@ -20,10 +20,10 @@
 class AnalysisFactory{
 public:
     using TCreateMethod = std::unique_ptr<Analysis>(*)();
-    static bool RegisterFactoryFunction(std::string name,
+    static bool RegisterAnalysis(std::string name,
         TCreateMethod classFactoryFunction);
     static std::unique_ptr<Analysis> Create(std::string name);
-    static std::map<std::string, std::unique_ptr<Analysis>(*)()> AnalyzerFactoryRegistry;
+    static std::map<std::string, TCreateMethod> AnalyzerFactoryRegistry;
 };
 
 #endif // FACTORY_H

@@ -265,6 +265,7 @@ void FunctionParameterAnalysis::processFeatures(ordered_json j){
 }
 
 bool FunctionParameterAnalysis::s_registered =
-    AnalysisFactory::RegisterFactoryFunction("fpa", FunctionParameterAnalysis::Create);
+    AnalysisFactory::RegisterAnalysis(FunctionParameterAnalysis::ShorthandName,
+        FunctionParameterAnalysis::Create);
 
 //-----------------------------------------------------------------------------

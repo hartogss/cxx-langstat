@@ -6,7 +6,7 @@ std::map<std::string, AnalysisFactory::TCreateMethod>
 
 //-----------------------------------------------------------------------------
 
-bool AnalysisFactory::RegisterFactoryFunction(std::string name,
+bool AnalysisFactory::RegisterAnalysis(std::string name,
         TCreateMethod classFactoryFunction){
             AnalyzerFactoryRegistry[name] = classFactoryFunction;
             return true;

@@ -101,6 +101,7 @@ void ConstexprAnalysis::processFeatures(nlohmann::ordered_json j){
 }
 
 bool ConstexprAnalysis::s_registered =
-    AnalysisFactory::RegisterFactoryFunction("cea", ConstexprAnalysis::Create);
+    AnalysisFactory::RegisterAnalysis(ConstexprAnalysis::ShorthandName,
+        ConstexprAnalysis::Create);
 
 //-----------------------------------------------------------------------------

@@ -43,12 +43,10 @@ public:
         Stage Stage = Registry->Options.Stage;
         int AnalysisIndex=0;
         for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
-            auto AnalysisAbbreviation = Registry
-                ->Options.EnabledAnalyses.Items[AnalysisIndex].Name;
+            auto AnalysisShorthand = an->getShorthand();
             // Analyze clang AST and get features
-            AllAnalysesFeatures[AnalysisAbbreviation]
+            AllAnalysesFeatures[AnalysisShorthand]
                 =an->getFeatures(InFile, Context);
-
             AnalysisIndex++;
         }
         // Write to file if -emit-features is active

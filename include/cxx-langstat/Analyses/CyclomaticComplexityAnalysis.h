@@ -13,6 +13,9 @@ public:
     ~CyclomaticComplexityAnalysis(){
         std::cout << "CCA dtor\n";
     }
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
 private:
     // Extracts features, calculates cyclomatic complexity and creates JSON
     // objects all in one go, since that is all pretty simple.
@@ -22,6 +25,7 @@ private:
         return std::make_unique<CyclomaticComplexityAnalysis>();
     }
     static bool s_registered;
+    static constexpr auto ShorthandName = "cca";
 };
 
 #endif // CYCLOMATICCOMPLEXITY_H

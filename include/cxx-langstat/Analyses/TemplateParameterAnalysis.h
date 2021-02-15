@@ -13,6 +13,9 @@ public:
     ~TemplateParameterAnalysis(){
         std::cout << "TPA dtor\n";
     }
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
 private:
     void extractFeatures();
     void gatherData(const Matches<clang::Decl>& Matches,
@@ -27,6 +30,7 @@ private:
         return std::make_unique<TemplateParameterAnalysis>();
     }
     static bool s_registered;
+    static constexpr auto ShorthandName = "tpa";
 };
 
 // Helper structs we create to later write to JSON files using helper functions.

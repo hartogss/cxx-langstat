@@ -12,13 +12,16 @@ public:
     ~AlgorithmLibraryAnalysis(){
         std::cout << "ALA dtor\n";
     }
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
 private:
     void processFeatures(nlohmann::ordered_json j) override;
     static std::unique_ptr<Analysis> Create(){
-        
         return std::make_unique<AlgorithmLibraryAnalysis>();
     }
     static bool s_registered;
+    static constexpr auto ShorthandName = "ala";
 };
 
 //-----------------------------------------------------------------------------
