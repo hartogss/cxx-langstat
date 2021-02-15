@@ -1,10 +1,8 @@
 #ifndef MOVESEMANTICSANALYSIS_H
 #define MOVESEMANTICSANALYSIS_H
 
-#include "cxx-langstat/Analysis.h"
-#include "cxx-langstat/Utils.h"
-
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
+#include "cxx-langstat/Utils.h"
 
 namespace msa {
 

@@ -1,7 +1,6 @@
 #ifndef UTILITYLIBANALYSIS_H
 #define UTILITYLIBANALYSIS_H
 
-#include "cxx-langstat/Analysis.h"
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 
 //-----------------------------------------------------------------------------

@@ -1,7 +1,6 @@
 #ifndef CONTAINERLIBANALYSIS_H
 #define CONTAINERLIBANALYSIS_H
 
-#include "cxx-langstat/Analysis.h"
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 
 //-----------------------------------------------------------------------------

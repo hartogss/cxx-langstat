@@ -1,7 +1,6 @@
 #ifndef ALGORITHMLIBRARYANALYSIS_H
 #define ALGORITHMLIBRARYANALYSIS_H
 
-#include "cxx-langstat/Analysis.h"
 #include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 
 //-----------------------------------------------------------------------------
