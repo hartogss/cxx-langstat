@@ -49,11 +49,12 @@ execute_process(COMMAND ${llvm-config} --libs # --system-libs
 
 # find_package(clang REQUIRED CONFIG)
 # message(STATUS "Using ClangConfig.cmake in: ${clang_DIR}")
-# message(STATUS "LLVM libs: ${llvm_libs}")
 
-# string(REPLACE "-l" "" llvm_libs ${llvm_libs})
-# string(REPLACE " " ";" llvm_libs ${llvm_libs})
 message(STATUS "LLVM libs: ${llvm_libs}")
+string(REPLACE "-l" "" llvm_libs ${llvm_libs})
+string(REPLACE " " ";" llvm_libs ${llvm_libs})
+message(STATUS "LLVM libs: ${llvm_libs}")
+
 # Set clang_libs
 set(clang_libs
     clangFrontendTool clangRewriteFrontend clangDynamicASTMatchers
