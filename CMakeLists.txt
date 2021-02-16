@@ -29,24 +29,31 @@ add_executable(${PROJECT_NAME} Runner.cpp)
 
 # ---- LLVM, Clang ----
 # Loads settings from external project LLVM
-find_package(LLVM 11 REQUIRED CONFIG)
+find_package(LLVM REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 # Show where LLVM includes are
 include_directories(${LLVM_INCLUDE_DIRS})
 message(STATUS "Found LLVM include dirs: ${LLVM_INCLUDE_DIRS}")
+
+# Find llvm-config
+message(STATUS "llvm definitions: ${LLVM_DEFINITIONS}")
+message(STATUS "llvmtools binary dir ${LLVM_TOOLS_BINARY_DIR}")
+find_program(llvm-config "llvm-config" PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH REQUIRED)
+message(STATUS "Using llvm-config in ${llvm-config}")
 # Get llvm_libs
-execute_process(COMMAND llvm-config --libs
+execute_process(COMMAND ${llvm-config} --libs # --system-libs
     OUTPUT_VARIABLE llvm_libs
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
 # find_package(clang REQUIRED CONFIG)
 # message(STATUS "Using ClangConfig.cmake in: ${clang_DIR}")
+# message(STATUS "LLVM libs: ${llvm_libs}")
 
-string(REPLACE "-l" "" llvm_libs ${llvm_libs})
-string(REPLACE " " ";" llvm_libs ${llvm_libs})
-# message(STATUS "LLVM libs: $${llvm_libs}")
+# string(REPLACE "-l" "" llvm_libs ${llvm_libs})
+# string(REPLACE " " ";" llvm_libs ${llvm_libs})
+message(STATUS "LLVM libs: ${llvm_libs}")
 # Set clang_libs
 set(clang_libs
     clangFrontendTool clangRewriteFrontend clangDynamicASTMatchers
@@ -72,30 +79,23 @@ target_link_libraries(${PROJECT_NAME}
     BaseExtractor MatchingExtractor
     AnalysisRegistry AnalysisList
     Utils Stats
-    AlgorithmLibraryAnalysis
-    ConstexprAnalysis
-    ContainerLibAnalysis
     CyclomaticComplexityAnalysis
-    FunctionParameterAnalysis
     LoopDepthAnalysis
-    LoopKindAnalysis
-    MoveSemanticsAnalysis
-    TemplateInstantiationAnalysis
-    TemplateParameterAnalysis
-    UsingAnalysis
-    UtilityLibAnalysis
-    VariableTemplateAnalysis
+    -pthread
     )
+
+add_library(Driver Driver.cpp)
+target_link_libraries(${PROJECT_NAME} Driver AnalysisRegistry AnalysisList Stats)
 # Link LLVM & Clang libs
 target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
-add_library(Driver Driver.cpp)
-target_link_libraries(${PROJECT_NAME} Driver)
+
 
 # Extra linking needed on ubuntu, not necessary on macOS(macOS doesn't dislike them either)
 target_link_libraries(BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(CyclomaticComplexityAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
 target_link_libraries(LoopDepthAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
+target_link_libraries(AnalysisRegistry LoopDepthAnalysis ${llvm_libs} ${clang_libs})
 
 
 
