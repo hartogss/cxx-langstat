@@ -17,7 +17,7 @@ using ordered_json = nlohmann::ordered_json;
 // passed around? What sizes do they occur (#elements, constexpr)?
 // Usage in templates and TMP?
 
-// Construct a SLA by constructing a more constrained TIA.
+// Construct a CLA by constructing a more constrained TIA.
 ContainerLibAnalysis::ContainerLibAnalysis() : TemplateInstantiationAnalysis(
     InstKind::Class,
     hasAnyName(
