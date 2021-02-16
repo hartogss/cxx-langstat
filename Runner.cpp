@@ -1,7 +1,7 @@
 #include <iostream>
 #include <future>
 
-#include "llvm/Support/Commandline.h"
+#include "llvm/Support/CommandLine.h"
 #include "clang/Tooling/CompilationDatabase.h"
 
 #include "cxx-langstat/Options.h"
