@@ -15,7 +15,8 @@ void to_json(nlohmann::json& j, const FunctionParamInfo& o){
         {"Func Location", o.FuncLocation},
         {"Identifier", o.Id},
         {"construction kind", toString.at(o.CK)},
-        {"copy/move ctor is compiler-generated", o.CompilerGenerated}
+        {"copy/move ctor is compiler-generated", o.CompilerGenerated},
+        {"Parm Type", o.ParmType}
         };
 }
 void from_json(const nlohmann::json& j, FunctionParamInfo& o){
@@ -25,6 +26,7 @@ void from_json(const nlohmann::json& j, FunctionParamInfo& o){
     j.at("Identifier").get_to(o.Id);
     o.CK = fromString.at(j.at("construction kind").get<std::string>());
     j.at("copy/move ctor is compiler-generated").get_to(o.CompilerGenerated);
+    j.at("Parm Type").get_to(o.ParmType);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CallExprInfo, Location);
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConstructInfo, CallExpr, Parameter);
@@ -35,16 +37,11 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
     // parameter and the expr that is the argument to that parameter.
     auto m = callExpr(isExpansionInMainFile(),
         forEachArgumentWithParam(
+            // Argument is something that has to be constructed
             cxxConstructExpr().bind("arg"),
-            // We want the type of the parameter variable to look like either
-            // of the three below:
-            // 1) func(C c){} for some class type C.
-            // 2) func(C<T> c){} for some instantiation of class template T.
-            // 3) template<typename T>
-            //   func(T t){} for some type T that will be substituted.
-            parmVarDecl(hasType(type(anyOf(
-                recordType(), templateSpecializationType(), substTemplateTypeParmType())
-                )), isExpansionInMainFile()).bind("parm")))
+            // Don't care about the type of the parameter, will be constructed
+            // by constructor call anyway
+            parmVarDecl(isExpansionInMainFile()).bind("parm")))
             .bind("callexpr");
     auto Res = Extractor.extract2(*Context, m);
     auto Args = getASTNodes<clang::CXXConstructExpr>(Res, "arg");
@@ -77,7 +74,7 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
 
         // what callee should we do here?
         FPI.FuncId = f->getQualifiedNameAsString();
-        FPI.FuncType = f->getType().getAsString();
+        FPI.FuncType = f->getType().getCanonicalType().getAsString();
         FPI.Id = p.Node->getQualifiedNameAsString();
         FPI.FuncLocation = Context->getFullLoc(f->getInnerLocStart())
             .getLineNumber();
@@ -86,12 +83,31 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
         else
             FPI.CK = ConstructKind::Unknown;
         FPI.CompilerGenerated = Ctor->isImplicit();
+        FPI.ParmType = p.Node->getType().getCanonicalType().getAsString();
         CEI.Location = c.Location;
         CI.Parameter = FPI;
         CI.CallExpr = CEI;
         nlohmann::json c_j = CI;
         Features.emplace_back(c_j);
     }
+}
+
+std::map<std::string, std::pair<unsigned, unsigned>>
+NumCopiesAndMovesPerType(const ojson& j){
+    std::map<std::string, std::pair<unsigned, unsigned>> m;
+    for(const auto& ci_j : j){
+        // std::cout << ci_j.dump(4) << std::endl;
+        ConstructInfo ci;
+        from_json(ci_j, ci);
+        auto s = ci.Parameter.CK;
+        auto Type = ci.Parameter.ParmType;
+        m.try_emplace(Type, std::make_pair(0, 0));
+        if(s == ConstructKind::Copy)
+            m.at(Type).first++;
+        if(s == ConstructKind::Move)
+            m.at(Type).second++;
+    }
+    return m;
 }
 
 std::pair<unsigned, unsigned> NumCopiesAndMoves(const ojson& j){
@@ -111,9 +127,14 @@ std::pair<unsigned, unsigned> NumCopiesAndMoves(const ojson& j){
 }
 
 void CopyAndMoveCounts(const ojson& j, ojson& res){
-    auto [Copy, Move] = NumCopiesAndMoves(j);
-    res["copy"] = Copy;
-    res["move"] = Move;
+    auto [TotalCopies, TotalMoves] = NumCopiesAndMoves(j);
+    res["total"]["copy"] = TotalCopies;
+    res["total"]["move"] = TotalMoves;
+    auto PerTypeCopiesMoves = NumCopiesAndMovesPerType(j);
+    for(const auto& [key, val] : PerTypeCopiesMoves){
+        res["per type"][key]["copy"] = val.first;
+        res["per type"][key]["move"] = val.second;
+    }
 }
 
 
@@ -123,7 +144,6 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::processFeatures(ojson j){
         CopyAndMoveCounts(j.at(p2desc), Statistics);
     }
     std::cout << Statistics.dump(4) << std::endl;
-
 }
 
 } // namespace msa

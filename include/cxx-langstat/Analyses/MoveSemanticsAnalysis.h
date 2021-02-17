@@ -22,6 +22,7 @@ struct FunctionParamInfo {
     std::string Id;
     ConstructKind CK;
     bool CompilerGenerated;
+    std::string ParmType;
 };
 struct CallExprInfo {
     unsigned Location;

@@ -46,6 +46,7 @@
                     "Func Location": 20,
                     "Func Type": "void (class C)",
                     "Identifier": "c",
+                    "Parm Type": "class C",
                     "construction kind": "copy",
                     "copy/move ctor is compiler-generated": false
                 }
@@ -59,6 +60,7 @@
                     "Func Location": 20,
                     "Func Type": "void (class C)",
                     "Identifier": "c",
+                    "Parm Type": "class C",
                     "construction kind": "unknown",
                     "copy/move ctor is compiler-generated": false
                 }
@@ -72,6 +74,7 @@
                     "Func Location": 20,
                     "Func Type": "void (class C)",
                     "Identifier": "c",
+                    "Parm Type": "class C",
                     "construction kind": "move",
                     "copy/move ctor is compiler-generated": false
                 }
@@ -85,6 +88,7 @@
                     "Func Location": 20,
                     "Func Type": "void (class C)",
                     "Identifier": "c",
+                    "Parm Type": "class C",
                     "construction kind": "copy",
                     "copy/move ctor is compiler-generated": false
                 }
@@ -98,6 +102,7 @@
                     "Func Location": 20,
                     "Func Type": "void (class C)",
                     "Identifier": "c",
+                    "Parm Type": "class C",
                     "construction kind": "move",
                     "copy/move ctor is compiler-generated": false
                 }
@@ -111,6 +116,7 @@
                     "Func Location": 20,
                     "Func Type": "void (class C)",
                     "Identifier": "c",
+                    "Parm Type": "class C",
                     "construction kind": "copy",
                     "copy/move ctor is compiler-generated": false
                 }
@@ -124,6 +130,7 @@
                     "Func Location": 20,
                     "Func Type": "void (class C)",
                     "Identifier": "c",
+                    "Parm Type": "class C",
                     "construction kind": "move",
                     "copy/move ctor is compiler-generated": false
                 }

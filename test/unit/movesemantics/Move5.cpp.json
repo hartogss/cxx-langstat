@@ -1,0 +1,135 @@
+{
+    "msa": {
+        "std::move, std::forward usage": {
+            "func insts": null
+        },
+        "copy or move construction": [
+            {
+                "CallExpr": {
+                    "Location": 33
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 20,
+                    "Func Type": "void (struct C)",
+                    "Identifier": "c",
+                    "Parm Type": "struct C",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": true
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 34
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 20,
+                    "Func Type": "void (struct C)",
+                    "Identifier": "c",
+                    "Parm Type": "struct C",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": true
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 35
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 20,
+                    "Func Type": "void (struct C)",
+                    "Identifier": "c",
+                    "Parm Type": "struct C",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": true
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 36
+                },
+                "Parameter": {
+                    "Func Identifier": "funcD",
+                    "Func Location": 22,
+                    "Func Type": "void (struct C)",
+                    "Identifier": "d",
+                    "Parm Type": "struct C",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": true
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 37
+                },
+                "Parameter": {
+                    "Func Identifier": "funcD",
+                    "Func Location": 22,
+                    "Func Type": "void (struct C)",
+                    "Identifier": "d",
+                    "Parm Type": "struct C",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": true
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 38
+                },
+                "Parameter": {
+                    "Func Identifier": "funcD",
+                    "Func Location": 22,
+                    "Func Type": "void (struct C)",
+                    "Identifier": "d",
+                    "Parm Type": "struct C",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": true
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 39
+                },
+                "Parameter": {
+                    "Func Identifier": "funcE",
+                    "Func Location": 24,
+                    "Func Type": "void (struct C)",
+                    "Identifier": "e",
+                    "Parm Type": "struct C",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": true
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 40
+                },
+                "Parameter": {
+                    "Func Identifier": "funcE",
+                    "Func Location": 24,
+                    "Func Type": "void (struct C)",
+                    "Identifier": "e",
+                    "Parm Type": "struct C",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": true
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 41
+                },
+                "Parameter": {
+                    "Func Identifier": "funcE",
+                    "Func Location": 24,
+                    "Func Type": "void (struct C)",
+                    "Identifier": "e",
+                    "Parm Type": "struct C",
+                    "construction kind": "copy",
+                    "copy/move ctor is compiler-generated": true
+                }
+            }
+        ]
+    }
+}

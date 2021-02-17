@@ -4,12 +4,13 @@
 // RUN: diff %t1.ast.json %s.json
 
 // Test checking if by-value of template type parameter type parameter's
-// construction is reported correctly.
-//
+// construction is reported correctly. Special case of Move3.cpp, because now
+// the constructed type is a template specialization type.
 
 #include <utility>
 #include <iostream>
 
+template<typename T>
 class C{
 public:
     C(){std::cout << "ctor\n";}
@@ -23,7 +24,7 @@ void func(T c){
 
 
 int main(int argc, char** argv){
-    C c;
+    C<int> c;
     func(c); // copy ctor
     func(std::move(c)); // move ctor
 

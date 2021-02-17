@@ -3,28 +3,40 @@
 // RUN: %S/../../../build/cxx-langstat --analyses=msa -emit-features -in %t1.ast -out %t1.ast.json -- -std=c++17
 // RUN: diff %t1.ast.json %s.json
 
-// Test checking if by-value of template type parameter type parameter's
-// construction is reported correctly.
+// Test that aliases form no barrier to MSA.
+//
 //
 
 #include <utility>
 #include <iostream>
 
-class C{
+struct C{
 public:
     C(){std::cout << "ctor\n";}
-    C(const C& c){std::cout << "copy ctor\n";}
-    C(C&& c){std::cout << "move ctor\n";}
 };
+using D = C;
+typedef C E;
 
-template<typename T>
-void func(T c){
+void func(C c){
+}
+void funcD(D d){
+}
+void funcE(E e){
 }
 
 
 int main(int argc, char** argv){
     C c;
-    func(c); // copy ctor
-    func(std::move(c)); // move ctor
-
+    D d;
+    E e;
+    // These should all result in copy ctor calls
+    func(c);
+    func(d);
+    func(e);
+    funcD(c);
+    funcD(d);
+    funcD(e);
+    funcE(c);
+    funcE(d);
+    funcE(e);
 }

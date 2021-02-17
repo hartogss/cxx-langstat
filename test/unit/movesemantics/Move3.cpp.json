@@ -4,11 +4,11 @@
             "func insts": {
                 "std::__1::move": [
                     {
-                        "location": 29,
+                        "location": 28,
                         "arguments": {
                             "non-type": [],
                             "type": [
-                                "C<int> &"
+                                "C &"
                             ],
                             "template": []
                         }
@@ -19,26 +19,28 @@
         "copy or move construction": [
             {
                 "CallExpr": {
-                    "Location": 28
+                    "Location": 27
                 },
                 "Parameter": {
                     "Func Identifier": "func",
-                    "Func Location": 22,
-                    "Func Type": "void (class C<int>)",
+                    "Func Location": 21,
+                    "Func Type": "void (class C)",
                     "Identifier": "c",
+                    "Parm Type": "class C",
                     "construction kind": "copy",
                     "copy/move ctor is compiler-generated": false
                 }
             },
             {
                 "CallExpr": {
-                    "Location": 29
+                    "Location": 28
                 },
                 "Parameter": {
                     "Func Identifier": "func",
-                    "Func Location": 22,
-                    "Func Type": "void (class C<int>)",
+                    "Func Location": 21,
+                    "Func Type": "void (class C)",
                     "Identifier": "c",
+                    "Parm Type": "class C",
                     "construction kind": "move",
                     "copy/move ctor is compiler-generated": false
                 }
