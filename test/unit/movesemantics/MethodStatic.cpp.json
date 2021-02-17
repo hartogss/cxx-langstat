@@ -1,0 +1,36 @@
+{
+    "msa": {
+        "std::move, std::forward usage": {
+            "func insts": {
+                "std::__1::move": [
+                    {
+                        "location": 23,
+                        "arguments": {
+                            "non-type": [],
+                            "type": [
+                                "D &"
+                            ],
+                            "template": []
+                        }
+                    }
+                ]
+            }
+        },
+        "copy or move construction": [
+            {
+                "CallExpr": {
+                    "Location": 23
+                },
+                "Parameter": {
+                    "Func Identifier": "C::method",
+                    "Func Location": 18,
+                    "Func Type": "void (struct D)",
+                    "Identifier": "d",
+                    "Parm Type": "struct D",
+                    "construction kind": "move",
+                    "copy/move ctor is compiler-generated": false
+                }
+            }
+        ]
+    }
+}
