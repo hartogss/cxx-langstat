@@ -73,24 +73,37 @@ void FunctionParameterAnalysis::associateParameters(const Matches<T>& Matches){
         } else if(auto f = dyn_cast<FunctionDecl>(Node)){
             Func = const_cast<FunctionDecl*>(f);
         }
+
+        // Printing policy for printing parameter types
+        LangOptions LO;
+        PrintingPolicy PP(LO);
+        // Causes some problems with instantiation-dependent types, namely
+        // that no qualifications are printed
+        PP.PrintCanonicalTypes = true;
+        PP.SuppressTagKeyword = false;
+        PP.SuppressScope = false;
+        PP.SuppressUnwrittenScope = false;
+        PP.FullyQualifiedName = true;
+
         Info.Location = match.Location;
         Info.Identifier = getMatchDeclName(match);
-        Info.Type = Func->getType().getAsString();
+        Info.Signature = Func->getType().getAsString();
 
         // For each parameter of the function
         for(auto Param : Func->parameters()){
+
+            auto ParmType = Param->getType();
             ParmInfo PInfo(Context->getFullLoc(Param->getBeginLoc())
                 .getLineNumber(),
                 cast<NamedDecl>(Param)->getQualifiedNameAsString(),
-                Param->getType().getAsString());
-            PInfo.isInstantiationDependent = Param->getOriginalType()
+                ParmType.getAsString(PP));
+            PInfo.isInstantiationDependent = ParmType
                 .getTypePtr()->isInstantiationDependentType();
-            QualType qt = Param->getOriginalType();
             // If parameter pack is used, strip it off.
             // For pack expansion T..., below function gives use the pattern T.
-            qt = qt.getNonPackExpansionType();
+            ParmType = ParmType.getNonPackExpansionType();
             // Get the underlying unqualified type
-            const Type* type = qt.getTypePtr();
+            const Type* type = ParmType.getTypePtr();
             // Split into value, lvalue ref and rvalue ref groups.
             if(type->isLValueReferenceType()){
                 if(type->getPointeeType().isConstQualified()){
@@ -101,7 +114,7 @@ void FunctionParameterAnalysis::associateParameters(const Matches<T>& Matches){
                     PInfo.Kind = ParmKind::NonConstLValueRef;
                 }
             }else if(type->isRValueReferenceType()){
-                if(isUniversalReference(FTD, qt) && WasTemplate){
+                if(isUniversalReference(FTD, ParmType) && WasTemplate){
                     Info.ByUniversalRef++;
                     PInfo.Kind = ParmKind::UniversalRef;
                 }else{
@@ -159,10 +172,10 @@ void FunctionParameterAnalysis::extractFeatures(){
 // No, separately probably better.
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(FunctionInfo, Location, Identifier,
-    ByValue, ByNonConstLvalueRef, ByConstLvalueRef, ByRvalueRef, Type);
+    ByValue, ByNonConstLvalueRef, ByConstLvalueRef, ByRvalueRef, Signature);
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(FunctionTemplateInfo, Location, Identifier,
     ByValue, ByNonConstLvalueRef, ByConstLvalueRef, ByRvalueRef, ByUniversalRef,
-    Type);
+    Signature);
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ParmInfo, Location, Identifier, Kind, Type,
     isInstantiationDependent);
 

@@ -8,13 +8,11 @@
 // Basic information we want to capture both about functions and parameters
 struct BasicInfo {
     BasicInfo() = default;
-    BasicInfo(int Location, std::string Identifier, std::string Type) :
+    BasicInfo(int Location, std::string Identifier) :
         Location(Location),
-        Identifier(Identifier),
-        Type(Type){}
+        Identifier(Identifier){}
     int Location;
     std::string Identifier;
-    std::string Type;
 };
 // Holds for each kind of parameter how often it occured in function decl.
 struct FunctionInfo : public BasicInfo {
@@ -23,6 +21,10 @@ struct FunctionInfo : public BasicInfo {
     int ByNonConstLvalueRef = 0;
     int ByConstLvalueRef = 0;
     int ByRvalueRef = 0;
+    // Non-canonical, sugared signature/type of the function.
+    // Should not be used except for debugging purposes, e.g. check if
+    // reported features make sense etc.
+    std::string Signature;
 };
 struct FunctionTemplateInfo : public FunctionInfo {
     int ByUniversalRef = 0;
@@ -34,9 +36,13 @@ enum class ParmKind {
 struct ParmInfo : public BasicInfo {
     ParmInfo() = default;
     ParmInfo(int Location, std::string Identifier, std::string Type) :
-        BasicInfo(Location, Identifier, Type){}
+        Type(Type), BasicInfo(Location, Identifier){}
     ParmKind Kind;
     bool isInstantiationDependent;
+    // Canonical, qualified, desugared type of the parameter. Can be used
+    // to compare types of parameters.
+    std::string Type;
+
 };
 
 //-----------------------------------------------------------------------------
