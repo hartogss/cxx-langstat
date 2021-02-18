@@ -10,7 +10,7 @@
             {
                 "Identifier": "A::A<T>",
                 "Location": 15,
-                "Type": "void (T)",
+                "Type": "void (type-parameter-0-0)",
                 "isConstexpr": false
             }
         ]

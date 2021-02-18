@@ -1,0 +1,46 @@
+{
+    "cea": {
+        "vars": [
+            {
+                "Identifier": "d",
+                "Location": 28,
+                "Type": "const struct C",
+                "isConstexpr": true
+            },
+            {
+                "Identifier": "v",
+                "Location": 29,
+                "Type": "const class std::__1::vector<const struct C, class std::__1::allocator<const struct C> >",
+                "isConstexpr": false
+            }
+        ],
+        "non-member functions": [
+            {
+                "Identifier": "func",
+                "Location": 17,
+                "Type": "void (struct C)",
+                "isConstexpr": true
+            },
+            {
+                "Identifier": "func2",
+                "Location": 19,
+                "Type": "void (const class std::__1::vector<const struct C, class std::__1::allocator<const struct C> > &&)",
+                "isConstexpr": false
+            },
+            {
+                "Identifier": "main",
+                "Location": 27,
+                "Type": "int (int, char **)",
+                "isConstexpr": false
+            }
+        ],
+        "member functions": [
+            {
+                "Identifier": "E::method",
+                "Location": 24,
+                "Type": "void (struct C)",
+                "isConstexpr": true
+            }
+        ]
+    }
+}

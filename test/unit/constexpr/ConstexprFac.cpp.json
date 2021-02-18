@@ -44,25 +44,13 @@
             {
                 "Identifier": "Fac::Fac",
                 "Location": 14,
-                "Type": "void (const int)",
+                "Type": "void (int)",
                 "isConstexpr": true
             },
             {
                 "Identifier": "Fac::get",
                 "Location": 23,
                 "Type": "int (void) const",
-                "isConstexpr": true
-            },
-            {
-                "Identifier": "Fac::Fac",
-                "Location": 12,
-                "Type": "void (const struct Fac &)",
-                "isConstexpr": true
-            },
-            {
-                "Identifier": "Fac::Fac",
-                "Location": 12,
-                "Type": "void (struct Fac &&)",
                 "isConstexpr": true
             }
         ],

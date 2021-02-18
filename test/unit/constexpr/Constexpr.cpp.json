@@ -10,13 +10,13 @@
             {
                 "Identifier": "var",
                 "Location": 14,
-                "Type": "T",
+                "Type": "type-parameter-0-0",
                 "isConstexpr": false
             },
             {
                 "Identifier": "varc",
                 "Location": 17,
-                "Type": "const T",
+                "Type": "const type-parameter-0-0",
                 "isConstexpr": true
             },
             {
