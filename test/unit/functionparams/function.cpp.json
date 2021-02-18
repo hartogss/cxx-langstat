@@ -8,7 +8,7 @@
                 "ByValue": 0,
                 "Identifier": "f0",
                 "Location": 11,
-                "Type": "void (void)"
+                "Signature": "void (void)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -17,7 +17,7 @@
                 "ByValue": 1,
                 "Identifier": "f1",
                 "Location": 13,
-                "Type": "void (class C)"
+                "Signature": "void (class C)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -26,7 +26,7 @@
                 "ByValue": 2,
                 "Identifier": "f1",
                 "Location": 14,
-                "Type": "void (class C, class C)"
+                "Signature": "void (class C, class C)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -35,7 +35,7 @@
                 "ByValue": 0,
                 "Identifier": "f2",
                 "Location": 15,
-                "Type": "void (class C &)"
+                "Signature": "void (class C &)"
             },
             {
                 "ByConstLvalueRef": 1,
@@ -44,7 +44,7 @@
                 "ByValue": 0,
                 "Identifier": "f3",
                 "Location": 16,
-                "Type": "void (const class C &)"
+                "Signature": "void (const class C &)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -53,7 +53,7 @@
                 "ByValue": 0,
                 "Identifier": "f4",
                 "Location": 17,
-                "Type": "void (class C &&)"
+                "Signature": "void (class C &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -62,7 +62,7 @@
                 "ByValue": 0,
                 "Identifier": "f4_2",
                 "Location": 18,
-                "Type": "void (class C &&, class C &&)"
+                "Signature": "void (class C &&, class C &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -71,7 +71,7 @@
                 "ByValue": 0,
                 "Identifier": "f5",
                 "Location": 19,
-                "Type": "void (class C &&)"
+                "Signature": "void (class C &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -80,7 +80,7 @@
                 "ByValue": 1,
                 "Identifier": "frp1",
                 "Location": 23,
-                "Type": "void (class C *)"
+                "Signature": "void (class C *)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -89,7 +89,7 @@
                 "ByValue": 0,
                 "Identifier": "frp2",
                 "Location": 24,
-                "Type": "void (class C *&)"
+                "Signature": "void (class C *&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -98,7 +98,7 @@
                 "ByValue": 0,
                 "Identifier": "frp3",
                 "Location": 25,
-                "Type": "void (const class C *&)"
+                "Signature": "void (const class C *&)"
             },
             {
                 "ByConstLvalueRef": 1,
@@ -107,7 +107,7 @@
                 "ByValue": 0,
                 "Identifier": "frp3_1",
                 "Location": 26,
-                "Type": "void (class C *const &)"
+                "Signature": "void (class C *const &)"
             },
             {
                 "ByConstLvalueRef": 1,
@@ -116,7 +116,7 @@
                 "ByValue": 0,
                 "Identifier": "frp3_2",
                 "Location": 27,
-                "Type": "void (const class C *const &)"
+                "Signature": "void (const class C *const &)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -125,7 +125,7 @@
                 "ByValue": 0,
                 "Identifier": "frp4",
                 "Location": 28,
-                "Type": "void (class C *&&)"
+                "Signature": "void (class C *&&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -134,7 +134,7 @@
                 "ByValue": 1,
                 "Identifier": "fp1",
                 "Location": 31,
-                "Type": "void (class C *)"
+                "Signature": "void (class C *)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -143,7 +143,7 @@
                 "ByValue": 1,
                 "Identifier": "fp2",
                 "Location": 32,
-                "Type": "void (const class C *)"
+                "Signature": "void (const class C *)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -152,7 +152,7 @@
                 "ByValue": 1,
                 "Identifier": "fp3",
                 "Location": 33,
-                "Type": "void (class C *const)"
+                "Signature": "void (class C *const)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -161,7 +161,7 @@
                 "ByValue": 1,
                 "Identifier": "fp4",
                 "Location": 34,
-                "Type": "void (const class C *const)"
+                "Signature": "void (const class C *const)"
             }
         ],
         "parameters": [

@@ -1,0 +1,56 @@
+{
+    "fpa": {
+        "functions": [
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 1,
+                "Identifier": "f1",
+                "Location": 14,
+                "Signature": "void (D)"
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 1,
+                "Identifier": "f1",
+                "Location": 15,
+                "Signature": "void (const D)"
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 1,
+                "Identifier": "func",
+                "Location": 17,
+                "Signature": "void (int *)"
+            }
+        ],
+        "parameters": [
+            {
+                "Identifier": "c",
+                "Kind": 0,
+                "Location": 14,
+                "Type": "class C",
+                "isInstantiationDependent": false
+            },
+            {
+                "Identifier": "c",
+                "Kind": 0,
+                "Location": 15,
+                "Type": "const class C",
+                "isInstantiationDependent": false
+            },
+            {
+                "Identifier": "a",
+                "Kind": 0,
+                "Location": 17,
+                "Type": "int *",
+                "isInstantiationDependent": false
+            }
+        ]
+    }
+}

@@ -9,7 +9,7 @@
                 "ByValue": 0,
                 "Identifier": "move_cpp11",
                 "Location": 17,
-                "Type": "typename std::remove_reference<T>::type &&(T &&) noexcept"
+                "Signature": "typename std::remove_reference<T>::type &&(T &&) noexcept"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -19,7 +19,7 @@
                 "ByValue": 0,
                 "Identifier": "move_cpp14",
                 "Location": 21,
-                "Type": "std::remove_reference_t<T> &&(T &&) noexcept"
+                "Signature": "std::remove_reference_t<T> &&(T &&) noexcept"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -29,7 +29,7 @@
                 "ByValue": 0,
                 "Identifier": "forward_cpp11l",
                 "Location": 28,
-                "Type": "T &&(typename std::remove_reference<T>::type &) noexcept"
+                "Signature": "T &&(typename std::remove_reference<T>::type &) noexcept"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -39,7 +39,7 @@
                 "ByValue": 0,
                 "Identifier": "forward_cpp14l",
                 "Location": 31,
-                "Type": "T &&(std::remove_reference_t<T> &) noexcept"
+                "Signature": "T &&(std::remove_reference_t<T> &) noexcept"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -49,7 +49,7 @@
                 "ByValue": 0,
                 "Identifier": "forward_cpp11r",
                 "Location": 34,
-                "Type": "T &&(typename std::remove_reference<T>::type &&) noexcept"
+                "Signature": "T &&(typename std::remove_reference<T>::type &&) noexcept"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -59,7 +59,7 @@
                 "ByValue": 0,
                 "Identifier": "forward_cpp14r",
                 "Location": 37,
-                "Type": "T &&(std::remove_reference_t<T> &&) noexcept"
+                "Signature": "T &&(std::remove_reference_t<T> &&) noexcept"
             }
         ],
         "parameters": [
@@ -67,42 +67,42 @@
                 "Identifier": "t",
                 "Kind": 4,
                 "Location": 19,
-                "Type": "T &&",
+                "Type": "type-parameter-0-0 &&",
                 "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 4,
                 "Location": 23,
-                "Type": "T &&",
+                "Type": "type-parameter-0-0 &&",
                 "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 1,
                 "Location": 29,
-                "Type": "typename std::remove_reference<T>::type &",
+                "Type": "typename remove_reference<type-parameter-0-0>::type &",
                 "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 1,
                 "Location": 32,
-                "Type": "std::remove_reference_t<T> &",
+                "Type": "typename remove_reference<type-parameter-0-0>::type &",
                 "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 3,
                 "Location": 35,
-                "Type": "typename std::remove_reference<T>::type &&",
+                "Type": "typename remove_reference<type-parameter-0-0>::type &&",
                 "isInstantiationDependent": true
             },
             {
                 "Identifier": "t",
                 "Kind": 3,
                 "Location": 38,
-                "Type": "std::remove_reference_t<T> &&",
+                "Type": "typename remove_reference<type-parameter-0-0>::type &&",
                 "isInstantiationDependent": true
             }
         ]

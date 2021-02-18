@@ -8,7 +8,7 @@
                 "ByValue": 1,
                 "Identifier": "func1",
                 "Location": 11,
-                "Type": "void (int)"
+                "Signature": "void (int)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -17,7 +17,7 @@
                 "ByValue": 0,
                 "Identifier": "func2",
                 "Location": 15,
-                "Type": "void (int &&)"
+                "Signature": "void (int &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -26,7 +26,7 @@
                 "ByValue": 0,
                 "Identifier": "func3",
                 "Location": 19,
-                "Type": "void (int &)"
+                "Signature": "void (int &)"
             }
         ],
         "function templates": [
@@ -38,7 +38,7 @@
                 "ByValue": 1,
                 "Identifier": "func1",
                 "Location": 10,
-                "Type": "void (T)"
+                "Signature": "void (T)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -48,7 +48,7 @@
                 "ByValue": 0,
                 "Identifier": "func2",
                 "Location": 14,
-                "Type": "void (int &&)"
+                "Signature": "void (int &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -58,7 +58,7 @@
                 "ByValue": 0,
                 "Identifier": "func3",
                 "Location": 18,
-                "Type": "void (T &&)"
+                "Signature": "void (T &&)"
             }
         ],
         "parameters": [
@@ -66,7 +66,7 @@
                 "Identifier": "t",
                 "Kind": 0,
                 "Location": 11,
-                "Type": "T",
+                "Type": "type-parameter-0-0",
                 "isInstantiationDependent": true
             },
             {
@@ -80,7 +80,7 @@
                 "Identifier": "t",
                 "Kind": 4,
                 "Location": 19,
-                "Type": "T &&",
+                "Type": "type-parameter-0-0 &&",
                 "isInstantiationDependent": true
             },
             {

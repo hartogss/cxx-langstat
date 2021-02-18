@@ -9,7 +9,7 @@
                 "ByValue": 0,
                 "Identifier": "f",
                 "Location": 14,
-                "Type": "void (void)"
+                "Signature": "void (void)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -19,7 +19,7 @@
                 "ByValue": 1,
                 "Identifier": "f1",
                 "Location": 18,
-                "Type": "void (class C)"
+                "Signature": "void (class C)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -29,7 +29,7 @@
                 "ByValue": 0,
                 "Identifier": "f2",
                 "Location": 21,
-                "Type": "void (class C &)"
+                "Signature": "void (class C &)"
             },
             {
                 "ByConstLvalueRef": 1,
@@ -39,7 +39,7 @@
                 "ByValue": 0,
                 "Identifier": "f3",
                 "Location": 24,
-                "Type": "void (const class C &)"
+                "Signature": "void (const class C &)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -49,7 +49,7 @@
                 "ByValue": 0,
                 "Identifier": "f4",
                 "Location": 27,
-                "Type": "void (class C &&)"
+                "Signature": "void (class C &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -59,7 +59,7 @@
                 "ByValue": 0,
                 "Identifier": "f5",
                 "Location": 30,
-                "Type": "void (T &&)"
+                "Signature": "void (T &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -69,7 +69,7 @@
                 "ByValue": 0,
                 "Identifier": "f5",
                 "Location": 33,
-                "Type": "void (const T &&)"
+                "Signature": "void (const T &&)"
             },
             {
                 "ByConstLvalueRef": 0,
@@ -79,7 +79,7 @@
                 "ByValue": 0,
                 "Identifier": "f5",
                 "Location": 36,
-                "Type": "void (std::vector<T> &&)"
+                "Signature": "void (std::vector<T> &&)"
             }
         ],
         "parameters": [
@@ -115,21 +115,21 @@
                 "Identifier": "param",
                 "Kind": 4,
                 "Location": 31,
-                "Type": "T &&",
+                "Type": "type-parameter-0-0 &&",
                 "isInstantiationDependent": true
             },
             {
                 "Identifier": "param",
                 "Kind": 3,
                 "Location": 34,
-                "Type": "const T &&",
+                "Type": "const type-parameter-0-0 &&",
                 "isInstantiationDependent": true
             },
             {
                 "Identifier": "param",
                 "Kind": 3,
                 "Location": 37,
-                "Type": "std::vector<T> &&",
+                "Type": "vector<type-parameter-0-0, allocator<type-parameter-0-0> > &&",
                 "isInstantiationDependent": true
             }
         ]
