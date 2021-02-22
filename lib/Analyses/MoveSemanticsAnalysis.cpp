@@ -39,9 +39,10 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
         forEachArgumentWithParam(
             // Argument is something that has to be constructed
             cxxConstructExpr().bind("arg"),
-            // Don't care about the type of the parameter, will be constructed
-            // by constructor call anyway
-            parmVarDecl(isExpansionInMainFile()).bind("parm")))
+            // Type of parameter should by-value
+            parmVarDecl(
+                hasType(type(unless(referenceType()))),
+                isExpansionInMainFile()).bind("parm")))
             .bind("callexpr");
     auto Res = Extractor.extract2(*Context, m);
     auto Args = getASTNodes<clang::CXXConstructExpr>(Res, "arg");
