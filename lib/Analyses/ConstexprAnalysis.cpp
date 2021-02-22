@@ -22,7 +22,7 @@ void ConstexprAnalysis::extractFeatures(){
     PP.SuppressTagKeyword = false;
     PP.SuppressScope = false;
     PP.SuppressUnwrittenScope = false;
-    PP.FullyQualifiedName = true;
+    PP.FullyQualifiedName = true; // only effect for function decls!
 
     //
     internal::VariadicDynCastAllOfMatcher<Decl, DecompositionDecl>
@@ -42,7 +42,7 @@ void ConstexprAnalysis::extractFeatures(){
         removeDuplicateMatches(Var);
     for(auto v : Var)
         Variables.emplace_back(CEDecl(v.Location, v.Node->isConstexpr(),
-            getMatchDeclName(v), v.Node->getType().getAsString(PP)));
+            v.getDeclName(PP), v.Node->getType().getAsString(PP)));
     //
     auto fr = Extractor.extract2(*Context,
         functionDecl(isExpansionInMainFile(),
@@ -53,7 +53,7 @@ void ConstexprAnalysis::extractFeatures(){
     auto Func = getASTNodes<clang::FunctionDecl>(fr, "f");
     for(auto v : Func)
         NonMemberFunctions.emplace_back(CEDecl(v.Location, v.Node->isConstexpr(),
-            getMatchDeclName(v), v.Node->getType().getAsString(PP)));
+            v.getDeclName(PP), v.Node->getType().getAsString(PP)));
     //
     auto mr = Extractor.extract2(*Context,
         cxxMethodDecl(
@@ -64,7 +64,7 @@ void ConstexprAnalysis::extractFeatures(){
     auto Method = getASTNodes<clang::FunctionDecl>(mr, "m");
     for(auto v : Method)
         MemberFunctions.emplace_back(CEDecl(v.Location, v.Node->isConstexpr(),
-            getMatchDeclName(v), v.Node->getType().getAsString(PP)));
+            v.getDeclName(PP), v.Node->getType().getAsString(PP)));
     //
     auto ir = Extractor.extract2(*Context,
         ifStmt(isExpansionInMainFile())

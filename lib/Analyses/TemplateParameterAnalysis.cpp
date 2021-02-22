@@ -81,6 +81,14 @@ void from_json(const nlohmann::json& j, Template& t){
 
 void TemplateParameterAnalysis::gatherData(const Matches<Decl>& Matches,
     std::string TemplateKind){
+    LangOptions LO;
+    PrintingPolicy PP(LO);
+    PP.PrintCanonicalTypes = true;
+    PP.SuppressTagKeyword = false;
+    PP.SuppressScope = false;
+    PP.SuppressUnwrittenScope = false;
+    PP.FullyQualifiedName = true;
+
     ordered_json Templates;
     for(auto match : Matches){
         Template Template;
@@ -106,7 +114,7 @@ void TemplateParameterAnalysis::gatherData(const Matches<Decl>& Matches,
         assert(Parms.NumParms() != 0);
         Template.Parms = Parms;
         nlohmann::json JSONTemplate = Template;
-        Templates[getMatchDeclName(match)].emplace_back(JSONTemplate);
+        Templates[match.getDeclName(PP)].emplace_back(JSONTemplate);
     }
     Features[TemplateKind] = Templates;
 }

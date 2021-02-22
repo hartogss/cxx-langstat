@@ -2,14 +2,18 @@
     "cca": {
         "fdecls": {
             "func": [
-                1,
                 1
             ],
-            "test": [
+            "func<int>": [
+                1
+            ],
+            "test<class std::__1::vector<int, class std::__1::allocator<int> > >": [
                 2
             ],
             "test2": [
-                2,
+                2
+            ],
+            "test2<int [42]>": [
                 2
             ]
         }

@@ -2,7 +2,7 @@
     "cea": {
         "vars": [
             {
-                "Identifier": "var",
+                "Identifier": "var<int>",
                 "Location": 14,
                 "Type": "int",
                 "isConstexpr": false
@@ -20,7 +20,7 @@
                 "isConstexpr": true
             },
             {
-                "Identifier": "varc",
+                "Identifier": "varc<int>",
                 "Location": 17,
                 "Type": "const int",
                 "isConstexpr": true

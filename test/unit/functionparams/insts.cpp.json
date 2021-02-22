@@ -6,7 +6,7 @@
                 "ByNonConstLvalueRef": 0,
                 "ByRvalueRef": 0,
                 "ByValue": 1,
-                "Identifier": "func1",
+                "Identifier": "func1<int>",
                 "Location": 11,
                 "Signature": "void (int)"
             },
@@ -15,7 +15,7 @@
                 "ByNonConstLvalueRef": 0,
                 "ByRvalueRef": 1,
                 "ByValue": 0,
-                "Identifier": "func2",
+                "Identifier": "func2<3>",
                 "Location": 15,
                 "Signature": "void (int &&)"
             },
@@ -24,7 +24,7 @@
                 "ByNonConstLvalueRef": 1,
                 "ByRvalueRef": 0,
                 "ByValue": 0,
-                "Identifier": "func3",
+                "Identifier": "func3<int &>",
                 "Location": 19,
                 "Signature": "void (int &)"
             }

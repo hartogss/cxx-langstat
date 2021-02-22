@@ -10,6 +10,7 @@
 
 #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 
+using namespace clang;
 using namespace clang::ast_matchers;
 using ordered_json = nlohmann::ordered_json;
 
@@ -37,6 +38,15 @@ void CyclomaticComplexityAnalysis::analyzeFeatures(){
             Context, clang::CFG::BuildOptions()
         );
         // FIXME: remove this if we don't compute CYC of function templates in the future anyway.
+
+        LangOptions LO;
+        PrintingPolicy PP(LO);
+        PP.PrintCanonicalTypes = true;
+        PP.SuppressTagKeyword = false;
+        PP.SuppressScope = false;
+        PP.SuppressUnwrittenScope = false;
+        PP.FullyQualifiedName = true;
+
         if(cfg){
             // Wanna print the cfgs? Don't, they're ugly.
             // llvm::raw_os_ostream OS(std::cout);
@@ -49,9 +59,9 @@ void CyclomaticComplexityAnalysis::analyzeFeatures(){
                 numEdges += (*block)->succ_size();
             unsigned CYC = numEdges - numNodes + 2; // 2 since #connected components P=1
             // Use emplace back because of overloading
-            fdecls[getMatchDeclName(match)].emplace_back(CYC);
+            fdecls[match.getDeclName(PP)].emplace_back(CYC);
         } else {
-            std::cout << "\"" << getMatchDeclName(match) << "\" of type \""
+            std::cout << "\"" << match.getDeclName(PP) << "\" of type \""
             << cast<clang::FunctionDecl>(match.Node)->getType().getAsString()
             << "\" could not be analyzed. This is likely because this function "
                 "is part of a function template.\n";

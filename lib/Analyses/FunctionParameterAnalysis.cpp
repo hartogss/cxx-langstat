@@ -86,7 +86,7 @@ void FunctionParameterAnalysis::associateParameters(const Matches<T>& Matches){
         PP.FullyQualifiedName = true;
 
         Info.Location = match.Location;
-        Info.Identifier = getMatchDeclName(match);
+        Info.Identifier = match.getDeclName(PP);
         Info.Signature = Func->getType().getAsString();
 
         // For each parameter of the function

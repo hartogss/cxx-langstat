@@ -176,9 +176,6 @@ void TemplateInstantiationAnalysis::extractFeatures() {
         auto FuncResults = Extractor.extract2(*Context, FuncInstMatcher);
         FuncInsts = getASTNodes<FunctionDecl>(FuncResults, "FuncInsts");
         Callers = getASTNodes<CallExpr>(FuncResults, "callers");
-        // for(int i=0; i<FuncInsts.size(); i++){
-        //     std::cout << getMatchDeclName(FuncInsts[i]) << " @ " << Callers[i].Location << std::endl;
-        // }
     }
 
     // Same behavior as with classTemplates: gives pointer to a
@@ -373,8 +370,10 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
         PP.SuppressScope = false;
         PP.SuppressUnwrittenScope = false;
         PP.FullyQualifiedName = true;
+        PP.Bool = true;
         std::string DeclName;
         llvm::raw_string_ostream stream(DeclName);
+        // FIXME: use match.getDeclName instead
         match.Node->printQualifiedName(stream, PP);
         // std::cout << DeclName << ":" << match.Node->getSpecializationKind() << std::endl;
         std::cout << DeclName << std::endl;
