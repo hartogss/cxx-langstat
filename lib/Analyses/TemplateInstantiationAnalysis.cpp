@@ -239,35 +239,77 @@ getTemplateArgs(const Match<FunctionDecl>& Match){
 // to the mapping.
 void updateArgsAndKinds(const TemplateArgument& TArg,
     std::multimap<std::string, std::string>& TArgs) {
+        LangOptions LO;
+        PrintingPolicy PP(LO);
+        PP.PrintCanonicalTypes = true;
+        PP.SuppressTagKeyword = true;
+        PP.SuppressScope = false;
+        PP.SuppressUnwrittenScope = false;
+        PP.FullyQualifiedName = true;
+        PP.Bool = true;
+
         std::string Result;
         llvm::raw_string_ostream stream(Result);
+        // std::cout << TArg.isPackExpansion() << std::endl;
+        // std::cout << TArg.containsUnexpandedParameterPack() << std::endl;
+
         switch (TArg.getKind()){
+            // ** Type **
             case TemplateArgument::Type:
-                TArg.dump(stream);
-                TArgs.emplace("type", Result);
+                std::cout << "type\n";
+                TArgs.emplace("type", TArg.getAsType().getAsString(PP));
                 break;
-            case TemplateArgument::Expression:
-                std::cout << "expr";
-                std::cout << std::endl;
-                break;
-            case TemplateArgument::Null:
-            case TemplateArgument::NullPtr:
+
+            // ** Non-type **
+            // Declaration
             case TemplateArgument::Declaration:
+                std::cout << "decl\n";
+                cast<clang::NamedDecl>(TArg.getAsDecl())->printQualifiedName(stream, PP);
+                TArgs.emplace("non-type", Result);
+                break;
+            // nullptr
+            // FIXME: report type of nullptr, e.g. nullptr to class XY etc.
+            case TemplateArgument::NullPtr:
+                std::cout << "nullptr\n";
+                TArgs.emplace("non-type", "nullptr");
+                break;
+            // Integers/Integrals
             case TemplateArgument::Integral:
+                std::cout << "integral\n";
+                // just dump that stuff, don't want to deal with llvm::APSInt
                 TArg.dump(stream);
                 TArgs.emplace("non-type", Result);
                 break;
+
+            // ** Template **
+            // Template
             case TemplateArgument::Template:
-                TArg.dump(stream);
+                std::cout << "template\n";
+                TArg.getAsTemplate().print(stream, PP);
                 TArgs.emplace("template", Result);
                 break;
+            // TemplateExpansion
+            // FIXME: what to do in this case
+            case TemplateArgument::TemplateExpansion:
+                std::cout << "TemplateExpansion\n";
+                break;
+            // Pack
             case TemplateArgument::Pack:
+                std::cout << "pack\n";
                 for(auto it=TArg.pack_begin(); it!=TArg.pack_end(); it++)
                     updateArgsAndKinds(*it, TArgs);
                 break;
-            // Still two cases missing:
-            // case TemplateArgument::TemplateExpansion
-            // case TemplateArgument::Expression
+
+            // ** Miscellaneous **
+            // FIXME: what to do in these cases?
+            // Expression
+            case TemplateArgument::Expression:
+                std::cout << "expr\n";
+                break;
+            // Null
+            case TemplateArgument::Null:
+                std::cout << "null\n";
+                break;
         }
 }
 
@@ -324,7 +366,18 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
     const std::array<std::string, 3> ArgKinds = {"non-type", "type", "template"};
     ordered_json instances;
     for(auto match : Insts){
-        // std::cout << getMatchDeclName(match) << ":" << match.Node->getSpecializationKind() << std::endl;
+        LangOptions LO;
+        PrintingPolicy PP(LO);
+        PP.PrintCanonicalTypes = true;
+        PP.SuppressTagKeyword = true;
+        PP.SuppressScope = false;
+        PP.SuppressUnwrittenScope = false;
+        PP.FullyQualifiedName = true;
+        std::string DeclName;
+        llvm::raw_string_ostream stream(DeclName);
+        match.Node->printQualifiedName(stream, PP);
+        // std::cout << DeclName << ":" << match.Node->getSpecializationKind() << std::endl;
+        std::cout << DeclName << std::endl;
         std::multimap<std::string, std::string> TArgs;
         const TemplateArgumentList* TALPtr(getTemplateArgs(match));
         // Only report instantiation if it had any arguments it was instantiated
@@ -348,9 +401,9 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
             }
             instance["arguments"] = arguments;
             // Use emplace instead of '=' because can be mult. insts for a template
-            instances[getMatchDeclName(match)].emplace_back(instance);
+            instances[DeclName].emplace_back(instance);
         } else {
-            std::cout << getMatchDeclName(match) << " had no inst args\n";
+            std::cout << DeclName << " had no inst args\n";
             // FIXME: find more elegant solution
             // No TAL -> skip a function call in reporting -> increase counter
             // to get correct call for each object in FuncInst
