@@ -23,7 +23,7 @@ void ConstexprAnalysis::extractFeatures(){
     PP.SuppressScope = false;
     PP.SuppressUnwrittenScope = false;
     PP.FullyQualifiedName = true; // only effect for function decls!
-
+    PP.Bool = true;
     //
     internal::VariadicDynCastAllOfMatcher<Decl, DecompositionDecl>
         decompositionDecl;

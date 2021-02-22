@@ -84,7 +84,7 @@ void FunctionParameterAnalysis::associateParameters(const Matches<T>& Matches){
         PP.SuppressScope = false;
         PP.SuppressUnwrittenScope = false;
         PP.FullyQualifiedName = true;
-
+        PP.Bool = true;
         Info.Location = match.Location;
         Info.Identifier = match.getDeclName(PP);
         Info.Signature = Func->getType().getAsString();
