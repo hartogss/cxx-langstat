@@ -12,6 +12,18 @@ using ordered_json = nlohmann::ordered_json;
 //-----------------------------------------------------------------------------
 
 void ConstexprAnalysis::extractFeatures(){
+
+    // Printing policy for printing parameter types
+    LangOptions LO;
+    PrintingPolicy PP(LO);
+    // Causes some problems with instantiation-dependent types, namely
+    // that no qualifications are printed
+    PP.PrintCanonicalTypes = true;
+    PP.SuppressTagKeyword = false;
+    PP.SuppressScope = false;
+    PP.SuppressUnwrittenScope = false;
+    PP.FullyQualifiedName = true;
+
     //
     internal::VariadicDynCastAllOfMatcher<Decl, DecompositionDecl>
         decompositionDecl;
@@ -30,7 +42,7 @@ void ConstexprAnalysis::extractFeatures(){
         removeDuplicateMatches(Var);
     for(auto v : Var)
         Variables.emplace_back(CEDecl(v.Location, v.Node->isConstexpr(),
-            getMatchDeclName(v), v.Node->getType().getCanonicalType().getAsString()));
+            getMatchDeclName(v), v.Node->getType().getAsString(PP)));
     //
     auto fr = Extractor.extract2(*Context,
         functionDecl(isExpansionInMainFile(),
@@ -41,7 +53,7 @@ void ConstexprAnalysis::extractFeatures(){
     auto Func = getASTNodes<clang::FunctionDecl>(fr, "f");
     for(auto v : Func)
         NonMemberFunctions.emplace_back(CEDecl(v.Location, v.Node->isConstexpr(),
-            getMatchDeclName(v), v.Node->getType().getCanonicalType().getAsString()));
+            getMatchDeclName(v), v.Node->getType().getAsString(PP)));
     //
     auto mr = Extractor.extract2(*Context,
         cxxMethodDecl(
@@ -52,7 +64,7 @@ void ConstexprAnalysis::extractFeatures(){
     auto Method = getASTNodes<clang::FunctionDecl>(mr, "m");
     for(auto v : Method)
         MemberFunctions.emplace_back(CEDecl(v.Location, v.Node->isConstexpr(),
-            getMatchDeclName(v), v.Node->getType().getCanonicalType().getAsString()));
+            getMatchDeclName(v), v.Node->getType().getAsString(PP)));
     //
     auto ir = Extractor.extract2(*Context,
         ifStmt(isExpansionInMainFile())
