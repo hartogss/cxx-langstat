@@ -107,25 +107,6 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
     std::vector<std::string> OutputFiles, Stage Stage, std::string Analyses,
     std::string BuildPath, std::shared_ptr<CompilationDatabase> db){
 
-    std::cout << "input files(" << InputFiles.size() << "): ";
-    for(const auto& InputFile : InputFiles){
-        std::cout << InputFile << " ";
-        if(StringRef(InputFile).consume_back("/")){
-            std::cout << "Specified input dir, quitting.. \n";
-            exit(1);
-        }
-    }
-    std::cout << '\n';
-    std::cout << "output files(" << OutputFiles.size() << "): ";
-    for(const auto& OutputFile : OutputFiles){
-        std::cout << OutputFile << " ";
-        if(StringRef(OutputFile).consume_back("/")){
-            std::cout << "Specified output dir, quitting.. \n";
-            exit(1);
-        }
-    }
-    std::cout << '\n';
-
     // Create custom options object for registry
     CXXLangstatOptions Opts(Stage, OutputFiles, Analyses);
     AnalysisRegistry* Registry = new AnalysisRegistry(Opts);

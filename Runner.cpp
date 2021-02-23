@@ -18,7 +18,7 @@ using namespace clang::tooling;
 // Global variables
 // Options in CLI specific to cxx-langstat
 llvm::cl::OptionCategory CXXLangstatCategory("cxx-langstat options", "");
-llvm::cl::OptionCategory IOCategory("Input/output options", "");
+llvm::cl::OptionCategory IOCategory("cxx-langstat i/o options", "");
 
 // llvm::cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
 // llvm::cl::extrahelp MoreHelp("\nMore help text coming soon...\n");
@@ -189,7 +189,7 @@ int ParallelEmitFeatures(std::vector<std::string> InputFiles,
             if(idx < JobsWith1Excess){
                 Work++;
             }
-            std::cout << b << ", " << b+Work << std::endl;
+            // std::cout << b << ", " << b+Work << std::endl;
             std::vector<std::string> In(InputFiles.begin() + b,
                 InputFiles.begin() + b + Work);
             std::vector<std::string> Out(OutputFiles.begin() + b,
@@ -241,9 +241,8 @@ int main(int argc, char** argv){
     bool Files = !InputFilesOption.empty();
     bool Dir = !InputDirOption.empty();
     if(Files && Dir){
-        std::cout << "Don't specify both input files and directory "
-            "at the same time\n";
-        exit(1);
+        assert(false && "Don't specify input files and directory "
+            "at the same time\n");
     }
 
     // Ensure dirs end with "/"
@@ -259,7 +258,6 @@ int main(int argc, char** argv){
         std::sort(InputFiles.begin(), InputFiles.end());
     }
 
-
     // When multiple output files are a fact (multiple input files) or very
     // likely (input dir), require OutputDirOption instead of OutputFileOption to be used.
     // OutputFiles can only be used when it is guaranteed to be only a single output file.
@@ -267,7 +265,7 @@ int main(int argc, char** argv){
     if(PipelineStage == emit_features){
         if(Files && InputFiles.size() == 1){  // single file
             if(!OutputDirOption.empty()){ // may not specify output dir
-                exit(1);
+                assert(false && "Don't specify an output dir for a single output\n");
             }
             if(!OutputFileOption.empty()){ // place at output file specified
                 OutputFiles.emplace_back(OutputFileOption);
@@ -277,10 +275,10 @@ int main(int argc, char** argv){
             }
         } else if((Files && InputFiles.size() > 1) || Dir) { // multiple files
                 if(!OutputFileOption.empty()){ // may not specify output file
-                    exit(1);
+                    assert(false && "Don't specify an output file when multiple outputs are expected\n");
                 }
                 if(OutputDirOption.empty()){ // obliged to specify output dir
-                    exit(1);
+                    assert(false && "Please specify an output dir\n");
                 } else {
                     for(const auto& File : InputFiles){ // place at output dir specified
                         StringRef filename = llvm::sys::path::filename(File);
@@ -289,11 +287,11 @@ int main(int argc, char** argv){
                 }
             }
         assert(InputFiles.size() == OutputFiles.size());
-    // When -emit-features option is not used, only zero or one output file is ok.
+    // When -emit-statistics option is used, only zero or one output file is ok.
     // Output dir is not ok, since the output is guaranteed to be only a single file.
-    } else {
+    } else if(PipelineStage == emit_statistics){
         if(!OutputDirOption.empty())
-            exit(1);
+            assert(false && "Don't specify an output dir for a single output\n");
         if(OutputFileOption.empty()){
             OutputFiles.emplace_back("./stats.json");
         }
@@ -302,26 +300,18 @@ int main(int argc, char** argv){
         assert(OutputFiles.size() == 1);
     }
 
+    // Now we know all input and output files
     std::cout << "input files(" << InputFiles.size() << "): ";
     for(const auto& InputFile : InputFiles){
-        std::cout << InputFile << " ";
+        std::cout << InputFile << '\n';
         if(StringRef(InputFile).consume_back("/")){
             std::cout << "Specified input dir, quitting.. \n";
             exit(1);
         }
     }
-    std::cout << '\n';
-    std::cout << "output files(" << OutputFiles.size() << "): ";
-    for(const auto& OutputFile : OutputFiles){
-        std::cout << OutputFile << " ";
-        if(StringRef(OutputFile).consume_back("/")){
-            std::cout << "Specified output dir, quitting.. \n";
-            exit(1);
-        }
-    }
-    std::cout << '\n';
-    // CXXLangstatMain(InputFiles, OutputFiles,
-    //     PipelineStage, AnalysesOption, BuildPath, std::move(db));
+
+    // Depending on what stage is requested, emit features in parallel
+    // or emit statistics sequentially
     if(PipelineStage == emit_features){
         ParallelEmitFeatures(InputFiles, OutputFiles, PipelineStage,
             AnalysesOption, BuildPath, db, ParallelismOption);
