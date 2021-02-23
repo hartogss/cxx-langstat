@@ -60,11 +60,13 @@ private:
     //
     unsigned VariablesCounter = 0;
     unsigned CallersCounter = 0;
-    // Regex specifying header names from which the template whose instantiations
-    // we're looking from has to come from.
-    // Don't go specify here two headers that specify something with the same
-    // name, like utility|algorithm and then expect your statistics for std::move
-    // to make sense.
+    // Regex specifying the header that the template comes from, i.e. usually
+    // where it is *defined*. This is important s.t. when the analyzer looks for
+    // instantiations of some template, it is ensured that the instantiation is
+    // not a false positive of some other template having the same name. Note
+    // that when analyzing C++ library templates you might have to dig 
+    // deeper to find the file containing the definition of the template, which
+    // can be an internal header file you usually don't include yourself.
     std::string HeaderRegex;
 };
 

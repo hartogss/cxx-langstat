@@ -37,14 +37,12 @@ MoveSemanticsAnalysis::StdMoveStdForwardUsageAnalyzer::
 StdMoveStdForwardUsageAnalyzer() : TemplateInstantiationAnalysis(
     InstKind::Function,
     clang::ast_matchers::hasAnyName("std::move", "std::forward"),
-    "type_traits" // header where libc++ (LLVM) defines those templates
-    "|"
-    "move" // header where libstdc++ (GNU) defines those templates
-    // Sources:
-    // libc++:
-    // https://github.com/llvm-mirror/libcxx/blob/master/include/type_traits
-    // libstdc++:
-    // https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-api-4.5/a00936_source.html
+    // libc++
+    // https://github.com/llvm/llvm-project/blob/release/11.x/libcxx/include/type_traits#L2613
+    "type_traits|"
+    // libstdc++
+    // https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-api-4.5/a00936.html
+    "move"
     ){
         std::cout << "StdMoveStdForwardUsageAnalyzer\n";
 }

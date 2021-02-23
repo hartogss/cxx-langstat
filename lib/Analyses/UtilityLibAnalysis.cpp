@@ -30,7 +30,15 @@ UtilityLibAnalysis::UtilityLibAnalysis() : TemplateInstantiationAnalysis(
         // Dynamic memory
         "std::unique_ptr", "std::shared_ptr", "std::weak_ptr"
     ),
-    "utility|tuple|bitset|memory"){
+    // libc++:
+    // pair \in <utility>, tuple \in <tuple>, bitset \in <bitset>
+    // all smart pointers \in <memory>
+    "utility|tuple|bitset|memory|"
+    // libstdc++
+    // pair \in <bits/stl_pair.h>, tuple \in <tuple>, bitset \in <bitset>
+    // unique_ptr \in <bits/unique_ptr.h>
+    // shared_ptr, weak_ptr \in <bits/shared_ptr.h>
+    "bits/stl_pair.h|bits/unique_ptr.h|bits/shared_ptr.h"){
     std::cout << "ULA ctor\n";
 }
 

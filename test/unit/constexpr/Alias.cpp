@@ -11,7 +11,7 @@
 
 struct C {};
 
-using D = const C;
+using D = C;
 
 // For some reason, the const-ness in the canonical type of the function is stripped away.
 constexpr void func(const D d);

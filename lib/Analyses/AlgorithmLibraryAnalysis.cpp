@@ -32,7 +32,11 @@ AlgorithmLibraryAnalysis::AlgorithmLibraryAnalysis() : TemplateInstantiationAnal
         // Modifying sequence operations
         "std::move"
     ),
-    "algorithm"
+    // libc++
+    "algorithm|"
+    // libstdc++
+    "bits/stl_algo.h|"
+    "bits/stl_algobase.h"
     ){
     std::cout << "ALA ctor\n";
 }
