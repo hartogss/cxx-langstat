@@ -32,6 +32,31 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(CallExprInfo, Location);
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConstructInfo, CallExpr, Parameter);
 
 
+// ** StdMoveStdForwardUsageAnalyzer **
+MoveSemanticsAnalysis::StdMoveStdForwardUsageAnalyzer::
+StdMoveStdForwardUsageAnalyzer() : TemplateInstantiationAnalysis(
+    InstKind::Function,
+    clang::ast_matchers::hasAnyName("std::move", "std::forward"),
+    "type_traits" // header where libc++ (LLVM) defines those templates
+    "|"
+    "move" // header where libstdc++ (GNU) defines those templates
+    // Sources:
+    // libc++:
+    // https://github.com/llvm-mirror/libcxx/blob/master/include/type_traits
+    // libstdc++:
+    // https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-api-4.5/a00936_source.html
+    ){
+        std::cout << "StdMoveStdForwardUsageAnalyzer\n";
+}
+void MoveSemanticsAnalysis::StdMoveStdForwardUsageAnalyzer::
+processFeatures(nlohmann::ordered_json j) {
+    if(j.contains(p1desc) && j.at(p1desc).contains("func insts")){
+        typePrevalence(j.at(p1desc).at("func insts"), Statistics);
+    }
+}
+
+
+// ** CopyOrMoveAnalyzer **
 void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
     // Gives us a triad of callexpr, a pass-by-value record type function
     // parameter and the expr that is the argument to that parameter.
@@ -137,7 +162,6 @@ void CopyAndMoveCounts(const ojson& j, ojson& res){
         res["per type"][key]["move"] = val.second;
     }
 }
-
 
 void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::processFeatures(ojson j){
     // std::cout << j.dump(4) << std::endl;

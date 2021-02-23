@@ -39,7 +39,7 @@ struct ConstructInfo {
 // MSA is guaranteed to be called thru analyzeFeatures and processFeatures.
 class MoveSemanticsAnalysis : public Analysis {
 public:
-    MoveSemanticsAnalysis() : p1(MoveAndForwardUsageAnalyzer()){
+    MoveSemanticsAnalysis(){
         std::cout << "MSA ctor\n";
     }
     ~MoveSemanticsAnalysis(){
@@ -56,20 +56,10 @@ private:
     }
 
     // Find how often std::move, std::forward from <utility> are used.
-    class MoveAndForwardUsageAnalyzer : public TemplateInstantiationAnalysis {
+    class StdMoveStdForwardUsageAnalyzer : public TemplateInstantiationAnalysis {
     public:
-        MoveAndForwardUsageAnalyzer() :
-        TemplateInstantiationAnalysis(InstKind::Function,
-            clang::ast_matchers::hasAnyName("std::move", "std::forward"),
-                "type_traits"){ // Why do these seem to be in the type_traits header?
-                // https://stackoverflow.com/questions/59860733/why-is-stdmove-defined-in-type-traits-but-not-in-utility
-                std::cout << "msap1\n";
-        }
-        void processFeatures(nlohmann::ordered_json j) override{
-            if(j.contains(p1desc) && j.at(p1desc).contains("func insts")){
-                typePrevalence(j.at(p1desc).at("func insts"), Statistics);
-            }
-        }
+        StdMoveStdForwardUsageAnalyzer();
+        void processFeatures(nlohmann::ordered_json j) override;
     };
     // Examine when calling functions that pass by value, how often copy and
     // move constructors are used to construct the value of the callee.
@@ -78,8 +68,9 @@ private:
         void analyzeFeatures() override;
         void processFeatures(nlohmann::ordered_json j) override;
     };
+
     // Analyzers run by MSA
-    MoveAndForwardUsageAnalyzer p1;
+    StdMoveStdForwardUsageAnalyzer p1;
     CopyOrMoveAnalyzer p2;
     constexpr static auto p1desc = "std::move, std::forward usage";
     constexpr static auto p2desc = "copy or move construction";
