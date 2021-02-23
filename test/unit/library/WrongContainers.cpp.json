@@ -2,14 +2,14 @@
     "cla": {
         "explicit class insts": null,
         "implicit class insts": {
-            "std::__1::vector": [
+            "std::vector": [
                 {
                     "location": 21,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::allocator<int>"
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
@@ -20,7 +20,7 @@
                         "non-type": [],
                         "type": [
                             "double",
-                            "std::__1::allocator<double>"
+                            "std::allocator<double>"
                         ],
                         "template": []
                     }

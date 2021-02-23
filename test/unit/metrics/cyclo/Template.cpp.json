@@ -7,7 +7,7 @@
             "func<int>": [
                 1
             ],
-            "test<class std::__1::vector<int, class std::__1::allocator<int> > >": [
+            "test<class std::vector<int, class std::allocator<int> > >": [
                 2
             ],
             "test2": [

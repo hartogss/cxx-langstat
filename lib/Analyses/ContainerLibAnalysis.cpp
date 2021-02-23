@@ -39,13 +39,13 @@ namespace {
 
 // Map that for a stdlib type contains how many instantiation type args are
 // intersting to us, e.g. for the instantiation stored in a .json below,
-// "std::__1::vector" : {
+// "std::vector" : {
 //     "location": "42"
 //     "arguments": {
 //         "non-type": [],
 //         "type": [
 //             "int",
-//             "std::__1::allocator<int>"
+//             "std::allocator<int>"
 //         ],
 //         "template": []
 //     }

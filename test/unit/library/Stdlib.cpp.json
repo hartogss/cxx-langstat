@@ -2,7 +2,7 @@
     "cla": {
         "explicit class insts": null,
         "implicit class insts": {
-            "std::__1::array": [
+            "std::array": [
                 {
                     "location": 32,
                     "arguments": {
@@ -28,14 +28,14 @@
                     }
                 }
             ],
-            "std::__1::vector": [
+            "std::vector": [
                 {
                     "location": 34,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::allocator<int>"
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
@@ -46,7 +46,7 @@
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::allocator<int>"
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
@@ -57,39 +57,39 @@
                         "non-type": [],
                         "type": [
                             "double",
-                            "std::__1::allocator<double>"
+                            "std::allocator<double>"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::forward_list": [
+            "std::forward_list": [
                 {
                     "location": 35,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::allocator<int>"
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::list": [
+            "std::list": [
                 {
                     "location": 36,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::allocator<int>"
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::map": [
+            "std::map": [
                 {
                     "location": 37,
                     "arguments": {
@@ -97,14 +97,14 @@
                         "type": [
                             "int",
                             "int",
-                            "std::__1::less<int>",
-                            "std::__1::allocator<std::__1::pair<const int, int> >"
+                            "std::less<int>",
+                            "std::allocator<std::pair<const int, int> >"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::multimap": [
+            "std::multimap": [
                 {
                     "location": 38,
                     "arguments": {
@@ -112,42 +112,42 @@
                         "type": [
                             "int",
                             "int",
-                            "std::__1::less<int>",
-                            "std::__1::allocator<std::__1::pair<const int, int> >"
+                            "std::less<int>",
+                            "std::allocator<std::pair<const int, int> >"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::set": [
+            "std::set": [
                 {
                     "location": 39,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::less<int>",
-                            "std::__1::allocator<int>"
+                            "std::less<int>",
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::multiset": [
+            "std::multiset": [
                 {
                     "location": 40,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::less<int>",
-                            "std::__1::allocator<int>"
+                            "std::less<int>",
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::unordered_map": [
+            "std::unordered_map": [
                 {
                     "location": 41,
                     "arguments": {
@@ -155,15 +155,15 @@
                         "type": [
                             "int",
                             "int",
-                            "std::__1::hash<int>",
-                            "std::__1::equal_to<int>",
-                            "std::__1::allocator<std::__1::pair<const int, int> >"
+                            "std::hash<int>",
+                            "std::equal_to<int>",
+                            "std::allocator<std::pair<const int, int> >"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::unordered_multimap": [
+            "std::unordered_multimap": [
                 {
                     "location": 42,
                     "arguments": {
@@ -171,92 +171,92 @@
                         "type": [
                             "int",
                             "int",
-                            "std::__1::hash<int>",
-                            "std::__1::equal_to<int>",
-                            "std::__1::allocator<std::__1::pair<const int, int> >"
+                            "std::hash<int>",
+                            "std::equal_to<int>",
+                            "std::allocator<std::pair<const int, int> >"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::unordered_set": [
+            "std::unordered_set": [
                 {
                     "location": 43,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::hash<int>",
-                            "std::__1::equal_to<int>",
-                            "std::__1::allocator<int>"
+                            "std::hash<int>",
+                            "std::equal_to<int>",
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::unordered_multiset": [
+            "std::unordered_multiset": [
                 {
                     "location": 44,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::hash<int>",
-                            "std::__1::equal_to<int>",
-                            "std::__1::allocator<int>"
+                            "std::hash<int>",
+                            "std::equal_to<int>",
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::queue": [
+            "std::queue": [
                 {
                     "location": 45,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::deque<int, std::__1::allocator<int> >"
+                            "std::deque<int, std::allocator<int> >"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::priority_queue": [
+            "std::priority_queue": [
                 {
                     "location": 46,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::vector<int, std::__1::allocator<int> >",
-                            "std::__1::less<int>"
+                            "std::vector<int, std::allocator<int> >",
+                            "std::less<int>"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::stack": [
+            "std::stack": [
                 {
                     "location": 47,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::deque<int, std::__1::allocator<int> >"
+                            "std::deque<int, std::allocator<int> >"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::deque": [
+            "std::deque": [
                 {
                     "location": 48,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::allocator<int>"
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
@@ -267,7 +267,7 @@
     "ula": {
         "explicit class insts": null,
         "implicit class insts": {
-            "std::__1::pair": [
+            "std::pair": [
                 {
                     "location": 51,
                     "arguments": {
@@ -291,7 +291,7 @@
                     }
                 }
             ],
-            "std::__1::tuple": [
+            "std::tuple": [
                 {
                     "location": 53,
                     "arguments": {
@@ -316,14 +316,14 @@
                     }
                 }
             ],
-            "std::__1::unique_ptr": [
+            "std::unique_ptr": [
                 {
                     "location": 57,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::default_delete<int>"
+                            "std::default_delete<int>"
                         ],
                         "template": []
                     }
@@ -334,13 +334,13 @@
                         "non-type": [],
                         "type": [
                             "C",
-                            "std::__1::default_delete<C>"
+                            "std::default_delete<C>"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::shared_ptr": [
+            "std::shared_ptr": [
                 {
                     "location": 58,
                     "arguments": {
@@ -352,7 +352,7 @@
                     }
                 }
             ],
-            "std::__1::weak_ptr": [
+            "std::weak_ptr": [
                 {
                     "location": 59,
                     "arguments": {

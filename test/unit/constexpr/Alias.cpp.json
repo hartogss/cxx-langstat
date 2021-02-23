@@ -10,7 +10,7 @@
             {
                 "Identifier": "v",
                 "Location": 29,
-                "Type": "const class std::__1::vector<const struct C, class std::__1::allocator<const struct C> >",
+                "Type": "const class std::vector<const struct C, class std::allocator<const struct C> >",
                 "isConstexpr": false
             }
         ],
@@ -24,7 +24,7 @@
             {
                 "Identifier": "func2",
                 "Location": 19,
-                "Type": "void (const class std::__1::vector<const struct C, class std::__1::allocator<const struct C> > &&)",
+                "Type": "void (const class std::vector<const struct C, class std::allocator<const struct C> > &&)",
                 "isConstexpr": false
             },
             {

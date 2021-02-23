@@ -44,7 +44,7 @@ void CyclomaticComplexityAnalysis::analyzeFeatures(){
         PP.PrintCanonicalTypes = true;
         PP.SuppressTagKeyword = false;
         PP.SuppressScope = false;
-        PP.SuppressUnwrittenScope = false;
+        PP.SuppressUnwrittenScope = true;
         PP.FullyQualifiedName = true;
 
         if(cfg){

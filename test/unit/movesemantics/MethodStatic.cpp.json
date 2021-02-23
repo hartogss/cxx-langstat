@@ -2,7 +2,7 @@
     "msa": {
         "std::move, std::forward usage": {
             "func insts": {
-                "std::__1::move": [
+                "std::move": [
                     {
                         "location": 23,
                         "arguments": {

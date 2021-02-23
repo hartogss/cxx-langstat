@@ -21,7 +21,7 @@ void ConstexprAnalysis::extractFeatures(){
     PP.PrintCanonicalTypes = true;
     PP.SuppressTagKeyword = false;
     PP.SuppressScope = false;
-    PP.SuppressUnwrittenScope = false;
+    PP.SuppressUnwrittenScope = true;
     PP.FullyQualifiedName = true; // only effect for function decls!
     PP.Bool = true;
     //

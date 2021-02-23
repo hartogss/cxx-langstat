@@ -86,7 +86,7 @@ void TemplateParameterAnalysis::gatherData(const Matches<Decl>& Matches,
     PP.PrintCanonicalTypes = true;
     PP.SuppressTagKeyword = false;
     PP.SuppressScope = false;
-    PP.SuppressUnwrittenScope = false;
+    PP.SuppressUnwrittenScope = true;
     PP.FullyQualifiedName = true;
     PP.Bool = true;
     ordered_json Templates;

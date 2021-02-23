@@ -241,7 +241,7 @@ void updateArgsAndKinds(const TemplateArgument& TArg,
         PP.PrintCanonicalTypes = true;
         PP.SuppressTagKeyword = true;
         PP.SuppressScope = false;
-        PP.SuppressUnwrittenScope = false;
+        PP.SuppressUnwrittenScope = true;
         PP.FullyQualifiedName = true;
         PP.Bool = true;
 
@@ -368,7 +368,7 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
         PP.PrintCanonicalTypes = true;
         PP.SuppressTagKeyword = true;
         PP.SuppressScope = false;
-        PP.SuppressUnwrittenScope = false;
+        PP.SuppressUnwrittenScope = true;
         PP.FullyQualifiedName = true;
         PP.Bool = true;
         std::string DeclName;

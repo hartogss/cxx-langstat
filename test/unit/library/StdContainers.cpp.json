@@ -2,14 +2,14 @@
     "cla": {
         "explicit class insts": null,
         "implicit class insts": {
-            "std::__1::vector": [
+            "std::vector": [
                 {
                     "location": 30,
                     "arguments": {
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::allocator<int>"
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
@@ -20,7 +20,7 @@
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::allocator<int>"
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
@@ -31,7 +31,7 @@
                         "non-type": [],
                         "type": [
                             "double",
-                            "std::__1::allocator<double>"
+                            "std::allocator<double>"
                         ],
                         "template": []
                     }
@@ -41,7 +41,7 @@
                     "arguments": {
                         "non-type": [],
                         "type": [
-                            "std::__1::allocator<bool>"
+                            "std::allocator<bool>"
                         ],
                         "template": []
                     }
@@ -52,7 +52,7 @@
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::allocator<int>"
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
@@ -63,13 +63,13 @@
                         "non-type": [],
                         "type": [
                             "int",
-                            "std::__1::allocator<int>"
+                            "std::allocator<int>"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::array": [
+            "std::array": [
                 {
                     "location": 41,
                     "arguments": {
@@ -125,13 +125,13 @@
                             "3"
                         ],
                         "type": [
-                            "std::__1::vector<int, std::__1::allocator<int> >"
+                            "std::vector<int, std::allocator<int> >"
                         ],
                         "template": []
                     }
                 }
             ],
-            "std::__1::map": [
+            "std::map": [
                 {
                     "location": 47,
                     "arguments": {
@@ -139,8 +139,8 @@
                         "type": [
                             "float",
                             "n::vector",
-                            "std::__1::less<float>",
-                            "std::__1::allocator<std::__1::pair<const float, n::vector> >"
+                            "std::less<float>",
+                            "std::allocator<std::pair<const float, n::vector> >"
                         ],
                         "template": []
                     }
