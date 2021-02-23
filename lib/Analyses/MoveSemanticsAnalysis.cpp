@@ -42,7 +42,7 @@ StdMoveStdForwardUsageAnalyzer() : TemplateInstantiationAnalysis(
     "type_traits|"
     // libstdc++
     // https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-api-4.5/a00936.html
-    "move"
+    "bits/move.h"
     ){
         std::cout << "StdMoveStdForwardUsageAnalyzer\n";
 }
