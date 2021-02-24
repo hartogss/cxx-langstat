@@ -7,15 +7,26 @@ It uses clang's ASTMatchers library in combination with LibTooling to analyze us
 ### Requirements
 - [LLVM](http://llvm.org) 11 including clang
 - [JSON for Modern C++](https://github.com/nlohmann/json)
+- Build system: `ninja`, `make` etc.
+- `cmake`
 ### Building
 To build, clone project into directory:  
 `mkdir build && cd build`  
-`cmake -DCMAKE_CXX_COMPILER=your/clang++/binary/here ../`  
-Usually located in `/usr/local/bin/clang++`.   
-
+`cmake G <generator> -DCMAKE_CXX_COMPILER=your/clang++/binary/here ../`  
+Usually located in `/usr/bin/clang++`,`/usr/local/bin/clang++`, but just `clang++` should suffice.
+### Testing
+Have llvm-lit installed: `pip install lit` \
+Make sure you're in your build directory and then type `lit test -s`. \
+Use `-vv` to get info about why testcases fail. \
 ## Running
-To run:  ` ./cxx-langstat [options] <source0> [... <sourceN> ]`  
-Options:  `--analyses=<string>` Accepts a string of comma-separated abbreviations of the analyses, e.g. `--analyses=lda,cca` will run cyclomatic complexity and loop depth analyses on your file in alphabetical order of the analyses.
+To run:  ` cxx-langstat [options] `  
+Options: 
+- `-analyses=<string>` Accepts a string of comma-separated abbreviations of the analyses, e.g. `-analyses=msa,ula` will run move semantics and utility library analyses in alphabetical order of the analyses.
+- `-emit-features`
+- `-emit-statistics`
+- `-in`, `-indir`
+- `-out`, `-outdir`
+
 
 
 ## Implemented Analyses
@@ -42,6 +53,7 @@ for(;;){
 Currently the matchers for this analysis grow exponentially with the maximum loop depth to look for, which is not (yet) a problem since depths >5 are rare. Still, switching to a dominator tree-based approach might be favorable.
 #### Loop Kind Analysis (LKA)
 Computes statistics on usage `for`, `while`, `do-while` and range-based `for` loops in C++. Especially interesting to use to see the adoption of range-based `for` since C++11.
+#### Move Semantics Analysis (MSA)
 #### Template Parameter Analysis(TPA)
 Counts each kind of template (class, function, variable, alias), how many were variadic/use parameter packs and outputs counts on what kind of template parameters were used (non-tupe template parameters, type template parameters and template template parameters).
 #### Template instantiation Analysis (TIA)
