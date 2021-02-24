@@ -13,6 +13,10 @@ public:
     }
 private:
     void processFeatures(nlohmann::ordered_json j) override;
+    // JSON keys
+    const std::string ContainerPrevalenceKey = "container type prevalence";
+    const std::string ContainedTypesPrevalenceKey =
+        "container instantiation type arguments";
 };
 
 //-----------------------------------------------------------------------------

@@ -13,6 +13,10 @@ public:
     }
 private:
     void processFeatures(nlohmann::ordered_json j) override;
+    // JSON keys
+    const std::string UtilityPrevalenceKey = "utility type prevalence";
+    const std::string UtilitiedTypesPrevalenceKey =
+        "utility instantiation type arguments";
 };
 
 //-----------------------------------------------------------------------------

@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "cxx-langstat/Analyses/ContainerLibAnalysis.h"
-#include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 #include "cxx-langstat/Utils.h"
 
 using namespace clang;
@@ -72,24 +71,24 @@ const StringMap<int> NumRelTypes = { // no constexpr support for map
 } // namespace
 
 // Gathers data on how often each container template was used.
-void containerPrevalence(ordered_json& Statistics, ordered_json j){
-    ordered_json res;
-    typePrevalence(j, res);
-    Statistics["container type prevalence"] = res;
+void containerPrevalence(const ordered_json& in, ordered_json& out){
+    typePrevalence(in, out);
 }
 
 // For each container template, gives statistics on how often each instantiation
 // was used by a (member) variable.
-void containerInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
-    ordered_json res;
-    instantiationTypeArgs(j, res, NumRelTypes);
-    Statistics["container instantiation type arguments"] = res;
+void containerInstantiationTypeArgs(const ordered_json& in, ordered_json& out){
+    instantiationTypeArgs(in, out, NumRelTypes);
 }
 
 void ContainerLibAnalysis::processFeatures(ordered_json j){
-    if(j.contains("implicit class insts")){
-        containerPrevalence(Statistics, j.at("implicit class insts"));
-        containerInstantiationTypeArgs(Statistics, j.at("implicit class insts"));
+    if(j.contains(ImplicitClassKey)){
+        ordered_json res1;
+        ordered_json res2;
+        containerPrevalence(j.at(ImplicitClassKey), res1);
+        containerInstantiationTypeArgs(j.at(ImplicitClassKey), res2);
+        Statistics[ContainerPrevalenceKey] = res1;
+        Statistics[ContainedTypesPrevalenceKey] = res2;
     }
 }
 

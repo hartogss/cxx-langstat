@@ -42,7 +42,6 @@ struct ParmInfo : public BasicInfo {
     // Canonical, qualified, desugared type of the parameter. Can be used
     // to compare types of parameters.
     std::string Type;
-
 };
 
 //-----------------------------------------------------------------------------

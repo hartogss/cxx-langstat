@@ -64,10 +64,16 @@ private:
     // where it is *defined*. This is important s.t. when the analyzer looks for
     // instantiations of some template, it is ensured that the instantiation is
     // not a false positive of some other template having the same name. Note
-    // that when analyzing C++ library templates you might have to dig 
+    // that when analyzing C++ library templates you might have to dig
     // deeper to find the file containing the definition of the template, which
     // can be an internal header file you usually don't include yourself.
     std::string HeaderRegex;
+protected:
+    // JSON keys
+    const std::string ExplicitClassKey = "explicit class insts";
+    const std::string ImplicitClassKey = "implicit class insts";
+    const std::string FuncKey = "func insts";
+    const std::string VarKey = "var insts";
 };
 
 template<typename T>

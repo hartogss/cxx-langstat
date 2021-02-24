@@ -1,10 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "llvm/Support/raw_ostream.h"
-
 #include "cxx-langstat/Analyses/AlgorithmLibraryAnalysis.h"
-#include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 #include "cxx-langstat/Utils.h"
 
 using namespace clang;
@@ -42,15 +39,16 @@ AlgorithmLibraryAnalysis::AlgorithmLibraryAnalysis() : TemplateInstantiationAnal
 }
 
 // Gathers data on how often each algorithm template was used.
-void algorithmPrevalence(ordered_json& Statistics, ordered_json j){
-    ordered_json res;
-    typePrevalence(j, res);
-    Statistics["algorithm type prevalence"] = res;
+void algorithmPrevalence(const ordered_json& in, ordered_json& out){
+    typePrevalence(in, out);
 }
 
 void AlgorithmLibraryAnalysis::processFeatures(ordered_json j){
-    if(j.contains("func insts"))
-        algorithmPrevalence(Statistics, j.at("func insts"));
+    if(j.contains(FuncKey)){
+        ordered_json res;
+        algorithmPrevalence(j.at(FuncKey), res);
+        Statistics[AlgorithmPrevalenceKey] = res;
+    }
 }
 
 //-----------------------------------------------------------------------------

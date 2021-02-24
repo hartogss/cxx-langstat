@@ -47,12 +47,12 @@ public:
     }
 private:
     void analyzeFeatures() override {
-        Features[p1desc] = p1.getFeatures(InFile, *Context);
-        Features[p2desc] = p2.getFeatures(InFile, *Context);
+        Features[p1key] = p1.getFeatures(InFile, *Context);
+        Features[p2key] = p2.getFeatures(InFile, *Context);
     }
     void processFeatures(nlohmann::ordered_json j) override {
-        Statistics[p1desc] = p1.getStatistics(j);
-        Statistics[p2desc] = p2.getStatistics(j);
+        Statistics[p1key] = p1.getStatistics(j);
+        Statistics[p2key] = p2.getStatistics(j);
     }
 
     // Find how often std::move, std::forward from <utility> are used.
@@ -72,8 +72,10 @@ private:
     // Analyzers run by MSA
     StdMoveStdForwardUsageAnalyzer p1;
     CopyOrMoveAnalyzer p2;
-    constexpr static auto p1desc = "std::move, std::forward usage";
-    constexpr static auto p2desc = "copy or move construction";
+
+    // JSON keys
+    static constexpr auto p1key = "std::move, std::forward usage";
+    static constexpr auto p2key = "copy or move construction";
 };
 
 } // namespace msa

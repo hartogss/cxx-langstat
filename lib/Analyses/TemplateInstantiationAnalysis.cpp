@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <stdlib.h>
 #include <string>
 
 #include "llvm/Support/raw_ostream.h"
@@ -416,30 +415,30 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
 void TemplateInstantiationAnalysis::analyzeFeatures(){
     extractFeatures();
     if(IK == InstKind::Class || IK == InstKind::Any){
-        gatherInstantiationData(ClassExplicitInsts, "explicit class insts", false);
-        gatherInstantiationData(ClassImplicitInsts, "implicit class insts", true);
+        gatherInstantiationData(ClassExplicitInsts, ExplicitClassKey, false);
+        gatherInstantiationData(ClassImplicitInsts, ImplicitClassKey, true);
     }
     if(IK == InstKind::Function || IK == InstKind::Any)
-        gatherInstantiationData(FuncInsts, "func insts", true);
+        gatherInstantiationData(FuncInsts, FuncKey, true);
     if(IK == InstKind::Variable || IK == InstKind::Any)
-        gatherInstantiationData(VarInsts, "var insts", false);
+        gatherInstantiationData(VarInsts, VarKey, false);
 }
 
 void TemplateInstantiationAnalysis::processFeatures(nlohmann::ordered_json j){
-    if(j.contains("explicit class insts")) {
+    if(j.contains(ExplicitClassKey)) {
         ordered_json res;
-        typePrevalence(j.at("explicit class insts"), res);
+        typePrevalence(j.at(ExplicitClassKey), res);
         Statistics["tia explicit class insts"] = res;
     }
-    if(j.contains("implicit class insts")) {
+    if(j.contains(ImplicitClassKey)) {
         ordered_json res;
-        typePrevalence(j.at("implicit class insts"), res);
+        typePrevalence(j.at(ImplicitClassKey), res);
         Statistics["tia implicit class insts"] = res;
     }
-    if(j.contains("func insts")) {
+    if(j.contains(FuncKey)) {
         ordered_json res;
-        typePrevalence(j.at("func insts"), res);
-        Statistics["func insts"] = res;
+        typePrevalence(j.at(FuncKey), res);
+        Statistics[FuncKey] = res;
     }
 }
 
@@ -471,7 +470,6 @@ void typePrevalence(const ordered_json& in, ordered_json& out){
         m.try_emplace(Type, Insts.size());
     }
     out = m;
-
 }
 
 void instantiationTypeArgs(const ordered_json& in, ordered_json& out,

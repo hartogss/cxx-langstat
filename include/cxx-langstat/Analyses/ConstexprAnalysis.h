@@ -43,6 +43,11 @@ private:
     void processFeatures(nlohmann::ordered_json j) override;
     template<typename T>
     void featuresToJSON(std::string Kind, const std::vector<T>& fs);
+    // JSON keys
+    const std::string VarKey = "vars";
+    const std::string NonMemberFuncKey = "non-member functions";
+    const std::string MemberFuncKey = "member functions";
+    const std::string IfKey = "if stmts";
 };
 
 //-----------------------------------------------------------------------------

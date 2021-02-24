@@ -48,8 +48,8 @@ StdMoveStdForwardUsageAnalyzer() : TemplateInstantiationAnalysis(
 }
 void MoveSemanticsAnalysis::StdMoveStdForwardUsageAnalyzer::
 processFeatures(nlohmann::ordered_json j) {
-    if(j.contains(p1desc) && j.at(p1desc).contains("func insts")){
-        typePrevalence(j.at(p1desc).at("func insts"), Statistics);
+    if(j.contains(p1key) && j.at(p1key).contains(FuncKey)){
+        typePrevalence(j.at(p1key).at(FuncKey), Statistics);
     }
 }
 
@@ -83,20 +83,21 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
         CallExprInfo CEI;
         ConstructInfo CI;
         auto Ctor = a.Node->getConstructor();
-        std::cout << a.Location << ", " <<
-            Ctor->getQualifiedNameAsString();
-        if(Ctor->isCopyConstructor()){
-            std::cout << " copy, ";
-        } else if(Ctor->isMoveConstructor()){
-            std::cout << " move, ";
-        } else if(Ctor->isDefaultConstructor()){
-            std::cout << " def, ";
-        }
-        std::cout << a.Node->isElidable() << "\n";
-        if(auto r = clang::dyn_cast<clang::CXXTemporaryObjectExpr>(a.Node))
-            std::cout << r->isElidable() << "\n";
 
-        // what callee should we do here?
+        // std::cout << a.Location << ", " <<
+        //     Ctor->getQualifiedNameAsString();
+        // if(Ctor->isCopyConstructor()){
+        //     std::cout << " copy, ";
+        // } else if(Ctor->isMoveConstructor()){
+        //     std::cout << " move, ";
+        // } else if(Ctor->isDefaultConstructor()){
+        //     std::cout << " def, ";
+        // }
+        // std::cout << a.Node->isElidable() << "\n";
+        // if(auto r = clang::dyn_cast<clang::CXXTemporaryObjectExpr>(a.Node))
+        //     std::cout << r->isElidable() << "\n";
+
+        // what callee should we get here?
         FPI.FuncId = f->getQualifiedNameAsString();
         FPI.FuncType = f->getType().getCanonicalType().getAsString();
         FPI.Id = p.Node->getQualifiedNameAsString();
@@ -163,10 +164,10 @@ void CopyAndMoveCounts(const ojson& j, ojson& res){
 
 void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::processFeatures(ojson j){
     // std::cout << j.dump(4) << std::endl;
-    if(j.contains(p2desc)){
-        CopyAndMoveCounts(j.at(p2desc), Statistics);
+    if(j.contains(p2key)){
+        CopyAndMoveCounts(j.at(p2key), Statistics);
     }
-    std::cout << Statistics.dump(4) << std::endl;
+    // std::cout << Statistics.dump(4) << std::endl;
 }
 
 } // namespace msa

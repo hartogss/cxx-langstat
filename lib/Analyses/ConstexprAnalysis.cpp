@@ -89,10 +89,10 @@ void ConstexprAnalysis::featuresToJSON(std::string Kind, const std::vector<T>& f
 void ConstexprAnalysis::analyzeFeatures(){
     extractFeatures();
     // Fill JSON with data about function (templates)
-    featuresToJSON("vars", Variables);
-    featuresToJSON("non-member functions", NonMemberFunctions);
-    featuresToJSON("member functions", MemberFunctions);
-    featuresToJSON("if stmts", IfStmts);
+    featuresToJSON(VarKey, Variables);
+    featuresToJSON(NonMemberFuncKey, NonMemberFunctions);
+    featuresToJSON(MemberFuncKey, MemberFunctions);
+    featuresToJSON(IfKey, IfStmts);
 }
 
 unsigned countConstexprOccurences(const ordered_json& j){
@@ -109,7 +109,7 @@ void constexprPopToJSON(ordered_json& Statistics, const ordered_json& j, llvm::S
 }
 
 void ConstexprAnalysis::processFeatures(nlohmann::ordered_json j){
-    for(auto t : {"vars", "non-member functions", "member functions", "if stmts"}){
+    for(auto t : {VarKey, NonMemberFuncKey, MemberFuncKey, IfKey}){
         if(j.contains(t))
             constexprPopToJSON(Statistics, j.at(t), t);
     }

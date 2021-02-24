@@ -1,10 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "llvm/Support/raw_ostream.h"
-
 #include "cxx-langstat/Analyses/UtilityLibAnalysis.h"
-#include "cxx-langstat/Analyses/TemplateInstantiationAnalysis.h"
 #include "cxx-langstat/Utils.h"
 
 using namespace clang;
@@ -58,24 +55,24 @@ const StringMap<int> NumRelTypes = { // no constexpr support for map
 
 
 // Gathers data on how often each utility template was used.
-void utilityPrevalence(ordered_json& Statistics, ordered_json j){
-    ordered_json res;
-    typePrevalence(j, res);
-    Statistics["utility type prevalence"] = res;
+void utilityPrevalence(const ordered_json& in, ordered_json& out){
+    typePrevalence(in, out);
 }
 
 // For each container template, gives statistics on how often each instantiation
 // was used by a (member) variable.
-void utilityInstantiationTypeArgs(ordered_json& Statistics, ordered_json j){
-    ordered_json res;
-    instantiationTypeArgs(j, res, NumRelTypes);
-    Statistics["utility instantiation type arguments"] = res;
+void utilityInstantiationTypeArgs(const ordered_json& in, ordered_json& out){
+    instantiationTypeArgs(in, out, NumRelTypes);
 }
 
 void UtilityLibAnalysis::processFeatures(ordered_json j){
-    if(j.contains("implicit class insts")){
-        utilityPrevalence(Statistics, j.at("implicit class insts"));
-        utilityInstantiationTypeArgs(Statistics, j.at("implicit class insts"));
+    if(j.contains(ImplicitClassKey)){
+        ordered_json res1;
+        ordered_json res2;
+        utilityPrevalence(j.at(ImplicitClassKey), res1);
+        utilityInstantiationTypeArgs(j.at(ImplicitClassKey), res2);
+        Statistics[UtilityPrevalenceKey] = res1;
+        Statistics[UtilitiedTypesPrevalenceKey] = res2;
     }
 }
 
