@@ -7,6 +7,7 @@
 #include <nlohmann/json.hpp>
 
 #include "BaseExtractor.h"
+#include "cxx-langstat/Factory.h"
 
 //-----------------------------------------------------------------------------
 // Abstract Analysis class. Specific analyses should subclass this &
@@ -52,5 +53,3 @@ protected:
 //-----------------------------------------------------------------------------
 
 #endif // ANALYSIS_H
-
-#include "cxx-langstat/Factory.h"

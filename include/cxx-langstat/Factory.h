@@ -6,14 +6,14 @@
 // How to use -Wl, and why I use -force_load instead
 // https://github.com/premake/premake-core/issues/1170
 
-
 #ifndef FACTORY_H
 #define FACTORY_H
 
 #include <map>
 #include <memory>
 
-#include "cxx-langstat/Analysis.h"
+// Forward declaration
+class Analysis;
 
 //-----------------------------------------------------------------------------
 

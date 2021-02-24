@@ -1,4 +1,5 @@
 #include "cxx-langstat/Factory.h"
+#include "cxx-langstat/Analysis.h"
 
 // Zero-initialize static list, i.e., it is empty
 std::map<std::string, AnalysisFactory::TCreateMethod>
