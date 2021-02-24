@@ -1,6 +1,6 @@
 // RUN: rm %t1.ast.json || true
 // RUN: clang++ %s -emit-ast -std=c++17 -o %t1.ast
-// RUN: %S/../../../build/cxx-langstat --analyses=cea -emit-features -in %t1.ast -out %t1.ast.json -- -std=c++17
+// RUN: %cxx-langstat --analyses=cea -emit-features -in %t1.ast -out %t1.ast.json -- -std=c++17
 // RUN: diff %t1.ast.json %s.json
 
 // Small test to ensure cxxDeductionGuideDecl don't appear in CEA as

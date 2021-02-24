@@ -64,59 +64,34 @@ set(clang_libs
 )
 # message(STATUS "Clang libs: $${clang_libs}")
 
-# ---- My library & includes ----
-# Directory to search for include files
-add_subdirectory(include)
-#
+
 include_directories(include)
+
 # Directory to search for library/src files
 add_subdirectory(lib)
-# Specify directory to look for libraries
-target_link_directories(${PROJECT_NAME} PUBLIC lib/)
 
 add_library(Driver Driver.cpp)
 
 # ---- Link everything together ----
 # Link custom libraries
 target_link_libraries(${PROJECT_NAME}
-    Driver BaseExtractor MatchingExtractor
-    AnalysisRegistry AnalysisList
+    Driver
+    AnalysisList
+    AnalysisRegistry
+    BaseExtractor
+    # MatchingExtractor
     Utils Stats
+    Analyses
     -pthread
-    )
-
-# Link LLVM & Clang libs
-target_link_libraries(${PROJECT_NAME} ${llvm_libs} ${clang_libs})
-
-# Extra linking needed on ubuntu, not necessary on macOS(macOS doesn't dislike them either)
-target_link_libraries(LoopDepthAnalysis BaseExtractor MatchingExtractor ${llvm_libs} ${clang_libs})
-target_link_libraries(AnalysisRegistry
-    AlgorithmLibraryAnalysis
-    ContainerLibAnalysis
-    CyclomaticComplexityAnalysis
-    ConstexprAnalysis
-    FunctionParameterAnalysis
-    LoopDepthAnalysis
-    LoopKindAnalysis
-    MoveSemanticsAnalysis
-    TemplateInstantiationAnalysis
-    TemplateParameterAnalysis
-    UsingAnalysis
-    UtilityLibAnalysis
-    VariableTemplateAnalysis
-    )
-
-
-# Testing, not yet already
-# clangtidy libs I could once need
-set(clang_tidy_libs
-clangTidy;clangTidyAndroidModule;clangTidyAbseilModule;clangTidyBoostModule;
-clangTidyBugproneModule;clangTidyCERTModule;clangTidyCppCoreGuidelinesModule;
-clangTidyDarwinModule;clangTidyFuchsiaModule;clangTidyGoogleModule;clangTidyHICPPModule;
-clangTidyLinuxKernelModule;clangTidyLLVMModule;clangTidyLLVMLibcModule;clangTidyMiscModule;
-clangTidyModernizeModule;clangTidyMPIModule;clangTidyObjCModule;clangTidyOpenMPModule;
-clangTidyPerformanceModule;clangTidyPortabilityModule;clangTidyReadabilityModule;
-clangTidyZirconModule;clangTidyPlugin;clangTidyMain;clangTidyUtils;
+    ${llvm_libs} ${clang_libs}
 )
-# message(STATUS "Clang-tidy libs: ${clang_tidy_libs}")
-# target_link_libraries(${PROJECT_NAME} ${clang_tidy_libs})
+
+# Someone explain to me why it never links without this line
+target_link_libraries(Analyses BaseExtractor MatchingExtractor)
+
+# For info about this and lit.site.cfg.py.in and lit.cfg.py see
+# https://medium.com/@mshockwave/using-llvm-lit-out-of-tree-5cddada85a78
+configure_file(test/lit.site.cfg.py.in test/lit.site.cfg.py)
+add_custom_target(check
+  COMMAND lit test -v -s
+DEPENDS ${PROJECT_NAME})

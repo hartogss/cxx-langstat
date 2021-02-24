@@ -1,6 +1,6 @@
 // RUN: rm %t1.ast.json || true
 // RUN: clang++ %s -emit-ast -o %t1.ast
-// RUN: %S/../../../build/cxx-langstat --analyses=cea -emit-features -in %t1.ast -out %t1.ast.json --
+// RUN: %cxx-langstat --analyses=cea -emit-features -in %t1.ast -out %t1.ast.json --
 // RUN: diff %t1.ast.json %s.json
 
 // Should report one variable that is constexpr, namely "yes".

@@ -1,6 +1,6 @@
 // RUN: rm %t1.ast.json || true
 // RUN: clang++ %s -emit-ast -o %t1.ast
-// RUN: %S/../../../../build/cxx-langstat --analyses=vta -emit-features -in %t1.ast -out %t1.ast.json --
+// RUN: %cxx-langstat --analyses=vta -emit-features -in %t1.ast -out %t1.ast.json --
 // RUN: diff %t1.ast.json %s.json
 
 // Test to have some extra precaution with classes inside of class templates

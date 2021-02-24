@@ -1,9 +1,9 @@
 // rm Output/nlt.ast.json || true
 // rm Output/empty.ast.json || true
 // RUN: clang++ %s -emit-ast -o Output/nlt.ast
-// RUN: clang++ empty.cpp -emit-ast -o Output/empty.ast
-// RUN: %S/../../../../build/cxx-langstat --analyses=ala,cca,cea,cla,fpa,lda,lka,msa,tia,tpa,ua,ula,vta -emit-features -in Output/nlt.ast -in Output/empty.ast -outdir Output/ --
-// RUN: diff Output/empty.ast.json empty.cpp.json
+// RUN: clang++ %S/empty.cpp -emit-ast -o Output/empty.ast
+// RUN: %cxx-langstat --analyses=ala,cca,cea,cla,fpa,lda,lka,msa,tia,tpa,ua,ula,vta -emit-features -in Output/nlt.ast -in Output/empty.ast -outdir Output/ --
+// RUN: diff Output/empty.ast.json %S/empty.cpp.json
 
 // Test to test that when input are multiple files, that features from first
 // file don't accidentally transfer to features of second file. Analyses retain
