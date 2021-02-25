@@ -30,12 +30,16 @@ public:
     ~UsingAnalysis(){
         std::cout << "UA dtor\n";
     }
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
 private:
     std::vector<Synonym> Synonyms;
     // Get matches from AST and store relevant information in "Synonyms"
     void extractFeatures();
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
+    static constexpr auto ShorthandName = "ua";
 };
 
 //-----------------------------------------------------------------------------

@@ -45,6 +45,7 @@ public:
     ~MoveSemanticsAnalysis(){
         std::cout << "MSA dtor\n";
     }
+
 private:
     void analyzeFeatures() override {
         Features[p1key] = p1.getFeatures(InFile, *Context);
@@ -54,7 +55,9 @@ private:
         Statistics[p1key] = p1.getStatistics(j);
         Statistics[p2key] = p2.getStatistics(j);
     }
-
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
     // Find how often std::move, std::forward from <utility> are used.
     class StdMoveStdForwardUsageAnalyzer : public TemplateInstantiationAnalysis {
     public:
@@ -67,6 +70,7 @@ private:
     private:
         void analyzeFeatures() override;
         void processFeatures(nlohmann::ordered_json j) override;
+        std::string getShorthand() override { return "msap2"; }
     };
 
     // Analyzers run by MSA
@@ -76,6 +80,8 @@ private:
     // JSON keys
     static constexpr auto p1key = "std::move, std::forward usage";
     static constexpr auto p2key = "copy or move construction";
+
+    static constexpr auto ShorthandName = "msa";
 };
 
 } // namespace msa

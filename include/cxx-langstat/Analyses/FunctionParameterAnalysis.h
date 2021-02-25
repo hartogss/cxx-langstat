@@ -54,6 +54,9 @@ public:
     ~FunctionParameterAnalysis(){
         std::cout << "FPA dtor\n";
     }
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
 private:
     std::vector<FunctionInfo> Functions;
     std::vector<FunctionTemplateInfo> FunctionTemplates;
@@ -74,6 +77,7 @@ private:
     template<typename T>
     void gatherData(std::string DeclKind,
         const std::vector<T>& fs);
+    static constexpr auto ShorthandName = "fpa";
 };
 
 #endif // FUNCTIONPARAMETERANALYSIS_H

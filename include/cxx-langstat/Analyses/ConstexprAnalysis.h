@@ -33,6 +33,9 @@ public:
     ~ConstexprAnalysis(){
         std::cout << "CEA dtor\n";
     }
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
 private:
     std::vector<CEDecl> Variables;
     std::vector<CEDecl> NonMemberFunctions;
@@ -48,6 +51,8 @@ private:
     const std::string NonMemberFuncKey = "non-member functions";
     const std::string MemberFuncKey = "member functions";
     const std::string IfKey = "if stmts";
+
+    static constexpr auto ShorthandName = "cea";
 };
 
 //-----------------------------------------------------------------------------

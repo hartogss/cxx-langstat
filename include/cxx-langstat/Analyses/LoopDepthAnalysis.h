@@ -16,6 +16,9 @@ public:
     ~LoopDepthAnalysis(){
         std::cout << "LDA dtor\n";
     }
+    std::string getShorthand() override {
+        return ShorthandName;
+    }
 private:
     int MaxDepth;
     // All loop statements that are not contained in any other loops
@@ -25,6 +28,7 @@ private:
     void extractFeatures();
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
+    static constexpr auto ShorthandName = "lda";
 };
 
 //-----------------------------------------------------------------------------
