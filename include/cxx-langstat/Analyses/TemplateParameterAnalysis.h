@@ -26,6 +26,7 @@ private:
     Matches<clang::Decl> FunctionTemplates;
     Matches<clang::Decl> VariableTemplates;
     Matches<clang::Decl> AliasTemplates;
+    //
     static constexpr auto ShorthandName = "tpa";
 };
 

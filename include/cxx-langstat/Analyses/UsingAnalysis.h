@@ -39,6 +39,7 @@ private:
     void extractFeatures();
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
+    //
     static constexpr auto ShorthandName = "ua";
 };
 

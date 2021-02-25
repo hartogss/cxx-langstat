@@ -35,6 +35,7 @@ private:
     std::vector<VariableFamily> VariableFamilies;
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
+    //
     static constexpr auto ShorthandName = "vta";
 };
 

@@ -21,6 +21,7 @@ private:
     // objects all in one go, since that is all pretty simple.
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
+    //
     static constexpr auto ShorthandName = "cca";
 };
 

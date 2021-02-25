@@ -77,6 +77,7 @@ private:
     template<typename T>
     void gatherData(std::string DeclKind,
         const std::vector<T>& fs);
+    //
     static constexpr auto ShorthandName = "fpa";
 };
 

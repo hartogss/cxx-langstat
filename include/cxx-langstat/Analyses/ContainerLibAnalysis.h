@@ -20,7 +20,7 @@ private:
     const std::string ContainerPrevalenceKey = "container type prevalence";
     const std::string ContainedTypesPrevalenceKey =
         "container instantiation type arguments";
-        
+    //
     static constexpr auto ShorthandName = "cla";
 };
 

@@ -19,6 +19,7 @@ public:
 private:
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
+    //
     static constexpr auto ShorthandName = "lka";
 };
 

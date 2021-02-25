@@ -20,6 +20,7 @@ private:
     const std::string UtilityPrevalenceKey = "utility type prevalence";
     const std::string UtilitiedTypesPrevalenceKey =
         "utility instantiation type arguments";
+        //
     static constexpr auto ShorthandName = "ula";
 };
 

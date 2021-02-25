@@ -51,7 +51,7 @@ private:
     const std::string NonMemberFuncKey = "non-member functions";
     const std::string MemberFuncKey = "member functions";
     const std::string IfKey = "if stmts";
-
+    //
     static constexpr auto ShorthandName = "cea";
 };
 

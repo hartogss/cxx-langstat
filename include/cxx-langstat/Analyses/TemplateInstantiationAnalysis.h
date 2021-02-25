@@ -77,6 +77,7 @@ protected:
     const std::string ImplicitClassKey = "implicit class insts";
     const std::string FuncKey = "func insts";
     const std::string VarKey = "var insts";
+    //
     static constexpr auto ShorthandName = "tia";
 };
 
