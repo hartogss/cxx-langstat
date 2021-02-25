@@ -2,10 +2,9 @@
 #include <future>
 
 #include "llvm/Support/CommandLine.h"
-#include "clang/Tooling/CompilationDatabase.h"
 
 #include "cxx-langstat/Options.h"
-#include "../Driver.h"
+#include "cxx-langstat/Driver.h"
 
 #include <dirent.h>
 
@@ -260,9 +259,8 @@ int main(int argc, char** argv){
     // emit-features creates one output per input.
     if(PipelineStage == emit_features){
         if(Files && InputFiles.size() == 1){  // single file
-            if(!OutputDirOption.empty()){ // may not specify output dir
+            if(!OutputDirOption.empty()) // may not specify output dir
                 assert(false && "Don't specify an output dir for a single output\n");
-            }
             if(!OutputFileOption.empty()){ // place at output file specified
                 OutputFiles.emplace_back(OutputFileOption);
             } else { // create output file if none specified
@@ -270,9 +268,8 @@ int main(int argc, char** argv){
                 OutputFiles.emplace_back(filename.str() + ".json");
             }
         } else if((Files && InputFiles.size() > 1) || Dir) { // multiple files
-                if(!OutputFileOption.empty()){ // may not specify output file
+                if(!OutputFileOption.empty()) // may not specify output file
                     assert(false && "Don't specify an output file when multiple outputs are expected\n");
-                }
                 if(OutputDirOption.empty()){ // obliged to specify output dir
                     assert(false && "Please specify an output dir\n");
                 } else {
@@ -288,9 +285,8 @@ int main(int argc, char** argv){
     } else if(PipelineStage == emit_statistics){
         if(!OutputDirOption.empty())
             assert(false && "Don't specify an output dir for a single output\n");
-        if(OutputFileOption.empty()){
+        if(OutputFileOption.empty())
             OutputFiles.emplace_back("./stats.json");
-        }
         if(!OutputFileOption.empty())
             OutputFiles.emplace_back(OutputFileOption);
         assert(OutputFiles.size() == 1);
@@ -315,5 +311,6 @@ int main(int argc, char** argv){
         return CXXLangstatMain(InputFiles, OutputFiles, PipelineStage,
             AnalysesOption, BuildPath, db);
     }
+    std::cout << "cxx-langstat finished." << std::endl;
     return 0;
 }

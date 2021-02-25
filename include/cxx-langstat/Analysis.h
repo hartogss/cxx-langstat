@@ -2,11 +2,10 @@
 #define ANALYSIS_H
 
 #include "clang/ASTMatchers/ASTMatchers.h"
-#include "clang/ASTMatchers/ASTMatchFinder.h"
 
 #include <nlohmann/json.hpp>
 
-#include "BaseExtractor.h"
+#include "cxx-langstat/BaseExtractor.h"
 
 //-----------------------------------------------------------------------------
 // Abstract Analysis class. Specific analyses should subclass this &

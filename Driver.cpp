@@ -15,7 +15,7 @@
 #include "cxx-langstat/AnalysisRegistry.h"
 #include "cxx-langstat/Utils.h"
 #include "cxx-langstat/Options.h"
-#include "../Driver.h"
+#include "cxx-langstat/Driver.h"
 #include "cxx-langstat/Stats.h"
 
 
@@ -79,8 +79,7 @@ public:
     }
     //
     void EndSourceFileAction(){
-        // std::cout
-        // << "Finished processing " << getCurrentFile().str() << ".\n";
+        // std::cout << "Finished processing " << getCurrentFile().str() << ".\n";
     }
     AnalysisRegistry* Registry;
 };
@@ -163,10 +162,6 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
         o << AllFilesAllStatistics.dump(4) << std::endl;
         o << Summary.dump(4) << std::endl;
     }
-
-    // Not really important here, but good practice
     delete Registry;
-    std::cout << "Reached end of program" << std::endl;
-
     return 0;
 }

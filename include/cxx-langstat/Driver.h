@@ -1,6 +1,6 @@
-#include "cxx-langstat/Options.h"
-
 #include "clang/Tooling/CompilationDatabase.h"
+
+#include "cxx-langstat/Options.h"
 
 //-----------------------------------------------------------------------------
 
