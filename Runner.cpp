@@ -24,13 +24,11 @@ llvm::cl::OptionCategory IOCategory("cxx-langstat i/o options", "");
 // llvm::cl::extrahelp MoreHelp("\nMore help text coming soon...\n");
 // CL options
 
-// # probably going to retire soon
 // Accepts comma-separated string of analyses
 llvm::cl::opt<std::string> AnalysesOption(
     "analyses",
     llvm::cl::desc("Comma-separated list of analyses"),
     llvm::cl::cat(CXXLangstatCategory));
-
 // 2 flags:
 // --emit-features: analysis stops after writing features to file after reading in .ast
 // --emit-statistics: read in JSON with features and compute statistics
@@ -50,7 +48,6 @@ llvm::cl::opt<Stage> PipelineStage(
             "and outputs a single JSON file containing\n "
             "statistics.")),
     llvm::cl::cat(CXXLangstatCategory));
-
 // --in: use this when running on a single file
 llvm::cl::list<std::string> InputFilesOption(
     "in",

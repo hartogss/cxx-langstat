@@ -252,26 +252,22 @@ void updateArgsAndKinds(const TemplateArgument& TArg,
         switch (TArg.getKind()){
             // ** Type **
             case TemplateArgument::Type:
-                std::cout << "type\n";
                 TArgs.emplace("type", TArg.getAsType().getAsString(PP));
                 break;
 
             // ** Non-type **
             // Declaration
             case TemplateArgument::Declaration:
-                std::cout << "decl\n";
                 cast<clang::NamedDecl>(TArg.getAsDecl())->printQualifiedName(stream, PP);
                 TArgs.emplace("non-type", Result);
                 break;
             // nullptr
             // FIXME: report type of nullptr, e.g. nullptr to class XY etc.
             case TemplateArgument::NullPtr:
-                std::cout << "nullptr\n";
                 TArgs.emplace("non-type", "nullptr");
                 break;
             // Integers/Integrals
             case TemplateArgument::Integral:
-                std::cout << "integral\n";
                 // just dump that stuff, don't want to deal with llvm::APSInt
                 TArg.dump(stream);
                 TArgs.emplace("non-type", Result);
@@ -280,7 +276,6 @@ void updateArgsAndKinds(const TemplateArgument& TArg,
             // ** Template **
             // Template
             case TemplateArgument::Template:
-                std::cout << "template\n";
                 TArg.getAsTemplate().print(stream, PP);
                 TArgs.emplace("template", Result);
                 break;
@@ -291,7 +286,6 @@ void updateArgsAndKinds(const TemplateArgument& TArg,
                 break;
             // Pack
             case TemplateArgument::Pack:
-                std::cout << "pack\n";
                 for(auto it=TArg.pack_begin(); it!=TArg.pack_end(); it++)
                     updateArgsAndKinds(*it, TArgs);
                 break;
@@ -375,7 +369,7 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
         // FIXME: use match.getDeclName instead
         match.Node->printQualifiedName(stream, PP);
         // std::cout << DeclName << ":" << match.Node->getSpecializationKind() << std::endl;
-        std::cout << DeclName << std::endl;
+        // std::cout << DeclName << std::endl;
         std::multimap<std::string, std::string> TArgs;
         const TemplateArgumentList* TALPtr(getTemplateArgs(match));
         // Only report instantiation if it had any arguments it was instantiated

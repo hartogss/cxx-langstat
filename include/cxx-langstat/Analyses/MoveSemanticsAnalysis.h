@@ -59,16 +59,15 @@ private:
         return ShorthandName;
     }
     // Find how often std::move, std::forward from <utility> are used.
-    class StdMoveStdForwardUsageAnalyzer : public TemplateInstantiationAnalysis {
-    public:
+    struct StdMoveStdForwardUsageAnalyzer : public TemplateInstantiationAnalysis {
         StdMoveStdForwardUsageAnalyzer();
         void processFeatures(nlohmann::ordered_json j) override;
         std::string getShorthand() override { return "msap1"; }
     };
     // Examine when calling functions that pass by value, how often copy and
     // move constructors are used to construct the value of the callee.
-    class CopyOrMoveAnalyzer : public Analysis {
-    private:
+    struct CopyOrMoveAnalyzer : public Analysis {
+        CopyOrMoveAnalyzer() { std::cout << "CopyOrMoveAnalyzer\n"; }
         void analyzeFeatures() override;
         void processFeatures(nlohmann::ordered_json j) override;
         std::string getShorthand() override { return "msap2"; }

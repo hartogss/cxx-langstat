@@ -52,7 +52,6 @@ void LoopDepthAnalysis::extractFeatures() {
             cxxForRangeStmt(IsOuterMostLoop)))
     .bind("fs1"));
 
-    std::cout << "#Top-level loops: " << TopLevelLoops.size() << "\n";
     unsigned NumLoopsFound = 0;
     for (int i=1; i<=this->MaxDepth; i++){
         StatementMatcher Matcher = constructMixedMatcher("fs", i);
