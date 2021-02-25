@@ -128,7 +128,7 @@ void VariableTemplateAnalysis::analyzeFeatures(){
 }
 
 void VariableFamilyKindPrevalence(ordered_json& Stats, const ordered_json& j){
-    unsigned CTSDs=0, CFTs=0, VTs=0;
+    unsigned CTSDs = 0, CFTs = 0, VTs = 0;
     for(const auto& vf_j : j){
         std::cout << vf_j.dump(4) << std::endl;
         VariableFamily vf;
@@ -136,10 +136,13 @@ void VariableFamilyKindPrevalence(ordered_json& Stats, const ordered_json& j){
         switch(vf.Kind){
             case ClassTemplateStaticMemberVar:
                 CTSDs++;
+                break;
             case ConstexprFunctionTemplate:
                 CFTs++;
+                break;
             case VarTemplate:
                 VTs++;
+                break;
         }
     }
     auto desc = "prevalence of variable templates and pre-C++14 idioms";
