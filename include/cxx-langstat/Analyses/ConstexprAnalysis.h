@@ -33,9 +33,6 @@ public:
     ~ConstexprAnalysis(){
         std::cout << "CEA dtor\n";
     }
-    static std::unique_ptr<Analysis> Create(){
-        return std::make_unique<ConstexprAnalysis>();
-    }
     std::string getShorthand() override {
         return ShorthandName;
     }
@@ -49,7 +46,6 @@ private:
     void processFeatures(nlohmann::ordered_json j) override;
     template<typename T>
     void featuresToJSON(std::string Kind, const std::vector<T>& fs);
-    static bool s_registered;
     static constexpr auto ShorthandName = "cea";
 };
 

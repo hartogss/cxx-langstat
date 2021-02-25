@@ -72,10 +72,6 @@ private:
     template<typename T>
     void gatherData(std::string DeclKind,
         const std::vector<T>& fs);
-    static std::unique_ptr<Analysis> Create(){
-        return std::make_unique<FunctionParameterAnalysis>();
-    }
-    static bool s_registered;
     static constexpr auto ShorthandName = "fpa";
 };
 

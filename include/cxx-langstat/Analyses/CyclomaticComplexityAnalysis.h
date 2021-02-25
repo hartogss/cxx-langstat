@@ -21,10 +21,6 @@ private:
     // objects all in one go, since that is all pretty simple.
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
-    static std::unique_ptr<Analysis> Create(){
-        return std::make_unique<CyclomaticComplexityAnalysis>();
-    }
-    static bool s_registered;
     static constexpr auto ShorthandName = "cca";
 };
 

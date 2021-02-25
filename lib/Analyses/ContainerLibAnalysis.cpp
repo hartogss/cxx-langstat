@@ -93,8 +93,4 @@ void ContainerLibAnalysis::processFeatures(ordered_json j){
     }
 }
 
-bool ContainerLibAnalysis::s_registered =
-    AnalysisFactory::RegisterAnalysis(ContainerLibAnalysis::ShorthandName,
-        ContainerLibAnalysis::Create);
-
 //-----------------------------------------------------------------------------

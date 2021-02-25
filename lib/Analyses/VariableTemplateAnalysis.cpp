@@ -152,8 +152,4 @@ void VariableTemplateAnalysis::processFeatures(nlohmann::ordered_json j){
     VariableFamilyKindPrevalence(Statistics, j);
 }
 
-bool VariableTemplateAnalysis::s_registered =
-    AnalysisFactory::RegisterAnalysis(VariableTemplateAnalysis::ShorthandName,
-        VariableTemplateAnalysis::Create);
-
 //-----------------------------------------------------------------------------

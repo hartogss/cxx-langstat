@@ -17,10 +17,6 @@ public:
     }
 private:
     void processFeatures(nlohmann::ordered_json j) override;
-    static std::unique_ptr<Analysis> Create(){
-        return std::make_unique<UtilityLibAnalysis>();
-    }
-    static bool s_registered;
     static constexpr auto ShorthandName = "ula";
 };
 

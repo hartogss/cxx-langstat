@@ -264,8 +264,4 @@ void FunctionParameterAnalysis::processFeatures(ordered_json j){
         ParamsCount(Statistics, j.at("parameters"));
 }
 
-bool FunctionParameterAnalysis::s_registered =
-    AnalysisFactory::RegisterAnalysis(FunctionParameterAnalysis::ShorthandName,
-        FunctionParameterAnalysis::Create);
-
 //-----------------------------------------------------------------------------

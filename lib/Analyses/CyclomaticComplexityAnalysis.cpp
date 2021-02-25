@@ -77,8 +77,4 @@ void CyclomaticComplexityAnalysis::processFeatures(nlohmann::ordered_json j){
     Statistics[desc] = m;
 }
 
-bool CyclomaticComplexityAnalysis::s_registered =
-    AnalysisFactory::RegisterAnalysis(CyclomaticComplexityAnalysis::ShorthandName,
-         CyclomaticComplexityAnalysis::Create);
-
 //-----------------------------------------------------------------------------

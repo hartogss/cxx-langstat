@@ -177,8 +177,4 @@ void UsingAnalysis::processFeatures(nlohmann::ordered_json j){
     SynonymPrevalence(Statistics, j);
 }
 
-bool UsingAnalysis::s_registered =
-    AnalysisFactory::RegisterAnalysis(UsingAnalysis::ShorthandName,
-        UsingAnalysis::Create);
-
 //-----------------------------------------------------------------------------

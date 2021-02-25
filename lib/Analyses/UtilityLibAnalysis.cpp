@@ -71,8 +71,4 @@ void UtilityLibAnalysis::processFeatures(ordered_json j){
     }
 }
 
-bool UtilityLibAnalysis::s_registered =
-    AnalysisFactory::RegisterAnalysis(UtilityLibAnalysis::ShorthandName,
-        UtilityLibAnalysis::Create);
-
 //-----------------------------------------------------------------------------

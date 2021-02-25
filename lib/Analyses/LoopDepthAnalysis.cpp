@@ -95,8 +95,4 @@ void LoopDepthAnalysis::processFeatures(nlohmann::ordered_json j){
     Statistics[desc] = m;
 }
 
-bool LoopDepthAnalysis::s_registered =
-    AnalysisFactory::RegisterAnalysis(LoopDepthAnalysis::ShorthandName,
-        LoopDepthAnalysis::Create);
-
 //-----------------------------------------------------------------------------

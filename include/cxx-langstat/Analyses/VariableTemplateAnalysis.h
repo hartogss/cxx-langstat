@@ -35,10 +35,6 @@ private:
     std::vector<VariableFamily> VariableFamilies;
     void analyzeFeatures() override;
     void processFeatures(nlohmann::ordered_json j) override;
-    static std::unique_ptr<Analysis> Create(){
-        return std::make_unique<VariableTemplateAnalysis>();
-    }
-    static bool s_registered;
     static constexpr auto ShorthandName = "vta";
 };
 
