@@ -3,7 +3,7 @@
 # https://www.youtube.com/watch?v=kEGQKzhciKc
 # and of course cmake.org
 # Potential for improvements: peek at https://github.com/firolino/clang-tool
-# colored output with ninja: # https://medium.com/@alasher/colored-c-compiler-output-with-ninja-clang-gcc-10bfe7f2b949
+# colored output with ninja: https://medium.com/@alasher/colored-c-compiler-output-with-ninja-clang-gcc-10bfe7f2b949
 
 # ---- ----
 cmake_minimum_required(VERSION 3.18.3)
@@ -42,7 +42,7 @@ message(STATUS "llvmtools binary dir ${LLVM_TOOLS_BINARY_DIR}")
 find_program(llvm-config "llvm-config" PATHS ${LLVM_TOOLS_BINARY_DIR} NO_DEFAULT_PATH REQUIRED)
 message(STATUS "Using llvm-config in ${llvm-config}")
 # Get llvm_libs
-execute_process(COMMAND ${llvm-config} --libs # --system-libs
+execute_process(COMMAND ${llvm-config} --libs # --system-libs--ignore-libllvm
     OUTPUT_VARIABLE llvm_libs
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
@@ -64,7 +64,8 @@ set(clang_libs
 )
 # message(STATUS "Clang libs: $${clang_libs}")
 
-
+# --- Where to look for includes ----
+# Includes from cxx-langstat thus are #include "cxx-langstat/<header>"
 include_directories(include)
 
 # Directory to search for library/src files
@@ -73,24 +74,26 @@ add_subdirectory(lib)
 add_library(Driver Driver.cpp)
 
 # ---- Link everything together ----
-# Link custom libraries
+# Order matters! Rule of thumb: the lower something is in this list, the more
+# code relies on its symbols and thus the more important it is.
+# The linker will learn about unresolved symbols from higher file first, and thus
+# have then the most opportunities to resolve them.
+# On macOS, these rules don't seem to be that important.
 target_link_libraries(${PROJECT_NAME}
-    Driver
-    AnalysisList
-    AnalysisRegistry
-    # MatchingExtractor
-    Utils Stats
-    Analyses
     -pthread
+    Driver
+    Stats
+    AnalysisRegistry
+    AnalysisList
+    Analyses
+    MatchingExtractor
     ${llvm_libs} ${clang_libs}
 )
-
-# Someone explain to me why it never links without this line
-target_link_libraries(Analyses MatchingExtractor)
 
 # For info about this and lit.site.cfg.py.in and lit.cfg.py see
 # https://medium.com/@mshockwave/using-llvm-lit-out-of-tree-5cddada85a78
 configure_file(test/lit.site.cfg.py.in test/lit.site.cfg.py)
+# Execute this using ninja check
 add_custom_target(check
   COMMAND lit test -v -s
 DEPENDS ${PROJECT_NAME})
