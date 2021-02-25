@@ -13,10 +13,7 @@ struct CXXLangstatOptions {
     std::string AnalysesString) :
         OutputFiles(OutputFiles),
         Stage(s),
-        EnabledAnalyses(AnalysisList(AnalysesString)) {
-            auto& Items = EnabledAnalyses.Items;
-            std::sort(Items.begin(), Items.end());
-        }
+        EnabledAnalyses(AnalysisList(AnalysesString)) {}
     std::vector<std::string> OutputFiles;
     Stage Stage;
     AnalysisList EnabledAnalyses;

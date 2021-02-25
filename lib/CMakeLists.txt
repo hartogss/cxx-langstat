@@ -1,4 +1,3 @@
-add_library(BaseExtractor BaseExtractor.cpp)
 add_library(MatchingExtractor MatchingExtractor.cpp)
 add_library(AnalysisList AnalysisList.cpp)
 add_library(AnalysisRegistry AnalysisRegistry.cpp)

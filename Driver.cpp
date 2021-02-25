@@ -37,17 +37,14 @@ public:
     // Called when AST for TU is ready/has been parsed
     // Asumes -emit-features in on
     void HandleTranslationUnit(ASTContext& Context){
-        std::cout << "Handling the translation unit" << std::endl;
         ordered_json AllAnalysesFeatures;
         Registry->createFreshAnalyses();
         Stage Stage = Registry->Options.Stage;
-        int AnalysisIndex=0;
         for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
             auto AnalysisShorthand = an->getShorthand();
             // Analyze clang AST and get features
             AllAnalysesFeatures[AnalysisShorthand]
                 =an->getFeatures(InFile, Context);
-            AnalysisIndex++;
         }
         // Write to file if -emit-features is active
         auto OutputFile = Registry->getCurrentOutputFile();
@@ -77,7 +74,7 @@ public:
     // Called after frontend is initialized, but before per-file processing
     virtual std::unique_ptr<ASTConsumer> CreateASTConsumer(
         CompilerInstance &CI, StringRef InFile){
-            std::cout << "Creating AST Consumer" << std::endl;
+            // std::cout << "Creating AST Consumer" << std::endl;
             return std::make_unique<Consumer>(getCurrentFile(), Registry);
     }
     //
@@ -145,21 +142,18 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
         ordered_json AllFilesAllStatistics;
         ordered_json Summary;
         for(auto File : InputFiles){
-            std::cout << "Reading features from file: " << File;
+            std::cout << "Reading features from file: " << File << "...";
             ordered_json j;
             std::ifstream i(File);
             i >> j;
-            std::cout << " Done\n";
-            auto AnalysisIndex = 0;
+            std::cout << "Done\n";
             ordered_json OneFileAllStatistics;
             Registry->createFreshAnalyses();
             for(const auto& an : Registry->Analyses){ // ref to unique_ptr bad?
-                auto AnalysisAbbreviation = Registry
-                    ->Options.EnabledAnalyses.Items[AnalysisIndex].Name;
-                for(const auto& [statdesc, stats] : an->getStatistics(j[AnalysisAbbreviation]).items()){
+                auto AnalysisShorthand = an->getShorthand();
+                for(const auto& [statdesc, stats] : an->getStatistics(j[AnalysisShorthand]).items()){
                     OneFileAllStatistics[statdesc] = stats;
                 }
-                AnalysisIndex++;
             }
             Summary = add(std::move(Summary), OneFileAllStatistics);
             AllFilesAllStatistics[File] = OneFileAllStatistics;

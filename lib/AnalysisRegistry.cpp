@@ -30,6 +30,11 @@ void AnalysisRegistry::createFreshAnalyses(){
     // Example of where std::move could be used if std::make<"Analysis">
     // was defined explicitly as a variable
     // Create all analyses and give them to the registry
+
+    // You don't have to add analyses in a particular order, but I think
+    // that alphabetically is the nicest, because it will affect in what order
+    // features and statistics will be printed at the end.
+
     if(Options.EnabledAnalyses.contains("ala"))
         Analyses.emplace_back(std::make_unique<AlgorithmLibraryAnalysis>());
     if(Options.EnabledAnalyses.contains("cca"))

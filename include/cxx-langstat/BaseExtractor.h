@@ -11,7 +11,8 @@
 class BaseExtractor{
 public :
     // ctor, dtor
-    BaseExtractor();
+    BaseExtractor() = default;
+    ~BaseExtractor() = default;
     // Responsible for invoking appropriate concrete Extractor
     template<typename NodeType>
     Matches<NodeType>

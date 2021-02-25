@@ -34,8 +34,8 @@ llvm::cl::opt<std::string> AnalysesOption(
 // 2 flags:
 // --emit-features: analysis stops after writing features to file after reading in .ast
 // --emit-statistics: read in JSON with features and compute statistics
-// no flag at all: compute features but don't write them to disk, compute
-// statistics and emit them
+// FIXME: if none of the above flags are given, emit features and statistics
+// in one go.
 llvm::cl::opt<Stage> PipelineStage(
     llvm::cl::desc("Stage: "),
     llvm::cl::values(
@@ -51,7 +51,7 @@ llvm::cl::opt<Stage> PipelineStage(
             "statistics.")),
     llvm::cl::cat(CXXLangstatCategory));
 
-// --in option, all until --out is taken as input files
+// --in: use this when running on a single file
 llvm::cl::list<std::string> InputFilesOption(
     "in",
     llvm::cl::desc("<src0> [... <srcN>], where srcI can be either a C/C++ source "
@@ -59,8 +59,7 @@ llvm::cl::list<std::string> InputFilesOption(
     llvm::cl::ValueRequired,
     llvm::cl::ZeroOrMore,
     llvm::cl::cat(IOCategory));
-
-// --out option, optional. when used, should give same #args as with --in.
+// --out: use when single output is expected (--in used or --emit-statistics)
 llvm::cl::opt<std::string> OutputFileOption(
     "out",
     llvm::cl::desc("[<json>]. Use this option if you expect there "
@@ -68,13 +67,13 @@ llvm::cl::opt<std::string> OutputFileOption(
         "Notably, use this when -emit-statistics is enabled."),
     llvm::cl::ValueRequired,
     llvm::cl::cat(IOCategory));
-
+// --indir: run tool on a directory. can always be used.
 llvm::cl::opt<std::string> InputDirOption(
     "indir",
     llvm::cl::desc("<dir>. Use this option if you want to analyze multiple files."),
     llvm::cl::ValueRequired,
     llvm::cl::cat(IOCategory));
-
+// --outdir: use when multiple output files are expcted (--indir or multiple --in used)
 llvm::cl::opt<std::string> OutputDirOption(
     "outdir",
     llvm::cl::desc("<dir>. Use this option if you expect there to be multiple "
@@ -82,21 +81,21 @@ llvm::cl::opt<std::string> OutputDirOption(
         "files or a directory"),
     llvm::cl::ValueRequired,
     llvm::cl::cat(IOCategory));
-
+// Give build path for compilation database
 // what to do with this? some -p option already there by default, but parser fails on it
-static llvm::cl::opt<std::string> BuildPath(
+llvm::cl::opt<std::string> BuildPath(
     "p",
     llvm::cl::desc("Build path to dir containing compilation database in JSON format."),
     llvm::cl::Optional, llvm::cl::cat(CXXLangstatCategory));
-
-static llvm::cl::opt<unsigned> ParallelismOption(
+// Option to run --emit-features in parallel. Will garble terminal output.
+llvm::cl::opt<unsigned> ParallelismOption(
     "parallel",
     llvm::cl::desc("Number of threads to use for -emit-features."),
     llvm::cl::init(1),
     llvm::cl::Optional,
     llvm::cl::ValueRequired,
     llvm::cl::cat(CXXLangstatCategory));
-static llvm::cl::alias ParallelismOptionAlias(
+llvm::cl::alias ParallelismOptionAlias(
     "j",
     llvm::cl::desc("Alias for -parallel"),
     llvm::cl::aliasopt(ParallelismOption),

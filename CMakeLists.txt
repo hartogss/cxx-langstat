@@ -78,7 +78,6 @@ target_link_libraries(${PROJECT_NAME}
     Driver
     AnalysisList
     AnalysisRegistry
-    BaseExtractor
     # MatchingExtractor
     Utils Stats
     Analyses
@@ -87,7 +86,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 # Someone explain to me why it never links without this line
-target_link_libraries(Analyses BaseExtractor MatchingExtractor)
+target_link_libraries(Analyses MatchingExtractor)
 
 # For info about this and lit.site.cfg.py.in and lit.cfg.py see
 # https://medium.com/@mshockwave/using-llvm-lit-out-of-tree-5cddada85a78
