@@ -49,7 +49,7 @@ StdMoveStdForwardUsageAnalyzer() : TemplateInstantiationAnalysis(
 void MoveSemanticsAnalysis::StdMoveStdForwardUsageAnalyzer::
 processFeatures(nlohmann::ordered_json j) {
     if(j.contains(p1key) && j.at(p1key).contains(FuncKey)){
-        typePrevalence(j.at(p1key).at(FuncKey), Statistics);
+        templatePrevalence(j.at(p1key).at(FuncKey), Statistics);
     }
 }
 

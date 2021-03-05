@@ -72,13 +72,13 @@ const StringMap<int> NumRelTypes = { // no constexpr support for map
 
 // Gathers data on how often each container template was used.
 void containerPrevalence(const ordered_json& in, ordered_json& out){
-    typePrevalence(in, out);
+    templatePrevalence(in, out);
 }
 
 // For each container template, gives statistics on how often each instantiation
 // was used by a (member) variable.
-void containerInstantiationTypeArgs(const ordered_json& in, ordered_json& out){
-    instantiationTypeArgs(in, out, NumRelTypes);
+void containertemplateTypeArgPrevalence(const ordered_json& in, ordered_json& out){
+    templateTypeArgPrevalence(in, out, NumRelTypes);
 }
 
 void ContainerLibAnalysis::processFeatures(ordered_json j){
@@ -86,7 +86,7 @@ void ContainerLibAnalysis::processFeatures(ordered_json j){
         ordered_json res1;
         ordered_json res2;
         containerPrevalence(j.at(ImplicitClassKey), res1);
-        containerInstantiationTypeArgs(j.at(ImplicitClassKey), res2);
+        containertemplateTypeArgPrevalence(j.at(ImplicitClassKey), res2);
         Statistics[ContainerPrevalenceKey] = res1;
         Statistics[ContainedTypesPrevalenceKey] = res2;
     }

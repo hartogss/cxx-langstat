@@ -40,7 +40,7 @@ AlgorithmLibraryAnalysis::AlgorithmLibraryAnalysis() : TemplateInstantiationAnal
 
 // Gathers data on how often each algorithm template was used.
 void algorithmPrevalence(const ordered_json& in, ordered_json& out){
-    typePrevalence(in, out);
+    templatePrevalence(in, out);
 }
 
 void AlgorithmLibraryAnalysis::processFeatures(ordered_json j){

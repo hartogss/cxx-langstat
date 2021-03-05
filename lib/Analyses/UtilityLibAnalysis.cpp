@@ -56,13 +56,13 @@ const StringMap<int> NumRelTypes = { // no constexpr support for map
 
 // Gathers data on how often each utility template was used.
 void utilityPrevalence(const ordered_json& in, ordered_json& out){
-    typePrevalence(in, out);
+    templatePrevalence(in, out);
 }
 
 // For each container template, gives statistics on how often each instantiation
 // was used by a (member) variable.
-void utilityInstantiationTypeArgs(const ordered_json& in, ordered_json& out){
-    instantiationTypeArgs(in, out, NumRelTypes);
+void utilitytemplateTypeArgPrevalence(const ordered_json& in, ordered_json& out){
+    templateTypeArgPrevalence(in, out, NumRelTypes);
 }
 
 void UtilityLibAnalysis::processFeatures(ordered_json j){
@@ -70,7 +70,7 @@ void UtilityLibAnalysis::processFeatures(ordered_json j){
         ordered_json res1;
         ordered_json res2;
         utilityPrevalence(j.at(ImplicitClassKey), res1);
-        utilityInstantiationTypeArgs(j.at(ImplicitClassKey), res2);
+        utilitytemplateTypeArgPrevalence(j.at(ImplicitClassKey), res2);
         Statistics[UtilityPrevalenceKey] = res1;
         Statistics[UtilitiedTypesPrevalenceKey] = res2;
     }

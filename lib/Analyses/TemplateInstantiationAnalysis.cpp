@@ -421,17 +421,17 @@ void TemplateInstantiationAnalysis::analyzeFeatures(){
 void TemplateInstantiationAnalysis::processFeatures(nlohmann::ordered_json j){
     if(j.contains(ExplicitClassKey)) {
         ordered_json res;
-        typePrevalence(j.at(ExplicitClassKey), res);
+        templatePrevalence(j.at(ExplicitClassKey), res);
         Statistics["tia explicit class insts"] = res;
     }
     if(j.contains(ImplicitClassKey)) {
         ordered_json res;
-        typePrevalence(j.at(ImplicitClassKey), res);
+        templatePrevalence(j.at(ImplicitClassKey), res);
         Statistics["tia implicit class insts"] = res;
     }
     if(j.contains(FuncKey)) {
         ordered_json res;
-        typePrevalence(j.at(FuncKey), res);
+        templatePrevalence(j.at(FuncKey), res);
         Statistics[FuncKey] = res;
     }
 }
@@ -457,7 +457,7 @@ std::string getRelevantTypesAsString(StringRef Type, json Types,
             return "";
 }
 
-void typePrevalence(const ordered_json& in, ordered_json& out){
+void templatePrevalence(const ordered_json& in, ordered_json& out){
     std::map<std::string, unsigned> m;
     for(const auto& [Type, Insts] : in.items()){
         // std::cout << Type << std::endl;
@@ -466,7 +466,7 @@ void typePrevalence(const ordered_json& in, ordered_json& out){
     out = m;
 }
 
-void instantiationTypeArgs(const ordered_json& in, ordered_json& out,
+void templateTypeArgPrevalence(const ordered_json& in, ordered_json& out,
     const StringMap<int>& SM){
         StringMap<StringMap<unsigned>> m;
         for(const auto& [Type, Insts] : in.items()){
