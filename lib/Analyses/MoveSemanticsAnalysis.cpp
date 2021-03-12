@@ -1,5 +1,6 @@
 #include "cxx-langstat/Analyses/MoveSemanticsAnalysis.h"
 
+using namespace clang;
 using namespace clang::ast_matchers;
 using ojson = nlohmann::ordered_json;
 
@@ -61,7 +62,16 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
     auto m = callExpr(isExpansionInMainFile(),
         forEachArgumentWithParam(
             // Argument is something that has to be constructed
-            cxxConstructExpr().bind("arg"),
+            expr(anyOf(
+                // for trivially destructible classes
+                cxxConstructExpr().bind("arg"),
+                // For clases that are not trivially destructible, i.e. have
+                // custom destructor
+                // https://clang.llvm.org/doxygen/classclang_1_1CXXBindTemporaryExpr.html#details
+                // When the to be constructed type has a non-trivial destructor,
+                // the clang AST wraps a CXXBindTemporaryExpr around the
+                // CXXConstructExpr, and I don't understand why
+                cxxBindTemporaryExpr(has(cxxConstructExpr().bind("arg"))))),
             // Type of parameter should by-value
             parmVarDecl(
                 hasType(type(unless(referenceType()))),
@@ -84,6 +94,15 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
         ConstructInfo CI;
         auto Ctor = a.Node->getConstructor();
 
+        LangOptions LO;
+        PrintingPolicy PP(LO);
+        PP.PrintCanonicalTypes = true;
+        PP.SuppressTagKeyword = false;
+        PP.SuppressScope = false;
+        PP.SuppressUnwrittenScope = true;
+        PP.FullyQualifiedName = true;
+        PP.Bool = true;
+
         // std::cout << a.Location << ", " <<
         //     Ctor->getQualifiedNameAsString();
         // if(Ctor->isCopyConstructor()){
@@ -99,7 +118,7 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
 
         // what callee should we get here?
         FPI.FuncId = f->getQualifiedNameAsString();
-        FPI.FuncType = f->getType().getCanonicalType().getAsString();
+        FPI.FuncType = f->getType().getAsString(PP);
         FPI.Id = p.Node->getQualifiedNameAsString();
         FPI.FuncLocation = Context->getFullLoc(f->getInnerLocStart())
             .getLineNumber();
@@ -108,7 +127,7 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
         else
             FPI.CK = ConstructKind::Unknown;
         FPI.CompilerGenerated = Ctor->isImplicit();
-        FPI.ParmType = p.Node->getType().getCanonicalType().getAsString();
+        FPI.ParmType = p.Node->getType().getAsString(PP);
         CEI.Location = c.Location;
         CI.Parameter = FPI;
         CI.CallExpr = CEI;

@@ -1,0 +1,23 @@
+{
+    "msa": {
+        "std::move, std::forward usage": {
+            "func insts": null
+        },
+        "copy or move construction": [
+            {
+                "CallExpr": {
+                    "Location": 17
+                },
+                "Parameter": {
+                    "Func Identifier": "f",
+                    "Func Location": 14,
+                    "Func Type": "void (class C)",
+                    "Identifier": "c",
+                    "Parm Type": "class C",
+                    "construction kind": "unknown",
+                    "copy/move ctor is compiler-generated": true
+                }
+            }
+        ]
+    }
+}
