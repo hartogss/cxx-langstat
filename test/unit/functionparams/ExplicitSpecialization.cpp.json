@@ -1,0 +1,43 @@
+{
+    "fpa": {
+        "functions": [
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 1,
+                "Identifier": "func<int>",
+                "Location": 14,
+                "Signature": "void (int)"
+            }
+        ],
+        "function templates": [
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByUniversalRef": 0,
+                "ByValue": 1,
+                "Identifier": "func",
+                "Location": 10,
+                "Signature": "void (T)"
+            }
+        ],
+        "parameters": [
+            {
+                "Identifier": "t",
+                "Kind": 0,
+                "Location": 11,
+                "Type": "type-parameter-0-0",
+                "isInstantiationDependent": true
+            },
+            {
+                "Identifier": "t",
+                "Kind": 0,
+                "Location": 15,
+                "Type": "int",
+                "isInstantiationDependent": false
+            }
+        ]
+    }
+}

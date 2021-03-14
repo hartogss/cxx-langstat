@@ -13,6 +13,15 @@
             {
                 "ByConstLvalueRef": 0,
                 "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 1,
+                "Identifier": "func1<double>",
+                "Location": 11,
+                "Signature": "void (double)"
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
                 "ByRvalueRef": 1,
                 "ByValue": 0,
                 "Identifier": "func2<3>",
@@ -27,6 +36,15 @@
                 "Identifier": "func3<int &>",
                 "Location": 19,
                 "Signature": "void (int &)"
+            },
+            {
+                "ByConstLvalueRef": 0,
+                "ByNonConstLvalueRef": 0,
+                "ByRvalueRef": 0,
+                "ByValue": 2,
+                "Identifier": "main",
+                "Location": 22,
+                "Signature": "int (int, char **)"
             }
         ],
         "function templates": [
@@ -91,6 +109,13 @@
                 "isInstantiationDependent": false
             },
             {
+                "Identifier": "t",
+                "Kind": 0,
+                "Location": 11,
+                "Type": "double",
+                "isInstantiationDependent": false
+            },
+            {
                 "Identifier": "n",
                 "Kind": 3,
                 "Location": 15,
@@ -102,6 +127,20 @@
                 "Kind": 1,
                 "Location": 19,
                 "Type": "int &",
+                "isInstantiationDependent": false
+            },
+            {
+                "Identifier": "argc",
+                "Kind": 0,
+                "Location": 22,
+                "Type": "int",
+                "isInstantiationDependent": false
+            },
+            {
+                "Identifier": "argv",
+                "Kind": 0,
+                "Location": 22,
+                "Type": "char **",
                 "isInstantiationDependent": false
             }
         ]

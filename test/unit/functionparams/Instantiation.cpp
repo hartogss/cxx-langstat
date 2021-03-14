@@ -18,3 +18,7 @@ template void func2<3>(int&&);
 template<typename T>
 void func3(T&& t){}
 template void func3<int&>(int&); // Thank you, reference collapsing :)
+
+int main(int argc, char** argv){
+    func1(3.0); // implicit instantiation test
+}
