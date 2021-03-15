@@ -1,0 +1,19 @@
+{
+    "ua": [
+        {
+            "kind": "Typedef",
+            "location": 13,
+            "templated": false
+        },
+        {
+            "kind": "Typedef",
+            "location": 13,
+            "templated": false
+        },
+        {
+            "kind": "Typedef",
+            "location": 22,
+            "templated": false
+        }
+    ]
+}

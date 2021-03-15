@@ -17,20 +17,7 @@ using ordered_json = nlohmann::ordered_json;
 // used.
 
 void UsingAnalysis::extractFeatures() {
-    Synonyms.clear();
-    // Count all typedefs that are explicitly written by programmer (high level)
-    // Concretely, that means:
-    // - in main file
-    // - not generated automatically in class template specializations
-    // - not part of instantiations
-    // Additionally: don't want them to be part of "template typedefs", in
-    // our statistics want to know how many were templatized & how many were not
-    auto typedef_ = typedefDecl(
-        isExpansionInMainFile(),
-        unless(isInstantiated())) // I think fixes s.t. specializations are
-                                  // ignored, got idea from UseUsingCheck.cpp,
-                                  // which is from clang-tidy
-    .bind("typedef");
+    // Synonyms.clear();
 
     // Type aliases, however, only those that are not part of type alias
     // templates. Type alias template contains type alias node in clang AST.
@@ -42,12 +29,12 @@ void UsingAnalysis::extractFeatures() {
     // Of course there are no typedef templates in C++, but we consider the
     // following idiom mostly used prior to C++11 to be a "typedef template":
     // template<typename T>
-    //     struct Pair {
-    // typedef Tuple<T> type; // don't have to name this 'type'
+    // struct Pair {
+    //     typedef Tuple<T> type; // don't have to name this 'type'
     // };
     // We thus say that a class template is a "typedef decl" if it contains only
     // typedefs, nothing else.
-    // Requires the typedef in the template to be public.
+    // No requirement about the access specifier of the typedef.
     auto typedefTemplate = classTemplateDecl(has(cxxRecordDecl(
         isExpansionInMainFile(),
         // Must have typedefDecl
@@ -69,6 +56,22 @@ void UsingAnalysis::extractFeatures() {
         isExpansionInMainFile())
     .bind("aliastemplate");
 
+    // Count all typedefs that are explicitly written by programmer (high level)
+    // Concretely, that means:
+    // We want typedefs matched here not to be part of a "typedef template",
+    // because we want to study those separately. To do that, have 2 requirements:
+    // 1) a typedef matched here may not be part of a class template that is
+    // used to create a "typedef template"
+    // 2) a typedef matched here may not be part of a class template specialization
+    // that occurs when the programmer wants to make use of the "typedef template"
+    auto typedef_ = typedefDecl(
+        isExpansionInMainFile(),
+        // 2) Don't match typedef in class specializations coming from "typedef templates"
+        // 1) will filtered out later
+        unless(hasParent(classTemplateSpecializationDecl(
+            hasSpecializedTemplate(typedefTemplate)))))
+    .bind("typedef");
+
     // Note: Left works only in clang-query, right works in both CQ and LibTooling
     // has(anyOf(...)) -> has(decl(anyOf(...)))
     // has(unless(...)) -> has(decl(unless(...)))
@@ -81,6 +84,7 @@ void UsingAnalysis::extractFeatures() {
     Matches<clang::Decl> TypeAliasTemplateDecls = Extractor.extract(*Context, "aliastemplate",
         typeAliasTemplate);
 
+    // Filters as described in 1) under typedefs
     // need to do extra work to remove from typedefdecls those decls that occur
     // in typedeftemplatedecls (to get distinction between typedef and typedef
     // templates)
