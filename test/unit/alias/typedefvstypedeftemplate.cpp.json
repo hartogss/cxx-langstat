@@ -1,0 +1,9 @@
+{
+    "ua": [
+        {
+            "kind": "Typedef",
+            "location": 11,
+            "templated": true
+        }
+    ]
+}
