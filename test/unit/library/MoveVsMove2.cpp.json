@@ -33,6 +33,49 @@
                 ]
             }
         },
-        "copy or move construction": null
+        "copy or move construction": [
+            {
+                "CallExpr": {
+                    "Location": 19
+                },
+                "Parameter": {
+                    "Func Identifier": "std::move",
+                    "Func Location": 1889,
+                    "Func Type": "class std::back_insert_iterator<class std::list<int, class std::allocator<int> > > (class std::__wrap_iter<int *>, class std::__wrap_iter<int *>, class std::back_insert_iterator<class std::list<int, class std::allocator<int> > >)",
+                    "Identifier": "__first",
+                    "Parm Type": "class std::__wrap_iter<int *>",
+                    "construction kind": "move",
+                    "copy/move ctor is compiler-generated": true
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 19
+                },
+                "Parameter": {
+                    "Func Identifier": "std::move",
+                    "Func Location": 1889,
+                    "Func Type": "class std::back_insert_iterator<class std::list<int, class std::allocator<int> > > (class std::__wrap_iter<int *>, class std::__wrap_iter<int *>, class std::back_insert_iterator<class std::list<int, class std::allocator<int> > >)",
+                    "Identifier": "__last",
+                    "Parm Type": "class std::__wrap_iter<int *>",
+                    "construction kind": "move",
+                    "copy/move ctor is compiler-generated": true
+                }
+            },
+            {
+                "CallExpr": {
+                    "Location": 19
+                },
+                "Parameter": {
+                    "Func Identifier": "std::move",
+                    "Func Location": 1889,
+                    "Func Type": "class std::back_insert_iterator<class std::list<int, class std::allocator<int> > > (class std::__wrap_iter<int *>, class std::__wrap_iter<int *>, class std::back_insert_iterator<class std::list<int, class std::allocator<int> > >)",
+                    "Identifier": "__result",
+                    "Parm Type": "class std::back_insert_iterator<class std::list<int, class std::allocator<int> > >",
+                    "construction kind": "move",
+                    "copy/move ctor is compiler-generated": true
+                }
+            }
+        ]
     }
 }

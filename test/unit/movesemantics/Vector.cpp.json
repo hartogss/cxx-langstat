@@ -1,0 +1,36 @@
+{
+    "msa": {
+        "std::move, std::forward usage": {
+            "func insts": {
+                "std::move": [
+                    {
+                        "location": 18,
+                        "arguments": {
+                            "non-type": [],
+                            "type": [
+                                "std::vector<int, std::allocator<int> > &"
+                            ],
+                            "template": []
+                        }
+                    }
+                ]
+            }
+        },
+        "copy or move construction": [
+            {
+                "CallExpr": {
+                    "Location": 18
+                },
+                "Parameter": {
+                    "Func Identifier": "func",
+                    "Func Location": 12,
+                    "Func Type": "void (class std::vector<int, class std::allocator<int> >)",
+                    "Identifier": "v",
+                    "Parm Type": "class std::vector<int, class std::allocator<int> >",
+                    "construction kind": "move",
+                    "copy/move ctor is compiler-generated": false
+                }
+            }
+        ]
+    }
+}

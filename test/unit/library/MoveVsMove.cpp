@@ -19,7 +19,7 @@ int main(int argc, char** argv){
     //
     std::vector<int> v;
     std::list<int> l;
-    std::move(v.begin(), v.end(), std::back_inserter(l));
+    std::move(v.begin(), v.end(), std::back_inserter(l)); // ATTENTION: this call to algorith:std::move will cause three move-constructed parameter to be detected
     //
     return std::move(0);
 

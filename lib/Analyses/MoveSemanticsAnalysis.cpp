@@ -1,5 +1,6 @@
 #include "cxx-langstat/Analyses/MoveSemanticsAnalysis.h"
 
+using namespace clang;
 using namespace clang::ast_matchers;
 using ojson = nlohmann::ordered_json;
 
@@ -61,12 +62,21 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
     auto m = callExpr(isExpansionInMainFile(),
         forEachArgumentWithParam(
             // Argument is something that has to be constructed
-            cxxConstructExpr().bind("arg"),
+            expr(anyOf(
+                // for trivially destructible classes
+                cxxConstructExpr().bind("arg"),
+                // For clases that are not trivially destructible, i.e. have
+                // custom destructor
+                // https://clang.llvm.org/doxygen/classclang_1_1CXXBindTemporaryExpr.html#details
+                // When the to be constructed type has a non-trivial destructor,
+                // the clang AST wraps a CXXBindTemporaryExpr around the
+                // CXXConstructExpr, and I don't understand why
+                cxxBindTemporaryExpr(has(cxxConstructExpr().bind("arg"))))),
             // Type of parameter should by-value
-            parmVarDecl(
-                hasType(type(unless(referenceType()))),
-                isExpansionInMainFile()).bind("parm")))
-            .bind("callexpr");
+            // and is not required to be isExpansionInMainFile, perfectly
+            // fine to call function from other TU by value
+            parmVarDecl(hasType(type(unless(referenceType())))).bind("parm")))
+    .bind("callexpr");
     auto Res = Extractor.extract2(*Context, m);
     auto Args = getASTNodes<clang::CXXConstructExpr>(Res, "arg");
     auto Parms = getASTNodes<clang::ParmVarDecl>(Res, "parm");
@@ -78,11 +88,21 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
         auto p = Parms.at(idx);
         auto a = Args.at(idx);
         auto c = Calls.at(idx);
+        // what callee should we get here?
         auto f = c.Node->getDirectCallee();
         FunctionParamInfo FPI;
         CallExprInfo CEI;
         ConstructInfo CI;
         auto Ctor = a.Node->getConstructor();
+
+        LangOptions LO;
+        PrintingPolicy PP(LO);
+        PP.PrintCanonicalTypes = true;
+        PP.SuppressTagKeyword = false;
+        PP.SuppressScope = false;
+        PP.SuppressUnwrittenScope = true;
+        PP.FullyQualifiedName = true;
+        PP.Bool = true;
 
         // std::cout << a.Location << ", " <<
         //     Ctor->getQualifiedNameAsString();
@@ -97,9 +117,13 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
         // if(auto r = clang::dyn_cast<clang::CXXTemporaryObjectExpr>(a.Node))
         //     std::cout << r->isElidable() << "\n";
 
-        // what callee should we get here?
-        FPI.FuncId = f->getQualifiedNameAsString();
-        FPI.FuncType = f->getType().getCanonicalType().getAsString();
+        std::string Result;
+        llvm::raw_string_ostream stream(Result);
+        // Can't use getQualifiedNameAsString, will print unwritten scope
+        // Can't use getNameForDiagnostic, will print specialization argument
+        f->printQualifiedName(stream, PP);
+        FPI.FuncId = Result;
+        FPI.FuncType = f->getType().getAsString(PP);
         FPI.Id = p.Node->getQualifiedNameAsString();
         FPI.FuncLocation = Context->getFullLoc(f->getInnerLocStart())
             .getLineNumber();
@@ -108,7 +132,7 @@ void MoveSemanticsAnalysis::CopyOrMoveAnalyzer::analyzeFeatures() {
         else
             FPI.CK = ConstructKind::Unknown;
         FPI.CompilerGenerated = Ctor->isImplicit();
-        FPI.ParmType = p.Node->getType().getCanonicalType().getAsString();
+        FPI.ParmType = p.Node->getType().getAsString(PP);
         CEI.Location = c.Location;
         CI.Parameter = FPI;
         CI.CallExpr = CEI;
