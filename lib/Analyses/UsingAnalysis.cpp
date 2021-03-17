@@ -19,13 +19,20 @@ using ordered_json = nlohmann::ordered_json;
 void UsingAnalysis::extractFeatures() {
     // Synonyms.clear();
 
-    // Type aliases, however, only those that are not part of type alias
+    // Type aliases
+    // however, only those that are not part of type alias
     // templates. Type alias template contains type alias node in clang AST.
     auto typeAlias = typeAliasDecl(
         isExpansionInMainFile(),
         unless(hasParent(typeAliasTemplateDecl())))
     .bind("alias");
 
+    // Alias template
+    auto typeAliasTemplate = typeAliasTemplateDecl(
+        isExpansionInMainFile())
+    .bind("aliastemplate");
+
+    // "Typedef template"
     // Of course there are no typedef templates in C++, but we consider the
     // following idiom mostly used prior to C++11 to be a "typedef template":
     // template<typename T>
@@ -51,11 +58,7 @@ void UsingAnalysis::extractFeatures() {
                 cxxRecordDecl(isImplicit())))))))))
     .bind("typedeftemplate");
 
-    // Alias template
-    auto typeAliasTemplate = typeAliasTemplateDecl(
-        isExpansionInMainFile())
-    .bind("aliastemplate");
-
+    // Typedef
     // Count all typedefs that are explicitly written by programmer (high level)
     // Concretely, that means:
     // We want typedefs matched here not to be part of a "typedef template",
@@ -84,7 +87,7 @@ void UsingAnalysis::extractFeatures() {
     Matches<clang::Decl> TypeAliasTemplateDecls = Extractor.extract(*Context, "aliastemplate",
         typeAliasTemplate);
 
-    // Filters as described in 1) under typedefs
+    // Filters as described in 1) in typedef
     // need to do extra work to remove from typedefdecls those decls that occur
     // in typedeftemplatedecls (to get distinction between typedef and typedef
     // templates)

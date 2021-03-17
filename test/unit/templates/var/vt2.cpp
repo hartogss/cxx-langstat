@@ -28,10 +28,10 @@ class C2 {
 };
 
 // Although intuitively I would make this to be a static class template member
-// var, it is a variable template according to cppreferenece.com.
+// var, it is a variable template according to cppreference.com.
 // At class scope, a variable template has to be static.
 template<typename T>
 class C1 {
     template<typename U>
-    static T data;
+    static T data; // notice the type here is T, not U
 };

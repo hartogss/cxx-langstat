@@ -29,8 +29,10 @@ ContainerLibAnalysis::ContainerLibAnalysis() : TemplateInstantiationAnalysis(
         "std::unordered_multiset", "std::unordered_multimap",
         "std::stack", "std::queue", "std::priority_queue"
     ),
+    // libc++
     "array|vector|deque|forward_list|list|set|map|unordered_set|unordered_map|"
     "stack|queue"){
+    // no libstdc++ header necessary?
     std::cout << "CLA ctor\n";
 }
 

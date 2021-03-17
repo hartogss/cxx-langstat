@@ -100,8 +100,7 @@ void TemplateInstantiationAnalysis::extractFeatures() {
             // & static member variables)
             varDecl(
                 isExpansionInMainFile(),
-                typematcher
-                )
+                typematcher)
             .bind("VarsFieldThatInstantiateImplicitly"),
             // Field declarations (non static variable member)
             fieldDecl(
@@ -136,7 +135,7 @@ void TemplateInstantiationAnalysis::extractFeatures() {
         // below will filter out those variable declarations and the belonging
         // implicit class inst with it in O(n^2). A better solution would be to
         // bundle variables with the class template specialization that is their type
-        // and sort (O(nlogn)), but for sake of easyness this is (still) omitted.
+        // and sort (O(nlogn)), but for sake of ease this is (still) omitted.
         // That they're matched twice is due to an bug in RecursiveASTVisitor:
         // https://lists.llvm.org/pipermail/cfe-dev/2021-February/067595.html
         // std::cout << Variables.size() << std::endl;
@@ -163,15 +162,15 @@ void TemplateInstantiationAnalysis::extractFeatures() {
         // .bind("FuncInsts");
         // Capture all calls that potentially cause an instantiation of a
         // function template. Explicit function template instantation are ignored
-        // for easity.
+        // for ease.
         auto FuncInstMatcher = callExpr(callee(
             functionDecl(
                 Names,
                 isTemplateInstantiation(),
                 isExpansionInFileMatching(HeaderRegex)
             ).bind("FuncInsts")),
-            isExpansionInMainFile()
-        ).bind("callers");
+            isExpansionInMainFile())
+        .bind("callers");
         auto FuncResults = Extractor.extract2(*Context, FuncInstMatcher);
         FuncInsts = getASTNodes<FunctionDecl>(FuncResults, "FuncInsts");
         Callers = getASTNodes<CallExpr>(FuncResults, "callers");
@@ -334,7 +333,6 @@ template<>
 unsigned TemplateInstantiationAnalysis::getInstantiationLocation(
     const Match<FunctionDecl>& Match, bool isImplicit){
         if(isImplicit){
-            // std::cout << CallersCounter << ", " << Callers[CallersCounter].Location << std::endl;
             return Callers[CallersCounter++].Location;
         } else {
             return Context->getFullLoc(Match.Node->getPointOfInstantiation())
@@ -399,7 +397,7 @@ void TemplateInstantiationAnalysis::gatherInstantiationData(Matches<T>& Insts,
             // FIXME: find more elegant solution
             // No TAL -> skip a function call in reporting -> increase counter
             // to get correct call for each object in FuncInst
-            if(InstKind == "func insts")
+            if(InstKind == FuncKey)
                 CallersCounter++;
         }
     }
