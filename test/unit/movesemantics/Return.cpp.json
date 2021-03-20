@@ -1,0 +1,8 @@
+{
+    "msa": {
+        "std::move, std::forward usage": {
+            "func insts": null
+        },
+        "copy or move construction": null
+    }
+}

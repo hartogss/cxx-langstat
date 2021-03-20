@@ -14,5 +14,5 @@ class C {
 void f(C c);
 
 int main(int argc, char** argv){
-    f(C());
+    f(C()); // cxxConstructExpr will bind to a cxxTemporaryObjectExpr 
 }
