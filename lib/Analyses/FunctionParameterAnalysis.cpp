@@ -199,8 +199,10 @@ void FunctionParameterAnalysis::analyzeFeatures() {
 void FunctionsCount(ordered_json& Stats, ordered_json j, bool templated){
     unsigned Value=0, NCLValueRef=0, CLValueRef=0, RValueRef = 0, UniversalRef=0;
     std::string addendum = "";
+    unsigned NumFuncs = 0;
     for(const auto& f_j : j){
         // std::cout << f_j.dump(4) << std::endl;
+        NumFuncs++;
         if(templated) {
             addendum = " template";
             FunctionTemplateInfo ft;
@@ -233,6 +235,7 @@ void FunctionsCount(ordered_json& Stats, ordered_json j, bool templated){
     Stats[desc]["non-const lvalue ref"] = NCLValueRef;
     Stats[desc]["const lvalue ref"] = CLValueRef;
     Stats[desc]["rvalue ref"] = RValueRef;
+    Stats[desc]["total num of functions/function templates"] = NumFuncs;
     if(templated)
         Stats[desc]["universal ref"] = UniversalRef;
 }
