@@ -21,7 +21,7 @@ struct CXXLangstatOptions {
 
 //-----------------------------------------------------------------------------
 // Registry holding information about options used, output files and pointers
-// to the actual analyses for a single CXXLangstatMain call.
+// to the actual analyses for a single CXXLangstatMain() call.
 class AnalysisRegistry {
 public:
     AnalysisRegistry(CXXLangstatOptions Opts);
@@ -31,6 +31,7 @@ public:
     // Since AnalysisRegistry holds for each input file analyzed by ClangTool
     // the corresponding output file, we can leverage that to ensure we
     // get the correct output file path.
+    // There probably is a nicer way to do this.
     std::string getCurrentOutputFile(){
         return Options.OutputFiles.at(FileIndex++);
     }

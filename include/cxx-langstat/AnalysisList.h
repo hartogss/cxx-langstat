@@ -5,7 +5,8 @@
 #include <string>
 #include "llvm/ADT/StringRef.h"
 
-// 'Copy' of clang-tidy's Globlist.h
+// Strongly inspired by clang-tidy's Globlist.h:
+// https://github.com/llvm/llvm-project/blob/release/11.x/clang-tools-extra/clang-tidy/GlobList.h
 
 //-----------------------------------------------------------------------------
 

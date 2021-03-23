@@ -19,8 +19,9 @@ public:
     virtual ~Analysis() = default;
 
     // Run analysis
-    // Return by ref is OK, as Analysis goes out of scope at the very end of the
-    // program.
+    // Get either features or statistics, part of the interface.
+    // Return by ref is OK, analysis goes out of scope just after this when particular
+    // file is analyzed.
     const nlohmann::ordered_json& getFeatures(llvm::StringRef InFile, clang::ASTContext& Ctxt){
         Context = &Ctxt;
         analyzeFeatures();
@@ -30,7 +31,7 @@ public:
         processFeatures(j);
         return Statistics;
     }
-    // implement this as by returning private static constexpr member of
+    // Implement this as by returning private static constexpr member of
     // analysis.
     // Not very nice solution, but ensure that all analyses have name they return
     // and shorthand name can be used to register analysis with factory.
@@ -41,6 +42,10 @@ protected:
     clang::ASTContext* Context;
     nlohmann::ordered_json Features;
     nlohmann::ordered_json Statistics;
+    
+    // Internal functions that actual analyses have to implement to compute
+    // features or statistics.
+
     // Function that looks for features in code and creates a JSON object to
     // hold all interesting features.
     virtual void analyzeFeatures() = 0;

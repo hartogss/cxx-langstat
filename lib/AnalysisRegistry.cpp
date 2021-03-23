@@ -25,6 +25,8 @@ AnalysisRegistry::AnalysisRegistry(CXXLangstatOptions Opts) : Options(Opts) {
 AnalysisRegistry::~AnalysisRegistry(){
     std::cout << "Registry dtor" << std::endl;
 }
+
+// Register new analyses here.
 void AnalysisRegistry::createFreshAnalyses(){
     std::cout << "Creating analyses" << std::endl;
     // Example of where std::move could be used if std::make<"Analysis">

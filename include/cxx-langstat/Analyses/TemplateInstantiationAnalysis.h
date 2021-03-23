@@ -98,7 +98,7 @@ void templatePrevalence(const nlohmann::ordered_json& in,
     nlohmann::ordered_json& out);
 
 // For each set of template type arguments used to create any instantiation in
-// "in",  computes how often that set occured in total among all instantiations
+// "in", computes how often that set occured in total among all instantiations
 // in "in".
 void templateTypeArgPrevalence(const nlohmann::ordered_json& in,
     nlohmann::ordered_json& out, const StringMap<int>& SM);

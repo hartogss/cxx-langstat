@@ -1,4 +1,15 @@
-// helpful: https://github.com/peter-can-talk/cppnow-2017/blob/master/code/mccabe/mccabe.cpp
+// Sources for the ASTFrontendAction-ASTConsumer-MatchCallback "triad":
+// Also has info on how to use FrontendActionFactory and ClangTool
+// https://github.com/peter-can-talk/cppnow-2017/blob/master/code/mccabe/mccabe.cpp
+// and the corresponding conference video
+// https://www.youtube.com/watch?v=E6i8jmiy8MY
+
+// Information about ASTFrontendAction, ASTConsumer from official Clang doc.
+// https://clang.llvm.org/docs/RAVFrontendAction.html
+
+// Information about ASTFrontendAction, ASTContext and Clang AST in general:
+// https://jonasdevlieghere.com/understanding-the-clang-ast/
+
 
 // clang includes
 #include "clang/Frontend/FrontendAction.h"
@@ -14,7 +25,6 @@
 //
 #include "cxx-langstat/AnalysisRegistry.h"
 #include "cxx-langstat/Utils.h"
-#include "cxx-langstat/Options.h"
 #include "cxx-langstat/Driver.h"
 #include "cxx-langstat/Stats.h"
 
@@ -35,7 +45,7 @@ public:
         Registry(Registry){
     }
     // Called when AST for TU is ready/has been parsed
-    // Asumes -emit-features in on
+    // Assumes -emit-features in on
     void HandleTranslationUnit(ASTContext& Context){
         ordered_json AllAnalysesFeatures;
         Registry->createFreshAnalyses();
@@ -162,6 +172,7 @@ int CXXLangstatMain(std::vector<std::string> InputFiles,
         o << AllFilesAllStatistics.dump(4) << std::endl;
         o << Summary.dump(4) << std::endl;
     }
+
     delete Registry;
     return 0;
 }

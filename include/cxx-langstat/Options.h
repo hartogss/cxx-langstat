@@ -2,9 +2,10 @@
 #define OPTIONS_H
 
 //-----------------------------------------------------------------------------
-
+// Is emit-features or emit-statistics supplied?
+// Needed by Runner, Driver and AnalysisRegistry.
 enum Stage {
-    none, emit_features=1, emit_statistics=2
+    emit_features=1, emit_statistics=2
 };
 
 //-----------------------------------------------------------------------------

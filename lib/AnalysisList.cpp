@@ -4,7 +4,9 @@
 
 #include "cxx-langstat/AnalysisList.h"
 
-// 'Copy' of clang-tidy's Globlist.cpp
+// Strongly inspired by clang-tidy's Globlist.h, GlobList.cpp:
+// https://github.com/llvm/llvm-project/blob/release/11.x/clang-tools-extra/clang-tidy/GlobList.h
+// https://github.com/llvm/llvm-project/blob/release/11.x/clang-tools-extra/clang-tidy/GlobList.cpp
 
 //-----------------------------------------------------------------------------
 

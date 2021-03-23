@@ -6,6 +6,10 @@
 #include "cxx-langstat/MatchingExtractor.h"
 #include "cxx-langstat/Utils.h"
 
+// Base of extraction mechanism. If you want to add any new methods of extraction,
+// e.g. asking clang-tidy for features, then please use BaseExtractor as an
+// interface that analyses can use.
+
 //-----------------------------------------------------------------------------
 
 class BaseExtractor{
@@ -24,7 +28,6 @@ public :
 };
 
 // Implementations s.t. explicit instantiation is not necessary
-// Might move this to a BaseExtractor.tpp file
 template<typename NodeType>
 Matches<NodeType>
 BaseExtractor::extract(clang::ASTContext& Context, std::string id,

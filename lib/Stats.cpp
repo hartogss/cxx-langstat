@@ -5,9 +5,6 @@
 using ordered_json = nlohmann::ordered_json;
 
 //-----------------------------------------------------------------------------
-// Given two JSON objects, where lhs describes the statistics of a single file
-// or summary statistics of multiple files, and rhs describes the statistics
-// of a single file, combine them to a single summary statistic.
 ordered_json add(ordered_json&& lhs, const ordered_json& rhs){
     if(lhs.empty())
         return rhs;

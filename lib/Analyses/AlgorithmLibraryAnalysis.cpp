@@ -28,6 +28,7 @@ AlgorithmLibraryAnalysis::AlgorithmLibraryAnalysis() : TemplateInstantiationAnal
         "std::minmax", "std::minmax_element", "std::clamp",
         // Modifying sequence operations
         "std::move"
+        // This list of algorithms is incomplete
     ),
     // libc++
     "algorithm|"

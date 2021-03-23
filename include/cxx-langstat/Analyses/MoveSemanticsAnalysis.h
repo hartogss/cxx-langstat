@@ -36,7 +36,7 @@ struct ConstructInfo {
 
 // Need to make MSA that adheres to Analysis interface, but that can call two
 // independent other analyses.
-// MSA is guaranteed to be called thru analyzeFeatures and processFeatures.
+// MSA is guaranteed to be called through analyzeFeatures and processFeatures.
 class MoveSemanticsAnalysis : public Analysis {
 public:
     MoveSemanticsAnalysis(){

@@ -1,6 +1,12 @@
 #ifndef MATCHINGEXTRACTOR_H
 #define MATCHINGEXTRACTOR_H
 
+// Helper class to abstract MatchCallback away to function that analyses can
+// call to extract MatchResults. Analyses should then apply getASTNodes
+// with the bound id to get the actual nodes in the AST.
+// In the future, might be more handy to implement MatchCallback directly inside
+// of the concrete analyses instead of hiding it after the BaseExtractor interface.
+
 //-----------------------------------------------------------------------------
 // Match object to contain data extracted from AST
 // contains location, pointer to object representing stmt, decl, or type in AST
@@ -53,8 +59,6 @@ using Matches = std::vector<Match<T>>; // allows to do Matches<T>
 // Callback class executed on match
 class MatchingExtractor : public clang::ast_matchers::MatchFinder::MatchCallback {
 public:
-    MatchingExtractor();
-    ~MatchingExtractor();
     // Run when match is found after extract call with Matcher
     virtual void run(const clang::ast_matchers::MatchFinder::MatchResult& Result);
     std::vector<clang::ast_matchers::MatchFinder::MatchResult> Results;

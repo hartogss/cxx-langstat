@@ -17,7 +17,7 @@ std::string getMatchDeclName(const Match<T>& Match){
         return "INVALID";
     }
 }
-
+// For a list containing matches that are derived from NamedDecl, print them.
 template<typename T>
 void printMatches(std::string text, const Matches<T>& Matches){
     std::cout << "\033[33m" << text << ":\033[0m " << Matches.size() << "\n";
@@ -26,7 +26,10 @@ void printMatches(std::string text, const Matches<T>& Matches){
 }
 
 //-----------------------------------------------------------------------------
-
+// Given a vector of Matchresults and an id, extract the actual nodes in the
+// Clang AST by returning pointers to them.
+// We thus assume that the ASTContext holding those nodes has a longer lifetime
+// than an analysis using them.
 template<typename NodeType>
 Matches<NodeType>
 getASTNodes(std::vector<clang::ast_matchers::MatchFinder::MatchResult> Results,
