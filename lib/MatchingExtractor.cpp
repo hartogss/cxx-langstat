@@ -1,5 +1,3 @@
-#include "clang/ASTMatchers/ASTMatchFinder.h"
-
 #include <iostream>
 
 #include "cxx-langstat/MatchingExtractor.h"

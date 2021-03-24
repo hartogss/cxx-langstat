@@ -1,6 +1,9 @@
 #ifndef MATCHINGEXTRACTOR_H
 #define MATCHINGEXTRACTOR_H
 
+#include "clang/ASTMatchers/ASTMatchFinder.h"
+#include <string>
+
 // Helper class to abstract MatchCallback away to function that analyses can
 // call to extract MatchResults. Analyses should then apply getASTNodes
 // with the bound id to get the actual nodes in the AST.

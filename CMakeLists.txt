@@ -56,6 +56,7 @@ string(REPLACE " " ";" llvm_libs ${llvm_libs})
 message(STATUS "LLVM libs: ${llvm_libs}")
 
 # Set clang_libs
+# https://jonasdevlieghere.com/understanding-the-clang-ast/
 set(clang_libs
     clangFrontendTool clangRewriteFrontend clangDynamicASTMatchers
     clangTooling clangFrontend clangToolingCore clangASTMatchers
