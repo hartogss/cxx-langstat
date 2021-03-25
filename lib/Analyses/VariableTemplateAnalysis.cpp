@@ -14,10 +14,9 @@ using ordered_json = nlohmann::ordered_json;
 // introduced in C++14?
 
 void VariableTemplateAnalysis::extractFeatures(){
-    VariableFamilies.clear();
     // First pre-C++14 idiom to get variable template functionality:
     // Class templates with static data.
-    // Seems like static members of classes in AST are vars, not fields.
+    // static members of classes in AST are varDecls, not fieldDecls.
     // Essentially the same matcher as for typedefs in UsingAnalysis.cpp,
     // but static vardecl instead of typedefs.
     DeclarationMatcher ClassWithStaticMember = classTemplateDecl(
@@ -39,15 +38,20 @@ void VariableTemplateAnalysis::extractFeatures(){
     // Second pre-C++14 idiom:
     DeclarationMatcher ConstexprFunction = functionTemplateDecl(
         isExpansionInMainFile(),
-        // FunctionDecl that is Constexpr
         has(functionDecl(
             isConstexpr(),
-            // whose body contains
+            // does not have "void" return type
+            unless(returns(asString("void"))),
+            // body
             has(compoundStmt(
-                // at least a variable declaration and a return that returns it
-                forEach(declStmt(has(varDecl().bind("datadecl")))),
-                has(returnStmt(has(
-                    declRefExpr(to(varDecl(equalsBoundNode("datadecl"))))))),
+                anyOf(
+                    // at least a variable declaration and a return that returns it
+                    allOf(
+                        forEach(declStmt(has(varDecl().bind("datadecl")))),
+                        has(returnStmt(has(
+                            declRefExpr(to(varDecl(equalsBoundNode("datadecl")))))))),
+                    // or a return stmt returning some expr
+                    has(returnStmt(hasReturnValue(expr())))),
                 // and does not contain anything else. Sufficient to filter for
                 // statement since function body contains statements only. Decl
                 // inside of body handled via a declStmt - which is a Stmt too.
@@ -55,7 +59,7 @@ void VariableTemplateAnalysis::extractFeatures(){
                     unless(anyOf(
                         declStmt(has(varDecl())),
                         returnStmt()))))))))))
-    .bind("constexprfunction");
+    .bind("constexprfunctiontemplate");
 
     // C++14 variable templates
     // "Write" matcher for variable templates that didn't exist yet:
@@ -68,11 +72,13 @@ void VariableTemplateAnalysis::extractFeatures(){
 
     auto ClassWithStaticMemberDecls = Extractor.extract(*Context,
         "classwithstaticmember", ClassWithStaticMember);
-    auto ConstexprFunctionDecls = Extractor.extract(*Context, "constexprfunction",
-        ConstexprFunction);
-    auto VariableTemplateDecls = Extractor.extract(*Context, "variabletemplate",
-        VariableTemplate);
-    // Possible improvement: report identifier of class/function/template.
+    auto ConstexprFunctionDecls = Extractor.extract(*Context,
+        "constexprfunctiontemplate", ConstexprFunction);
+    auto VariableTemplateDecls = Extractor.extract(*Context,
+        "variabletemplate", VariableTemplate);
+
+    // Possible improvement: report identifier of class/function/variable
+    // template.
     for(const auto& m : ClassWithStaticMemberDecls){
         VariableFamilies.emplace_back(VariableFamily(m.Location,
             ClassTemplateStaticMemberVar));

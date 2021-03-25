@@ -54,13 +54,13 @@ constexpr int f3(){
     int data = 3;
     return data;
 }
-// Probably shouldn't be CFT since it does not return the data it defines
+// CFT although it does not return the data it defines
 template<typename T>
 constexpr T f4(){
     T data = 3;
     return 0;
 }
-// Shouldn't be CFT, doesn't define anything
+// CFT, even if no variable declaration, can just return literal of something else immediately
 template<typename T>
 constexpr T f5(){
     return 0;
@@ -77,7 +77,7 @@ constexpr T f7(){
     f1<T>();
     return data;
 }
-// Not CFT, returns something different that data (irrelevant that it's a call)
+// CFT, although returns something different than data (irrelevant that it's a call)
 template<typename T>
 constexpr T f8(){
     T data;

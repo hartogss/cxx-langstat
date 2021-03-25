@@ -19,7 +19,7 @@ class A {
 template<typename T>
 class B {
     static T data;
-    
+
     class C {
 
     };
@@ -40,4 +40,4 @@ class C {
 //   `-CXXRecordDecl 0x7f8a1905ab30 <col:1, col:7> col:7 implicit class C
 
 // We see that C contains another cxxRecordDecl, so allow a class only to be
-// CTSO when it does not contain cxxRecordDecl that are not implicit.
+// CTSD when it does not contain cxxRecordDecl that are not implicit.

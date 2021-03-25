@@ -18,6 +18,18 @@
         },
         {
             "kind": "Constexpr function template",
+            "location": 58
+        },
+        {
+            "kind": "Constexpr function template",
+            "location": 64
+        },
+        {
+            "kind": "Constexpr function template",
+            "location": 81
+        },
+        {
+            "kind": "Constexpr function template",
             "location": 94
         },
         {

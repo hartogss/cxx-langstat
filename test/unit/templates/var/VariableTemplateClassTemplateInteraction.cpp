@@ -27,9 +27,12 @@ class C2 {
     static U data;
 };
 
-// Although intuitively I would make this to be a static class template member
-// var, it is a variable template according to cppreference.com.
-// At class scope, a variable template has to be static.
+// "data" is a variable template, not a static class template member var.
+// Look at the Clang AST.
+// This is because "data" is still templated, even if the encompassing class
+// is instantiated or specialized. Imagine the encompassing class had a non-type
+// template parameter that would become the value assigned to data. If data is
+// then still templated, it is still a variable template.
 template<typename T>
 class C1 {
     template<typename U>

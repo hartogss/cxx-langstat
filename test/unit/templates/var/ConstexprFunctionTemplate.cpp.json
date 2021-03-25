@@ -1,0 +1,12 @@
+{
+    "vta": [
+        {
+            "kind": "Constexpr function template",
+            "location": 11
+        },
+        {
+            "kind": "Constexpr function template",
+            "location": 18
+        }
+    ]
+}
