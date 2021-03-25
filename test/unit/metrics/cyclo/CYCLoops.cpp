@@ -2,9 +2,10 @@
 // RUN: clang++ %s -emit-ast -o %t1.ast
 // RUN: %cxx-langstat --analyses=cca -emit-features -in %t1.ast -out %t1.ast.json --
 // RUN: diff %t1.ast.json %s.json
-// Test to ensure LDA finds corrects loop depths and only recognizes top-level
-// loops as relevant
-// Run lKA too because why not
+
+// CCA works with loops?
+//
+//
 
 void loop(){
     for (;;){ //depth 1

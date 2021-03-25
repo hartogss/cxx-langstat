@@ -21,6 +21,7 @@ void CyclomaticComplexityAnalysis::analyzeFeatures(){
     auto id = "fd";
     auto fDecl = functionDecl(
         isExpansionInMainFile(),
+        // Should we remove this condition?
         unless(isImplicit()), // Should not be compiler-generated
         hasBody(anything()))  // Should be defined, i.e have a body
     .bind(id);
@@ -51,8 +52,9 @@ void CyclomaticComplexityAnalysis::analyzeFeatures(){
             // Wanna print the cfgs? Don't, they're ugly.
             // llvm::raw_os_ostream OS(std::cout);
             // cfg->print(OS, clang::LangOptions(), true);
-            // Strictly speaking, you'd have to subtract -2 each from numNodes & numEdges
-            // because of the LLVM entry & exit block. However, this has no effect on CYC.
+            // McCabe's formula for computing CYC should be applicable here
+            // because intraprocedural CFGs in Clang have a distinct entry and
+            // exit block.
             unsigned numNodes = cfg->size();
             unsigned numEdges = 0;
             for(auto block = cfg->begin(); block != cfg->end(); block++)
