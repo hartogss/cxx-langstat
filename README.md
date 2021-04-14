@@ -12,12 +12,14 @@ It uses clang's ASTMatchers library in combination with LibTooling to analyze us
 ### Building
 To build, clone project into directory:  
 `mkdir build && cd build`  
-`cmake G <generator> -DCMAKE_CXX_COMPILER=your/clang++/binary/here ../`  
-Usually located in `/usr/bin/clang++`,`/usr/local/bin/clang++`, but just `clang++` should suffice.
+`cmake -G "<generator>" -DCMAKE_CXX_COMPILER=your/clang++/binary/here ../`  
+Usually located in `/usr/bin/clang++`,`/usr/local/bin/clang++`, but just `clang++` should suffice. \
+Download the single-include `json.hpp` from JSON for Modern C++ and put it in `cxx-langstat/include/nlohmann`. \
+Run `ninja` inside of build directory.
 ### Testing
 Have llvm-lit installed: `pip install lit` \
 Make sure you're in your build directory and then type `lit test -s`. \
-Use `-vv` to get info about why testcases fail. \
+Use `-vv` to get info about why testcases fail.
 ## Running
 To run:  ` cxx-langstat [options] `  
 Options: 
