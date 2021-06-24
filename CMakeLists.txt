@@ -6,7 +6,7 @@
 # colored output with ninja: https://medium.com/@alasher/colored-c-compiler-output-with-ninja-clang-gcc-10bfe7f2b949
 
 # ---- ----
-cmake_minimum_required(VERSION 3.18.3)
+cmake_minimum_required(VERSION 3.16)
 # Sets ${PROJECT_NAME}
 project(cxx-langstat)
 
@@ -91,10 +91,13 @@ target_link_libraries(${PROJECT_NAME}
     ${llvm_libs} ${clang_libs}
 )
 
+
+# ---- llvm-lit configuration -----
 # For info about this and lit.site.cfg.py.in and lit.cfg.py see
 # https://medium.com/@mshockwave/using-llvm-lit-out-of-tree-5cddada85a78
+# Copies file to file and modifies contents
 configure_file(test/lit.site.cfg.py.in test/lit.site.cfg.py)
 # Execute this using ninja check
 add_custom_target(check
-  COMMAND lit test -v -s
+  COMMAND lit test -s
 DEPENDS ${PROJECT_NAME})
