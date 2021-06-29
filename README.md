@@ -26,8 +26,8 @@ cxx-langstat was developed as part of my Bachelor's thesis at ETH Zurich, see [h
 1. Clone/download cxx-langstat project
 2. Download the single-include `json.hpp` from [JSON for Modern C++](https://github.com/nlohmann/json) and put it in `cxx-langstat/include/nlohmann` or use one of the other suggested integration methods
 3. `mkdir build && cd build`  
-4. `cmake -G "<generator>" -DCMAKE_CXX_COMPILER=<C++ compiler>` (`clang++`, `clang++-11`, `g++` etc.)
-5. `ninja` to build the binary
+4. `cmake -G "<generator>" -DCMAKE_CXX_COMPILER=<C++ compiler> ../` (`clang++`, `clang++-11` etc.)
+5. `ninja` or `make` to build the binary
 
 
 ### Testing
@@ -44,7 +44,7 @@ Options:
 - `parallel` or `-j`: number of parallel instances to use, works for `-emit-features` only
 
 #### Example use cases:
-###### Single file
+##### Single file
 To analyze a single source or AST file:
 1. Extract features: \
 `cxx-langstat -analyses=<> -emit-features -in Helloworld.cpp -out Helloworld.cpp.json `
