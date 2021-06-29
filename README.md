@@ -67,17 +67,15 @@ A script and instructions for doing will be be merged into main soon.
 ## Implemented Analyses
 ##### Algorithm Library Analysis (ALA)
 Anecdotal evidence suggests that the [C++ Standard Library Algorithms](https://en.cppreference.com/w/cpp/algorithm) are rarely used, motivating analysis to check this claim.
-ALA finds and counts calls to function template from the STL algorithms, however, currently only of the non-modifying sequence operations and the minimum/maximum operations; also, the C++20 `std::ranges` algorithms aren't considered. \
-A usage of an algorithm is only detected in a call expression.
+ALA finds and counts calls to function template from the STL algorithms, however, currently only of the non-modifying sequence operations and the minimum/maximum operations; also, the C++20 `std::ranges` algorithms aren't considered.
 ##### Constexpr Analysis (CEA)
-Computes simple statistics on how often variables, function and if statements are constexpr or not constexpr.
+Finds and counts how often variables, functions and `if`-statements are (not) `constexpr`. This could help us learning how prevalent compile-time constructs are. However, we probably should distinguish between those constructs that aren't `constexpr` and those that can't be. Currently, only some trivial conditions that prohibit `constexpr`-ness are checked, leading me to believe that we will underestimate the popularity of the keyword.  
 ##### Container Library Analysis (CLA)
 CLA reports variable declarations whose type is a [C++ Standard Library Container](https://en.cppreference.com/w/cpp/container):
-`array`, `vector`, `forward_list`, `list`, `map`, `multimap`, `set`, `multiset`, `unordered_map`, `unordered_multimap`, `unordered_set`, `unordered_multiset`, `queue`, `priority_queue`, `stack`, `deque`.
-
+`array`, `vector`, `forward_list`, `list`, `map`, `multimap`, `set`, `multiset`, `unordered_map`, `unordered_multimap`, `unordered_set`, `unordered_multiset`, `queue`, `priority_queue`, `stack`, `deque`. \
 "Variable declarations" include member variables and function parameters. Other occurrences of containers are not respected.
 ##### Cyclomatic Complexity Analysis (CCA)
-For each explicit (not compiler-generated) function declaration that has a body (i.e. is defined), calculates the so-called cyclomatic complexity. This concept developed by Thomas J. McCabe, intuitively, computes for a "section of source code the number of independent paths within it, where linearly-independent means that each path has at least one edge that is not in the other paths." (https://en.wikipedia.org/wiki/Cyclomatic_complexity)
+For each explicit (not compiler-generated) function declaration that has a body (i.e. is defined), CCA calculates the so-called cyclomatic complexity. This concept developed by Thomas J. McCabe, intuitively, computes for a "section of source code the number of independent paths within it, where linearly-independent means that each path has at least one edge that is not in the other paths." (https://en.wikipedia.org/wiki/Cyclomatic_complexity)
 ##### Function Parameter Analysis (FPA)
 FPA extracts and counts the parameters of functions, function templates and their instantiations and specializations. This gives us insights about the commonness of the different kinds of parameters: by value, non-`const` lvalue ref, `const` lvalue ref, rvalue ref, forwarding ref.
 ##### Loop Depth Analysis (LDA)
@@ -98,7 +96,8 @@ Limitation: not all occurrences of "traditional" loops can be converted to range
 - For each type, counts how often by-value parameter at function call sites where constructed by copy/move, respectively.
 
 ##### Template Parameter Analysis (TPA)
-Counts each kind of template (class, function, variable, alias), how many were variadic/use parameter packs and outputs counts on what kind of template parameters were used (non-tupe template parameters, type template parameters and template template parameters).
+For the different kinds of templates (class, function, variable, alias), TPA counts the different kinds of template parameters (non-type template, type template and template template parameters) and reports whether the template employs a template parameter pack or not \
+(TPA finds *template* parameter packs, but gives no information about *function* parameter packs).
 ##### Template Instantiation Analysis (TIA)
 Reports instantiations of templates, and counts how often certain class and function template instantiations were used. In the case of variable templates, the instantiation is reported but not (yet) counted due to oddities in clang's matchers. \
 Since the data types and function analyzed in ALA, CLA and ULA are mostly templates, they are based on TIA.
@@ -119,7 +118,8 @@ C++11 introduced type aliases (`using` keyword) which are similar to `typedef`s,
   // "typedef template" idiom
   template<typename T>
   struct TVector {
-    typedef std::vector<T> type; // doesn't have to be named 'type'
+    // doesn't have to be named 'type'
+    typedef std::vector<T> type;
   };
   ```
 </td>
