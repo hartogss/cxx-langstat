@@ -65,23 +65,23 @@ Computing statistics creates a single JSON file.
 A script and instructions for doing will be be merged into main soon.
 
 ## Implemented Analyses
-###### Algorithm Library Analysis (ALA)
+##### Algorithm Library Analysis (ALA)
 Anecdotal evidence suggests that the [C++ Standard Library Algorithms](https://en.cppreference.com/w/cpp/algorithm) are rarely used, motivating analysis to check this claim.
-ALA finds and counts calls to function template from the STL algorithms, however, currently only of the non-modifying sequence operations and the minimum/maximum operations; also, the C++20 `std::ranges` algorithms aren't considered.
-###### Constexpr Analysis (CEA)
+ALA finds and counts calls to function template from the STL algorithms, however, currently only of the non-modifying sequence operations and the minimum/maximum operations; also, the C++20 `std::ranges` algorithms aren't considered. \
+A usage of an algorithm is only detected in a call expression.
+##### Constexpr Analysis (CEA)
 Computes simple statistics on how often variables, function and if statements are constexpr or not constexpr.
-###### Container Library Analysis (CLA)
+##### Container Library Analysis (CLA)
 CLA reports variable declarations whose type is a [C++ Standard Library Container](https://en.cppreference.com/w/cpp/container):
 `array`, `vector`, `forward_list`, `list`, `map`, `multimap`, `set`, `multiset`, `unordered_map`, `unordered_multimap`, `unordered_set`, `unordered_multiset`, `queue`, `priority_queue`, `stack`, `deque`.
 
 "Variable declarations" include member variables and function parameters. Other occurrences of containers are not respected.
-
-###### Cyclomatic Complexity Analysis (CCA)
+##### Cyclomatic Complexity Analysis (CCA)
 For each explicit (not compiler-generated) function declaration that has a body (i.e. is defined), calculates the so-called cyclomatic complexity. This concept developed by Thomas J. McCabe, intuitively, computes for a "section of source code the number of independent paths within it, where linearly-independent means that each path has at least one edge that is not in the other paths." (https://en.wikipedia.org/wiki/Cyclomatic_complexity)
-###### Function Parameter Analysis (FPA)
-Computes how often the 4 main kinds of function parameters are used: pass-by value, non-const lvalue reference, const lvalue reference and rvalue reference.
-###### Loop Depth Analysis (LDA)
-LDA computes statistics about loop depths, i.e., computes how deeply nested loops are. Example of depth 2:
+##### Function Parameter Analysis (FPA)
+FPA extracts and counts the parameters of functions, function templates and their instantiations and specializations. This gives us insights about the commonness of the different kinds of parameters: by value, non-`const` lvalue ref, `const` lvalue ref, rvalue ref, forwarding ref.
+##### Loop Depth Analysis (LDA)
+LDA computes the depth of each loops and counts commonness of the dephts. Example of depth 2:
 ```c++
 for(;;){
   do{
@@ -90,14 +90,20 @@ for(;;){
 }
 ```
 Currently the matchers for this analysis grow exponentially with the maximum loop depth to look for, which is not (yet) a problem since depths >5 are rare. Still, switching to a dominator tree-based approach might be favorable.
-###### Loop Kind Analysis (LKA)
-Computes statistics on usage `for`, `while`, `do-while` and range-based `for` loops in C++. Especially interesting to use to see the adoption of range-based `for` since C++11.
-###### Move Semantics Analysis (MSA)
-###### Template Parameter Analysis (TPA)
+##### Loop Kind Analysis (LKA)
+Extracts and counts`for`, `while`, `do-while` and range-based `for` loops in C++. Especially interesting to investigate the adoption of range-based `for` since C++11.
+Limitation: not all occurrences of "traditional" loops can be converted to range-based loops, e.g. infinite loops, which might lead to LKA underestimating the popularity of range-based `for`.
+##### Move Semantics Analysis (MSA)
+- Counts uses of `std::move`, `std::forward`
+- For each type, counts how often by-value parameter at function call sites where constructed by copy/move, respectively.
+
+##### Template Parameter Analysis (TPA)
 Counts each kind of template (class, function, variable, alias), how many were variadic/use parameter packs and outputs counts on what kind of template parameters were used (non-tupe template parameters, type template parameters and template template parameters).
-###### Template instantiation Analysis (TIA)
-For the different instantiations (class, function) counts how often these instantations were used. I.e., for class isntantiaitons, counts how many variables and member variables have that type, and for function instantiations, counts how often those instantiations are called through callExprs.
-###### `using` Analysis (UA)
+##### Template Instantiation Analysis (TIA)
+Reports instantiations of templates, and counts how often certain class and function template instantiations were used. In the case of variable templates, the instantiation is reported but not (yet) counted due to oddities in clang's matchers. \
+Since the data types and function analyzed in ALA, CLA and ULA are mostly templates, they are based on TIA.
+
+##### `using` Analysis (UA)
 C++11 introduced type aliases (`using` keyword) which are similar to `typedef`s, but additionally can be templated. This analysis aims to find out if programmers shifted from `typedef`s to aliases. The analysis gives you usage figures of `typedef`s, aliases, "`typedef` templates" (an idiom used to get around above said `typedef` limitation) and alias templates.
 <table>
 <tr>
@@ -130,11 +136,11 @@ C++11 introduced type aliases (`using` keyword) which are similar to `typedef`s,
 </tr>
 </table>
 
-###### Utility Library Analysis (ULA)
+##### Utility Library Analysis (ULA)
 Similar to the Container Library Analysis; analyzes the usage of certain class template types, namely, the following [C++ Utilities](https://en.cppreference.com/w/cpp/utility): `pair`, `tuple`, `bitset`, `unique_ptr`, `shared_ptr` and `weak_ptr`. \
 Interesting to extend to see if `auto_ptr` is still used in C++.
 
-###### Variable Template Analysis (VTA)
+##### Variable Template Analysis (VTA)
 C++14 added variable templates. Previously, one used either class templates with a static data member or constexpr function templates returning the desired value. We here analyze whether programmers transitioned in favor of the new concept by reporting usage of the three constructs.
 <table>
 <tr>
