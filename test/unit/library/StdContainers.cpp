@@ -1,5 +1,5 @@
 // RUN: rm %t1.ast.json || true
-// RUN: clang++ %s -emit-ast -o %t1.ast
+// RUN: %clangxx %s -emit-ast -o %t1.ast
 // RUN: %cxx-langstat --analyses=cla -emit-features -in %t1.ast -out %t1.ast.json --
 // RUN: diff %t1.ast.json %s.json
 // Some old test I still wanted to run to check for library container usage.
