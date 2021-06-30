@@ -179,3 +179,6 @@ C++14 added variable templates. Previously, one used either class templates with
 </td>
 </tr>
 </table>
+
+## Attributions
+`add_new_analysis.py` was derived from LLVM clang-tidy's `add_new_check.py`, which is distributed under the [Apache License v2.0 with LLVM Exceptions](https://llvm.org/LICENSE.txt).
