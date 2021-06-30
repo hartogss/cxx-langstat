@@ -6,6 +6,22 @@
 # file for your analysis in the cxx-langstat project directory and register
 # it in CMakeLists.txt and AnalysisRegistry.cpp
 
+# Steps of creating a new analysis:
+# 1. Create YourAnalysis.cpp and YourAnalysis.h
+# 2. In YourAnalysis.h, create header guards: YOURANALYSIS_H etc.
+# 3. Include YourAnalysis.h in YourAnalysis.cpp
+# 4. Add YouAnalysis to CMakeLists.txt
+# 5. Add YourAnalysis to AnalysisRegistry.cpp
+# 6. Implement analyzeFeatures and processFeatures in YourAnalysis.cpp
+# 7. Advice: in YourAnalysis.h, create datastructure that holds features in neat
+# way and implement functions to convert that type to/from JSON
+#
+# FIXME:
+# analyzeFeatures and processFeatures should be renamed s.t. they reflect what
+# they do
+# remove this notice only when done
+
+
 import os
 import argparse
 
