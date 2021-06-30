@@ -1,11 +1,10 @@
+# This code and its methods are adapted from
+# https://github.com/llvm/llvm-project/blob/release/12.x/clang-tools-extra/clang-tidy/add_new_check.py
+
 # Command line Python script to create and register new analyses
 # Running this script will create a header (.h) and implementation (.cpp)
 # file for your analysis in the cxx-langstat project directory and register
 # it in CMakeLists.txt and AnalysisRegistry.cpp
-
-# This file was inspired by and uses code from clang-tidy, namely add_new_check.py
-# see https://github.com/llvm/llvm-project/blob/release/12.x/clang-tools-extra/clang-tidy/add_new_check.py
-
 
 import os
 import argparse
@@ -110,6 +109,9 @@ def adapt_cmake(path, analysis):
 
 
 # Register the analysis in AnalysisRegistry.cpp
+# Conceptually similar to adapt_cmake, but reads lines with a step size of 2
+# when necessary
+# Adapted from adapt_cmake
 def register_analysis(registry_path, headers_path, analysis, analysis_shorthand):
     filename = os.path.join(registry_path, 'AnalysisRegistry.cpp')
     with open(filename, 'r') as f:

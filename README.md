@@ -22,7 +22,7 @@ Make sure you're in your build directory and then type `lit test -s`. \
 Use `-vv` to get info about why testcases fail.
 ## Running
 To run:  ` cxx-langstat [options] `  
-Options: 
+Options:
 - `-analyses=<string>` Accepts a string of comma-separated abbreviations of the analyses, e.g. `-analyses=msa,ula` will run move semantics and utility library analyses in alphabetical order of the analyses.
 - `-emit-features`
 - `-emit-statistics`
@@ -136,3 +136,6 @@ C++14 added variable templates. Previously, one used either class templates with
 </td>
 </tr>
 </table>
+
+## Attributions
+`add_new_analysis.py` was derived from LLVM clang-tidy's `add_new_check.py`, which is distributed under the [Apache License v2.0 with LLVM Exceptions](https://llvm.org/LICENSE.txt).
