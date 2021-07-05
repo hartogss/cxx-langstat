@@ -1,9 +1,9 @@
 Not yet a license for cxx-langstat itself
 
 --------------------------------------------------------------------------------
-The file add_new_analysis.py are adapted from
-the LLVM Project (https://github.com/llvm/llvm-project)
-(Apache 2.0 with LLVM exceptions)
+The files add_new_analysis.py, AnalysisList.h and AnalysisList.cpp
+are adapted from the LLVM Project (https://github.com/llvm/llvm-project)
+(Apache 2.0 with LLVM Exceptions)
 
 See https://llvm.org/LICENSE.txt or below for the full text:
 

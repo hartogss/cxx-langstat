@@ -181,4 +181,6 @@ C++14 added variable templates. Previously, one used either class templates with
 </table>
 
 ## Attributions
-`add_new_analysis.py` was derived from LLVM clang-tidy's `add_new_check.py`, which is distributed under the [Apache License v2.0 with LLVM Exceptions](https://llvm.org/LICENSE.txt).
+- `add_new_analysis.py` and `AnalysisList` are derived from LLVM [clang-tidy](https://github.com/llvm/llvm-project/tree/llvmorg-12.0.0/clang-tools-extra/clang-tidy)'s `add_new_check.py` and `GlobList`, respectively, which are distributed under the [Apache License v2.0 with LLVM Exceptions](https://llvm.org/LICENSE.txt).
+- Parts of `Driver.cpp` and the `MatchingExtractor` were learned from and inspired by and the CYC computation in `CyclomaticComplexityAnalysis` was derived from Peter Goldsborough's clang-useful tutorial: [talk](https://cppnow2017.sched.com/event/A8Ij/clang-useful-building-useful-tools-with-llvm-and-clang-for-fun-and-profit), [code](https://github.com/peter-can-talk/cppnow-2017/blob/master/code/mccabe/mccabe.cpp).
+- Code to walk through directories used in `Runner.cpp` was copied from [here](http://web.archive.org/web/20201111224934/http://www.martinbroadhurst.com/list-the-files-in-a-directory-in-c.html).
