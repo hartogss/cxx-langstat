@@ -4,6 +4,7 @@ add_library(Analyses
     ContainerLibAnalysis.cpp
     CyclomaticComplexityAnalysis.cpp
     FunctionParameterAnalysis.cpp
+    LLVMContainersAnalysis.cpp
     LoopDepthAnalysis.cpp
     LoopKindAnalysis.cpp
     MoveSemanticsAnalysis.cpp

@@ -8,6 +8,7 @@
 #include "cxx-langstat/Analyses/CyclomaticComplexityAnalysis.h"
 #include "cxx-langstat/Analyses/ContainerLibAnalysis.h"
 #include "cxx-langstat/Analyses/FunctionParameterAnalysis.h"
+#include "cxx-langstat/Analyses/LLVMContainersAnalysis.h"
 #include "cxx-langstat/Analyses/LoopDepthAnalysis.h"
 #include "cxx-langstat/Analyses/LoopKindAnalysis.h"
 #include "cxx-langstat/Analyses/MoveSemanticsAnalysis.h"
@@ -37,6 +38,8 @@ void AnalysisRegistry::createFreshAnalyses(){
     // that alphabetically is the nicest, because it will affect in what order
     // features and statistics will be printed at the end.
 
+    if(Options.EnabledAnalyses.contains("lca"))
+        Analyses.emplace_back(std::make_unique<LLVMContainersAnalysis>());
     if(Options.EnabledAnalyses.contains("ala"))
         Analyses.emplace_back(std::make_unique<AlgorithmLibraryAnalysis>());
     if(Options.EnabledAnalyses.contains("cca"))
